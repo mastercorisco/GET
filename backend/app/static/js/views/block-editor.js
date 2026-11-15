@@ -10,6 +10,74 @@ let activeBlockId = null;
 let headerWired = false;
 let _templates = [];
 
+const TARGET_OUTPUT_PRESETS = [
+  { label: "— Não definido —", value: {} },
+  { label: "Secção de especificação", value: { format: "spec_section" } },
+  {
+    label: "Especificação técnica (pt-PT, formal)",
+    value: {
+      format: "technical_specification",
+      language: "pt-PT",
+      tone: "formal_technical",
+      indicative_length_words: 1200,
+    },
+  },
+  { label: "Secção (kind legado)", value: { kind: "spec_section" } },
+];
+
+function stableTargetOutputKey(obj) {
+  const normalized = obj && typeof obj === "object" && !Array.isArray(obj) ? obj : {};
+  const sorted = {};
+  Object.keys(normalized)
+    .sort()
+    .forEach(function (k) {
+      sorted[k] = normalized[k];
+    });
+  return JSON.stringify(sorted);
+}
+
+function parseTargetOutputSelectValue(raw) {
+  try {
+    const parsed = JSON.parse(raw || "{}");
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch (_e) {
+    return {};
+  }
+}
+
+function syncTargetOutputSelect(select, currentObj) {
+  if (!select) return;
+  if (!select.dataset.presetsBuilt) {
+    select.replaceChildren();
+    TARGET_OUTPUT_PRESETS.forEach(function (p) {
+      const opt = document.createElement("option");
+      opt.value = stableTargetOutputKey(p.value);
+      opt.textContent = p.label;
+      select.appendChild(opt);
+    });
+    select.dataset.presetsBuilt = "1";
+  }
+  select.querySelectorAll("option[data-custom]").forEach(function (o) {
+    o.remove();
+  });
+  const currentKey = stableTargetOutputKey(currentObj);
+  let matched = false;
+  for (let i = 0; i < select.options.length; i++) {
+    if (select.options[i].value === currentKey) {
+      matched = true;
+      break;
+    }
+  }
+  if (!matched && currentKey !== "{}") {
+    const opt = document.createElement("option");
+    opt.value = currentKey;
+    opt.textContent = "Personalizado (valor guardado)";
+    opt.dataset.custom = "1";
+    select.appendChild(opt);
+  }
+  select.value = currentKey;
+}
+
 async function api(path, options, fallback) {
   const res = await fetch(path, options || {});
   const body = res.ok
@@ -163,14 +231,10 @@ export function initBlockEditor(router) {
     const obj = document.getElementById("beObjective");
     const sc = document.getElementById("beScope");
     const tgt = document.getElementById("beTargetOutput");
+    syncTargetOutputSelect(tgt, {});
     function saveHeader() {
       if (!activeBlockId) return;
-      let target_output = {};
-      try {
-        target_output = JSON.parse(tgt?.value || "{}");
-      } catch (_e) {
-        target_output = {};
-      }
+      const target_output = parseTargetOutputSelectValue(tgt?.value);
       api(
         "/api/blocks/" + activeBlockId,
         {
@@ -265,9 +329,7 @@ function refreshBlockEditor() {
     const tgt = document.getElementById("beTargetOutput");
     if (obj) obj.value = b.objective || "";
     if (sc) sc.value = b.scope || "";
-    if (tgt) {
-      tgt.value = JSON.stringify(b.target_output || {}, null, 2);
-    }
+    if (tgt) syncTargetOutputSelect(tgt, b.target_output || {});
 
     const list = document.getElementById("bePointList");
     if (list) {
