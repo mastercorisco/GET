@@ -84,11 +84,11 @@ export function createDevelopmentPointCard(point, hooks) {
   card.dataset.pointId = point.id;
 
   const head = el("header", "dp-card-head");
-  const toggle = el(
-    "button",
-    "dp-card-toggle",
-    "#" + point.order + " — " + (point.title || "(sem título)")
-  );
+  const titleBit =
+    point.title && String(point.title).trim()
+      ? String(point.title).trim()
+      : "(sem título)";
+  const toggle = el("button", "dp-card-toggle", "#" + point.order + " · " + titleBit);
   toggle.type = "button";
   toggle.setAttribute("aria-expanded", "false");
   const overviewBtn = document.createElement("button");
@@ -104,20 +104,11 @@ export function createDevelopmentPointCard(point, hooks) {
   const meta = el(
     "span",
     "dp-card-meta",
-    point.status +
-      (point.needs_review ? " · revisão" : "") +
-      " · P:" +
-      (point.premise_count || 0) +
-      " · Obr:" +
-      (point.must_include_count || 0) +
-      " · ?:" +
-      (point.open_questions_count || 0) +
-      " · CA:" +
-      (point.acceptance_criteria_count || 0)
+    point.status + (point.needs_review ? " · rev" : "")
   );
   head.appendChild(toggle);
-  head.appendChild(overviewBtn);
   head.appendChild(meta);
+  head.appendChild(overviewBtn);
   if (point.completeness_alerts && point.completeness_alerts.length) {
     const alert = el("span", "error", point.completeness_alerts.join(" · "));
     head.appendChild(alert);

@@ -288,10 +288,17 @@
                   <option value="unverified">unverified</option>
                 </select>
                 <button type="button" id="bePremiseAdd" class="secondary">Adicionar premissa</button>
-                <label class="section-label field-label" data-help-key="block.points_overview">Pontos de desenvolvimento</label>
-                <button type="button" id="beNewPoint" class="secondary">Novo ponto</button>
-                <button type="button" id="beRefresh" class="secondary">Actualizar</button>
-                <div id="bePointList" class="dp-list"></div>
+                <details class="be-points-panel" id="bePointsPanel">
+                  <summary class="be-points-summary" data-help-key="block.points_overview">
+                    <span>Pontos de desenvolvimento</span>
+                    <span id="bePointsCount" class="be-points-count"></span>
+                  </summary>
+                  <div class="be-points-toolbar">
+                    <button type="button" id="beNewPoint" class="secondary">Novo ponto</button>
+                    <button type="button" id="beRefresh" class="secondary">Actualizar</button>
+                  </div>
+                  <div id="bePointList" class="dp-list be-points-list"></div>
+                </details>
               </div>
               <aside class="block-prep-aside card-muted">
                 <h3>Ajuda à preparação</h3>

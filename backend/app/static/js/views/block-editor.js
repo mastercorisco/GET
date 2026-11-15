@@ -441,6 +441,11 @@ function refreshBlockEditor() {
     if (sc) sc.value = b.scope || "";
     if (tgt) syncTargetOutputSelect(tgt, b.target_output || {});
 
+    const countEl = document.getElementById("bePointsCount");
+    if (countEl) {
+      const n = data.points ? data.points.length : 0;
+      countEl.textContent = n ? "(" + n + ")" : "(nenhum)";
+    }
     const list = document.getElementById("bePointList");
     if (list) {
       list.replaceChildren();
