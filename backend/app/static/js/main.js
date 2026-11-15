@@ -14,6 +14,7 @@ import { hydrateAppearanceFromStorage, initAppearance } from "./components/appea
 import { initBackupsView } from "./views/backups.js";
 import { initBlockEditor, openBlockEditor } from "./views/block-editor.js";
 import { initSettingsView, setSettingsWorkspaceOpen } from "./views/settings.js";
+import { initRouteTabs } from "./components/route-tabs.js";
 
 hydrateAppearanceFromStorage();
 
@@ -21,6 +22,7 @@ const router = initRouter({
   onRouteChange: function (routeId) {
     renderScreenGuide(routeId);
     wireDeclarativeHelp(document);
+    initRouteTabs(document.querySelector(".route-panel.is-active"));
     if (routeId === "backups") {
       document.dispatchEvent(new CustomEvent("get:workspace-open"));
     }
@@ -65,6 +67,7 @@ initHelpSystem().then(function () {
       ? window.location.hash.slice(1)
       : "workspace";
   renderScreenGuide(hash);
+  initRouteTabs(document.querySelector(".route-panel.is-active"));
 });
 
 document.addEventListener("get:help-level-changed", function () {

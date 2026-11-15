@@ -1,0 +1,250 @@
+/* Studio UI (inspirado shadcn/zinc): tokens --ring, cards, tabs, grids, focus rings.
+ * checklist: fundo/superfície, borda subtil, accent, radius 0.5rem, sombra leve,
+ * nav item arredondado, inputs com ring, btn default/outline/ghost, abas route-tabs,
+ * list-panel scroll, card-grid responsivo. */
+
+:root {
+  --ring: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  --radius-lg: 0.5rem;
+  --sidebar-width: 15rem;
+  --color-muted-foreground: var(--color-muted);
+  --shadow-sm: 0 1px 2px hsl(222 47% 11% / 0.06);
+  --shadow-md: 0 4px 6px -1px hsl(222 47% 11% / 0.08), 0 2px 4px -2px hsl(222 47% 11% / 0.06);
+}
+
+html[data-theme-effective="light"] {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-border: #e4e4e7;
+  --color-border-input: #d4d4d8;
+  --color-text: #09090b;
+  --color-muted: #71717a;
+  --color-accent-subtle: color-mix(in srgb, var(--color-accent) 12%, #ffffff);
+}
+
+html[data-theme-effective="dark"] {
+  --color-bg: #09090b;
+  --color-surface: #18181b;
+  --color-surface-elevated: #27272a;
+  --color-border: #27272a;
+  --color-border-input: #3f3f46;
+  --color-text: #fafafa;
+  --color-muted: #a1a1aa;
+  --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.4);
+  --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.35);
+}
+
+.app-main {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1rem, 2.5vw, 1.5rem) 2rem;
+}
+
+.card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-muted {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 1fr));
+  gap: 1rem;
+  align-items: start;
+  margin: 1rem 0;
+}
+
+.card-grid > .card-surface,
+.card-grid > .card-muted {
+  margin: 0;
+}
+
+.card-surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-surface h3,
+.card-muted h3 {
+  margin-top: 0;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--ring);
+}
+
+button.ghost,
+.app-header__settings.ghost {
+  background: transparent;
+  color: var(--color-text);
+  border-color: transparent;
+}
+
+button.ghost:hover,
+.app-header__settings.ghost:hover {
+  background: var(--color-bg);
+}
+
+.app-nav {
+  padding: 0.5rem 0.65rem 1rem;
+}
+
+.nav-group-title {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-surface);
+  padding-top: 0.85rem;
+  margin-top: 0.35rem;
+}
+
+.nav-group-title:first-child {
+  margin-top: 0;
+}
+
+.nav-link {
+  border-radius: var(--radius-sm);
+  margin: 0.1rem 0.25rem;
+  width: calc(100% - 0.5rem);
+  padding: 0.45rem 0.65rem;
+  font-size: 0.92rem;
+}
+
+.nav-link:hover {
+  background: var(--color-bg);
+}
+
+.nav-link.is-active {
+  border-right: none;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.nav-link__icon {
+  display: inline-flex;
+  width: 1.1rem;
+  margin-right: 0.4rem;
+  opacity: 0.75;
+  vertical-align: -0.15em;
+}
+
+.route-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.2rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.route-tab {
+  padding: 0.4rem 0.85rem;
+  border-radius: calc(var(--radius-lg) - 2px);
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  margin: 0;
+}
+
+.route-tab:hover {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-surface) 80%, var(--color-bg));
+}
+
+.route-tab[aria-selected="true"],
+.route-tab.is-active {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.route-tab-panel[hidden] {
+  display: none !important;
+}
+
+.list-panel {
+  max-height: min(22rem, 50vh);
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  background: var(--color-bg);
+  margin-top: 0.5rem;
+}
+
+.template-picker.card-grid .template-card {
+  display: block;
+  height: 100%;
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+  border-radius: var(--radius-sm);
+}
+
+.block-editor-main .be-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem 1rem;
+  margin: 0.75rem 0;
+}
+
+@media (min-width: 900px) {
+  .split-explorer.block-editor-split {
+    grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.65fr);
+  }
+
+  .block-editor-main .be-fields-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .block-editor-main .be-fields-grid .be-field-full {
+    grid-column: 1 / -1;
+  }
+}
+
+.block-prep-aside {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+}
+
+.prep-tab-btn {
+  border-radius: calc(var(--radius-lg) - 2px);
+}
+
+@media (max-width: 900px) {
+  .nav-group-sep {
+    color: var(--color-border);
+    padding: 0 0.25rem;
+    align-self: center;
+  }
+}
+
+@media (min-width: 1200px) {
+  .template-picker.card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

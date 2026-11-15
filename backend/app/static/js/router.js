@@ -15,6 +15,21 @@ const ROUTES = [
 
 const ROUTES_ALWAYS = ["workspace", "settings"];
 
+const ROUTE_ICONS = {
+  workspace: "⌂",
+  workbook: "▦",
+  library: "◎",
+  project: "◫",
+  "project-structure": "↳",
+  "block-editor": "✎",
+  "project-technical": "⎇",
+  export: "⇧",
+  import: "⇩",
+  backups: "⧉",
+  diagnostics: "ℹ",
+  settings: "⚙",
+};
+
 const BREADCRUMBS = {
   workspace: "Início / Workspace",
   workbook: "Início / Modelo Excel",
@@ -52,7 +67,13 @@ export function initRouter(options) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "nav-link" + (route.id === current ? " is-active" : "");
-      btn.textContent = route.label;
+      const icon = ROUTE_ICONS[route.id] || "•";
+      const spanIcon = document.createElement("span");
+      spanIcon.className = "nav-link__icon";
+      spanIcon.setAttribute("aria-hidden", "true");
+      spanIcon.textContent = icon;
+      btn.appendChild(spanIcon);
+      btn.appendChild(document.createTextNode(route.label));
       btn.dataset.route = route.id;
       btn.addEventListener("click", function () {
         navigate(route.id);

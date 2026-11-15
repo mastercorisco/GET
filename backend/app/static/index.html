@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GET — Gerador de Especificações Funcionais</title>
     <link rel="stylesheet" href="/static/css/tokens.css" />
+    <link rel="stylesheet" href="/static/css/studio.css" />
     <link rel="stylesheet" href="/static/css/layout.css" />
     <link rel="stylesheet" href="/static/css/components.css" />
     <link rel="stylesheet" href="/static/css/appearance.css" />
@@ -40,7 +41,7 @@
         <span class="status-pill" id="status-workspace">Workspace: fechado</span>
         <span class="status-pill" id="status-project">Projecto: —</span>
         <span class="status-pill status-pill--warn" id="status-baseline">Baseline: —</span>
-        <button type="button" class="app-header__settings" id="headerSettings" title="Configurações">
+        <button type="button" class="app-header__settings ghost" id="headerSettings" title="Configurações">
           Configurações
         </button>
       </header>
@@ -53,12 +54,19 @@
         <h2>Preparar workspace</h2>
         <p class="lead">Crie ou abra a pasta de dados (SQLite, exportações, importações).</p>
         
-        <h2>Workspace</h2>
         <p>Crie ou abra um workspace de dados separado da aplicação.</p>
-        <label for="rootPath" data-help-key="workspace.root_path">Caminho do workspace</label>
-        <input id="rootPath" placeholder="C:\caminho\para\workspace-get" />
-        <label for="userName" data-help-key="workspace.user_name">Utilizador local (proveniência)</label>
-        <input id="userName" value="local_user" />
+        <div class="card-grid">
+          <div class="card-surface">
+            <h3>Dados</h3>
+            <label for="rootPath" data-help-key="workspace.root_path">Caminho do workspace</label>
+            <input id="rootPath" placeholder="C:\caminho\para\workspace-get" />
+          </div>
+          <div class="card-surface">
+            <h3>Proveniência</h3>
+            <label for="userName" data-help-key="workspace.user_name">Utilizador local (proveniência)</label>
+            <input id="userName" value="local_user" />
+          </div>
+        </div>
         <button type="button" id="createBtn" disabled>Criar workspace</button>
         <button type="button" id="openBtn" class="secondary" disabled>Abrir workspace</button>
         
@@ -85,134 +93,145 @@
         <div class="screen-guide-panel" data-screen-guide="library" hidden></div>
         <h2>Biblioteca EDA</h2>
         <p class="lead">Conhecimento reutilizável, referências e terminologia.</p>
-        
-        <h2>Biblioteca</h2>
-        <p>Crie uma unidade. O rascunho fica separado da revisão até carregar em «Concluir revisão».</p>
-        <label for="kTitle" data-help-key="knowledge.title">Título</label>
-        <input id="kTitle" />
-        <label for="kContent" data-help-key="knowledge.content">Conteúdo</label>
-        <textarea id="kContent"></textarea>
-        <label for="kContext" data-help-key="knowledge.origin_context">Contexto de origem</label>
-        <input id="kContext" />
-        <button type="button" id="kCreate">Criar unidade</button>
-        <p id="kError" class="error" hidden></p>
-
-        <h2>Pesquisa</h2>
-        <label for="kQuery" data-help-key="knowledge.search">Texto</label>
-        <input id="kQuery" />
-        <button type="button" id="kSearch" class="secondary">Pesquisar</button>
-        <div id="kResults"></div>
-
-        <h2>Unidades (biblioteca)</h2>
-        <div id="kList"></div>
-
-        <h3>Ficha técnica (unidade seleccionada)</h3>
-        <p id="kProfileMeta">Seleccione uma unidade na lista.</p>
-        <label for="kProfileType" data-help-key="knowledge.profile_type">profile_type</label>
-        <select id="kProfileType">
-          <option value="control_function">control_function</option>
-          <option value="interface">interface</option>
-          <option value="requirement">requirement</option>
-          <option value="decision">decision</option>
-          <option value="open_question">open_question</option>
-        </select>
-        <label for="kProfileData" data-help-key="knowledge.profile_data">data (JSON)</label>
-        <textarea id="kProfileData" placeholder='{"technical_parameters": "texto livre"}'></textarea>
-        <button type="button" id="kProfileSave" class="secondary">Guardar ficha</button>
-        <p id="kProfileWarn" class="error" hidden></p>
-
-        <h3>Referências (biblioteca)</h3>
-        <label for="libRefTitle" data-help-key="library.ref_title">Título</label>
-        <input id="libRefTitle" />
-        <label for="libRefCitation" data-help-key="library.ref_citation">Citação</label>
-        <input id="libRefCitation" />
-        <button type="button" id="libRefCreate" class="secondary">Criar referência</button>
-        <div id="libRefList"></div>
-
-        <h3>Terminologia (biblioteca)</h3>
-        <label for="libTermPreferred" data-help-key="library.term_preferred">Termo preferencial</label>
-        <input id="libTermPreferred" />
-        <label for="libTermDefinition" data-help-key="library.term_definition">Definição</label>
-        <textarea id="libTermDefinition"></textarea>
-        <label for="libTermSynonyms" data-help-key="library.term_synonyms">Sinónimos (vírgulas)</label>
-        <input id="libTermSynonyms" />
-        <button type="button" id="libTermCreate" class="secondary">Criar termo</button>
-        <div id="libTermList"></div>
-      
+        <div class="route-tab-bar" role="tablist" aria-label="Secções da biblioteca">
+          <button type="button" class="route-tab is-active" data-route-tab="units" role="tab">Unidades</button>
+          <button type="button" class="route-tab" data-route-tab="search" role="tab">Pesquisa</button>
+          <button type="button" class="route-tab" data-route-tab="refs" role="tab">Referências</button>
+          <button type="button" class="route-tab" data-route-tab="terms" role="tab">Terminologia</button>
+        </div>
+        <div class="route-tab-panel" data-route-tab="units">
+          <p>Crie uma unidade. O rascunho fica separado da revisão até carregar em «Concluir revisão».</p>
+          <label for="kTitle" data-help-key="knowledge.title">Título</label>
+          <input id="kTitle" />
+          <label for="kContent" data-help-key="knowledge.content">Conteúdo</label>
+          <textarea id="kContent"></textarea>
+          <label for="kContext" data-help-key="knowledge.origin_context">Contexto de origem</label>
+          <input id="kContext" />
+          <button type="button" id="kCreate">Criar unidade</button>
+          <p id="kError" class="error" hidden></p>
+          <h3>Unidades (biblioteca)</h3>
+          <div id="kList" class="list-panel"></div>
+          <h3>Ficha técnica (unidade seleccionada)</h3>
+          <p id="kProfileMeta">Seleccione uma unidade na lista.</p>
+          <label for="kProfileType" data-help-key="knowledge.profile_type">profile_type</label>
+          <select id="kProfileType">
+            <option value="control_function">control_function</option>
+            <option value="interface">interface</option>
+            <option value="requirement">requirement</option>
+            <option value="decision">decision</option>
+            <option value="open_question">open_question</option>
+          </select>
+          <label for="kProfileData" data-help-key="knowledge.profile_data">data (JSON)</label>
+          <textarea id="kProfileData" placeholder='{"technical_parameters": "texto livre"}'></textarea>
+          <button type="button" id="kProfileSave" class="secondary">Guardar ficha</button>
+          <p id="kProfileWarn" class="error" hidden></p>
+        </div>
+        <div class="route-tab-panel" data-route-tab="search" hidden>
+          <label for="kQuery" data-help-key="knowledge.search">Texto</label>
+          <input id="kQuery" />
+          <button type="button" id="kSearch" class="secondary">Pesquisar</button>
+          <div id="kResults" class="list-panel"></div>
+        </div>
+        <div class="route-tab-panel" data-route-tab="refs" hidden>
+          <label for="libRefTitle" data-help-key="library.ref_title">Título</label>
+          <input id="libRefTitle" />
+          <label for="libRefCitation" data-help-key="library.ref_citation">Citação</label>
+          <input id="libRefCitation" />
+          <button type="button" id="libRefCreate" class="secondary">Criar referência</button>
+          <div id="libRefList" class="list-panel"></div>
+        </div>
+        <div class="route-tab-panel" data-route-tab="terms" hidden>
+          <label for="libTermPreferred" data-help-key="library.term_preferred">Termo preferencial</label>
+          <input id="libTermPreferred" />
+          <label for="libTermDefinition" data-help-key="library.term_definition">Definição</label>
+          <textarea id="libTermDefinition"></textarea>
+          <label for="libTermSynonyms" data-help-key="library.term_synonyms">Sinónimos (vírgulas)</label>
+          <input id="libTermSynonyms" />
+          <button type="button" id="libTermCreate" class="secondary">Criar termo</button>
+          <div id="libTermList" class="list-panel"></div>
+        </div>
       </section>
 
       <section class="route-panel card " data-route="project">
         <div class="screen-guide-panel" data-screen-guide="project" hidden></div>
         <h2>Projecto</h2>
         <p class="lead">Crie projectos e gira conhecimento e referências do âmbito.</p>
-        <h2>Projetos</h2>
-        <label for="pTemplateVersion" data-help-key="project.template_version">Modelo (versão)</label>
-        <select id="pTemplateVersion"></select>
-        <label for="pName" data-help-key="project.name">Nome do projeto</label>
-        <input id="pName" placeholder="Ex.: Central Vale do Sousa — fase 1" />
-        <label for="pIntervention" data-help-key="project.intervention">Tipo de intervenção</label>
-        <input id="pIntervention" value="brownfield" />
-        <button type="button" id="pCreate">Criar projeto</button>
-        <p id="pError" class="error" hidden></p>
-
-        <h2>Lista de projetos</h2>
-        <div id="pList"></div>
-
-        <h2>Projeto activo</h2>
-        <label for="pActive" data-help-key="project.active">Seleccionar</label>
-        <select id="pActive"></select>
-
-        <h3>Conhecimento do projeto</h3>
-        <label for="pkTitle">Título</label>
-        <input id="pkTitle" />
-        <label for="pkContent">Conteúdo</label>
-        <textarea id="pkContent"></textarea>
-        <label for="pkContext">Contexto</label>
-        <input id="pkContext" />
-        <button type="button" id="pkCreate">Criar unidade no projeto</button>
-        <div id="pkList"></div>
-
-        <h3>Ficha técnica (projecto)</h3>
-        <p id="pkProfileMeta">Seleccione uma unidade na lista do projecto.</p>
-        <label for="pkProfileType">profile_type</label>
-        <select id="pkProfileType">
-          <option value="control_function">control_function</option>
-          <option value="interface">interface</option>
-          <option value="requirement">requirement</option>
-          <option value="decision">decision</option>
-          <option value="open_question">open_question</option>
-        </select>
-        <label for="pkProfileData">data (JSON)</label>
-        <textarea id="pkProfileData"></textarea>
-        <button type="button" id="pkProfileSave" class="secondary">Guardar ficha</button>
-
-        <h3>Referências (projecto)</h3>
-        <label for="projRefTitle">Título</label>
-        <input id="projRefTitle" />
-        <button type="button" id="projRefCreate" class="secondary">Criar referência</button>
-        <label for="projRefStandard">Referência para ficha normativa</label>
-        <select id="projRefStandard"><option value="">—</option></select>
-        <label for="projRefRole">Papel contratual</label>
-        <select id="projRefRole">
-          <option value="informative_reference">informative_reference</option>
-          <option value="design_basis">design_basis</option>
-          <option value="contractual_requirement">contractual_requirement</option>
-          <option value="compliance_target">compliance_target</option>
-          <option value="guidance_only">guidance_only</option>
-        </select>
-        <button type="button" id="projRefStandardSave" class="secondary">Guardar ficha normativa</button>
-        <div id="projRefList"></div>
-
-        <h3>Terminologia — overrides</h3>
-        <label for="termOverrideConcept">Conceito (biblioteca)</label>
-        <select id="termOverrideConcept"><option value="">—</option></select>
-        <label for="termLegacy">Termo legado</label>
-        <input id="termLegacy" />
-        <label for="termUsageNote">Nota de uso</label>
-        <input id="termUsageNote" />
-        <button type="button" id="termOverrideCreate" class="secondary">Criar override</button>
-        <div id="projTermOverrideList"></div>
-      
+        <div class="route-tab-bar" role="tablist" aria-label="Secções do projecto">
+          <button type="button" class="route-tab is-active" data-route-tab="projects" role="tab">Projetos</button>
+          <button type="button" class="route-tab" data-route-tab="pknowledge" role="tab">Conhecimento</button>
+          <button type="button" class="route-tab" data-route-tab="prefs" role="tab">Referências</button>
+          <button type="button" class="route-tab" data-route-tab="pterms" role="tab">Termos</button>
+        </div>
+        <div class="route-tab-panel" data-route-tab="projects">
+          <label for="pTemplateVersion" data-help-key="project.template_version">Modelo (versão)</label>
+          <select id="pTemplateVersion"></select>
+          <div class="card-grid">
+            <div class="card-surface">
+              <label for="pName" data-help-key="project.name">Nome do projeto</label>
+              <input id="pName" placeholder="Ex.: Central Vale do Sousa — fase 1" />
+            </div>
+            <div class="card-surface">
+              <label for="pIntervention" data-help-key="project.intervention">Tipo de intervenção</label>
+              <input id="pIntervention" value="brownfield" />
+            </div>
+          </div>
+          <button type="button" id="pCreate">Criar projeto</button>
+          <p id="pError" class="error" hidden></p>
+          <h3>Lista de projetos</h3>
+          <div id="pList" class="list-panel"></div>
+          <label for="pActive" data-help-key="project.active">Projeto activo</label>
+          <select id="pActive"></select>
+        </div>
+        <div class="route-tab-panel" data-route-tab="pknowledge" hidden>
+          <label for="pkTitle">Título</label>
+          <input id="pkTitle" />
+          <label for="pkContent">Conteúdo</label>
+          <textarea id="pkContent"></textarea>
+          <label for="pkContext">Contexto</label>
+          <input id="pkContext" />
+          <button type="button" id="pkCreate">Criar unidade no projeto</button>
+          <div id="pkList" class="list-panel"></div>
+          <h3>Ficha técnica (projecto)</h3>
+          <p id="pkProfileMeta">Seleccione uma unidade na lista do projecto.</p>
+          <label for="pkProfileType">profile_type</label>
+          <select id="pkProfileType">
+            <option value="control_function">control_function</option>
+            <option value="interface">interface</option>
+            <option value="requirement">requirement</option>
+            <option value="decision">decision</option>
+            <option value="open_question">open_question</option>
+          </select>
+          <label for="pkProfileData">data (JSON)</label>
+          <textarea id="pkProfileData"></textarea>
+          <button type="button" id="pkProfileSave" class="secondary">Guardar ficha</button>
+        </div>
+        <div class="route-tab-panel" data-route-tab="prefs" hidden>
+          <label for="projRefTitle">Título</label>
+          <input id="projRefTitle" />
+          <button type="button" id="projRefCreate" class="secondary">Criar referência</button>
+          <label for="projRefStandard">Referência para ficha normativa</label>
+          <select id="projRefStandard"><option value="">—</option></select>
+          <label for="projRefRole">Papel contratual</label>
+          <select id="projRefRole">
+            <option value="informative_reference">informative_reference</option>
+            <option value="design_basis">design_basis</option>
+            <option value="contractual_requirement">contractual_requirement</option>
+            <option value="compliance_target">compliance_target</option>
+            <option value="guidance_only">guidance_only</option>
+          </select>
+          <button type="button" id="projRefStandardSave" class="secondary">Guardar ficha normativa</button>
+          <div id="projRefList" class="list-panel"></div>
+        </div>
+        <div class="route-tab-panel" data-route-tab="pterms" hidden>
+          <label for="termOverrideConcept">Conceito (biblioteca)</label>
+          <select id="termOverrideConcept"><option value="">—</option></select>
+          <label for="termLegacy">Termo legado</label>
+          <input id="termLegacy" />
+          <label for="termUsageNote">Nota de uso</label>
+          <input id="termUsageNote" />
+          <button type="button" id="termOverrideCreate" class="secondary">Criar override</button>
+          <div id="projTermOverrideList" class="list-panel"></div>
+        </div>
       </section>
 
           <section class="route-panel card" data-route="block-editor">
@@ -220,19 +239,27 @@
             <h2>Preparação do bloco</h2>
             <p class="lead">Pontos de desenvolvimento, premissas e exportação para LLM externa.</p>
             <p id="beEmptyHint" class="lead" hidden>Seleccione um bloco na estrutura documental.</p>
-            <div id="block-editor-root" class="split-explorer" hidden>
+            <div id="block-editor-root" class="split-explorer block-editor-split" hidden>
               <div class="block-editor-main">
                 <p id="beHeader" class="field-label">—</p>
-                <label for="beObjective" data-help-key="block.objective">Objectivo do bloco</label>
-                <textarea id="beObjective" rows="2"></textarea>
-                <label for="beScope" data-help-key="block.scope">Âmbito do bloco</label>
-                <textarea id="beScope" rows="2"></textarea>
-                <label for="beTargetOutput" data-help-key="block.target_output">Resultado pretendido (JSON)</label>
-                <textarea id="beTargetOutput" rows="2" placeholder="{&quot;format&quot;: &quot;spec_section&quot;}"></textarea>
+                <div class="be-fields-grid">
+                  <div>
+                    <label for="beObjective" data-help-key="block.objective">Objectivo do bloco</label>
+                    <textarea id="beObjective" rows="2"></textarea>
+                  </div>
+                  <div>
+                    <label for="beScope" data-help-key="block.scope">Âmbito do bloco</label>
+                    <textarea id="beScope" rows="2"></textarea>
+                  </div>
+                  <div class="be-field-full">
+                    <label for="beTargetOutput" data-help-key="block.target_output">Resultado pretendido (JSON)</label>
+                    <textarea id="beTargetOutput" rows="2" placeholder="{&quot;format&quot;: &quot;spec_section&quot;}"></textarea>
+                  </div>
+                </div>
                 <h3>Modelo estrutural</h3>
                 <label for="beTemplate" data-help-key="block.template">Aplicar ao novo ponto</label>
                 <select id="beTemplate"><option value="">— vazio —</option></select>
-                <div id="beTemplateCards" class="template-picker"></div>
+                <div id="beTemplateCards" class="template-picker card-grid"></div>
                 <h3>Premissas do bloco</h3>
                 <div id="bePremiseList" class="be-premise-list"></div>
                 <label for="bePremiseStatement" data-help-key="premise.statement">Nova premissa</label>
@@ -265,7 +292,7 @@
                 <button type="button" id="beRefresh" class="secondary">Actualizar</button>
                 <div id="bePointList" class="dp-list"></div>
               </div>
-              <aside class="block-prep-aside">
+              <aside class="block-prep-aside card-muted">
                 <h3>Ajuda à preparação</h3>
                 <div class="prep-tabs" role="tablist" aria-label="Secções de ajuda">
                   <button type="button" class="prep-tab-btn is-active" data-prep-tab="routing">Encaminhamento</button>
@@ -377,28 +404,35 @@
         <div class="screen-guide-panel" data-screen-guide="export" hidden></div>
         <h2>Exportar para LLM</h2>
         <p class="lead">Publique a baseline e gere JSON para discussão ou redação.</p>
-        <h3>Exportação</h3>
-        <p id="expBaselineMeta">Baseline: desconhecida — publique antes do mestre.</p>
-        <label class="section-label field-label" data-help-key="export.baseline">Baseline do projecto</label>
-        <button type="button" id="expBaselinePublish" class="secondary">Publicar baseline</button>
-        <label for="expProfile" data-help-key="export.profile">Perfil</label>
-        <select id="expProfile">
-          <option value="discussion">discussion</option>
-          <option value="redaction">redaction</option>
-        </select>
-        <label class="choice-inline" for="expWriteZip" data-help-key="export.zip">
-          <input type="checkbox" id="expWriteZip" />
-          <span>
-            <span class="choice-text">Incluir pacote ZIP</span>
-            <span class="choice-hint">Gera export_package.zip com JSON(s), Markdown e validation.json (só leitura / arquivo).</span>
-          </span>
-        </label>
-        <button type="button" id="expMaster">Exportar mestre</button>
-        <label for="expFascicle" data-help-key="export.fascicle">Fascículo (raiz)</label>
-        <select id="expFascicle"><option value="">—</option></select>
-        <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo</button>
+        <div class="card-grid">
+          <div class="card-surface">
+            <h3>Baseline</h3>
+            <p id="expBaselineMeta">Baseline: desconhecida — publique antes do mestre.</p>
+            <label class="section-label field-label" data-help-key="export.baseline">Baseline do projecto</label>
+            <button type="button" id="expBaselinePublish" class="secondary">Publicar baseline</button>
+          </div>
+          <div class="card-surface">
+            <h3>Exportação JSON</h3>
+            <label for="expProfile" data-help-key="export.profile">Perfil</label>
+            <select id="expProfile">
+              <option value="discussion">discussion</option>
+              <option value="redaction">redaction</option>
+            </select>
+            <label class="choice-inline" for="expWriteZip" data-help-key="export.zip">
+              <input type="checkbox" id="expWriteZip" />
+              <span>
+                <span class="choice-text">Incluir pacote ZIP</span>
+                <span class="choice-hint">Gera export_package.zip com JSON(s), Markdown e validation.json.</span>
+              </span>
+            </label>
+            <button type="button" id="expMaster">Exportar mestre</button>
+            <label for="expFascicle" data-help-key="export.fascicle">Fascículo (raiz)</label>
+            <select id="expFascicle"><option value="">—</option></select>
+            <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo</button>
+          </div>
+        </div>
         <p id="expStatus" class="error" hidden></p>
-        <div id="expList"></div>
+        <div id="expList" class="list-panel"></div>
 
         
       </section>

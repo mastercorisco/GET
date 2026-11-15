@@ -418,7 +418,7 @@ button.linkish.field-help-concept-btn {
   overflow: auto;
 }
 
-.template-picker {
+.template-picker:not(.card-grid) {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

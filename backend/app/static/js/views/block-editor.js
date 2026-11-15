@@ -199,7 +199,7 @@ function renderTemplateCards() {
   _templates.forEach(function (t) {
     const card = document.createElement("button");
     card.type = "button";
-    card.className = "template-card secondary";
+    card.className = "template-card secondary card-surface";
     card.dataset.templateId = t.id;
     const title = document.createElement("strong");
     title.textContent = t.name;
