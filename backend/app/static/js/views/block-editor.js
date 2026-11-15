@@ -197,10 +197,33 @@ export function openBlockEditor(blockId, router) {
   refreshBlockEditor();
 }
 
+function initBlockPrepHelpDrawer() {
+  const aside = document.getElementById("blockPrepAside");
+  const openBtn = document.getElementById("bePrepHelpOpen");
+  const closeBtn = document.getElementById("bePrepHelpClose");
+  if (!aside || !openBtn) return;
+
+  function setPrepHelpOpen(open) {
+    aside.classList.toggle("is-open", open);
+    aside.setAttribute("aria-hidden", open ? "false" : "true");
+    openBtn.hidden = open;
+    openBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  setPrepHelpOpen(false);
+  openBtn.addEventListener("click", function () {
+    setPrepHelpOpen(true);
+  });
+  closeBtn?.addEventListener("click", function () {
+    setPrepHelpOpen(false);
+  });
+}
+
 export function initBlockEditor(router) {
   const root = document.getElementById("block-editor-root");
   if (!root) return;
 
+  initBlockPrepHelpDrawer();
   initBlockPrepPanel(router);
 
   document.getElementById("beRefresh")?.addEventListener("click", refreshBlockEditor);
@@ -369,6 +392,7 @@ function renderTemplateCards() {
     card.appendChild(title);
     if (t.description) {
       const p = document.createElement("p");
+      p.className = "template-card-desc";
       p.textContent = t.description;
       card.appendChild(p);
     }

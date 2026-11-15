@@ -247,7 +247,10 @@
             <h2>Preparação do bloco</h2>
             <p class="lead">Pontos de desenvolvimento, premissas e exportação para LLM externa.</p>
             <p id="beEmptyHint" class="lead" hidden>Seleccione um bloco na estrutura documental.</p>
-            <div id="block-editor-root" class="split-explorer block-editor-split" hidden>
+            <div id="block-editor-root" class="block-editor-shell" hidden>
+              <button type="button" id="bePrepHelpOpen" class="block-prep-help-open secondary">
+                Ajuda à preparação
+              </button>
               <div class="block-editor-main">
                 <p id="beHeader" class="field-label">—</p>
                 <div class="be-fields-grid">
@@ -308,8 +311,23 @@
                   <div id="bePointList" class="dp-list be-points-list"></div>
                 </details>
               </div>
-              <aside class="block-prep-aside card-muted">
-                <h3>Ajuda à preparação</h3>
+              <aside
+                id="blockPrepAside"
+                class="block-prep-aside block-prep-drawer card-muted"
+                aria-hidden="true"
+                aria-label="Ajuda à preparação"
+              >
+                <header class="block-prep-aside-header">
+                  <h3>Ajuda à preparação</h3>
+                  <button
+                    type="button"
+                    id="bePrepHelpClose"
+                    class="block-prep-help-close ghost"
+                    aria-label="Fechar ajuda à preparação"
+                  >
+                    Fechar
+                  </button>
+                </header>
                 <div class="prep-tabs" role="tablist" aria-label="Secções de ajuda">
                   <button type="button" class="prep-tab-btn is-active" data-prep-tab="routing">Encaminhamento</button>
                   <button type="button" class="prep-tab-btn" data-prep-tab="concepts">Conceitos</button>
