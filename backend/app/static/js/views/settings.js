@@ -3,10 +3,12 @@ import {
   getAppearancePrefs,
   resetAppearance,
   saveAppearance,
+  toggleManualSettingsVisibility,
 } from "../components/appearance.js";
 import { rewireHelpAfterLevelChange, setHelpLevel } from "../components/help-ui.js";
 
 let _workspaceOpen = false;
+let _saveTimer = null;
 
 export function setSettingsWorkspaceOpen(open) {
   _workspaceOpen = open;
@@ -31,6 +33,50 @@ function loadHelpLevel() {
     .catch(function () {});
 }
 
+function defaultPrefs() {
+  return {
+    schema_version: "1.1",
+    theme: "light",
+    accent: "blue",
+    accent_color: "#1d4ed8",
+    font: "system",
+    font_family_custom: "",
+    density: "normal",
+    control_font_size_rem: 1,
+    control_padding_block_rem: 0.55,
+    control_padding_inline_rem: 0.65,
+    textarea_min_height_rem: 5,
+    content_width: "normal",
+    content_max_px: 1200,
+    ui_scale_percent: 100,
+  };
+}
+
+function readManualPatch() {
+  return {
+    accent_color: document.getElementById("uiAccentColor")?.value,
+    font_family_custom: document.getElementById("uiFontCustom")?.value || "",
+    control_font_size_rem: parseFloat(document.getElementById("uiFontSizeRem")?.value || "1"),
+    control_padding_block_rem: parseFloat(document.getElementById("uiPadBlockRem")?.value || "0.55"),
+    control_padding_inline_rem: parseFloat(document.getElementById("uiPadInlineRem")?.value || "0.65"),
+    textarea_min_height_rem: parseFloat(document.getElementById("uiTextareaMinRem")?.value || "5"),
+    content_max_px: parseInt(document.getElementById("uiContentMaxPx")?.value || "1200", 10),
+    ui_scale_percent: parseInt(document.getElementById("uiScalePercent")?.value || "100", 10),
+  };
+}
+
+function queueSave(patch) {
+  const base = getAppearancePrefs() || defaultPrefs();
+  applyAppearance(Object.assign({}, base, patch));
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(function () {
+    saveAppearance(patch).catch(function (err) {
+      const st = document.getElementById("settingsStatus");
+      if (st) st.textContent = String(err.message || err);
+    });
+  }, 280);
+}
+
 export function initSettingsView(router) {
   const map = {
     uiTheme: "theme",
@@ -44,22 +90,50 @@ export function initSettingsView(router) {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("change", function () {
-      const patch = {};
+      const patch = readManualPatch();
       patch[map[id]] = el.value;
-      const base = getAppearancePrefs() || {
-        schema_version: "1.0",
-        theme: "light",
-        accent: "blue",
-        font: "system",
-        density: "normal",
-        content_width: "normal",
-      };
-      applyAppearance(Object.assign({}, base, patch));
-      saveAppearance(patch).catch(function (err) {
-        const st = document.getElementById("settingsStatus");
-        if (st) st.textContent = String(err.message || err);
-      });
+      toggleManualSettingsVisibility();
+      queueSave(patch);
     });
+  });
+
+  ["uiFontSizeRem", "uiPadBlockRem", "uiPadInlineRem", "uiTextareaMinRem", "uiScalePercent", "uiContentMaxPx"].forEach(
+    function (id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("change", function () {
+        queueSave(readManualPatch());
+      });
+    }
+  );
+
+  const colorText = document.getElementById("uiAccentColor");
+  const colorPick = document.getElementById("uiAccentColorPicker");
+  if (colorText && colorPick) {
+    colorPick.addEventListener("input", function () {
+      colorText.value = colorPick.value;
+      const patch = readManualPatch();
+      patch.accent = "custom";
+      document.getElementById("uiAccent").value = "custom";
+      queueSave(patch);
+    });
+    colorText.addEventListener("change", function () {
+      const v = colorText.value.trim();
+      if (/^#[0-9A-Fa-f]{6}$/.test(v)) {
+        colorPick.value = v;
+        const patch = readManualPatch();
+        patch.accent = "custom";
+        document.getElementById("uiAccent").value = "custom";
+        queueSave(patch);
+      }
+    });
+  }
+
+  document.getElementById("uiFontCustom")?.addEventListener("change", function () {
+    const patch = readManualPatch();
+    patch.font = "custom";
+    document.getElementById("uiFont").value = "custom";
+    queueSave(patch);
   });
 
   document.getElementById("uiReset")?.addEventListener("click", function () {
@@ -119,6 +193,25 @@ function syncFormFromPrefs(ev) {
     const el = document.getElementById(id);
     if (el && ids[id]) el.value = ids[id];
   });
+  const setVal = function (id, val) {
+    const el = document.getElementById(id);
+    if (el && val !== undefined && val !== null) el.value = val;
+  };
+  setVal("uiAccentColor", prefs.accent_color);
+  setVal("uiAccentColorPicker", prefs.accent_color);
+  setVal("uiFontCustom", prefs.font_family_custom);
+  setVal("uiFontSizeRem", prefs.control_font_size_rem);
+  setVal("uiPadBlockRem", prefs.control_padding_block_rem);
+  setVal("uiPadInlineRem", prefs.control_padding_inline_rem);
+  setVal("uiTextareaMinRem", prefs.textarea_min_height_rem);
+  setVal("uiContentMaxPx", prefs.content_max_px);
+  setVal("uiScalePercent", prefs.ui_scale_percent);
+  toggleManualSettingsVisibility();
+  const density = prefs.density;
+  const sizesHead = document.getElementById("uiManualSizes");
+  const sizesFields = document.getElementById("uiManualSizesFields");
+  if (sizesHead) sizesHead.hidden = density !== "custom";
+  if (sizesFields) sizesFields.hidden = density !== "custom";
 }
 
 function loadSettingsForm() {

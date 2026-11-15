@@ -25,7 +25,7 @@ def test_ui_preferences_defaults(client: TestClient) -> None:
     data = res.json()
     assert data["theme"] == "light"
     assert data["density"] == "normal"
-    assert data["schema_version"] == "1.0"
+    assert data["schema_version"] == "1.1"
 
 
 def test_ui_preferences_patch_roundtrip(client: TestClient) -> None:
@@ -51,3 +51,15 @@ def test_ui_preferences_reset(client: TestClient) -> None:
 def test_ui_preferences_invalid_enum(client: TestClient) -> None:
     res = client.patch("/api/ui-preferences", json={"theme": "neon"})
     assert res.status_code == 422
+
+
+def test_ui_preferences_custom_accent_color(client: TestClient) -> None:
+    res = client.patch(
+        "/api/ui-preferences",
+        json={"accent": "custom", "accent_color": "#7c3aed", "density": "custom", "textarea_min_height_rem": 4.5},
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["accent"] == "custom"
+    assert data["accent_color"] == "#7c3aed"
+    assert data["textarea_min_height_rem"] == 4.5

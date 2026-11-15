@@ -7,6 +7,8 @@ const FONT_STACKS = {
   segoe: '"Segoe UI", system-ui, sans-serif',
   atkinson: '"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif',
   source_sans: '"Source Sans 3", "Segoe UI", system-ui, sans-serif',
+  georgia: 'Georgia, "Times New Roman", serif',
+  monospace: 'ui-monospace, Consolas, "Cascadia Code", monospace',
 };
 
 const FONT_CDN = {
@@ -47,16 +49,88 @@ const CONTENT_WIDTH_TOKENS = {
   narrow: "960px",
   normal: "1200px",
   wide: "1400px",
+  xlarge: "1600px",
 };
 
+function scaleRem(rem, percent) {
+  const n = parseFloat(rem) * (percent / 100);
+  return n.toFixed(3).replace(/\.?0+$/, "") + "rem";
+}
+
+function buildCustomDensityTokens(prefs) {
+  const scale = prefs.ui_scale_percent || 100;
+  const block = prefs.control_padding_block_rem ?? 0.55;
+  const inline = prefs.control_padding_inline_rem ?? 0.65;
+  const font = prefs.control_font_size_rem ?? 1;
+  const ta = prefs.textarea_min_height_rem ?? 5;
+  return {
+    "--control-padding": scaleRem(block, scale) + " " + scaleRem(inline, scale),
+    "--control-font-size": scaleRem(font, scale),
+    "--textarea-min-height": scaleRem(ta, scale),
+    "--card-padding": scaleRem(1.25, scale) + " " + scaleRem(1.35, scale),
+    "--heading-scale": String(Math.min(1.15, Math.max(0.85, scale / 100))),
+  };
+}
+
+function resolveDensityTokens(prefs) {
+  if (prefs.density === "custom") {
+    return buildCustomDensityTokens(prefs);
+  }
+  const base = DENSITY_TOKENS[prefs.density] || DENSITY_TOKENS.normal;
+  if ((prefs.ui_scale_percent || 100) === 100) {
+    return base;
+  }
+  const scale = prefs.ui_scale_percent;
+  const custom = buildCustomDensityTokens({
+    control_padding_block_rem: parseFloat(base["--control-padding"].split(" ")[0]),
+    control_padding_inline_rem: parseFloat(base["--control-padding"].split(" ")[1]),
+    control_font_size_rem: parseFloat(base["--control-font-size"]),
+    textarea_min_height_rem: parseFloat(base["--textarea-min-height"]),
+    ui_scale_percent: scale,
+  });
+  return custom;
+}
+
+function resolveContentMax(prefs) {
+  if (prefs.content_width === "custom") {
+    return (prefs.content_max_px || 1200) + "px";
+  }
+  return CONTENT_WIDTH_TOKENS[prefs.content_width] || CONTENT_WIDTH_TOKENS.normal;
+}
+
+function adjustHex(hex, amount) {
+  if (!hex || hex[0] !== "#" || hex.length !== 7) return hex;
+  const clamp = function (v) {
+    return Math.max(0, Math.min(255, v));
+  };
+  const r = clamp(parseInt(hex.slice(1, 3), 16) + amount);
+  const g = clamp(parseInt(hex.slice(3, 5), 16) + amount);
+  const b = clamp(parseInt(hex.slice(5, 7), 16) + amount);
+  return (
+    "#" +
+    [r, g, b]
+      .map(function (x) {
+        return x.toString(16).padStart(2, "0");
+      })
+      .join("")
+  );
+}
+
+function applyAccentCustom(el, prefs) {
+  if (prefs.accent !== "custom" || !prefs.accent_color) return;
+  const c = prefs.accent_color;
+  el.style.setProperty("--color-accent", c);
+  el.style.setProperty("--color-accent-hover", adjustHex(c, -18));
+  el.style.setProperty("--color-accent-subtle", adjustHex(c, 120));
+}
+
 function applyInlineTokens(el, prefs) {
-  const density = prefs.density || "normal";
-  const tokens = DENSITY_TOKENS[density] || DENSITY_TOKENS.normal;
+  const tokens = resolveDensityTokens(prefs);
   Object.keys(tokens).forEach(function (key) {
     el.style.setProperty(key, tokens[key]);
   });
-  const cw = CONTENT_WIDTH_TOKENS[prefs.content_width] || CONTENT_WIDTH_TOKENS.normal;
-  el.style.setProperty("--content-max", cw);
+  el.style.setProperty("--content-max", resolveContentMax(prefs));
+  applyAccentCustom(el, prefs);
 }
 
 function syncSettingsPreview(prefs, effective) {
@@ -67,8 +141,13 @@ function syncSettingsPreview(prefs, effective) {
     box.dataset.density = prefs.density || "normal";
     box.dataset.accent = prefs.accent || "blue";
     applyInlineTokens(box, prefs);
+    applyAccentCustom(box, prefs);
   }
   if (meta) {
+    const extra =
+      prefs.density === "custom" || prefs.accent === "custom" || prefs.content_width === "custom"
+        ? " · valores manuais activos"
+        : "";
     meta.textContent =
       "Tema: " +
       prefs.theme +
@@ -77,7 +156,8 @@ function syncSettingsPreview(prefs, effective) {
       ") · densidade: " +
       prefs.density +
       " · acento: " +
-      prefs.accent;
+      (prefs.accent === "custom" ? prefs.accent_color : prefs.accent) +
+      extra;
   }
 }
 
@@ -113,11 +193,14 @@ export function applyAppearance(prefs) {
   const effective = resolveEffectiveTheme(prefs.theme);
   root.dataset.theme = prefs.theme;
   root.dataset.themeEffective = effective;
-  root.dataset.accent = prefs.accent;
+  root.dataset.accent = prefs.accent === "custom" ? "custom" : prefs.accent;
   root.dataset.density = prefs.density;
-  root.dataset.contentWidth = prefs.content_width;
+  root.dataset.contentWidth = prefs.content_width === "custom" ? "custom" : prefs.content_width;
   root.dataset.font = prefs.font;
-  const stack = FONT_STACKS[prefs.font] || FONT_STACKS.system;
+  let stack = FONT_STACKS[prefs.font] || FONT_STACKS.system;
+  if (prefs.font === "custom" && prefs.font_family_custom) {
+    stack = prefs.font_family_custom;
+  }
   root.style.setProperty("--font-sans", stack);
   if (prefs.font === "atkinson" || prefs.font === "source_sans") {
     ensureFontLink(prefs.font);
@@ -197,4 +280,21 @@ export async function saveAppearance(patch) {
 
 export async function resetAppearance() {
   return saveAppearance({ reset_defaults: true });
+}
+
+export function toggleManualSettingsVisibility() {
+  const accent = document.getElementById("uiAccent")?.value;
+  const density = document.getElementById("uiDensity")?.value;
+  const font = document.getElementById("uiFont")?.value;
+  const cw = document.getElementById("uiContentWidth")?.value;
+  const accentCustom = document.getElementById("uiManualAccent");
+  const sizes = document.getElementById("uiManualSizes");
+  const sizesFields = document.getElementById("uiManualSizesFields");
+  const fontCustom = document.getElementById("uiManualFont");
+  const cwCustom = document.getElementById("uiManualContentWidth");
+  if (accentCustom) accentCustom.hidden = accent !== "custom";
+  if (sizes) sizes.hidden = density !== "custom";
+  if (sizesFields) sizesFields.hidden = density !== "custom";
+  if (fontCustom) fontCustom.hidden = font !== "custom";
+  if (cwCustom) cwCustom.hidden = cw !== "custom";
 }

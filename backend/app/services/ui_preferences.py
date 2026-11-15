@@ -23,7 +23,8 @@ def _read_raw(path: Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         return dict(DEFAULT_UI_PREFERENCES)
     merged = dict(DEFAULT_UI_PREFERENCES)
-    merged.update({k: v for k, v in data.items() if k in DEFAULT_UI_PREFERENCES})
+    allowed = set(DEFAULT_UI_PREFERENCES.keys())
+    merged.update({k: v for k, v in data.items() if k in allowed})
     return merged
 
 

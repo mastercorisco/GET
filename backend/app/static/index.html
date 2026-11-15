@@ -453,27 +453,63 @@
             <option value="blue">Azul</option>
             <option value="teal">Verde-azulado</option>
             <option value="slate">Cinzento</option>
+            <option value="purple">Roxo</option>
+            <option value="amber">Âmbar</option>
+            <option value="rose">Rosa</option>
             <option value="high_contrast">Alto contraste</option>
+            <option value="custom">Personalizada (hex)</option>
           </select>
+          <div id="uiManualAccent" class="settings-manual-block" hidden>
+            <label for="uiAccentColor" data-help-key="settings.accent_color">Cor de destaque (#RRGGBB)</label>
+            <input type="color" id="uiAccentColorPicker" value="#1d4ed8" aria-label="Seleccionar cor" />
+            <input id="uiAccentColor" value="#1d4ed8" pattern="^#[0-9A-Fa-f]{6}$" spellcheck="false" />
+          </div>
           <label for="uiFont" data-help-key="settings.font">Tipo de letra</label>
           <select id="uiFont">
             <option value="system">Sistema</option>
             <option value="segoe">Segoe UI</option>
             <option value="atkinson">Atkinson Hyperlegible</option>
             <option value="source_sans">Source Sans 3</option>
+            <option value="georgia">Georgia (serif)</option>
+            <option value="monospace">Monospace</option>
+            <option value="custom">Família manual (CSS)</option>
           </select>
+          <div id="uiManualFont" class="settings-manual-block" hidden>
+            <label for="uiFontCustom" data-help-key="settings.font_custom">font-family (ex.: &quot;Inter&quot;, sans-serif)</label>
+            <input id="uiFontCustom" placeholder='"Segoe UI", system-ui, sans-serif' />
+          </div>
           <label for="uiDensity" data-help-key="settings.density">Densidade / tamanho dos controlos</label>
           <select id="uiDensity">
             <option value="compact">Compacta</option>
             <option value="normal">Normal</option>
             <option value="comfortable">Confortável</option>
+            <option value="custom">Manual (tamanhos abaixo)</option>
           </select>
+          <h3 id="uiManualSizes" class="settings-manual-block settings-manual-heading" hidden>Tamanhos manuais</h3>
+          <div id="uiManualSizesFields" class="settings-manual-block settings-manual-grid" hidden>
+            <label for="uiFontSizeRem" data-help-key="settings.control_font_size">Tamanho base do texto (rem)</label>
+            <input type="number" id="uiFontSizeRem" min="0.65" max="1.5" step="0.05" value="1" />
+            <label for="uiPadBlockRem" data-help-key="settings.control_padding_block">Padding vertical dos campos (rem)</label>
+            <input type="number" id="uiPadBlockRem" min="0.2" max="1.2" step="0.05" value="0.55" />
+            <label for="uiPadInlineRem" data-help-key="settings.control_padding_inline">Padding horizontal dos campos (rem)</label>
+            <input type="number" id="uiPadInlineRem" min="0.2" max="1.5" step="0.05" value="0.65" />
+            <label for="uiTextareaMinRem" data-help-key="settings.textarea_min_height">Altura mínima de áreas de texto (rem)</label>
+            <input type="number" id="uiTextareaMinRem" min="2" max="14" step="0.25" value="5" />
+          </div>
+          <label for="uiScalePercent" data-help-key="settings.ui_scale">Escala global da interface (%)</label>
+          <input type="number" id="uiScalePercent" min="80" max="130" step="5" value="100" />
           <label for="uiContentWidth" data-help-key="settings.content_width">Largura do conteúdo</label>
           <select id="uiContentWidth">
             <option value="narrow">Estreita</option>
             <option value="normal">Normal</option>
             <option value="wide">Larga</option>
+            <option value="xlarge">Muito larga</option>
+            <option value="custom">Largura em pixels</option>
           </select>
+          <div id="uiManualContentWidth" class="settings-manual-block" hidden>
+            <label for="uiContentMaxPx" data-help-key="settings.content_max_px">Largura máxima (px)</label>
+            <input type="number" id="uiContentMaxPx" min="640" max="2000" step="20" value="1200" />
+          </div>
           <button type="button" id="uiReset" class="secondary">Restaurar predefinições</button>
           <details class="compact-section compact-section--nested">
             <summary>Pré-visualização</summary>

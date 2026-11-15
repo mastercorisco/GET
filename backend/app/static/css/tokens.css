@@ -112,3 +112,37 @@ html[data-content-width="narrow"] {
 html[data-content-width="wide"] {
   --content-max: 1400px;
 }
+
+html[data-content-width="xlarge"] {
+  --content-max: 1600px;
+}
+
+html[data-accent="purple"] {
+  --color-accent: #7c3aed;
+  --color-accent-hover: #6d28d9;
+  --color-accent-subtle: #ede9fe;
+}
+
+html[data-theme-effective="dark"][data-accent="purple"] {
+  --color-accent-subtle: #3b2068;
+}
+
+html[data-accent="amber"] {
+  --color-accent: #d97706;
+  --color-accent-hover: #b45309;
+  --color-accent-subtle: #fffbeb;
+}
+
+html[data-theme-effective="dark"][data-accent="amber"] {
+  --color-accent-subtle: #78350f;
+}
+
+html[data-accent="rose"] {
+  --color-accent: #e11d48;
+  --color-accent-hover: #be123c;
+  --color-accent-subtle: #fff1f2;
+}
+
+html[data-theme-effective="dark"][data-accent="rose"] {
+  --color-accent-subtle: #881337;
+}

@@ -809,6 +809,94 @@
       "bad_examples": [],
       "tips": [],
       "allow_use_example": false
+    },
+    "settings.accent_color": {
+      "label": "Cor personalizada",
+      "short_help": "Hex #RRGGBB",
+      "definition": "Use com acento Personalizada.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.font_custom": {
+      "label": "Família tipográfica",
+      "short_help": "Valor CSS font-family",
+      "definition": "Use com fonte Manual.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.control_font_size": {
+      "label": "Tamanho do texto",
+      "short_help": "rem nos campos",
+      "definition": "Só com densidade Manual.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.control_padding_block": {
+      "label": "Padding vertical",
+      "short_help": "rem",
+      "definition": "Só com densidade Manual.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.control_padding_inline": {
+      "label": "Padding horizontal",
+      "short_help": "rem",
+      "definition": "Só com densidade Manual.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.textarea_min_height": {
+      "label": "Altura mínima textarea",
+      "short_help": "rem",
+      "definition": "Só com densidade Manual.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.content_max_px": {
+      "label": "Largura máxima",
+      "short_help": "pixels",
+      "definition": "Com largura personalizada.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.ui_scale": {
+      "label": "Escala global",
+      "short_help": "percentagem",
+      "definition": "Multiplica tamanhos dos controlos.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
     }
   },
   "concepts": {

@@ -137,3 +137,29 @@
   opacity: 0.55;
   pointer-events: none;
 }
+
+.settings-manual-block {
+  margin-top: 0.5rem;
+}
+
+.settings-manual-heading {
+  font-size: calc(0.95rem * var(--heading-scale));
+  margin: 0.75rem 0 0.35rem;
+}
+
+.settings-manual-grid {
+  display: grid;
+  gap: 0.35rem 1rem;
+  grid-template-columns: 1fr minmax(5rem, 8rem);
+  align-items: center;
+}
+
+.settings-manual-grid label {
+  margin: 0;
+}
+
+#uiAccentColorPicker {
+  width: 3rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
