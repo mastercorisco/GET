@@ -229,8 +229,8 @@
     },
     "workspace.help_level": {
       "label": "Nível de ajuda",
-      "short_help": "Controla microajuda, popups e exemplos.",
-      "definition": "Essential: ícones; Normal: ajuda completa no popup; Detailed: comparações extra.",
+      "short_help": "Normal usa ícone (i) e popup; Detailed acrescenta microajuda sob o campo.",
+      "definition": "Essential: só ícones (i); Normal (predefinido): popup com resumo, definição e exemplos; Detailed: popup + texto curto inline.",
       "guiding_question": "Quanto detalhe de orientação pretende?",
       "instructions": "",
       "good_examples": [],

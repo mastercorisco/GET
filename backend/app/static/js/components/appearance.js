@@ -19,6 +19,68 @@ const FONT_CDN = {
 let _prefs = null;
 let _systemMq = null;
 
+const DENSITY_TOKENS = {
+  compact: {
+    "--control-padding": "0.35rem 0.5rem",
+    "--control-font-size": "0.875rem",
+    "--textarea-min-height": "3.25rem",
+    "--card-padding": "0.75rem 0.85rem",
+    "--heading-scale": "0.95",
+  },
+  normal: {
+    "--control-padding": "0.55rem 0.65rem",
+    "--control-font-size": "1rem",
+    "--textarea-min-height": "5rem",
+    "--card-padding": "1.25rem 1.35rem",
+    "--heading-scale": "1",
+  },
+  comfortable: {
+    "--control-padding": "0.7rem 0.85rem",
+    "--control-font-size": "1.05rem",
+    "--textarea-min-height": "6.5rem",
+    "--card-padding": "1.5rem 1.65rem",
+    "--heading-scale": "1.05",
+  },
+};
+
+const CONTENT_WIDTH_TOKENS = {
+  narrow: "960px",
+  normal: "1200px",
+  wide: "1400px",
+};
+
+function applyInlineTokens(el, prefs) {
+  const density = prefs.density || "normal";
+  const tokens = DENSITY_TOKENS[density] || DENSITY_TOKENS.normal;
+  Object.keys(tokens).forEach(function (key) {
+    el.style.setProperty(key, tokens[key]);
+  });
+  const cw = CONTENT_WIDTH_TOKENS[prefs.content_width] || CONTENT_WIDTH_TOKENS.normal;
+  el.style.setProperty("--content-max", cw);
+}
+
+function syncSettingsPreview(prefs, effective) {
+  const box = document.getElementById("settingsPreviewRoot");
+  const meta = document.getElementById("settingsPreviewMeta");
+  if (box) {
+    box.dataset.themeEffective = effective;
+    box.dataset.density = prefs.density || "normal";
+    box.dataset.accent = prefs.accent || "blue";
+    applyInlineTokens(box, prefs);
+  }
+  if (meta) {
+    meta.textContent =
+      "Tema: " +
+      prefs.theme +
+      " (" +
+      effective +
+      ") · densidade: " +
+      prefs.density +
+      " · acento: " +
+      prefs.accent;
+  }
+}
+
 function resolveEffectiveTheme(theme) {
   if (theme === "dark") return "dark";
   if (theme === "light") return "light";
@@ -60,6 +122,8 @@ export function applyAppearance(prefs) {
   if (prefs.font === "atkinson" || prefs.font === "source_sans") {
     ensureFontLink(prefs.font);
   }
+  applyInlineTokens(root, prefs);
+  syncSettingsPreview(prefs, effective);
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
   } catch (_e) {

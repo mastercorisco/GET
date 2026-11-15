@@ -1,5 +1,10 @@
-import { resetAppearance, saveAppearance } from "../components/appearance.js";
-import { setHelpLevel, wireDeclarativeHelp } from "../components/help-ui.js";
+import {
+  applyAppearance,
+  getAppearancePrefs,
+  resetAppearance,
+  saveAppearance,
+} from "../components/appearance.js";
+import { rewireHelpAfterLevelChange, setHelpLevel } from "../components/help-ui.js";
 
 let _workspaceOpen = false;
 
@@ -41,6 +46,15 @@ export function initSettingsView(router) {
     el.addEventListener("change", function () {
       const patch = {};
       patch[map[id]] = el.value;
+      const base = getAppearancePrefs() || {
+        schema_version: "1.0",
+        theme: "light",
+        accent: "blue",
+        font: "system",
+        density: "normal",
+        content_width: "normal",
+      };
+      applyAppearance(Object.assign({}, base, patch));
       saveAppearance(patch).catch(function (err) {
         const st = document.getElementById("settingsStatus");
         if (st) st.textContent = String(err.message || err);
@@ -78,7 +92,7 @@ export function initSettingsView(router) {
         })
         .then(function (p) {
           setHelpLevel(p.help_level);
-          wireDeclarativeHelp(document);
+          rewireHelpAfterLevelChange(document);
         })
         .catch(function (err) {
           const st = document.getElementById("settingsStatus");

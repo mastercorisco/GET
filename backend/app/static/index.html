@@ -430,8 +430,18 @@
         <div class="screen-guide-panel" data-screen-guide="settings" hidden></div>
         <h2>Configurações</h2>
         <p class="lead">Aparência local desta máquina (não faz parte do pacote de conhecimento exportado).</p>
-        <section class="settings-section">
-          <h3>Aparência</h3>
+        <p class="compact-section-toolbar">
+          <button type="button" class="secondary" data-compact-expand data-compact-target="#settingsCompactRoot">
+            Expandir secções
+          </button>
+          <button type="button" class="secondary" data-compact-collapse data-compact-target="#settingsCompactRoot">
+            Recolher secções
+          </button>
+        </p>
+        <div id="settingsCompactRoot">
+        <details class="compact-section" open>
+          <summary>Aparência</summary>
+          <div class="compact-section__body">
           <label for="uiTheme" data-help-key="settings.theme">Tema</label>
           <select id="uiTheme">
             <option value="light">Claro</option>
@@ -465,25 +475,35 @@
             <option value="wide">Larga</option>
           </select>
           <button type="button" id="uiReset" class="secondary">Restaurar predefinições</button>
-          <div class="settings-preview" aria-hidden="true">
-            <h4>Pré-visualização</h4>
-            <label for="settingsPreviewInput">Campo de exemplo</label>
-            <input id="settingsPreviewInput" value="Texto de exemplo" />
-            <textarea id="settingsPreviewArea" rows="2">Área de texto de exemplo.</textarea>
+          <details class="compact-section compact-section--nested">
+            <summary>Pré-visualização</summary>
+            <div class="settings-preview compact-section__body" id="settingsPreviewRoot">
+              <p id="settingsPreviewMeta" class="settings-hint" aria-live="polite"></p>
+              <label for="settingsPreviewInput">Campo de exemplo</label>
+              <input id="settingsPreviewInput" value="Texto de exemplo" readonly tabindex="-1" />
+              <textarea id="settingsPreviewArea" rows="2" readonly tabindex="-1">Área de texto de exemplo.</textarea>
+              <button type="button" class="settings-preview-btn" id="settingsPreviewBtn" disabled tabindex="-1">
+                Botão (acento)
+              </button>
+            </div>
+          </details>
           </div>
-        </section>
-        <section class="settings-section">
-          <h3>Ajuda contextual</h3>
+        </details>
+        <details class="compact-section">
+          <summary>Ajuda contextual</summary>
+          <div class="compact-section__body">
           <p id="settingsHelpHint" class="settings-hint">Abra um workspace para alterar o nível de ajuda.</p>
           <div id="settingsHelpWrap">
             <label for="helpLevel" data-help-key="workspace.help_level">Nível de ajuda</label>
             <select id="helpLevel" disabled>
-              <option value="essential">Essential — ícones</option>
-              <option value="normal" selected>Normal — microajuda e popups</option>
-              <option value="detailed">Detailed — exemplos e comparações</option>
+              <option value="essential">Essential — só ícones (i)</option>
+              <option value="normal" selected>Normal — ajuda em popup (predefinido)</option>
+              <option value="detailed">Detailed — popup + microajuda inline</option>
             </select>
           </div>
-        </section>
+          </div>
+        </details>
+        </div>
         <p id="settingsStatus" class="lead"></p>
       </section>
 

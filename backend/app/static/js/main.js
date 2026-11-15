@@ -2,7 +2,12 @@ import { initRouter } from "./router.js";
 import { createShell } from "./shell.js";
 import { initLegacyApp } from "./app/legacy-logic.js";
 import { mountDocumentTree, mountTechnicalTree } from "./components/tree.js";
-import { initHelpSystem, wireDeclarativeHelp } from "./components/help-ui.js";
+import { initCompactSections } from "./components/compact-sections.js";
+import {
+  initHelpSystem,
+  rewireHelpAfterLevelChange,
+  wireDeclarativeHelp,
+} from "./components/help-ui.js";
 import { renderScreenGuide } from "./components/screen-guide.js";
 import { applyFriendlySelectLabels } from "./labels.js";
 import { hydrateAppearanceFromStorage, initAppearance } from "./components/appearance.js";
@@ -63,8 +68,10 @@ initHelpSystem().then(function () {
 });
 
 document.addEventListener("get:help-level-changed", function () {
-  wireDeclarativeHelp(document);
+  rewireHelpAfterLevelChange(document);
 });
+
+initCompactSections(document);
 
 const pActive = document.getElementById("pActive");
 if (pActive) {

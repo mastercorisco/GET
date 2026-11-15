@@ -19,15 +19,19 @@ export function renderScreenGuide(routeId) {
     el.hidden = !active;
     if (!active || !meta) return;
     el.replaceChildren();
-    const h = document.createElement("h3");
-    h.className = "screen-guide-title";
-    h.textContent = meta.title || routeId;
-    el.appendChild(h);
+    el.classList.add("screen-guide-panel--compact");
+    const details = document.createElement("details");
+    details.className = "compact-section compact-section--screen-guide";
+    const summary = document.createElement("summary");
+    summary.textContent = "Guia: " + (meta.title || routeId);
+    details.appendChild(summary);
+    const body = document.createElement("div");
+    body.className = "compact-section__body";
     if (meta.objective) {
       const p = document.createElement("p");
       p.className = "lead";
       p.textContent = meta.objective;
-      el.appendChild(p);
+      body.appendChild(p);
     }
     if (meta.steps && meta.steps.length) {
       const ol = document.createElement("ol");
@@ -37,14 +41,16 @@ export function renderScreenGuide(routeId) {
         li.textContent = step;
         ol.appendChild(li);
       });
-      el.appendChild(ol);
+      body.appendChild(ol);
     }
     if (meta.next && ROUTE_LABELS[meta.next]) {
       const next = document.createElement("p");
       next.className = "screen-guide-next";
       next.textContent = "Seguinte sugerido: «" + ROUTE_LABELS[meta.next] + "» (menu lateral).";
-      el.appendChild(next);
+      body.appendChild(next);
     }
+    details.appendChild(body);
+    el.appendChild(details);
     if (rid === "block-editor" && meta.empty_state) {
       const empty = document.createElement("p");
       empty.className = "screen-guide-empty";

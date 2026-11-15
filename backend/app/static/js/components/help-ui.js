@@ -20,6 +20,18 @@ export function setHelpLevel(level) {
   );
 }
 
+/** Recoloca ajuda após mudança de nível (normal = só popup). */
+export function rewireHelpAfterLevelChange(root) {
+  const scope = root || document;
+  scope.querySelectorAll(".field-microhelp").forEach(function (el) {
+    el.remove();
+  });
+  scope.querySelectorAll("label[data-help-key]").forEach(function (label) {
+    delete label.dataset.helpWired;
+  });
+  wireDeclarativeHelp(scope);
+}
+
 export async function loadHelpCatalog() {
   try {
     const res = await fetch("/api/catalogs/help");
@@ -58,7 +70,7 @@ export async function initHelpSystem() {
         })
         .then(function (p) {
           if (p) setHelpLevel(p.help_level);
-          wireDeclarativeHelp(document);
+          rewireHelpAfterLevelChange(document);
         });
     });
   }
@@ -163,6 +175,9 @@ export function openHelpModal(fieldKey, options) {
     dlg.appendChild(p);
   }
 
+  if (_helpLevel !== "essential" && entry.short_help) {
+    addSection("Resumo", entry.short_help);
+  }
   addSection("Definição", entry.definition);
   addSection("Pergunta orientadora", entry.guiding_question);
   const instr = entry.instructions || (entry.tips && entry.tips[0]) || "";
@@ -238,7 +253,7 @@ export function attachFieldHelp(container, fieldKey, options) {
   let label = container.querySelector("label");
   if (!label && container.tagName === "LABEL") label = container;
 
-  if (_helpLevel !== "essential") {
+  if (_helpLevel === "detailed") {
     const existing = container.querySelector(".field-microhelp");
     if (!existing && entry.short_help) {
       const micro = document.createElement("p");
