@@ -107,6 +107,7 @@ const rootPath = document.getElementById("rootPath");
         el.textContent = message;
       }
 
+      let projectDeleteInFlight = false;
       let projectCatalog = [];
       let selectedLibraryItemId = null;
       let selectedProjectItemId = null;
@@ -151,6 +152,10 @@ const rootPath = document.getElementById("rootPath");
               actionDeleteButton(
                 "Apagar projecto",
                 function () {
+                  if (projectDeleteInFlight) {
+                    setProjectError("Apagar projecto em curso — aguarde.");
+                    return;
+                  }
                   if (
                     !confirmDelete(
                       "Apagar o projecto «" +
@@ -160,13 +165,25 @@ const rootPath = document.getElementById("rootPath");
                   ) {
                     return;
                   }
-                  knowledgeRequest("/api/projects/" + p.id, { method: "DELETE" }, "Falha ao apagar projecto.")
+                  projectDeleteInFlight = true;
+                  setProjectError("A apagar projecto… (projectos grandes podem demorar até um minuto)");
+                  const deleteUrl = "/api/projects/" + p.id;
+                  document.querySelectorAll(".project-list-panel .icon-btn--danger").forEach(function (b) {
+                    b.disabled = true;
+                  });
+                  knowledgeRequest(deleteUrl, { method: "DELETE" }, "Falha ao apagar projecto.")
                     .then(function () {
                       if (selectedDocumentNodeId) selectedDocumentNodeId = null;
                       return loadProjects();
                     })
                     .catch(function (err) {
                       setProjectError(err.message);
+                    })
+                    .finally(function () {
+                      projectDeleteInFlight = false;
+                      document.querySelectorAll(".project-list-panel .icon-btn--danger").forEach(function (b) {
+                        b.disabled = false;
+                      });
                     });
                 },
                 { icon: true, skipConfirm: true }
@@ -651,7 +668,8 @@ const rootPath = document.getElementById("rootPath");
       }
 
       async function knowledgeRequest(url, options, fallback) {
-        const res = await fetch(url, options || {});
+        const opts = options || {};
+        const res = await fetch(url, opts);
         if (!res.ok) {
           const payload = await res.json().catch(function () { return {}; });
           let msg = apiErrorMessage(payload, fallback);

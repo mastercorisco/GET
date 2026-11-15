@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import threading
+
 from sqlalchemy import delete, func, or_, select, text
 from sqlalchemy.orm import Session
 
@@ -35,6 +37,8 @@ from app.services.reference_service import ReferenceError
 from app.services.technical_service import TechnicalError
 from app.services.terminology_service import TerminologyError
 from app.services.workspace_service import workspace_session
+
+_project_delete_lock = threading.Lock()
 
 class DeletionResult:
     def __init__(self, mode: str, detail: str | None = None) -> None:
@@ -247,78 +251,97 @@ def _purge_baselines_and_exports(session: Session, project_id: str) -> None:
     session.execute(delete(ExportRecord).where(ExportRecord.project_id == project_id))
 
 
-def delete_project(app_settings: AppSettings, project_id: str) -> None:
-    with workspace_session(app_settings) as (session, _paths):
-        project = session.get(Project, project_id)
-        if project is None:
-            raise ProjectError("Projeto não encontrado.")
-        _purge_imports(session, project_id)
-        _purge_baselines_and_exports(session, project_id)
+def _require_project(session: Session, project_id: str) -> Project:
+    project = session.get(Project, project_id)
+    if project is None:
+        raise ProjectError("Projeto não encontrado.")
+    return project
 
-        node_ids = [
-            n.id for n in session.scalars(select(DocumentNode.id).where(DocumentNode.project_id == project_id))
-        ]
-        for nid in list(node_ids):
-            node = session.get(DocumentNode, nid)
-            if node is None:
-                continue
-            if node.node_type == "block":
-                _delete_block_points(session, nid)
-            _delete_premises_for_owner(session, "block", nid)
-            _delete_premises_for_owner(session, "fascicle", nid)
-        if node_ids:
-            session.execute(
-                delete(DocumentAssociation).where(DocumentAssociation.document_node_id.in_(node_ids))
-            )
-            session.execute(delete(DocumentNode).where(DocumentNode.project_id == project_id))
-        session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
 
-        while True:
-            instances = list(
-                session.scalars(select(TechnicalInstance).where(TechnicalInstance.project_id == project_id))
-            )
-            if not instances:
-                break
-            parent_ids = set(
-                session.scalars(
-                    select(TechnicalInstance.parent_id).where(
-                        TechnicalInstance.project_id == project_id,
-                        TechnicalInstance.parent_id.isnot(None),
-                    )
-                )
-            )
-            leaves = [i for i in instances if i.id not in parent_ids]
-            if not leaves:
-                for inst in instances:
-                    session.delete(inst)
-                break
-            for inst in leaves:
-                session.delete(inst)
+def _purge_document_tree(session: Session, project_id: str) -> None:
+    node_ids = list(session.scalars(select(DocumentNode.id).where(DocumentNode.project_id == project_id)))
+    for nid in list(node_ids):
+        node = session.get(DocumentNode, nid)
+        if node is None:
+            continue
+        if node.node_type == "block":
+            _delete_block_points(session, nid)
+        _delete_premises_for_owner(session, "block", nid)
+        _delete_premises_for_owner(session, "fascicle", nid)
+    if node_ids:
+        session.execute(delete(DocumentAssociation).where(DocumentAssociation.document_node_id.in_(node_ids)))
+        session.execute(delete(DocumentNode).where(DocumentNode.project_id == project_id))
+    session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
 
-        items = list(
+
+def _purge_technical_instances(session: Session, project_id: str) -> None:
+    while True:
+        instances = list(
+            session.scalars(select(TechnicalInstance).where(TechnicalInstance.project_id == project_id))
+        )
+        if not instances:
+            break
+        parent_ids = set(
             session.scalars(
-                select(KnowledgeItem).where(
-                    KnowledgeItem.scope_type == "project",
-                    KnowledgeItem.scope_id == project_id,
+                select(TechnicalInstance.parent_id).where(
+                    TechnicalInstance.project_id == project_id,
+                    TechnicalInstance.parent_id.isnot(None),
                 )
             )
         )
-        for item in items:
-            _hard_delete_knowledge(session, item.id)
+        leaves = [i for i in instances if i.id not in parent_ids]
+        if not leaves:
+            for inst in instances:
+                session.delete(inst)
+            break
+        for inst in leaves:
+            session.delete(inst)
 
-        session.execute(
-            delete(ProjectTerminologyOverride).where(ProjectTerminologyOverride.project_id == project_id)
-        )
-        session.execute(
-            delete(TerminologyConcept).where(
-                TerminologyConcept.scope_type == "project",
-                TerminologyConcept.scope_id == project_id,
+
+def _purge_project_tail(session: Session, project_id: str) -> None:
+    items = list(
+        session.scalars(
+            select(KnowledgeItem).where(
+                KnowledgeItem.scope_type == "project",
+                KnowledgeItem.scope_id == project_id,
             )
         )
-        session.execute(
-            delete(Reference).where(Reference.scope_type == "project", Reference.scope_id == project_id)
+    )
+    for item in items:
+        _hard_delete_knowledge(session, item.id)
+    session.execute(
+        delete(ProjectTerminologyOverride).where(ProjectTerminologyOverride.project_id == project_id)
+    )
+    session.execute(
+        delete(TerminologyConcept).where(
+            TerminologyConcept.scope_type == "project",
+            TerminologyConcept.scope_id == project_id,
         )
-        _delete_premises_for_owner(session, "project", project_id)
-        session.execute(delete(ProjectLibraryPin).where(ProjectLibraryPin.project_id == project_id))
-        session.delete(project)
-        session.flush()
+    )
+    session.execute(delete(Reference).where(Reference.scope_type == "project", Reference.scope_id == project_id))
+    _delete_premises_for_owner(session, "project", project_id)
+    session.execute(delete(ProjectLibraryPin).where(ProjectLibraryPin.project_id == project_id))
+    project = _require_project(session, project_id)
+    session.delete(project)
+    session.flush()
+
+
+def delete_project(app_settings: AppSettings, project_id: str) -> None:
+    if not _project_delete_lock.acquire(blocking=False):
+        raise ProjectError("Já está a apagar um projecto. Aguarde a conclusão e tente de novo.")
+    try:
+        phase_kw = {"begin_immediate": True}
+        with workspace_session(app_settings, **phase_kw) as (session, _paths):
+            _require_project(session, project_id)
+        with workspace_session(app_settings, **phase_kw) as (session, _paths):
+            _purge_imports(session, project_id)
+        with workspace_session(app_settings, **phase_kw) as (session, _paths):
+            _purge_baselines_and_exports(session, project_id)
+        with workspace_session(app_settings, **phase_kw) as (session, _paths):
+            _purge_document_tree(session, project_id)
+        with workspace_session(app_settings, **phase_kw) as (session, _paths):
+            _purge_technical_instances(session, project_id)
+        with workspace_session(app_settings, **phase_kw) as (session, _paths):
+            _purge_project_tail(session, project_id)
+    finally:
+        _project_delete_lock.release()

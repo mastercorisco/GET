@@ -56,3 +56,27 @@ def test_delete_draft_knowledge_and_project(client: TestClient, tmp_path: Path) 
     pid = project["id"]
     assert client.delete(f"/api/projects/{pid}").status_code == 204
     assert client.get("/api/projects").json() == []
+
+
+def test_delete_project_with_document_structure(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    templates = client.get("/api/projects/templates").json()
+    v1 = templates[0]["versions"][0]["id"]
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1,
+            "name": "Com estrutura",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    pid = project["id"]
+    fascicle = client.post(
+        f"/api/projects/{pid}/document-nodes",
+        json={"node_type": "fascicle", "title": "F01", "parent_id": None},
+    ).json()["node"]
+    client.post(
+        f"/api/projects/{pid}/document-nodes",
+        json={"node_type": "block", "title": "Bloco", "parent_id": fascicle["id"]},
+    )
+    assert client.delete(f"/api/projects/{pid}").status_code == 204

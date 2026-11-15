@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from sqlalchemy.exc import OperationalError
 
 from app.deps import get_settings
 from app.schemas.project import ProjectCreateRequest, ProjectResponse, TemplateResponse
@@ -9,13 +10,25 @@ from app.services.workspace_service import WorkspaceError
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
-def _run(action):
+def _run(action, *, route: str = ""):
     try:
         return action()
     except WorkspaceError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ProjectError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except OperationalError as exc:
+        if route == "project_delete":
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Base de dados ocupada (SQLite). Feche o GET em todas as janelas do browser, "
+                    "pare o servidor (uvicorn), aguarde 10 s e tente de novo; projectos grandes podem demorar."
+                ),
+            ) from exc
+        raise
+    except Exception:
+        raise
 
 
 @router.get("/templates", response_model=list[TemplateResponse])
@@ -40,4 +53,4 @@ def project_get(project_id: str) -> ProjectResponse:
 
 @router.delete("/{project_id}", status_code=204)
 def project_delete(project_id: str) -> None:
-    _run(lambda: delete_project(get_settings(), project_id))
+    _run(lambda: delete_project(get_settings(), project_id), route="project_delete")

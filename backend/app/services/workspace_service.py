@@ -7,7 +7,7 @@ import sys
 from contextlib import contextmanager
 from pathlib import Path
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.config import AppSettings, get_active_workspace_root, set_active_workspace_root
@@ -63,9 +63,11 @@ def require_workspace_session(app_settings: AppSettings) -> tuple[Session, Works
 
 
 @contextmanager
-def workspace_session(app_settings: AppSettings):
+def workspace_session(app_settings: AppSettings, *, begin_immediate: bool = False):
     session, paths = require_workspace_session(app_settings)
     try:
+        if begin_immediate:
+            session.execute(text("BEGIN IMMEDIATE"))
         yield session, paths
         session.commit()
     except Exception:
