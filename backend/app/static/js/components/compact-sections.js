@@ -1,4 +1,7 @@
-/** Secções recolhíveis (<details class="compact-section">) e acções expandir/recolher. */
+/**
+ * Secções recolhíveis (<details class="compact-section">) e acções expandir/recolher.
+ * Variantes: compact-section--content (corpo a 78%), compact-section--scroll (área com scroll).
+ */
 
 export function setCompactSectionsOpen(open, root) {
   const scope = root || document;

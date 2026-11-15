@@ -84,6 +84,51 @@
   padding: 0.35rem 0 0.5rem;
 }
 
+/* Corpo com tipografia uniforme (ex.: preparação do bloco, listas densas). */
+.compact-section--content .compact-section__body {
+  font-size: 78%;
+  line-height: 1.35;
+}
+
+.compact-section--content .compact-section__body label,
+.compact-section--content .compact-section__body input,
+.compact-section--content .compact-section__body textarea,
+.compact-section--content .compact-section__body select,
+.compact-section--content .compact-section__body button,
+.compact-section--content .compact-section__body .choice-hint {
+  font-size: inherit;
+}
+
+.compact-section--scroll[open] {
+  display: flex;
+  flex-direction: column;
+  max-height: min(58rem, calc(100vh - 5.5rem));
+  overflow: hidden;
+}
+
+.compact-section--scroll[open] > .compact-section__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.compact-section__scroll-host {
+  min-width: 0;
+}
+
+.compact-section--scroll[open] .compact-section__scroll-host {
+  flex: 1 1 auto;
+  min-height: min(22rem, 42vh);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.compact-section--scroll[open] .compact-section__scroll-host::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
 .compact-section--nested {
   margin-top: 0.75rem;
   border-style: dashed;

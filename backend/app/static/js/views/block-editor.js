@@ -1,4 +1,5 @@
 import { createDevelopmentPointCard } from "../components/development-point-card.js";
+import { wireLocalHelpDrawer } from "../components/help-drawer.js";
 import { wireDeclarativeHelp } from "../components/help-ui.js";
 import {
   initBlockPrepPanel,
@@ -198,24 +199,11 @@ export function openBlockEditor(blockId, router) {
 }
 
 function initBlockPrepHelpDrawer() {
-  const aside = document.getElementById("blockPrepAside");
-  const openBtn = document.getElementById("bePrepHelpOpen");
-  const closeBtn = document.getElementById("bePrepHelpClose");
-  if (!aside || !openBtn) return;
-
-  function setPrepHelpOpen(open) {
-    aside.classList.toggle("is-open", open);
-    aside.setAttribute("aria-hidden", open ? "false" : "true");
-    openBtn.hidden = open;
-    openBtn.setAttribute("aria-expanded", open ? "true" : "false");
-  }
-
-  setPrepHelpOpen(false);
-  openBtn.addEventListener("click", function () {
-    setPrepHelpOpen(true);
-  });
-  closeBtn?.addEventListener("click", function () {
-    setPrepHelpOpen(false);
+  const host = document.getElementById("block-editor-root");
+  wireLocalHelpDrawer(host, {
+    aside: document.getElementById("blockPrepAside"),
+    openBtn: document.getElementById("bePrepHelpOpen"),
+    closeBtn: document.getElementById("bePrepHelpClose"),
   });
 }
 

@@ -411,6 +411,14 @@ button.ghost:hover,
   width: 100%;
 }
 
+.route-panel[data-route="block-editor"] .help-screen-open {
+  right: calc(var(--card-padding, 1rem) + 0.15rem);
+}
+
+.route-panel[data-route="block-editor"] .help-drawer-open {
+  top: 2.4rem;
+}
+
 .block-editor-main {
   min-width: 0;
   padding-top: 2.15rem;
@@ -452,68 +460,9 @@ button.ghost:hover,
   max-width: 16rem;
 }
 
-.block-prep-help-open {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 3;
-  margin: 0;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-  box-shadow: var(--shadow-sm);
-}
-
-.block-prep-help-open[hidden] {
-  display: none;
-}
-
-.block-prep-aside.block-prep-drawer {
-  position: absolute;
+.block-prep-aside.help-drawer--local {
   z-index: 6;
-  top: 0;
-  right: 0;
   width: min(21rem, 92vw);
-  max-height: min(88vh, 52rem);
-  overflow-y: auto;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 0.65rem 0.85rem 0.85rem;
-  box-shadow: var(--shadow-md);
-  transform: translateX(calc(100% + 0.35rem));
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    transform 0.22s ease,
-    opacity 0.18s ease;
-}
-
-.block-prep-drawer.is-open {
-  transform: translateX(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.block-prep-aside-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.35rem;
-}
-
-.block-prep-aside-header h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.block-prep-help-close {
-  margin: 0;
-  padding: 0.25rem 0.55rem;
-  font-size: 0.78rem;
-  flex-shrink: 0;
 }
 
 .block-prep-aside .prep-tab-btn {
@@ -554,86 +503,28 @@ button.secondary.danger:hover {
   background: color-mix(in srgb, var(--color-danger) 12%, transparent);
 }
 
-.be-points-panel {
-  margin-top: 0.65rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 0.35rem 0.55rem 0.55rem;
+.block-editor-main .compact-section {
+  margin-top: 0.5rem;
   background: var(--color-bg);
-}
-
-.be-points-panel[open] {
-  display: flex;
-  flex-direction: column;
-  max-height: min(58rem, calc(100vh - 5.5rem));
-  overflow: hidden;
-}
-
-.be-points-summary {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  list-style: none;
-}
-
-.be-points-summary::-webkit-details-marker {
-  display: none;
-}
-
-.be-points-summary::before {
-  content: "▸";
-  display: inline-block;
-  width: 0.85rem;
-  color: var(--color-muted);
-  transition: transform 0.12s ease;
-}
-
-.be-points-panel[open] > .be-points-summary::before {
-  transform: rotate(90deg);
-}
-
-.be-points-count {
-  font-weight: 400;
-  font-size: 0.82rem;
-  color: var(--color-muted);
 }
 
 .be-points-toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  margin: 0.45rem 0 0.35rem;
+  margin: 0 0 0.35rem;
 }
 
 .be-points-toolbar button {
   margin-top: 0;
   margin-right: 0;
   padding: 0.35rem 0.65rem;
-  font-size: 0.88rem;
 }
 
 .be-points-list {
   margin-top: 0.25rem;
   gap: 0.35rem;
-  font-size: 78%;
-  line-height: 1.35;
   min-width: 0;
-}
-
-.be-points-panel[open] .be-points-list {
-  flex: 1 1 auto;
-  min-height: min(22rem, 42vh);
-  max-height: none;
-  overflow: auto;
-  overscroll-behavior: contain;
-}
-
-.be-points-panel[open] .be-points-list::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
 }
 
 .be-points-list.dp-list {

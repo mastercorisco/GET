@@ -1,9 +1,9 @@
 /** Ajuda contextual unificada (catálogo JSON + níveis essential/normal/detailed). */
 
+import { closeHelpDrawer, initGlobalHelpDrawer, openHelpDrawer } from "./help-drawer.js";
+
 let _catalog = null;
 let _helpLevel = "normal";
-let _openModal = null;
-let _lastTrigger = null;
 
 export function getHelpCatalog() {
   return _catalog;
@@ -45,6 +45,7 @@ export async function loadHelpCatalog() {
 }
 
 export async function initHelpSystem() {
+  initGlobalHelpDrawer();
   await loadHelpCatalog();
   try {
     const res = await fetch("/api/workspace/preferences");
@@ -130,29 +131,7 @@ function inputForLabel(label) {
 }
 
 function closeModal() {
-  if (_openModal) {
-    _openModal.remove();
-    _openModal = null;
-    document.removeEventListener("keydown", onEsc, true);
-    document.removeEventListener("click", onOutside, true);
-  }
-  if (_lastTrigger) {
-    _lastTrigger.focus();
-    _lastTrigger = null;
-  }
-}
-
-function onEsc(ev) {
-  if (ev.key === "Escape") {
-    ev.preventDefault();
-    closeModal();
-  }
-}
-
-function onOutside(ev) {
-  if (_openModal && !_openModal.contains(ev.target) && ev.target !== _lastTrigger) {
-    closeModal();
-  }
+  closeHelpDrawer();
 }
 
 function openConceptSnippet(conceptId, anchorDlg) {
@@ -272,29 +251,19 @@ export function openMethodOverview(options) {
   options = options || {};
   const method = (_catalog && _catalog.method) || {};
   closeModal();
-  _lastTrigger = options.trigger || null;
 
-  const dlg = document.createElement("div");
-  dlg.className = "field-help-modal field-help-modal--centered method-overview-modal";
-  dlg.setAttribute("role", "dialog");
-  dlg.setAttribute("aria-modal", "true");
-  dlg.setAttribute("aria-labelledby", "method-modal-title");
-  dlg.tabIndex = -1;
-
-  const title = document.createElement("h4");
-  title.id = "method-modal-title";
-  title.textContent = method.title || "Método GET";
-  dlg.appendChild(title);
+  const body = document.createElement("div");
+  body.className = "method-overview-modal field-help-modal--drawer-body";
 
   function addSection(heading, text) {
     if (!text) return;
     const h = document.createElement("p");
     h.className = "field-help-section-title";
     h.textContent = heading;
-    dlg.appendChild(h);
+    body.appendChild(h);
     const p = document.createElement("p");
     p.textContent = text;
-    dlg.appendChild(p);
+    body.appendChild(p);
   }
 
   function addList(heading, items) {
@@ -302,14 +271,14 @@ export function openMethodOverview(options) {
     const h = document.createElement("p");
     h.className = "field-help-section-title";
     h.textContent = heading;
-    dlg.appendChild(h);
+    body.appendChild(h);
     const ul = document.createElement("ul");
     items.forEach(function (item) {
       const li = document.createElement("li");
       li.textContent = item;
       ul.appendChild(li);
     });
-    dlg.appendChild(ul);
+    body.appendChild(ul);
   }
 
   addSection("Princípio", method.principle);
@@ -325,19 +294,11 @@ export function openMethodOverview(options) {
     addSection("Ajuda na aplicação", method.help_system_note);
   }
 
-  const closeBtn = document.createElement("button");
-  closeBtn.type = "button";
-  closeBtn.textContent = "Fechar";
-  closeBtn.addEventListener("click", closeModal);
-  dlg.appendChild(closeBtn);
-
-  document.body.appendChild(dlg);
-  _openModal = dlg;
-  dlg.focus();
-  document.addEventListener("keydown", onEsc, true);
-  setTimeout(function () {
-    document.addEventListener("click", onOutside, true);
-  }, 0);
+  openHelpDrawer({
+    title: method.title || "Método GET",
+    content: body,
+    trigger: options.trigger || null,
+  });
 }
 
 export function openHelpModal(fieldKey, options) {
@@ -346,19 +307,9 @@ export function openHelpModal(fieldKey, options) {
   const inputEl = options.inputEl;
   const onUseExample = options.onUseExample;
   closeModal();
-  _lastTrigger = options.trigger || null;
 
   const dlg = document.createElement("div");
-  dlg.className = "field-help-modal field-help-modal--centered";
-  dlg.setAttribute("role", "dialog");
-  dlg.setAttribute("aria-modal", "true");
-  dlg.setAttribute("aria-labelledby", "help-modal-title");
-  dlg.tabIndex = -1;
-
-  const title = document.createElement("h4");
-  title.id = "help-modal-title";
-  title.textContent = entry.label || fieldKey;
-  dlg.appendChild(title);
+  dlg.className = "field-help-modal--drawer-body";
 
   function addSection(heading, text) {
     if (!text) return;
@@ -463,19 +414,11 @@ export function openHelpModal(fieldKey, options) {
     dlg.appendChild(useBtn);
   }
 
-  const closeBtn = document.createElement("button");
-  closeBtn.type = "button";
-  closeBtn.textContent = "Fechar";
-  closeBtn.addEventListener("click", closeModal);
-  dlg.appendChild(closeBtn);
-
-  document.body.appendChild(dlg);
-  _openModal = dlg;
-  dlg.focus();
-  document.addEventListener("keydown", onEsc, true);
-  setTimeout(function () {
-    document.addEventListener("click", onOutside, true);
-  }, 0);
+  openHelpDrawer({
+    title: entry.label || fieldKey,
+    content: dlg,
+    trigger: options.trigger || null,
+  });
 }
 
 export function attachFieldHelp(container, fieldKey, options) {
