@@ -19,11 +19,19 @@ def _run(action, *, route: str = ""):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except OperationalError as exc:
         if route == "project_delete":
+            from app.debug_agent_log import agent_debug_log
+
+            agent_debug_log(
+                location="projects.py:project_delete",
+                message="OperationalError on delete",
+                data={"error": str(exc)[:500]},
+                hypothesis_id="D",
+            )
             raise HTTPException(
                 status_code=503,
                 detail=(
-                    "Base de dados ocupada (SQLite). Feche o GET em todas as janelas do browser, "
-                    "pare o servidor (uvicorn), aguarde 10 s e tente de novo; projectos grandes podem demorar."
+                    "Base de dados ocupada (SQLite). Feche outras janelas do GET, confirme que não há "
+                    "scripts Python antigos a usar o mesmo workspace, reinicie o uvicorn e tente de novo."
                 ),
             ) from exc
         raise

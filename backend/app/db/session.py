@@ -6,11 +6,16 @@ from pathlib import Path
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.pool import NullPool
 
 from app.db.base import Base
 
 _ENGINE_CACHE: dict[str, tuple[Engine, sessionmaker[Session]]] = {}
+
+# Espera máxima em conflito de bloqueio (WAL). Valores baixos falham cedo; fases curtas na eliminação
+# de projecto não exigem esperas de dezenas de segundos.
+SQLITE_LOCK_TIMEOUT_S = 15.0
+SQLITE_BUSY_TIMEOUT_MS = 8000
 
 
 def sqlite_url(db_path: Path) -> str:
@@ -21,8 +26,8 @@ def create_sqlite_engine(db_path: Path) -> Engine:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     engine = create_engine(
         sqlite_url(db_path),
-        connect_args={"check_same_thread": False, "timeout": 120.0},
-        poolclass=StaticPool,
+        connect_args={"check_same_thread": False, "timeout": SQLITE_LOCK_TIMEOUT_S},
+        poolclass=NullPool,
         future=True,
     )
 
@@ -31,7 +36,7 @@ def create_sqlite_engine(db_path: Path) -> Engine:
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.execute("PRAGMA journal_mode=WAL")
-        cursor.execute("PRAGMA busy_timeout=30000")
+        cursor.execute(f"PRAGMA busy_timeout={SQLITE_BUSY_TIMEOUT_MS}")
         cursor.close()
 
     return engine
