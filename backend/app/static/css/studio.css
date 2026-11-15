@@ -210,6 +210,11 @@ button.ghost:hover,
   margin: 0.75rem 0;
 }
 
+.block-editor-main .be-block-textarea {
+  min-height: calc(var(--textarea-min-height) * 2);
+  resize: vertical;
+}
+
 /* Estrutura documental: árvore mais larga e alta */
 .split-explorer.doc-structure-split {
   grid-template-columns: minmax(31rem, 2.05fr) minmax(18rem, 0.9fr);
