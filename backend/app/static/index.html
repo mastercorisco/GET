@@ -351,7 +351,10 @@
           <section class="route-panel card" data-route="project-structure">
             <div class="screen-guide-panel" data-screen-guide="project-structure" hidden></div>
             <h2>Estrutura documental</h2>
-            <p class="lead">Árvore do caderno de encargos. Seleccione um nó para associar conhecimento.</p>
+            <p class="lead">
+              Árvore do caderno de encargos. Seleccione um nó para ver associações; blocos abrem a preparação só
+              quando pedir.
+            </p>
             <div class="split-explorer doc-structure-split">
               <div class="doc-structure-tree">
                 <p id="docDepthWarn" class="error" hidden>Aviso: profundidade ≥ 5.</p>
@@ -360,6 +363,12 @@
               <aside class="card-surface doc-structure-detail">
                 <h3>Detalhe e associações</h3>
                 <p id="docSelectedMeta">Nenhum nó seleccionado.</p>
+                <div id="docBlockPrepWrap" class="doc-block-prep-cta" hidden>
+                  <button type="button" id="docOpenBlockPrep" class="doc-block-prep-btn">
+                    <span class="doc-block-prep-btn__icon" aria-hidden="true">✎</span>
+                    <span class="doc-block-prep-btn__text">Preparar este bloco</span>
+                  </button>
+                </div>
                 <div id="docAssocList" class="list-panel doc-assoc-panel"></div>
                 <label for="docAssocItem" class="field-label">Unidade de conhecimento</label>
                 <select id="docAssocItem"><option value="">—</option></select>

@@ -113,6 +113,30 @@ const rootPath = document.getElementById("rootPath");
       let selectedProjectItemId = null;
       let libraryTerms = [];
       let selectedDocumentNodeId = null;
+      let selectedDocumentBlockId = null;
+
+      function syncDocStructureSelection(node) {
+        const meta = document.getElementById("docSelectedMeta");
+        const prepWrap = document.getElementById("docBlockPrepWrap");
+        const prepBtn = document.getElementById("docOpenBlockPrep");
+        if (!node) {
+          selectedDocumentBlockId = null;
+          if (meta) meta.textContent = "Nenhum nó seleccionado.";
+          if (prepWrap) prepWrap.hidden = true;
+          if (prepBtn) prepBtn.disabled = true;
+          return;
+        }
+        if (meta) {
+          meta.textContent = node.display_code + " — " + node.title;
+        }
+        const isBlock = node.node_type === "block";
+        selectedDocumentBlockId = isBlock ? node.id : null;
+        if (prepWrap) prepWrap.hidden = !isBlock;
+        if (prepBtn) {
+          prepBtn.disabled = !isBlock;
+          prepBtn.setAttribute("aria-label", isBlock ? "Abrir preparação do bloco " + node.display_code : "");
+        }
+      }
       let projectKnowledgeItems = [];
 
       async function loadProjects() {
@@ -173,7 +197,10 @@ const rootPath = document.getElementById("rootPath");
                   });
                   knowledgeRequest(deleteUrl, { method: "DELETE" }, "Falha ao apagar projecto.")
                     .then(function () {
-                      if (selectedDocumentNodeId) selectedDocumentNodeId = null;
+                      if (selectedDocumentNodeId) {
+                        selectedDocumentNodeId = null;
+                        syncDocStructureSelection(null);
+                      }
                       return loadProjects();
                     })
                     .catch(function (err) {
@@ -236,12 +263,8 @@ const rootPath = document.getElementById("rootPath");
             selectedId: selectedDocumentNodeId,
             onSelect: function (node) {
               selectedDocumentNodeId = node.id;
-              document.getElementById("docSelectedMeta").textContent =
-                node.display_code + " — " + node.title;
+              syncDocStructureSelection(node);
               loadDocumentAssociations(node.id).catch(function (err) { setProjectError(err.message); });
-              if (node.node_type === "block" && onBlockSelect) {
-                onBlockSelect(node.id);
-              }
               renderDocumentTree(nodes);
             },
             onMove: function (node, direction) {
@@ -263,7 +286,10 @@ const rootPath = document.getElementById("rootPath");
                 "Falha ao apagar nó."
               )
                 .then(function () {
-                  if (selectedDocumentNodeId === node.id) selectedDocumentNodeId = null;
+                  if (selectedDocumentNodeId === node.id) {
+                    selectedDocumentNodeId = null;
+                    syncDocStructureSelection(null);
+                  }
                   return loadDocumentTree(node.project_id);
                 })
                 .catch(function (err) {
@@ -334,14 +360,11 @@ const rootPath = document.getElementById("rootPath");
         );
         if (selectedDocumentNodeId && !data.nodes.some(function (n) { return n.id === selectedDocumentNodeId; })) {
           selectedDocumentNodeId = null;
-          document.getElementById("docSelectedMeta").textContent = "Nenhum nó seleccionado.";
+          syncDocStructureSelection(null);
           document.getElementById("docAssocList").replaceChildren();
         } else if (selectedDocumentNodeId) {
           const sel = data.nodes.find(function (n) { return n.id === selectedDocumentNodeId; });
-          if (sel) {
-            document.getElementById("docSelectedMeta").textContent =
-              sel.display_code + " — " + sel.title + " (" + sel.id + ")";
-          }
+          if (sel) syncDocStructureSelection(sel);
         }
         renderDocumentTree(data.nodes);
       }
@@ -1137,6 +1160,10 @@ const rootPath = document.getElementById("rootPath");
             setDocStatus("");
             setDocError(err.message);
           });
+      });
+      document.getElementById("docOpenBlockPrep")?.addEventListener("click", function () {
+        if (!selectedDocumentBlockId || !onBlockSelect) return;
+        onBlockSelect(selectedDocumentBlockId);
       });
       document.getElementById("docAssocCreate").addEventListener("click", function () {
         const nodeId = selectedDocumentNodeId;
