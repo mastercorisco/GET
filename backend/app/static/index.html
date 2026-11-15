@@ -21,15 +21,22 @@
         <main class="app-main" id="app-main">
           <div class="breadcrumb" id="app-breadcrumb"></div>
       <section class="route-panel card " data-route="workspace">
+        <div class="screen-guide-panel" data-screen-guide="workspace" hidden></div>
         <h2>Preparar workspace</h2>
         <p class="lead">Crie ou abra a pasta de dados (SQLite, exportações, importações).</p>
         
         <h2>Workspace</h2>
         <p>Crie ou abra um workspace de dados separado da aplicação.</p>
-        <label for="rootPath">Caminho do workspace</label>
+        <label for="rootPath" data-help-key="workspace.root_path">Caminho do workspace</label>
         <input id="rootPath" placeholder="C:\caminho\para\workspace-get" />
-        <label for="userName">Utilizador local (proveniência)</label>
+        <label for="userName" data-help-key="workspace.user_name">Utilizador local (proveniência)</label>
         <input id="userName" value="local_user" />
+        <label for="helpLevel" data-help-key="workspace.help_level">Nível de ajuda</label>
+        <select id="helpLevel">
+          <option value="essential">Essential — ícones</option>
+          <option value="normal" selected>Normal — microajuda e popups</option>
+          <option value="detailed">Detailed — exemplos e comparações</option>
+        </select>
         <button type="button" id="createBtn" disabled>Criar workspace</button>
         <button type="button" id="openBtn" class="secondary" disabled>Abrir workspace</button>
         
@@ -39,35 +46,37 @@
       </section>
 
       <section class="route-panel card " data-route="workbook">
+        <div class="screen-guide-panel" data-screen-guide="workbook" hidden></div>
         <h2>Modelo Excel GET v1</h2>
         <p class="lead">Transferir ou validar o modelo controlado (não importa para a base de dados).</p>
         <h3>Modelo Excel GET v1</h3>
         <p>Transferir modelo controlado ou validar estrutura (sem importar para a base de dados).</p>
         <button type="button" id="wbTplLibrary" class="secondary">Transferir modelo (biblioteca)</button>
         <button type="button" id="wbTplProject" class="secondary">Transferir modelo (projecto)</button>
-        <label for="wbValidateFile">Validar ficheiro .xlsx</label>
+        <label for="wbValidateFile" data-help-key="workbook.validate_file">Validar ficheiro .xlsx</label>
         <input type="file" id="wbValidateFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
         <button type="button" id="wbValidateBtn" class="secondary">Validar estrutura</button>
         <pre id="wbValidateOut" hidden></pre>
       </section>
 
       <section class="route-panel card " data-route="library">
+        <div class="screen-guide-panel" data-screen-guide="library" hidden></div>
         <h2>Biblioteca EDA</h2>
         <p class="lead">Conhecimento reutilizável, referências e terminologia.</p>
         
         <h2>Biblioteca</h2>
         <p>Crie uma unidade. O rascunho fica separado da revisão até carregar em «Concluir revisão».</p>
-        <label for="kTitle">Título</label>
+        <label for="kTitle" data-help-key="knowledge.title">Título</label>
         <input id="kTitle" />
-        <label for="kContent">Conteúdo</label>
+        <label for="kContent" data-help-key="knowledge.content">Conteúdo</label>
         <textarea id="kContent"></textarea>
-        <label for="kContext">Contexto de origem</label>
+        <label for="kContext" data-help-key="knowledge.origin_context">Contexto de origem</label>
         <input id="kContext" />
         <button type="button" id="kCreate">Criar unidade</button>
         <p id="kError" class="error" hidden></p>
 
         <h2>Pesquisa</h2>
-        <label for="kQuery">Texto</label>
+        <label for="kQuery" data-help-key="knowledge.search">Texto</label>
         <input id="kQuery" />
         <button type="button" id="kSearch" class="secondary">Pesquisar</button>
         <div id="kResults"></div>
@@ -77,7 +86,7 @@
 
         <h3>Ficha técnica (unidade seleccionada)</h3>
         <p id="kProfileMeta">Seleccione uma unidade na lista.</p>
-        <label for="kProfileType">profile_type</label>
+        <label for="kProfileType" data-help-key="knowledge.profile_type">profile_type</label>
         <select id="kProfileType">
           <option value="control_function">control_function</option>
           <option value="interface">interface</option>
@@ -85,25 +94,25 @@
           <option value="decision">decision</option>
           <option value="open_question">open_question</option>
         </select>
-        <label for="kProfileData">data (JSON)</label>
+        <label for="kProfileData" data-help-key="knowledge.profile_data">data (JSON)</label>
         <textarea id="kProfileData" placeholder='{"technical_parameters": "texto livre"}'></textarea>
         <button type="button" id="kProfileSave" class="secondary">Guardar ficha</button>
         <p id="kProfileWarn" class="error" hidden></p>
 
         <h3>Referências (biblioteca)</h3>
-        <label for="libRefTitle">Título</label>
+        <label for="libRefTitle" data-help-key="library.ref_title">Título</label>
         <input id="libRefTitle" />
-        <label for="libRefCitation">Citação</label>
+        <label for="libRefCitation" data-help-key="library.ref_citation">Citação</label>
         <input id="libRefCitation" />
         <button type="button" id="libRefCreate" class="secondary">Criar referência</button>
         <div id="libRefList"></div>
 
         <h3>Terminologia (biblioteca)</h3>
-        <label for="libTermPreferred">Termo preferencial</label>
+        <label for="libTermPreferred" data-help-key="library.term_preferred">Termo preferencial</label>
         <input id="libTermPreferred" />
-        <label for="libTermDefinition">Definição</label>
+        <label for="libTermDefinition" data-help-key="library.term_definition">Definição</label>
         <textarea id="libTermDefinition"></textarea>
-        <label for="libTermSynonyms">Sinónimos (vírgulas)</label>
+        <label for="libTermSynonyms" data-help-key="library.term_synonyms">Sinónimos (vírgulas)</label>
         <input id="libTermSynonyms" />
         <button type="button" id="libTermCreate" class="secondary">Criar termo</button>
         <div id="libTermList"></div>
@@ -111,6 +120,7 @@
       </section>
 
       <section class="route-panel card " data-route="project">
+        <div class="screen-guide-panel" data-screen-guide="project" hidden></div>
         <h2>Projecto</h2>
         <p class="lead">Crie projectos e gira conhecimento e referências do âmbito.</p>
         <h2>Projetos</h2>
@@ -184,33 +194,89 @@
       </section>
 
           <section class="route-panel card" data-route="block-editor">
+            <div class="screen-guide-panel" data-screen-guide="block-editor" hidden></div>
             <h2>Preparação do bloco</h2>
             <p class="lead">Pontos de desenvolvimento, premissas e exportação para LLM externa.</p>
-            <div id="block-editor-root" class="split-explorer">
-              <div>
+            <p id="beEmptyHint" class="lead" hidden>Seleccione um bloco na estrutura documental.</p>
+            <div id="block-editor-root" class="split-explorer" hidden>
+              <div class="block-editor-main">
                 <p id="beHeader" class="field-label">—</p>
-                <label for="beObjective">Objectivo do bloco</label>
+                <label for="beObjective" data-help-key="block.objective">Objectivo do bloco</label>
                 <textarea id="beObjective" rows="2"></textarea>
-                <label for="beScope">Âmbito do bloco</label>
+                <label for="beScope" data-help-key="block.scope">Âmbito do bloco</label>
                 <textarea id="beScope" rows="2"></textarea>
-                <label for="beTemplate">Modelo estrutural (opcional)</label>
+                <label for="beTargetOutput" data-help-key="block.target_output">Resultado pretendido (JSON)</label>
+                <textarea id="beTargetOutput" rows="2" placeholder="{&quot;format&quot;: &quot;spec_section&quot;}"></textarea>
+                <h3>Modelo estrutural</h3>
+                <label for="beTemplate" data-help-key="block.template">Aplicar ao novo ponto</label>
                 <select id="beTemplate"><option value="">— vazio —</option></select>
+                <div id="beTemplateCards" class="template-picker"></div>
+                <h3>Premissas do bloco</h3>
+                <div id="bePremiseList" class="be-premise-list"></div>
+                <label for="bePremiseStatement" data-help-key="premise.statement">Nova premissa</label>
+                <textarea id="bePremiseStatement" rows="2"></textarea>
+                <label for="bePremiseImportance" data-help-key="premise.importance">Importância</label>
+                <select id="bePremiseImportance">
+                  <option value="mandatory">mandatory</option>
+                  <option value="recommended">recommended</option>
+                  <option value="informative">informative</option>
+                </select>
+                <label for="bePremiseSource" data-help-key="premise.source_type">Origem</label>
+                <select id="bePremiseSource">
+                  <option value="project_decision">project_decision</option>
+                  <option value="functional_requirement">functional_requirement</option>
+                  <option value="standard">standard</option>
+                  <option value="existing_document">existing_document</option>
+                  <option value="operational_experience">operational_experience</option>
+                  <option value="technical_recommendation">technical_recommendation</option>
+                  <option value="unconfirmed_information">unconfirmed_information</option>
+                </select>
+                <label for="bePremiseConfidence" data-help-key="premise.confidence">Confiança</label>
+                <select id="bePremiseConfidence">
+                  <option value="confirmed">confirmed</option>
+                  <option value="provisional">provisional</option>
+                  <option value="unverified">unverified</option>
+                </select>
+                <button type="button" id="bePremiseAdd" class="secondary">Adicionar premissa</button>
+                <label class="section-label field-label" data-help-key="block.points_overview">Pontos de desenvolvimento</label>
                 <button type="button" id="beNewPoint" class="secondary">Novo ponto</button>
                 <button type="button" id="beRefresh" class="secondary">Actualizar</button>
                 <div id="bePointList" class="dp-list"></div>
               </div>
-              <div>
-                <h3>Ajuda e exportação</h3>
-                <label class="choice-inline"><input type="checkbox" id="beIncludeDraft" /> Incluir rascunhos na exportação</label>
-                <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
-                <button type="button" id="beExportWrite">Exportar pacote</button>
-                <p id="beStatus" class="lead"></p>
-                <pre id="bePreview" class="tree-ascii" style="max-height:24rem;overflow:auto"></pre>
-              </div>
+              <aside class="block-prep-aside">
+                <h3>Ajuda à preparação</h3>
+                <div class="prep-tabs" role="tablist" aria-label="Secções de ajuda">
+                  <button type="button" class="prep-tab-btn is-active" data-prep-tab="routing">Encaminhamento</button>
+                  <button type="button" class="prep-tab-btn" data-prep-tab="concepts">Conceitos</button>
+                  <button type="button" class="prep-tab-btn" data-prep-tab="validation">Validação</button>
+                  <button type="button" class="prep-tab-btn" data-prep-tab="export">Exportação</button>
+                </div>
+                <div class="prep-tab-panel" data-prep-panel="routing">
+                  <ul id="prepChecklist" class="prep-checklist"></ul>
+                  <p id="prepLlmRole" class="lead"></p>
+                </div>
+                <div class="prep-tab-panel" data-prep-panel="concepts" hidden>
+                  <div id="prepConcepts" class="prep-concepts"></div>
+                </div>
+                <div class="prep-tab-panel" data-prep-panel="validation" hidden>
+                  <div id="prepValidation"></div>
+                </div>
+                <div class="prep-tab-panel" data-prep-panel="export" hidden>
+                  <label class="choice-inline" data-help-key="block.include_draft">
+                    <input type="checkbox" id="beIncludeDraft" />
+                    <span>Incluir rascunhos na exportação</span>
+                  </label>
+                  <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
+                  <button type="button" id="beExportWrite">Exportar pacote</button>
+                  <p id="beStatus" class="lead"></p>
+                  <pre id="bePreview" class="tree-ascii be-preview-json"></pre>
+                </div>
+              </aside>
             </div>
           </section>
 
           <section class="route-panel card" data-route="project-structure">
+            <div class="screen-guide-panel" data-screen-guide="project-structure" hidden></div>
             <h2>Estrutura documental</h2>
             <p class="lead">Árvore do caderno de encargos. Seleccione um nó para associar conhecimento.</p>
             <div class="split-explorer">
@@ -257,6 +323,7 @@
             <p id="docStatus" hidden></p>
           </section>
       <section class="route-panel card " data-route="project-technical">
+        <div class="screen-guide-panel" data-screen-guide="project-technical" hidden></div>
         <h2>Árvore técnica</h2>
         <p class="lead">Sistemas, equipamentos e funções exportáveis.</p>
         <h3>Instâncias técnicas</h3>
@@ -277,12 +344,13 @@
       </section>
 
       <section class="route-panel card " data-route="export">
+        <div class="screen-guide-panel" data-screen-guide="export" hidden></div>
         <h2>Exportar para LLM</h2>
         <p class="lead">Publique a baseline e gere JSON para discussão ou redação.</p>
         <h3>Exportação</h3>
         <p id="expBaselineMeta">Baseline: desconhecida — publique antes do mestre.</p>
         <button type="button" id="expBaselinePublish" class="secondary">Publicar baseline</button>
-        <label for="expProfile">Perfil</label>
+        <label for="expProfile" data-help-key="export.profile">Perfil</label>
         <select id="expProfile">
           <option value="discussion">discussion</option>
           <option value="redaction">redaction</option>
@@ -305,11 +373,12 @@
       </section>
 
       <section class="route-panel card " data-route="import">
+        <div class="screen-guide-panel" data-screen-guide="import" hidden></div>
         <h2>Reimportar e decidir</h2>
         <p class="lead">Carregue o JSON devolvido pela LLM e decida proposta a proposta.</p>
         <h3>Reimportação</h3>
         <p id="impMeta">Envie um JSON fascicle_roundtrip devolvido pela LLM.</p>
-        <label for="impFile">Ficheiro JSON</label>
+        <label for="impFile" data-help-key="import.file">Ficheiro JSON</label>
         <input type="file" id="impFile" accept=".json,application/json" />
         <button type="button" id="impUpload" class="secondary">Carregar importação</button>
         <button type="button" id="impMerge">Analisar (merge)</button>
@@ -324,6 +393,7 @@
       </section>
 
       <section class="route-panel card " data-route="backups">
+        <div class="screen-guide-panel" data-screen-guide="backups" hidden></div>
         <h2>Backups</h2>
         
         
@@ -335,6 +405,7 @@
       </section>
 
       <section class="route-panel card " data-route="diagnostics">
+        <div class="screen-guide-panel" data-screen-guide="diagnostics" hidden></div>
         <h2>Diagnóstico</h2>
         <p class="lead">Estado técnico do workspace (avançado).</p>
         

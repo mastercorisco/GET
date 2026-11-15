@@ -1,4 +1,4 @@
-import { attachFieldHelp } from "./field-help.js";
+import { attachFieldHelp, openHelpModal } from "./field-help.js";
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -7,10 +7,27 @@ function el(tag, cls, text) {
   return node;
 }
 
-function listEditor(parent, label, items, onChange, isObject) {
+function sectionSummary(title, fieldKey) {
+  const summary = el("summary", "dp-section-summary", title);
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "tip-btn field-help-btn";
+  btn.setAttribute("aria-label", "Ajuda: " + title);
+  btn.textContent = "i";
+  btn.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    openHelpModal(fieldKey);
+  });
+  summary.appendChild(btn);
+  return summary;
+}
+
+function listEditor(parent, label, fieldKey, items, onChange, isObject) {
   const wrap = el("div", "dp-list-editor");
   const lbl = el("label", "field-label", label);
   wrap.appendChild(lbl);
+  attachFieldHelp(wrap, fieldKey, {});
   const list = el("div", "dp-list-items");
   wrap.appendChild(list);
 
@@ -23,9 +40,11 @@ function listEditor(parent, label, items, onChange, isObject) {
         inp.value = item.prompt || item.text || JSON.stringify(item);
         inp.placeholder = "…";
         inp.addEventListener("change", function () {
-          items[index] = isObject && label.indexOf("quest") >= 0
-            ? { prompt: inp.value, answer: item.answer || "" }
-            : { text: inp.value };
+          if (label.indexOf("quest") >= 0 || fieldKey.indexOf("open_questions") >= 0) {
+            items[index] = { prompt: inp.value, answer: item.answer || "" };
+          } else {
+            items[index] = { text: inp.value };
+          }
           onChange();
         });
       } else {
@@ -65,19 +84,39 @@ export function createDevelopmentPointCard(point, hooks) {
   card.dataset.pointId = point.id;
 
   const head = el("header", "dp-card-head");
-  const toggle = el("button", "dp-card-toggle", "#" + point.order + " — " + (point.title || "(sem título)"));
+  const toggle = el(
+    "button",
+    "dp-card-toggle",
+    "#" + point.order + " — " + (point.title || "(sem título)")
+  );
   toggle.type = "button";
   toggle.setAttribute("aria-expanded", "false");
+  const overviewBtn = document.createElement("button");
+  overviewBtn.type = "button";
+  overviewBtn.className = "tip-btn field-help-btn";
+  overviewBtn.setAttribute("aria-label", "Ajuda do ponto");
+  overviewBtn.textContent = "i";
+  overviewBtn.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    openHelpModal("development_point.overview");
+  });
   const meta = el(
     "span",
     "dp-card-meta",
-    point.status + (point.needs_review ? " · revisão" : "") +
-      " · P:" + (point.premise_count || 0) +
-      " · Obr:" + (point.must_include_count || 0) +
-      " · ?:" + (point.open_questions_count || 0) +
-      " · CA:" + (point.acceptance_criteria_count || 0)
+    point.status +
+      (point.needs_review ? " · revisão" : "") +
+      " · P:" +
+      (point.premise_count || 0) +
+      " · Obr:" +
+      (point.must_include_count || 0) +
+      " · ?:" +
+      (point.open_questions_count || 0) +
+      " · CA:" +
+      (point.acceptance_criteria_count || 0)
   );
   head.appendChild(toggle);
+  head.appendChild(overviewBtn);
   head.appendChild(meta);
   if (point.completeness_alerts && point.completeness_alerts.length) {
     const alert = el("span", "error", point.completeness_alerts.join(" · "));
@@ -128,7 +167,7 @@ function renderExpanded(body, detail, hooks) {
     hooks.savePoint(detail.id, patch);
   }
 
-  function fieldBlock(fieldKey, labelText, value, multiline) {
+  function fieldBlock(parent, fieldKey, labelText, value, multiline) {
     const block = el("div", "field-block");
     const lbl = el("label", "field-label", labelText);
     block.appendChild(lbl);
@@ -150,50 +189,131 @@ function renderExpanded(body, detail, hooks) {
       },
     });
     input.addEventListener("change", flush);
-    body.appendChild(block);
+    parent.appendChild(block);
   }
 
-  fieldBlock("title", "Título", detail.title, false);
-  fieldBlock("core_idea", "Ideia central", detail.core_idea, true);
-  fieldBlock("intended_outcome", "Resultado pretendido", detail.intended_outcome, true);
+  function makeSection(title, fieldKey, builder, openDefault) {
+    const det = el("details", "dp-section");
+    if (openDefault) det.open = true;
+    det.appendChild(sectionSummary(title, fieldKey));
+    const inner = el("div", "dp-section-body");
+    builder(inner);
+    det.appendChild(inner);
+    body.appendChild(det);
+  }
 
-  const ffLbl = el("label", "field-label", "Liberdade da LLM");
-  const ffSel = document.createElement("select");
-  ffSel.id = "dp-" + detail.id + "-llm_freedom";
-  ["strict", "bounded", "exploratory"].forEach(function (v) {
-    const o = document.createElement("option");
-    o.value = v;
-    o.textContent = v;
-    if (v === detail.llm_freedom) o.selected = true;
-    ffSel.appendChild(o);
+  makeSection(
+    "Ideia",
+    "development_point.core_idea",
+    function (inner) {
+      fieldBlock(inner, "title", "Título", detail.title, false);
+      fieldBlock(inner, "core_idea", "Ideia central", detail.core_idea, true);
+      fieldBlock(inner, "intended_outcome", "Resultado pretendido", detail.intended_outcome, true);
+    },
+    true
+  );
+
+  makeSection("Orientações", "development_point.development_guidance", function (inner) {
+    if (!lists.development_guidance) lists.development_guidance = [];
+    listEditor(inner, "Orientações", "development_point.development_guidance", lists.development_guidance, flush, false);
   });
-  ffSel.addEventListener("change", flush);
-  body.appendChild(ffLbl);
-  body.appendChild(ffSel);
 
-  const stLbl = el("label", "field-label", "Estado");
-  const stSel = document.createElement("select");
-  stSel.id = "dp-" + detail.id + "-status";
-  ["draft", "incomplete", "ready", "approved", "obsolete"].forEach(function (v) {
-    const o = document.createElement("option");
-    o.value = v;
-    o.textContent = v;
-    if (v === detail.status) o.selected = true;
-    stSel.appendChild(o);
+  makeSection("Premissas", "development_point.premises", function (inner) {
+    const note = el("p", "field-microhelp", "Premissas do bloco e do projecto aplicam-se na exportação. Registe premissas específicas do ponto quando necessário.");
+    inner.appendChild(note);
   });
-  stSel.addEventListener("change", flush);
-  body.appendChild(stLbl);
-  body.appendChild(stSel);
 
-  if (!lists.development_guidance) lists.development_guidance = [];
-  listEditor(body, "Orientações", lists.development_guidance, flush, false);
-  listEditor(body, "Elementos obrigatórios", lists.must_include, flush, true);
-  listEditor(body, "Limites e exclusões", lists.limits_and_exclusions, flush, true);
-  listEditor(body, "Questões pendentes", lists.open_questions, flush, true);
-  listEditor(body, "Critérios de aceitação", lists.acceptance_criteria, flush, false);
+  makeSection("Obrigatórios", "development_point.must_include", function (inner) {
+    if (!lists.must_include) lists.must_include = [];
+    listEditor(inner, "Elementos obrigatórios", "development_point.must_include", lists.must_include, flush, true);
+  });
+
+  makeSection("Limites", "development_point.limits_and_exclusions", function (inner) {
+    if (!lists.limits_and_exclusions) lists.limits_and_exclusions = [];
+    listEditor(
+      inner,
+      "Limites e exclusões",
+      "development_point.limits_and_exclusions",
+      lists.limits_and_exclusions,
+      flush,
+      true
+    );
+  });
+
+  makeSection("Conhecimento e referências", "development_point.questions_to_answer", function (inner) {
+    if (!lists.knowledge_item_ids) lists.knowledge_item_ids = [];
+    if (!lists.reference_ids) lists.reference_ids = [];
+    listEditor(inner, "IDs unidades de conhecimento", "development_point.questions_to_answer", lists.knowledge_item_ids, flush, false);
+    listEditor(inner, "IDs referências", "development_point.questions_to_answer", lists.reference_ids, flush, false);
+  });
+
+  makeSection("Questões", "development_point.open_questions", function (inner) {
+    if (!lists.open_questions) lists.open_questions = [];
+    if (!lists.questions_to_answer) lists.questions_to_answer = [];
+    listEditor(inner, "Questões pendentes", "development_point.open_questions", lists.open_questions, flush, true);
+    listEditor(
+      inner,
+      "Perguntas a responder",
+      "development_point.questions_to_answer",
+      lists.questions_to_answer,
+      flush,
+      true
+    );
+  });
+
+  makeSection("Critérios", "development_point.acceptance_criteria", function (inner) {
+    if (!lists.acceptance_criteria) lists.acceptance_criteria = [];
+    listEditor(
+      inner,
+      "Critérios de aceitação",
+      "development_point.acceptance_criteria",
+      lists.acceptance_criteria,
+      flush,
+      false
+    );
+  });
+
+  makeSection("Estado e LLM", "development_point.llm_freedom", function (inner) {
+    const ffBlock = el("div", "field-block");
+    const ffLbl = el("label", "field-label", "Liberdade da LLM");
+    ffBlock.appendChild(ffLbl);
+    const ffSel = document.createElement("select");
+    ffSel.id = "dp-" + detail.id + "-llm_freedom";
+    ["strict", "bounded", "exploratory"].forEach(function (v) {
+      const o = document.createElement("option");
+      o.value = v;
+      o.textContent = v;
+      if (v === detail.llm_freedom) o.selected = true;
+      ffSel.appendChild(o);
+    });
+    ffSel.addEventListener("change", flush);
+    ffBlock.appendChild(ffSel);
+    attachFieldHelp(ffBlock, "development_point.llm_freedom", { inputEl: ffSel });
+    inner.appendChild(ffBlock);
+
+    const stBlock = el("div", "field-block");
+    const stLbl = el("label", "field-label", "Estado");
+    stBlock.appendChild(stLbl);
+    const stSel = document.createElement("select");
+    stSel.id = "dp-" + detail.id + "-status";
+    ["draft", "incomplete", "ready", "approved", "obsolete"].forEach(function (v) {
+      const o = document.createElement("option");
+      o.value = v;
+      o.textContent = v;
+      if (v === detail.status) o.selected = true;
+      stSel.appendChild(o);
+    });
+    stSel.addEventListener("change", flush);
+    stBlock.appendChild(stSel);
+    attachFieldHelp(stBlock, "development_point.status", { inputEl: stSel });
+    inner.appendChild(stBlock);
+  });
 
   const actions = el("div", "dp-card-actions");
-  [["Duplicar", "duplicate"], ["Arquivar", "archive"]].forEach(function (pair) {
+  [
+    ["Duplicar", "duplicate"],
+    ["Arquivar", "archive"],
+  ].forEach(function (pair) {
     const b = el("button", "secondary", pair[0]);
     b.type = "button";
     b.addEventListener("click", function () {

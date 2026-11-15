@@ -2,13 +2,16 @@ import { initRouter } from "./router.js";
 import { createShell } from "./shell.js";
 import { initLegacyApp } from "./app/legacy-logic.js";
 import { mountDocumentTree, mountTechnicalTree } from "./components/tree.js";
-import { wireTips } from "./components/tip.js";
+import { initHelpSystem, wireDeclarativeHelp } from "./components/help-ui.js";
+import { renderScreenGuide } from "./components/screen-guide.js";
 import { applyFriendlySelectLabels } from "./labels.js";
 import { initBackupsView } from "./views/backups.js";
 import { initBlockEditor, openBlockEditor } from "./views/block-editor.js";
 
 const router = initRouter({
   onRouteChange: function (routeId) {
+    renderScreenGuide(routeId);
+    wireDeclarativeHelp(document);
     if (routeId === "backups") {
       document.dispatchEvent(new CustomEvent("get:workspace-open"));
     }
@@ -16,11 +19,21 @@ const router = initRouter({
 });
 const shell = createShell(router);
 
+let _blockPrepHintShown = false;
+
 initLegacyApp({
   mountDocumentTree: mountDocumentTree,
   mountTechnicalTree: mountTechnicalTree,
   onBlockSelect: function (blockId) {
     openBlockEditor(blockId, router);
+    if (!_blockPrepHintShown) {
+      _blockPrepHintShown = true;
+      const st = document.getElementById("beStatus");
+      if (st) {
+        st.textContent =
+          "Dica: use Preparação do bloco para definir pontos antes de exportar o pacote exchange.";
+      }
+    }
   },
   onWorkspaceChange: function (data) {
     shell.onWorkspaceChange(data);
@@ -32,7 +45,17 @@ initLegacyApp({
 });
 
 applyFriendlySelectLabels();
-wireTips();
+initHelpSystem().then(function () {
+  const hash =
+    window.location.hash && window.location.hash.length > 1
+      ? window.location.hash.slice(1)
+      : "workspace";
+  renderScreenGuide(hash);
+});
+
+document.addEventListener("get:help-level-changed", function () {
+  wireDeclarativeHelp(document);
+});
 
 const pActive = document.getElementById("pActive");
 if (pActive) {

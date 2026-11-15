@@ -1,5 +1,5 @@
 {
-  "catalog_version": "1.0.0",
+  "catalog_version": "1.1.0",
   "locale": "pt-PT",
   "default_help_level": "normal",
   "fields": {
@@ -17,8 +17,12 @@
           "reason": "É demasiado genérico para identificar o assunto concreto."
         }
       ],
-      "tips": ["Use uma expressão curta e específica.", "Não escreva aqui o requisito completo."],
-      "allow_use_example": true
+      "tips": [
+        "Use uma expressão curta e específica.",
+        "Não escreva aqui o requisito completo."
+      ],
+      "allow_use_example": true,
+      "instructions": "Use uma expressão curta e específica."
     },
     "development_point.core_idea": {
       "label": "Ideia central",
@@ -34,8 +38,13 @@
           "reason": "É uma instrução de redação, não uma afirmação técnica."
         }
       ],
-      "tips": ["Use uma afirmação completa.", "Evite juntar requisitos independentes.", "Não introduza valores ainda não confirmados."],
-      "allow_use_example": true
+      "tips": [
+        "Use uma afirmação completa.",
+        "Evite juntar requisitos independentes.",
+        "Não introduza valores ainda não confirmados."
+      ],
+      "allow_use_example": true,
+      "instructions": "Use uma afirmação completa."
     },
     "development_point.intended_outcome": {
       "label": "Resultado pretendido",
@@ -46,8 +55,11 @@
         "Deverá ficar estabelecido que a perda do SCADA não implica a perda das funções locais de comando, controlo e proteção."
       ],
       "bad_examples": [],
-      "tips": ["Formule o resultado do ponto, não uma lista de tarefas."],
-      "allow_use_example": true
+      "tips": [
+        "Formule o resultado do ponto, não uma lista de tarefas."
+      ],
+      "allow_use_example": true,
+      "instructions": "Formule o resultado do ponto, não uma lista de tarefas."
     },
     "development_point.development_guidance": {
       "label": "Orientações de desenvolvimento",
@@ -64,8 +76,11 @@
           "reason": "É um requisito e deve ser registado como elemento obrigatório ou requisito associado."
         }
       ],
-      "tips": ["Registe uma orientação por item."],
-      "allow_use_example": true
+      "tips": [
+        "Registe uma orientação por item."
+      ],
+      "allow_use_example": true,
+      "instructions": "Registe uma orientação por item."
     },
     "development_point.premises": {
       "label": "Premissas",
@@ -81,73 +96,814 @@
           "reason": "É um requisito técnico, não uma condição assumida."
         }
       ],
-      "tips": ["Indique origem e confiança.", "Não esconda decisões pendentes numa premissa."],
-      "allow_use_example": true
+      "tips": [
+        "Indique origem e confiança.",
+        "Não esconda decisões pendentes numa premissa."
+      ],
+      "allow_use_example": true,
+      "instructions": "Indique origem e confiança."
     },
     "development_point.must_include": {
       "label": "Elementos obrigatórios",
       "short_help": "Registe o que terá obrigatoriamente de aparecer no desenvolvimento.",
       "definition": "Cada item representa matéria obrigatória, sem prescrever automaticamente a redação final.",
       "guiding_question": "O que não pode faltar no resultado?",
-      "good_examples": ["Deteção de qualidade inválida ou timeout.", "Sinalização da condição ao operador."],
+      "good_examples": [
+        "Deteção de qualidade inválida ou timeout.",
+        "Sinalização da condição ao operador."
+      ],
       "bad_examples": [],
-      "tips": ["Registe um elemento por item.", "Acrescente justificação quando o motivo não for evidente."],
-      "allow_use_example": true
+      "tips": [
+        "Registe um elemento por item.",
+        "Acrescente justificação quando o motivo não for evidente."
+      ],
+      "allow_use_example": true,
+      "instructions": "Registe um elemento por item."
     },
     "development_point.limits_and_exclusions": {
       "label": "Limites e exclusões",
       "short_help": "Indique o que não pode ser assumido, definido ou incluído.",
       "definition": "Protege o conteúdo contra invenções, decisões prematuras e expansão indevida do âmbito.",
       "guiding_question": "O que deve ficar fora, por definir ou remetido para detalhe?",
-      "good_examples": ["Não fixar o valor do timeout; depende da dinâmica específica do processo."],
+      "good_examples": [
+        "Não fixar o valor do timeout; depende da dinâmica específica do processo."
+      ],
       "bad_examples": [],
-      "tips": ["Classifique como não definir, não assumir, não incluir, engenharia de detalhe ou fora do âmbito."],
-      "allow_use_example": true
+      "tips": [
+        "Classifique como não definir, não assumir, não incluir, engenharia de detalhe ou fora do âmbito."
+      ],
+      "allow_use_example": true,
+      "instructions": "Classifique como não definir, não assumir, não incluir, engenharia de detalhe ou fora do âmbito."
     },
     "development_point.questions_to_answer": {
       "label": "Questões a responder",
       "short_help": "Liste perguntas que o texto desenvolvido deverá responder.",
       "definition": "As perguntas orientam a cobertura temática sem converter respostas desconhecidas em factos.",
       "guiding_question": "Que perguntas devem ficar respondidas?",
-      "good_examples": ["O que desencadeia o fallback?", "Como ocorre o regresso ao modo normal?"],
+      "good_examples": [
+        "O que desencadeia o fallback?",
+        "Como ocorre o regresso ao modo normal?"
+      ],
       "bad_examples": [],
-      "tips": ["Marque as perguntas obrigatórias.", "Mova para questões pendentes o que ainda não tem resposta aprovada."],
-      "allow_use_example": true
+      "tips": [
+        "Marque as perguntas obrigatórias.",
+        "Mova para questões pendentes o que ainda não tem resposta aprovada."
+      ],
+      "allow_use_example": true,
+      "instructions": "Marque as perguntas obrigatórias."
     },
     "development_point.open_questions": {
       "label": "Questões pendentes",
       "short_help": "Registe lacunas que a LLM não pode resolver por iniciativa própria.",
       "definition": "Identifica decisões ou informação ainda indisponível que deve permanecer explicitamente pendente.",
       "guiding_question": "O que continua por decidir ou confirmar?",
-      "good_examples": ["O retorno ao modo remoto será automático ou sujeito a confirmação do operador?"],
+      "good_examples": [
+        "O retorno ao modo remoto será automático ou sujeito a confirmação do operador?"
+      ],
       "bad_examples": [],
-      "tips": ["Atribua estado e, quando possível, responsável ou marco de decisão."],
-      "allow_use_example": true
+      "tips": [
+        "Atribua estado e, quando possível, responsável ou marco de decisão."
+      ],
+      "allow_use_example": true,
+      "instructions": "Atribua estado e, quando possível, responsável ou marco de decisão."
     },
     "development_point.acceptance_criteria": {
       "label": "Critérios de aceitação",
       "short_help": "Defina como será verificado se o desenvolvimento respeita os inputs.",
       "definition": "Os critérios permitem avaliar o resultado sem depender apenas de apreciação subjetiva.",
       "guiding_question": "Quando será considerado adequado o desenvolvimento?",
-      "good_examples": ["Distingue claramente supervisão e controlo.", "Não introduz valores temporais não aprovados."],
+      "good_examples": [
+        "Distingue claramente supervisão e controlo.",
+        "Não introduz valores temporais não aprovados."
+      ],
       "bad_examples": [
         {
           "text": "O texto deve ficar bom.",
           "reason": "Não é verificável."
         }
       ],
-      "tips": ["Use critérios observáveis e verificáveis."],
-      "allow_use_example": true
+      "tips": [
+        "Use critérios observáveis e verificáveis."
+      ],
+      "allow_use_example": true,
+      "instructions": "Use critérios observáveis e verificáveis."
     },
     "development_point.llm_freedom": {
       "label": "Liberdade da LLM",
       "short_help": "Defina o grau de liberdade permitido no desenvolvimento externo.",
       "definition": "Strict limita a LLM aos inputs; bounded permite melhorar estrutura e explicação; exploratory permite sugestões separadas.",
       "guiding_question": "Que liberdade pode a LLM ter sem alterar a intenção técnica?",
-      "good_examples": ["strict"],
+      "good_examples": [
+        "strict"
+      ],
       "bad_examples": [],
-      "tips": ["Use strict por defeito em cadernos de encargos."],
+      "tips": [
+        "Use strict por defeito em cadernos de encargos."
+      ],
+      "allow_use_example": false,
+      "instructions": "Use strict por defeito em cadernos de encargos."
+    },
+    "workspace.root_path": {
+      "label": "Caminho do workspace",
+      "short_help": "Pasta no disco para SQLite, exportações e importações.",
+      "definition": "Separa o código da aplicação dos dados do projecto.",
+      "guiding_question": "Onde quer guardar os dados?",
+      "instructions": "Use um caminho dedicado fora do repositório Git.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [
+        "Use um caminho dedicado fora do repositório Git."
+      ],
       "allow_use_example": false
+    },
+    "workspace.user_name": {
+      "label": "Utilizador local",
+      "short_help": "Nome registado na proveniência.",
+      "definition": "Identifica quem criou revisões e exportações.",
+      "guiding_question": "Que nome deve aparecer nos metadados?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "workspace.help_level": {
+      "label": "Nível de ajuda",
+      "short_help": "Controla microajuda, popups e exemplos.",
+      "definition": "Essential: ícones; Normal: ajuda completa no popup; Detailed: comparações extra.",
+      "guiding_question": "Quanto detalhe de orientação pretende?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "workbook.validate_file": {
+      "label": "Validar Excel",
+      "short_help": "Confirma cabeçalhos do modelo v1.",
+      "definition": "Não importa dados — apenas valida estrutura.",
+      "guiding_question": "O ficheiro segue o modelo GET?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "knowledge.title": {
+      "label": "Título",
+      "short_help": "Nome legível da unidade.",
+      "definition": "Identifica o conhecimento na biblioteca ou projecto.",
+      "guiding_question": "Como nomear esta unidade?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "knowledge.content": {
+      "label": "Conteúdo",
+      "short_help": "Texto Markdown limitado.",
+      "definition": "Corpo do conhecimento reutilizável.",
+      "guiding_question": "Qual é a afirmação ou descrição?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "knowledge.origin_context": {
+      "label": "Contexto de origem",
+      "short_help": "De onde vem este conhecimento.",
+      "definition": "Proveniência para revisão futura.",
+      "guiding_question": "Qual o contexto de captura?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "knowledge.search": {
+      "label": "Pesquisa",
+      "short_help": "Procure na biblioteca.",
+      "definition": "Pesquisa FTS local.",
+      "guiding_question": "Que termo procura?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "knowledge.profile_type": {
+      "label": "Tipo de ficha",
+      "short_help": "Ficha estruturada opcional.",
+      "definition": "Classifica a unidade para exportação.",
+      "guiding_question": "Que tipo de ficha se aplica?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "knowledge.profile_data": {
+      "label": "Dados da ficha",
+      "short_help": "JSON da ficha técnica.",
+      "definition": "Parâmetros em texto livre no MVP.",
+      "guiding_question": "Que campos estruturados anotar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "knowledge.draft": {
+      "label": "Rascunho vs revisão",
+      "short_help": "O rascunho é editável até concluir revisão.",
+      "definition": "Só após concluir revisão o conteúdo fica imutável na base.",
+      "guiding_question": "Já está pronto para revisão?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "library.ref_title": {
+      "label": "Título da referência",
+      "short_help": "Designação da fonte.",
+      "definition": "Referência genérica ou norma.",
+      "guiding_question": "Como identificar a fonte?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "library.ref_citation": {
+      "label": "Citação",
+      "short_help": "Como citar a referência.",
+      "definition": "Formato bibliográfico ou interno.",
+      "guiding_question": "Como citar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "library.term_preferred": {
+      "label": "Termo preferencial",
+      "short_help": "Vocabulário controlado.",
+      "definition": "Termo a usar na redação.",
+      "guiding_question": "Qual o termo preferido?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "library.term_definition": {
+      "label": "Definição",
+      "short_help": "Significado do termo.",
+      "definition": "Evita ambiguidade no caderno.",
+      "guiding_question": "O que significa?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "library.term_synonyms": {
+      "label": "Sinónimos",
+      "short_help": "Variantes aceites.",
+      "definition": "Lista separada por vírgulas.",
+      "guiding_question": "Que sinónimos registar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "project.template_version": {
+      "label": "Modelo de projecto",
+      "short_help": "Define estrutura inicial.",
+      "definition": "Versão do modelo de projecto.",
+      "guiding_question": "Que modelo usar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "project.name": {
+      "label": "Nome do projecto",
+      "short_help": "Identificação do caderno.",
+      "definition": "Nome legível do projecto.",
+      "guiding_question": "Como nomear o projecto?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "project.intervention": {
+      "label": "Tipo de intervenção",
+      "short_help": "Brownfield, greenfield, etc.",
+      "definition": "Contexto da obra.",
+      "guiding_question": "Que tipo de intervenção?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "project.active": {
+      "label": "Projecto activo",
+      "short_help": "Seleccionar para editar.",
+      "definition": "Projecto corrente na shell.",
+      "guiding_question": "Em que projecto trabalha?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "block.objective": {
+      "label": "Objectivo do bloco",
+      "short_help": "O que este bloco deve produzir.",
+      "definition": "Delimita a unidade documental a desenvolver.",
+      "guiding_question": "Qual o objectivo do bloco documental?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "block.scope": {
+      "label": "Âmbito do bloco",
+      "short_help": "Limites temáticos.",
+      "definition": "O que entra e o que fica fora do bloco.",
+      "guiding_question": "Qual o âmbito?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "block.target_output": {
+      "label": "Resultado documental",
+      "short_help": "Formato ou tipo de saída.",
+      "definition": "Describe target_output para a LLM.",
+      "guiding_question": "Que tipo de texto ou secção se espera?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "block.template": {
+      "label": "Modelo estrutural",
+      "short_help": "Cria prompts vazios por tipo de assunto.",
+      "definition": "Não inventa conteúdo — só estrutura.",
+      "guiding_question": "Que modelo se aplica ao novo ponto?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "block.points_overview": {
+      "label": "Pontos de desenvolvimento",
+      "short_help": "Lista ordenada de assuntos.",
+      "definition": "Cada ponto é um assunto que a LLM desenvolve sem escolher autonomamente.",
+      "guiding_question": "Quantos assuntos precisa de desenvolver?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "block.include_draft": {
+      "label": "Incluir rascunhos",
+      "short_help": "Exporta pontos ainda não ready.",
+      "definition": "Por defeito só ready/approved entram no pacote.",
+      "guiding_question": "Quer expor rascunhos à LLM?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "premise.statement": {
+      "label": "Enunciado da premissa",
+      "short_help": "Condição assumida verdadeira.",
+      "definition": "Enquadramento, não requisito ao adjudicatário.",
+      "guiding_question": "Que condição é assumida?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "premise.importance": {
+      "label": "Importância",
+      "short_help": "Mandatória, recomendada ou informativa.",
+      "definition": "Prioridade da premissa.",
+      "guiding_question": "Quão crítica é?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "premise.source_type": {
+      "label": "Origem",
+      "short_help": "Tipo de fonte da premissa.",
+      "definition": "Classificação da proveniência.",
+      "guiding_question": "De onde vem esta condição?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "premise.confidence": {
+      "label": "Confiança",
+      "short_help": "Confirmada, provisória ou não verificada.",
+      "definition": "Grau de certeza.",
+      "guiding_question": "Está confirmada?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "document.tree": {
+      "label": "Árvore documental",
+      "short_help": "Seleccione nó para associar conhecimento.",
+      "definition": "Fascículos, blocos, secções.",
+      "guiding_question": "Que parte do caderno editar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "document.assoc_item": {
+      "label": "Unidade de conhecimento",
+      "short_help": "Ligação qualificada ao nó.",
+      "definition": "Não duplica a unidade na base.",
+      "guiding_question": "Que conhecimento associar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "document.assoc_role": {
+      "label": "Papel da associação",
+      "short_help": "Como usar na exportação.",
+      "definition": "Papéis como mandatory_content, example.",
+      "guiding_question": "Com que papel exportar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "document.assoc_instruction": {
+      "label": "Instrução de uso",
+      "short_help": "Nota para exportação.",
+      "definition": "Orienta a LLM sobre o uso.",
+      "guiding_question": "Como deve ser usada?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "document.node_type": {
+      "label": "Tipo de nó",
+      "short_help": "fascicle, block, section, subsection.",
+      "definition": "Estrutura do caderno.",
+      "guiding_question": "Que tipo criar?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "document.title": {
+      "label": "Título do nó",
+      "short_help": "Designação na árvore.",
+      "definition": "Aparece na numeração calculada.",
+      "guiding_question": "Qual o título?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "document.parent": {
+      "label": "Nó pai",
+      "short_help": "Posição na hierarquia.",
+      "definition": "Blocos pertencem a fascículos.",
+      "guiding_question": "Onde inserir?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "technical.instance_name": {
+      "label": "Nome da instância",
+      "short_help": "Sistema, equipamento ou função.",
+      "definition": "Árvore técnica do projecto.",
+      "guiding_question": "Como nomear?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "technical.kind": {
+      "label": "Tipo técnico",
+      "short_help": "system, equipment, function.",
+      "definition": "Código legível na exportação.",
+      "guiding_question": "Que tipo é?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "technical.parent": {
+      "label": "Pai técnico",
+      "short_help": "Hierarquia opcional.",
+      "definition": "Relação sistema-equipamento.",
+      "guiding_question": "Tem pai?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "export.baseline": {
+      "label": "Baseline",
+      "short_help": "Congela códigos e revisões.",
+      "definition": "Publique antes do pacote mestre.",
+      "guiding_question": "Já publicou baseline?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "export.profile": {
+      "label": "Perfil de exportação",
+      "short_help": "Discussão ou redacção.",
+      "definition": "Controla contexto enviado à LLM.",
+      "guiding_question": "Discussão ou redacção?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "export.zip": {
+      "label": "Pacote ZIP",
+      "short_help": "JSON, Markdown e validation.",
+      "definition": "Arquivo para partilha manual.",
+      "guiding_question": "Precisa de ZIP?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "export.fascicle": {
+      "label": "Fascículo a exportar",
+      "short_help": "Raiz do fascículo.",
+      "definition": "Exportação roundtrip clássica.",
+      "guiding_question": "Qual fascículo?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "import.file": {
+      "label": "Ficheiro JSON",
+      "short_help": "Devolução da LLM.",
+      "definition": "Só JSON reimportável.",
+      "guiding_question": "Tem o JSON devolvido?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
+    },
+    "import.fascicle": {
+      "label": "Fascículo do merge",
+      "short_help": "Âmbito da reimportação.",
+      "definition": "Alterações estruturais limitadas ao fascículo.",
+      "guiding_question": "Que fascículo?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "import.omission": {
+      "label": "Omissões no JSON",
+      "short_help": "Omitir não é eliminar.",
+      "definition": "Campos omitidos não apagam conteúdo aprovado.",
+      "guiding_question": "Entendeu a regra de omissão?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "backup.critical": {
+      "label": "Backup crítico",
+      "short_help": "Cópia antes de migrações.",
+      "definition": "Protege SQLite e metadados.",
+      "guiding_question": "Criar backup agora?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "development_point.status": {
+      "label": "Estado do ponto",
+      "short_help": "draft, ready, approved, etc.",
+      "definition": "Controla exportação e revisão.",
+      "guiding_question": "Qual o estado?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "development_point.overview": {
+      "label": "Ponto de desenvolvimento",
+      "short_help": "Define um assunto para a LLM.",
+      "definition": "A LLM transforma em texto, não escolhe o conteúdo.",
+      "guiding_question": "O que precisa de ser desenvolvido?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": true
     }
+  },
+  "concepts": {
+    "block": {
+      "label": "Bloco",
+      "summary": "Delimita a unidade documental a produzir (ex.: F04_B03)."
+    },
+    "development_point": {
+      "label": "Ponto de desenvolvimento",
+      "summary": "Cada assunto que a LLM deve desenvolver, por ordem."
+    },
+    "premise": {
+      "label": "Premissa",
+      "summary": "Condição considerada verdadeira; limita o desenvolvimento."
+    },
+    "knowledge_item": {
+      "label": "KnowledgeItem",
+      "summary": "Conhecimento reutilizável que suporta um ou mais pontos."
+    },
+    "reference": {
+      "label": "Referência",
+      "summary": "Fonte documental, normativa ou técnica."
+    },
+    "open_question": {
+      "label": "Questão pendente",
+      "summary": "Lacuna que a LLM não pode resolver por iniciativa própria."
+    }
+  },
+  "workflows": {
+    "user_controls": [
+      "Quais os assuntos a desenvolver",
+      "A ordem dos assuntos",
+      "As ideias nucleares",
+      "As premissas",
+      "O grau de detalhe",
+      "O que é obrigatório",
+      "O que é proibido assumir",
+      "As referências aplicáveis"
+    ],
+    "llm_role": "A LLM apenas transforma essa estrutura em texto desenvolvido, sem escolher autonomamente o conteúdo do bloco."
+  },
+  "screens": {
+    "workspace": {
+      "title": "Preparar workspace",
+      "objective": "Criar ou abrir a pasta de dados local.",
+      "steps": [
+        "Indique o caminho do workspace",
+        "Crie ou abra",
+        "Configure o nível de ajuda"
+      ],
+      "next": "library"
+    },
+    "library": {
+      "title": "Biblioteca EDA",
+      "objective": "Conhecimento reutilizável.",
+      "steps": [
+        "Crie unidades",
+        "Conclua revisões",
+        "Adicione referências"
+      ],
+      "next": "project"
+    },
+    "project": {
+      "title": "Projecto",
+      "objective": "Contexto do caderno de encargos.",
+      "steps": [
+        "Crie projecto",
+        "Seleccione activo",
+        "Adicione conhecimento do projecto"
+      ],
+      "next": "project-structure"
+    },
+    "project-structure": {
+      "title": "Estrutura documental",
+      "objective": "Árvore fascículo/bloco.",
+      "steps": [
+        "Crie fascículo e blocos",
+        "Seleccione um bloco",
+        "Abre Preparação do bloco"
+      ],
+      "next": "block-editor"
+    },
+    "block-editor": {
+      "title": "Preparação do bloco",
+      "objective": "Definir pontos, premissas e exportar pacote exchange.",
+      "steps": [
+        "Objectivo e âmbito",
+        "Criar pontos ordenados",
+        "Marcar ready",
+        "Exportar JSON para LLM"
+      ],
+      "empty_state": "Crie o primeiro ponto ou escolha um modelo estrutural.",
+      "next": "export"
+    },
+    "export": {
+      "title": "Exportar",
+      "objective": "Baseline e pacotes roundtrip.",
+      "steps": [
+        "Publique baseline",
+        "Exporte mestre ou fascículo"
+      ],
+      "next": "import"
+    },
+    "import": {
+      "title": "Reimportar",
+      "objective": "Decidir alterações propostas.",
+      "steps": [
+        "Carregue JSON",
+        "Decida propostas",
+        "Consolide"
+      ],
+      "next": null
+    },
+    "workbook": {
+      "title": "Modelo Excel",
+      "objective": "Validar modelo controlado.",
+      "steps": [
+        "Transfira modelo",
+        "Valide estrutura"
+      ],
+      "next": "project-structure"
+    },
+    "project-technical": {
+      "title": "Árvore técnica",
+      "objective": "Instâncias exportáveis.",
+      "steps": [
+        "Registe sistemas e funções"
+      ],
+      "next": "export"
+    },
+    "backups": {
+      "title": "Backups",
+      "objective": "Protecção do workspace.",
+      "steps": [
+        "Crie backup crítico antes de mudanças"
+      ],
+      "next": null
+    },
+    "diagnostics": {
+      "title": "Diagnóstico",
+      "objective": "Estado técnico.",
+      "steps": [
+        "Consulte estado do workspace"
+      ],
+      "next": null
+    }
+  },
+  "example_library": {
+    "autonomy_scada_title": "Autonomia perante indisponibilidade do SCADA",
+    "autonomy_scada_idea": "A indisponibilidade do SCADA não deve impedir a operação segura das funções de controlo local.",
+    "premise_local_vars": "O controlador local dispõe das variáveis necessárias para executar a função sem depender continuamente do SCADA."
   }
 }
