@@ -373,8 +373,54 @@ button.secondary.danger:hover {
 
 .list-item-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   margin: 0.35rem 0;
+}
+
+.list-item-row > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.92rem;
+}
+
+.project-list-panel.list-panel {
+  max-height: min(10rem, 28vh);
+  overflow-y: auto;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.icon-btn svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.icon-btn--danger:hover {
+  color: var(--color-danger);
+  border-color: color-mix(in srgb, var(--color-danger) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+}
+
+.icon-btn--danger:focus-visible {
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
 }

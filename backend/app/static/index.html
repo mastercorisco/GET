@@ -177,10 +177,18 @@
           </div>
           <button type="button" id="pCreate">Criar projeto</button>
           <p id="pError" class="error" hidden></p>
-          <h3>Lista de projetos</h3>
-          <div id="pList" class="list-panel"></div>
-          <label for="pActive" data-help-key="project.active">Projeto activo</label>
-          <select id="pActive"></select>
+          <details class="compact-section project-mgmt-panel" id="pMgmtPanel">
+            <summary>
+              <span>Gestão</span>
+              <span id="pMgmtCount" class="compact-section-count"></span>
+            </summary>
+            <div class="compact-section__body">
+              <p class="section-label">Lista de projetos</p>
+              <div id="pList" class="list-panel project-list-panel"></div>
+              <label for="pActive" data-help-key="project.active">Projeto activo</label>
+              <select id="pActive"></select>
+            </div>
+          </details>
         </div>
         <div class="route-tab-panel" data-route-tab="pknowledge" hidden>
           <label for="pkTitle">Título</label>

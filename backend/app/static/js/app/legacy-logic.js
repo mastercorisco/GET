@@ -26,13 +26,23 @@ const rootPath = document.getElementById("rootPath");
         return window.confirm(message || "Confirma eliminação? Pode ser irreversível.");
       }
 
-      function actionDeleteButton(label, onDelete) {
+      const TRASH_ICON_SVG =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>';
+
+      function actionDeleteButton(label, onDelete, options) {
+        const opts = options || {};
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "secondary danger";
-        btn.textContent = label || "Apagar";
+        if (opts.icon) {
+          btn.className = "icon-btn icon-btn--danger";
+          btn.setAttribute("aria-label", label || "Apagar");
+          btn.innerHTML = TRASH_ICON_SVG;
+        } else {
+          btn.className = "secondary danger";
+          btn.textContent = label || "Apagar";
+        }
         btn.addEventListener("click", function () {
-          if (confirmDelete()) onDelete();
+          if (opts.skipConfirm || confirmDelete()) onDelete();
         });
         return btn;
       }
@@ -118,6 +128,11 @@ const rootPath = document.getElementById("rootPath");
           });
         });
         projectCatalog = await knowledgeRequest("/api/projects", {}, "Falha ao listar projetos.");
+        const mgmtCount = document.getElementById("pMgmtCount");
+        if (mgmtCount) {
+          const n = projectCatalog.length;
+          mgmtCount.textContent = n ? "(" + n + " projectos)" : "";
+        }
         const list = document.getElementById("pList");
         list.replaceChildren();
         if (!projectCatalog.length) {
@@ -133,25 +148,29 @@ const rootPath = document.getElementById("rootPath");
               p.name + " · modelo v" + p.template_version + " · biblioteca v" + p.library_version;
             row.appendChild(line);
             row.appendChild(
-              actionDeleteButton("Apagar projecto", function () {
-                if (
-                  !confirmDelete(
-                    "Apagar o projecto «" +
-                      p.name +
-                      "» e toda a estrutura, conhecimento, baselines e importações?"
-                  )
-                ) {
-                  return;
-                }
-                knowledgeRequest("/api/projects/" + p.id, { method: "DELETE" }, "Falha ao apagar projecto.")
-                  .then(function () {
-                    if (selectedDocumentNodeId) selectedDocumentNodeId = null;
-                    return loadProjects();
-                  })
-                  .catch(function (err) {
-                    setProjectError(err.message);
-                  });
-              })
+              actionDeleteButton(
+                "Apagar projecto",
+                function () {
+                  if (
+                    !confirmDelete(
+                      "Apagar o projecto «" +
+                        p.name +
+                        "» e toda a estrutura, conhecimento, baselines e importações?"
+                    )
+                  ) {
+                    return;
+                  }
+                  knowledgeRequest("/api/projects/" + p.id, { method: "DELETE" }, "Falha ao apagar projecto.")
+                    .then(function () {
+                      if (selectedDocumentNodeId) selectedDocumentNodeId = null;
+                      return loadProjects();
+                    })
+                    .catch(function (err) {
+                      setProjectError(err.message);
+                    });
+                },
+                { icon: true, skipConfirm: true }
+              )
             );
             list.appendChild(row);
           });
