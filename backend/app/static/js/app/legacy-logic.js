@@ -215,6 +215,7 @@ const rootPath = document.getElementById("rootPath");
 
         if (mountDocumentTree) {
           mountDocumentTree(list, nodes, {
+            projectId: nodes.length ? nodes[0].project_id : null,
             selectedId: selectedDocumentNodeId,
             onSelect: function (node) {
               selectedDocumentNodeId = node.id;
