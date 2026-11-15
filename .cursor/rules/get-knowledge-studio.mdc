@@ -1,0 +1,25 @@
+---
+description: Regras obrigatórias do GET Knowledge Studio
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# GET Knowledge Studio
+
+- A aplicação é um gestor local de conhecimento técnico. Não contém integração com LLM e não gera texto técnico.
+- SQLite é a fonte de verdade. JSON, Markdown, Excel e ZIP são artefactos derivados.
+- O servidor deve escutar exclusivamente em 127.0.0.1.
+- Não introduzir Docker, cloud, autenticação, multiutilizador, embeddings ou pesquisa semântica no MVP.
+- Usar UUID imutável para identidade e códigos legíveis apenas como atributos editáveis.
+- Nunca atualizar ou eliminar conhecimento aprovado sem criar nova revisão.
+- Omissão num JSON importado nunca significa eliminação.
+- Reimportações entram numa staging area e requerem aprovação humana.
+- Implementar three-way merge: base exportada, estado atual, ficheiro devolvido.
+- IDs, proveniência, aprovação e ciclo de vida são campos protegidos.
+- O perfil Discussão e o perfil Redação são exportações distintas da mesma base.
+- Apenas JSON é reimportável. Markdown é leitura ou texto externo não reimportável.
+- Não inventar requisitos nem alterar schemas sem atualizar versão e migrações.
+- Qualquer mudança de schema exige testes, JSON Schema atualizado e caminho de migração explícito.
+- Preferir código simples, tipado, testável e modular. Evitar abstrações prematuras.
+- Antes de implementar, ler `ARCHITECTURE_DECISIONS.json` e `docs/GET_APP_SPECIFICATION.md`.

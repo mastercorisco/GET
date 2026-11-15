@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+node_modules/
+dist/
+.DS_Store
+.idea/
+.vscode/
+backend/.mypy_cache/
+frontend/tsconfig.tsbuildinfo
+*.db
+*.db-journal

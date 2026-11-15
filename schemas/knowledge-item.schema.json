@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eda.local/get/schemas/knowledge-item.schema.json",
+  "title": "GET Knowledge Item Export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "content",
+    "knowledge_type",
+    "revision",
+    "states",
+    "provenance",
+    "edit_policy"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rationale": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "knowledge_type": {
+      "enum": [
+        "fact",
+        "principle",
+        "requirement",
+        "decision",
+        "rationale",
+        "example",
+        "recommendation",
+        "open_question",
+        "exclusion",
+        "authoring_instruction",
+        "unclassified"
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "states": {
+      "$ref": "common.schema.json#/$defs/states"
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "properties": {
+        "scope_type": {
+          "enum": [
+            "library",
+            "project"
+          ]
+        },
+        "scope_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "technical_profile": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "profile_type": {
+          "enum": [
+            "control_function",
+            "interface",
+            "requirement",
+            "decision",
+            "open_question"
+          ]
+        },
+        "data": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "profile_type",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "relation_type": {
+            "type": "string"
+          },
+          "target_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "relation_type",
+          "target_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "provenance": {
+      "$ref": "common.schema.json#/$defs/provenance"
+    },
+    "edit_policy": {
+      "$ref": "common.schema.json#/$defs/editPolicy"
+    }
+  }
+}

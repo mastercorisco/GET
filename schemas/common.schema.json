@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eda.local/get/schemas/common.schema.json",
+  "title": "GET Common Types",
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revisionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/uuid"
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin_type",
+        "created_at"
+      ],
+      "properties": {
+        "origin_type": {
+          "enum": [
+            "manual_entry",
+            "excel_migration",
+            "library_template",
+            "project_template",
+            "external_json_import",
+            "llm_roundtrip",
+            "merged_item",
+            "derived_item"
+          ]
+        },
+        "origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_reference_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_export_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_import_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "states": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maturity",
+        "approval",
+        "lifecycle"
+      ],
+      "properties": {
+        "maturity": {
+          "enum": [
+            "captured",
+            "structured",
+            "reviewed",
+            "mature"
+          ]
+        },
+        "approval": {
+          "enum": [
+            "unreviewed",
+            "proposed",
+            "confirmed",
+            "approved",
+            "rejected"
+          ]
+        },
+        "lifecycle": {
+          "enum": [
+            "active",
+            "superseded",
+            "withdrawn",
+            "archived"
+          ]
+        }
+      }
+    },
+    "editPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "read_only",
+            "propose_changes",
+            "editable",
+            "structure_only",
+            "reference_only",
+            "excluded"
+          ]
+        },
+        "protected_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "editable_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "allow_new_items": {
+          "type": "boolean"
+        },
+        "allow_removal_proposals": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

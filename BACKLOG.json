@@ -1,0 +1,288 @@
+{
+  "product": "GET Gerador de Especificações Funcionais",
+  "version": "1.0.0",
+  "mvp": true,
+  "epics": [
+    {
+      "id": "E01",
+      "title": "Workspace e fundações",
+      "depends_on": [],
+      "stories": [
+        {
+          "id": "E01-S01",
+          "title": "Criar e abrir workspace local",
+          "acceptance": [
+            "Workspace separado da aplicação",
+            "Configuração persistida",
+            "Servidor apenas em 127.0.0.1"
+          ]
+        },
+        {
+          "id": "E01-S02",
+          "title": "Backups e restauro",
+          "acceptance": [
+            "Backup SQLite consistente",
+            "Backups críticos, diários e semanais",
+            "Restauro com pré-visualização"
+          ]
+        },
+        {
+          "id": "E01-S03",
+          "title": "Migrações da base de dados",
+          "acceptance": [
+            "Alembic configurado",
+            "Migrações testadas",
+            "Falha não corrompe workspace"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E02",
+      "title": "Conhecimento e Biblioteca EDA",
+      "depends_on": [
+        "E01"
+      ],
+      "stories": [
+        {
+          "id": "E02-S01",
+          "title": "Criar unidade mínima",
+          "acceptance": [
+            "Título, conteúdo e contexto obrigatórios",
+            "UUID criado automaticamente",
+            "Rascunho separado da revisão"
+          ]
+        },
+        {
+          "id": "E02-S02",
+          "title": "Estados e revisões",
+          "acceptance": [
+            "Três dimensões de estado",
+            "Revisões append-only",
+            "Estado resumido calculado"
+          ]
+        },
+        {
+          "id": "E02-S03",
+          "title": "Relações e duplicados",
+          "acceptance": [
+            "Vocabulário extensível",
+            "Autorreferência bloqueada",
+            "Fusão nunca automática"
+          ]
+        },
+        {
+          "id": "E02-S04",
+          "title": "Pesquisa",
+          "acceptance": [
+            "FTS5 operacional",
+            "Filtros relacionais",
+            "Resultados distinguem biblioteca e projeto"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E03",
+      "title": "Projetos e modelos",
+      "depends_on": [
+        "E02"
+      ],
+      "stories": [
+        {
+          "id": "E03-S01",
+          "title": "Criar projeto de modelo versionado",
+          "acceptance": [
+            "Origem registada",
+            "Projeto independente da evolução futura do modelo",
+            "Núcleo comum resolvido"
+          ]
+        },
+        {
+          "id": "E03-S02",
+          "title": "Classes e instâncias técnicas",
+          "acceptance": [
+            "Catálogo reutilizável",
+            "Árvore técnica por projeto",
+            "Ligações a conhecimento"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E04",
+      "title": "Estrutura documental",
+      "depends_on": [
+        "E03"
+      ],
+      "stories": [
+        {
+          "id": "E04-S01",
+          "title": "Árvore documental",
+          "acceptance": [
+            "Quatro tipos de nó",
+            "Drag and drop ou reordenação segura",
+            "Aviso no quinto nível"
+          ]
+        },
+        {
+          "id": "E04-S02",
+          "title": "Numeração e baseline",
+          "acceptance": [
+            "Códigos calculados",
+            "Relatório de renumeração",
+            "Códigos congelados na baseline"
+          ]
+        },
+        {
+          "id": "E04-S03",
+          "title": "Associações qualificadas",
+          "acceptance": [
+            "Sem duplicar conhecimento",
+            "Papéis de associação disponíveis",
+            "Instrução de uso exportável"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E05",
+      "title": "Fichas técnicas e referências",
+      "depends_on": [
+        "E02",
+        "E03"
+      ],
+      "stories": [
+        {
+          "id": "E05-S01",
+          "title": "Cinco fichas do MVP",
+          "acceptance": [
+            "Função, interface, requisito, decisão e questão pendente",
+            "Parâmetros em texto livre",
+            "Validações específicas transparentes"
+          ]
+        },
+        {
+          "id": "E05-S02",
+          "title": "Referências e normas",
+          "acceptance": [
+            "Referência simples",
+            "Ficha normativa opcional",
+            "Papel contratual explícito"
+          ]
+        },
+        {
+          "id": "E05-S03",
+          "title": "Terminologia",
+          "acceptance": [
+            "Termo preferencial",
+            "Sinónimos e termos a evitar",
+            "Uso contextual por projeto"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E06",
+      "title": "Exportação",
+      "depends_on": [
+        "E04",
+        "E05"
+      ],
+      "stories": [
+        {
+          "id": "E06-S01",
+          "title": "JSON mestre",
+          "acceptance": [
+            "Consolidado e seletivo",
+            "Schema validado",
+            "Manifesto de fascículos"
+          ]
+        },
+        {
+          "id": "E06-S02",
+          "title": "Fascículo autónomo",
+          "acceptance": [
+            "Contexto suficiente",
+            "Políticas de edição",
+            "Perfis Discussão e Redação"
+          ]
+        },
+        {
+          "id": "E06-S03",
+          "title": "Markdown e ZIP",
+          "acceptance": [
+            "Markdown não reimportável",
+            "ZIP opcional",
+            "Relatório de validação incluível"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E07",
+      "title": "Reimportação e revisão",
+      "depends_on": [
+        "E06"
+      ],
+      "stories": [
+        {
+          "id": "E07-S01",
+          "title": "Staging e validação",
+          "acceptance": [
+            "JSON truncado rejeitado",
+            "Erros localizados em quarentena",
+            "Sem correções silenciosas"
+          ]
+        },
+        {
+          "id": "E07-S02",
+          "title": "Three-way merge",
+          "acceptance": [
+            "Base, atual e devolvido comparados",
+            "Conflitos identificados",
+            "Omissão não remove"
+          ]
+        },
+        {
+          "id": "E07-S03",
+          "title": "Aprovação por unidade",
+          "acceptance": [
+            "Aceitar/rejeitar por grupo",
+            "Destino da melhoria selecionável",
+            "Campos protegidos requerem confirmação"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E08",
+      "title": "Migração inicial",
+      "depends_on": [
+        "E01",
+        "E04",
+        "E05"
+      ],
+      "stories": [
+        {
+          "id": "E08-S01",
+          "title": "Migrar workbook GET",
+          "acceptance": [
+            "Script dedicado",
+            "Relatório de migração",
+            "Consolidação apenas após validação"
+          ]
+        },
+        {
+          "id": "E08-S02",
+          "title": "Templates Excel controlados",
+          "acceptance": [
+            "Templates gerados pela app",
+            "Validação antes de importar",
+            "Sem mapeamento arbitrário"
+          ]
+        }
+      ]
+    }
+  ]
+}

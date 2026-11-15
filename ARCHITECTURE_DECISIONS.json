@@ -1,0 +1,290 @@
+{
+  "document_type": "get_architecture_decisions",
+  "version": "1.0.0",
+  "created_at": "2026-11-14T18:00:00-01:00",
+  "status": "approved_for_planning",
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "topic": "deployment",
+      "decision": "Aplicação web local para um único utilizador, acessível apenas em 127.0.0.1.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-002",
+      "topic": "knowledge_model",
+      "decision": "Biblioteca EDA comum mais definições específicas por projeto.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-003",
+      "topic": "capture",
+      "decision": "Duas entradas para o mesmo modelo: biblioteca ou contexto de projeto/bloco.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-004",
+      "topic": "minimum_capture",
+      "decision": "Título, conteúdo e contexto são obrigatórios; classificação detalhada é progressiva.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-005",
+      "topic": "import_review",
+      "decision": "Aprovação por unidade de conhecimento, com detalhe campo a campo e aceitação em lote apenas sem conflitos.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-006",
+      "topic": "external_structure_changes",
+      "decision": "JSON devolvido pode propor alterações estruturais dentro do fascículo exportado.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-007",
+      "topic": "formats",
+      "decision": "JSON é canónico e reimportável; Markdown é apenas leitura/produção externa; ZIP é opcional.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-008",
+      "topic": "documents",
+      "decision": "A app guarda apenas referências a documentos, não anexos.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-009",
+      "topic": "export_profiles",
+      "decision": "Perfis Discussão e Redação sobre a mesma base.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-010",
+      "topic": "autonomous_context",
+      "decision": "Núcleo comum obrigatório, relações explícitas e revisão de conteúdo antes de exportar.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-011",
+      "topic": "history",
+      "decision": "Histórico por unidade e baselines imutáveis do projeto.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-012",
+      "topic": "promotion",
+      "decision": "Na revisão, cada melhoria é classificada como específica do projeto, reutilizável na biblioteca ou pendente.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-013",
+      "topic": "authoring_profiles",
+      "decision": "Perfil-base versionado com ajustes por projeto e fascículo.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-014",
+      "topic": "validation",
+      "decision": "Validação estrutural e regras explícitas de coerência, sem interpretação semântica por IA.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-015",
+      "topic": "technical_forms",
+      "decision": "Unidade genérica com fichas estruturadas opcionais.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-016",
+      "topic": "invalid_imports",
+      "decision": "Validação estrita; JSON ilegível é rejeitado; erros localizados podem ser colocados em quarentena.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-017",
+      "topic": "transport",
+      "decision": "Ficheiro JSON único por defeito e ZIP opcional.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-018",
+      "topic": "ui_architecture",
+      "decision": "FastAPI + SQLite + React/TypeScript, executado localmente.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-019",
+      "topic": "backup",
+      "decision": "Workspace separado, backups críticos, diários e semanais, with consistent SQLite backup.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-020",
+      "topic": "exchange_retention",
+      "decision": "Guardar importações, exportações associadas a baselines e exportações usadas em reimportações.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-021",
+      "topic": "search",
+      "decision": "SQLite FTS5 e filtros estruturados; sem pesquisa semântica.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-022",
+      "topic": "numbering",
+      "decision": "Numeração automática na versão de trabalho e congelada em baselines.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-023",
+      "topic": "document_tree",
+      "decision": "Árvore genérica; quatro níveis recomendados; aviso no quinto.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-024",
+      "topic": "applicability",
+      "decision": "Âmbito estruturado, condições opcionais e nota textual.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-025",
+      "topic": "standards",
+      "decision": "Referência genérica e ficha normativa opcional.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-026",
+      "topic": "states",
+      "decision": "Maturidade, aprovação e ciclo de vida independentes, com estado resumido calculado.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-027",
+      "topic": "relations",
+      "decision": "Vocabulário controlado extensível.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-028",
+      "topic": "duplicates",
+      "decision": "Deteção determinística e consolidação humana controlada.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-029",
+      "topic": "technical_structure",
+      "decision": "Classes reutilizáveis mais instâncias por projeto.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-030",
+      "topic": "technical_parameters",
+      "decision": "Parâmetros técnicos em texto livre no MVP.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-031",
+      "topic": "mvp_profiles",
+      "decision": "Cinco fichas: função de controlo, interface, requisito, decisão e questão pendente.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-032",
+      "topic": "schema_evolution",
+      "decision": "Schemas versionados e migrações explícitas.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-033",
+      "topic": "project_creation",
+      "decision": "Projetos criados a partir de modelos versionados.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-034",
+      "topic": "excel_import",
+      "decision": "Migração dedicada do workbook atual e importação futura por templates GET controlados.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-035",
+      "topic": "editing",
+      "decision": "Autosave em rascunho e conclusão explícita da revisão.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-036",
+      "topic": "navigation",
+      "decision": "Biblioteca EDA e Projetos, com vistas documental, técnica e de conhecimento.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-037",
+      "topic": "master_json",
+      "decision": "Mestre consolidado, mas seletivo.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-038",
+      "topic": "block_association",
+      "decision": "Associação qualificada sem duplicação.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-039",
+      "topic": "edit_policy",
+      "decision": "Política de edição por objeto e por campo.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-040",
+      "topic": "llm_outputs",
+      "decision": "JSON de retorno e Markdown externo são artefactos independentes.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-041",
+      "topic": "redaction_profile",
+      "decision": "Perfil-base Markdown com regras por fascículo e bloco.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-042",
+      "topic": "common_core",
+      "decision": "Núcleo comum definido pelo modelo e ajustável no projeto.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-043",
+      "topic": "exclusions",
+      "decision": "Exclusão explícita e fundamentada.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-044",
+      "topic": "terminology",
+      "decision": "Vocabulário controlado reutilizável e uso contextual.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-045",
+      "topic": "identifiers",
+      "decision": "UUID imutável + código legível editável + aliases; códigos documentais separados.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-046",
+      "topic": "markdown_storage",
+      "decision": "Campos narrativos armazenados em Markdown limitado e sanitizado.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-047",
+      "topic": "deletion",
+      "decision": "Soft delete/lifecycle por defeito; eliminação física apenas para rascunhos nunca utilizados.",
+      "status": "accepted"
+    }
+  ]
+}

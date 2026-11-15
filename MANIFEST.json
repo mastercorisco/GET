@@ -1,0 +1,76 @@
+{
+  "package": "GET_Cursor_Planning_Package_v1",
+  "created_at": "2026-11-14T18:00:00-01:00",
+  "files": [
+    {
+      "path": ".cursor/rules/get-knowledge-studio.mdc",
+      "sha256": "2ebaf0f06053d27754bb52138450719f6a87d854d865dcc12300dc57eee0dba6",
+      "size": 1504
+    },
+    {
+      "path": "ARCHITECTURE_DECISIONS.json",
+      "sha256": "f927706089ae4d58e56a968aa66aaab852f8759d57fb899575715f8759a0e02d",
+      "size": 8845
+    },
+    {
+      "path": "BACKLOG.json",
+      "sha256": "e46ccefd3d99402b5c61c625062f3bac9b27460996aead45d21ff0ea2916ab58",
+      "size": 7224
+    },
+    {
+      "path": "CURSOR_MASTER_PROMPT.md",
+      "sha256": "a17548be34109bbe011f7c45ebcda5d81d5bde75f4a80d9e248af16ee954a66f",
+      "size": 5848
+    },
+    {
+      "path": "README.md",
+      "sha256": "8f384ec7f60741a3dd41f0718ae96f3acc007ab84abf1532397c605eb7f60519",
+      "size": 2018
+    },
+    {
+      "path": "docs/DATA_MODEL.md",
+      "sha256": "9fdb4cae6b33f268d19382abe3ebfa7382d33c46b181761e6ce740d5dfef5f08",
+      "size": 3808
+    },
+    {
+      "path": "docs/GET_APP_SPECIFICATION.md",
+      "sha256": "68e1aa165b2027dd727101febf7e201d9a861759bd5f5e1ef7d5161b0bffff06",
+      "size": 12156
+    },
+    {
+      "path": "docs/IMPLEMENTATION_PLAN_TEMPLATE.md",
+      "sha256": "52b15df53680050a5832b5eab808e868177c8f4178812cac6ab1b398b59ffeda",
+      "size": 1137
+    },
+    {
+      "path": "examples/fascicle-roundtrip.example.json",
+      "sha256": "54293fbbdcc0e12a3ad0fde4a4abbe9a637ca6a1c198d4eab52981388c699432",
+      "size": 8745
+    },
+    {
+      "path": "examples/master.example.json",
+      "sha256": "46a581f1517e10f7460fa3f341879e5490d487aaf884e5c91aac06ff46bd12b9",
+      "size": 2706
+    },
+    {
+      "path": "schemas/common.schema.json",
+      "sha256": "bba03d2968b3dfa8acda49c673b90cafeb049c13ea03c095772f87540be22349",
+      "size": 3431
+    },
+    {
+      "path": "schemas/fascicle-roundtrip.schema.json",
+      "sha256": "e128e01ca066389b6fede8b9b0ac41654906f674709ed22a747c2dad4e99800d",
+      "size": 5956
+    },
+    {
+      "path": "schemas/knowledge-item.schema.json",
+      "sha256": "2fca6c3325616e336dbad1332d088c74e94144d814b38d4ee98e41a8a9183ed9",
+      "size": 2971
+    },
+    {
+      "path": "schemas/master.schema.json",
+      "sha256": "6c5813bf4c7953149c88ac40d6a18533e757c2f793ce62e70119adcfbf91fe69",
+      "size": 3970
+    }
+  ]
+}

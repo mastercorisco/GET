@@ -1,0 +1,267 @@
+{
+  "schema_name": "get_fascicle_roundtrip",
+  "schema_version": "1.0.0",
+  "application_version": "0.1.0",
+  "package_type": "fascicle_roundtrip",
+  "export_profile": "discussion",
+  "export_id": "EXP-F04-0001",
+  "created_at": "2026-11-14T18:00:00-01:00",
+  "base_revision": 1,
+  "project": {
+    "id": "11111111-1111-4111-8111-111111111111",
+    "code": "PRJ-CTBJ-CMDCTRL",
+    "name": "Remodelação do Sistema de Comando e Controlo"
+  },
+  "fascicle": {
+    "id": "33333333-3333-4333-8333-333333333333",
+    "display_code": "F04",
+    "title": "Filosofia funcional, modos de operação e alocação do controlo",
+    "revision": 1,
+    "scope": "Definir princípios de proximidade, autonomia, distribuição, autoridade, fallback e estados de funcionamento.",
+    "structure": [
+      {
+        "node_id": "77777777-7777-4777-8777-777777777777",
+        "node_type": "block",
+        "display_code": "F04_B34",
+        "title": "Perda de referências remotas",
+        "position": 34
+      }
+    ]
+  },
+  "protected_context": {
+    "purpose": "Contexto de leitura; alterações exigem proposta explícita.",
+    "knowledge_items": [
+      {
+        "id": "44444444-4444-4444-8444-444444444444",
+        "code": "KN-CONTINUIDADE-SEGURA",
+        "aliases": [],
+        "title": "Estado de continuidade segura",
+        "content": "A perda de uma referência superior deverá conduzir a uma condição local previamente definida que preserve a continuidade segura da função, sem neutralizar proteções.",
+        "rationale": "Numa central, a resposta segura pode ser manter um serviço auxiliar essencial em funcionamento, dentro do envelope admissível.",
+        "notes": null,
+        "knowledge_type": "principle",
+        "revision": 1,
+        "states": {
+          "maturity": "reviewed",
+          "approval": "confirmed",
+          "lifecycle": "active"
+        },
+        "scope": {
+          "scope_type": "project",
+          "scope_id": "11111111-1111-4111-8111-111111111111"
+        },
+        "technical_profile": null,
+        "relations": [],
+        "provenance": {
+          "origin_type": "manual_entry",
+          "origin_id": null,
+          "created_by": "local_user",
+          "created_at": "2026-11-14T18:00:00-01:00",
+          "source_reference_ids": [],
+          "source_export_id": null,
+          "source_import_id": null
+        },
+        "edit_policy": {
+          "mode": "propose_changes",
+          "protected_fields": [
+            "id",
+            "revision",
+            "states.approval",
+            "states.lifecycle",
+            "provenance"
+          ],
+          "editable_fields": [
+            "title",
+            "content",
+            "rationale",
+            "notes",
+            "relations"
+          ],
+          "allow_new_items": true,
+          "allow_removal_proposals": true
+        }
+      }
+    ],
+    "terminology": [
+      {
+        "concept_id": "TERM-001",
+        "preferred_term": "estado de continuidade segura",
+        "definition": "Estado autónomo e conservador que mantém uma função essencial dentro de condições admissíveis."
+      }
+    ],
+    "references": []
+  },
+  "editable_knowledge": {
+    "knowledge_items": [],
+    "decisions": [
+      {
+        "id": "55555555-5555-4555-8555-555555555555",
+        "code": "DEC-FEEDER-FALLBACK",
+        "aliases": [],
+        "title": "Fallback dos feeders de combustível",
+        "content": "Na perda ou invalidação da referência remota necessária aos variadores dos feeders, o controlo local deverá assumir uma referência conservadora de 100%, mantendo a redundância e todas as proteções aplicáveis.",
+        "rationale": "Priorizar a continuidade da alimentação de combustível e evitar disparo dos grupos por perda de pressão.",
+        "notes": "A base exata do valor percentual deve permanecer explícita no desenvolvimento posterior.",
+        "knowledge_type": "decision",
+        "revision": 1,
+        "states": {
+          "maturity": "structured",
+          "approval": "confirmed",
+          "lifecycle": "active"
+        },
+        "scope": {
+          "scope_type": "project",
+          "scope_id": "11111111-1111-4111-8111-111111111111"
+        },
+        "technical_profile": {
+          "profile_type": "decision",
+          "data": {
+            "decision_scope": "Feeders de combustível",
+            "technical_parameters": "Fallback a 100%; condições e rampa de reposição por completar.",
+            "consequences": "Manter continuidade segura; não neutralizar proteções."
+          }
+        },
+        "relations": [
+          {
+            "relation_type": "implements",
+            "target_id": "44444444-4444-4444-8444-444444444444",
+            "note": "Concretiza o princípio para os feeders."
+          }
+        ],
+        "provenance": {
+          "origin_type": "manual_entry",
+          "origin_id": null,
+          "created_by": "local_user",
+          "created_at": "2026-11-14T18:00:00-01:00",
+          "source_reference_ids": [],
+          "source_export_id": null,
+          "source_import_id": null
+        },
+        "edit_policy": {
+          "mode": "propose_changes",
+          "protected_fields": [
+            "id",
+            "revision",
+            "states.approval",
+            "states.lifecycle",
+            "provenance"
+          ],
+          "editable_fields": [
+            "title",
+            "content",
+            "rationale",
+            "notes",
+            "relations",
+            "technical_profile.data"
+          ],
+          "allow_new_items": true,
+          "allow_removal_proposals": true
+        }
+      }
+    ],
+    "open_questions": [
+      {
+        "id": "66666666-6666-4666-8666-666666666666",
+        "code": "OQ-FEEDER-RETURN",
+        "aliases": [],
+        "title": "Reposição da referência remota dos feeders",
+        "content": "Definir a estratégia de retorno após recuperação da comunicação, incluindo validação, estabilidade, rampa e eventual confirmação do operador.",
+        "rationale": null,
+        "notes": null,
+        "knowledge_type": "open_question",
+        "revision": 1,
+        "states": {
+          "maturity": "captured",
+          "approval": "proposed",
+          "lifecycle": "active"
+        },
+        "scope": {
+          "scope_type": "project",
+          "scope_id": "11111111-1111-4111-8111-111111111111"
+        },
+        "technical_profile": {
+          "profile_type": "open_question",
+          "data": {
+            "blocking": "false",
+            "target": "engineering_design"
+          }
+        },
+        "relations": [
+          {
+            "relation_type": "depends_on",
+            "target_id": "55555555-5555-4555-8555-555555555555",
+            "note": null
+          }
+        ],
+        "provenance": {
+          "origin_type": "manual_entry",
+          "origin_id": null,
+          "created_by": "local_user",
+          "created_at": "2026-11-14T18:00:00-01:00",
+          "source_reference_ids": [],
+          "source_export_id": null,
+          "source_import_id": null
+        },
+        "edit_policy": {
+          "mode": "editable",
+          "protected_fields": [
+            "id",
+            "revision",
+            "states.approval",
+            "states.lifecycle",
+            "provenance"
+          ],
+          "editable_fields": [
+            "title",
+            "content",
+            "rationale",
+            "notes",
+            "relations",
+            "technical_profile.data"
+          ],
+          "allow_new_items": true,
+          "allow_removal_proposals": true
+        }
+      }
+    ]
+  },
+  "technical_instances": [
+    {
+      "instance_id": "SYS-FUEL-FEEDERS",
+      "class_code": "redundant_pump_skid",
+      "title": "Skid de bombas feeders",
+      "notes": "Controlo local e variadores com referência remota."
+    }
+  ],
+  "authoring_profile": {
+    "language": "pt-PT",
+    "mode": "discussion",
+    "instructions": [
+      "Debater alternativas mantendo decisões confirmadas identificadas.",
+      "Não inventar parâmetros.",
+      "Devolver o pacote JSON completo."
+    ]
+  },
+  "working_instructions": {
+    "preserve_existing_ids": true,
+    "invent_missing_values": false,
+    "treat_omissions_as_deletions": false,
+    "return_complete_package": true,
+    "notes": [
+      "Novos objetos devem usar IDs temporários new_001, new_002, etc.",
+      "Não alterar aprovação ou ciclo de vida."
+    ]
+  },
+  "proposed_removals": [],
+  "change_summary": [],
+  "validation": {
+    "status": "valid_with_warnings",
+    "errors": [],
+    "warnings": [
+      {
+        "code": "OPEN_QUESTION",
+        "message": "Estratégia de retorno da referência remota ainda por definir."
+      }
+    ]
+  }
+}

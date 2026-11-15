@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eda.local/get/schemas/master.schema.json",
+  "title": "GET Project Master Export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_name",
+    "schema_version",
+    "package_type",
+    "export_profile",
+    "export_id",
+    "project",
+    "baseline",
+    "common_context",
+    "document_structure",
+    "fascicle_manifest",
+    "validation"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "get_project_master"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "application_version": {
+      "type": "string"
+    },
+    "package_type": {
+      "const": "master"
+    },
+    "export_profile": {
+      "enum": [
+        "discussion",
+        "redaction"
+      ]
+    },
+    "export_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "id",
+        "code",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "installation": {
+          "type": "string"
+        },
+        "intervention_type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "baseline": {
+      "type": "object",
+      "required": [
+        "id",
+        "code",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "code": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_context": {
+      "type": "object"
+    },
+    "document_structure": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "system_catalog_summary": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "knowledge_index": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "global_open_questions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "fascicle_manifest": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "fascicle_id",
+          "display_code",
+          "title",
+          "revision",
+          "filename"
+        ],
+        "properties": {
+          "fascicle_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "display_code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "content_hash": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "authoring_profile": {
+      "type": "object"
+    },
+    "validation": {
+      "type": "object",
+      "required": [
+        "status",
+        "errors",
+        "warnings"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "valid",
+            "valid_with_warnings",
+            "invalid"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
