@@ -1,6 +1,7 @@
 /** Ajuda contextual unificada (catálogo JSON + níveis essential/normal/detailed). */
 
 import { closeHelpDrawer, initGlobalHelpDrawer, openHelpDrawer } from "./help-drawer.js";
+import { createHelpIcon } from "./help-icon.js";
 
 let _catalog = null;
 let _helpLevel = "normal";
@@ -237,7 +238,7 @@ function createHelpButton(fieldKey, inputEl, onUseExample) {
   btn.type = "button";
   btn.className = "tip-btn field-help-btn";
   btn.setAttribute("aria-label", "Ajuda: " + (entry.label || fieldKey));
-  btn.textContent = "i";
+  btn.replaceChildren(createHelpIcon("help-icon--field"));
   btn.addEventListener("click", function (ev) {
     ev.preventDefault();
     ev.stopPropagation();

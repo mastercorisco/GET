@@ -1,5 +1,6 @@
 import { getHelpCatalog } from "./help-ui.js";
 import { openHelpDrawer } from "./help-drawer.js";
+import { setHelpTriggerLabel } from "./help-icon.js";
 
 const ROUTE_LABELS = {
   library: "Biblioteca",
@@ -84,7 +85,7 @@ export function renderScreenGuide(routeId) {
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "help-screen-open secondary";
-  btn.textContent = "Guia: " + (meta.title || routeId);
+  setHelpTriggerLabel(btn, "Guia: " + (meta.title || routeId));
   btn.addEventListener("click", function () {
     openHelpDrawer({
       title: "Guia: " + (meta.title || routeId),

@@ -1,5 +1,6 @@
 import { createDevelopmentPointCard } from "../components/development-point-card.js";
 import { wireLocalHelpDrawer } from "../components/help-drawer.js";
+import { ensureHelpDrawerTitleIcon, setHelpTriggerLabel } from "../components/help-icon.js";
 import { wireDeclarativeHelp } from "../components/help-ui.js";
 import {
   initBlockPrepPanel,
@@ -200,9 +201,13 @@ export function openBlockEditor(blockId, router) {
 
 function initBlockPrepHelpDrawer() {
   const host = document.getElementById("block-editor-root");
+  const openBtn = document.getElementById("bePrepHelpOpen");
+  if (openBtn) setHelpTriggerLabel(openBtn, "Ajuda à preparação");
+  const asideHeader = document.querySelector("#blockPrepAside .help-drawer__header h3");
+  if (asideHeader) ensureHelpDrawerTitleIcon(asideHeader);
   wireLocalHelpDrawer(host, {
     aside: document.getElementById("blockPrepAside"),
-    openBtn: document.getElementById("bePrepHelpOpen"),
+    openBtn: openBtn,
     closeBtn: document.getElementById("bePrepHelpClose"),
   });
 }

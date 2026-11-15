@@ -1,4 +1,5 @@
 import { attachFieldHelp, openHelpModal } from "./field-help.js";
+import { createHelpIcon } from "./help-icon.js";
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -13,7 +14,7 @@ function sectionSummary(title, fieldKey) {
   btn.type = "button";
   btn.className = "tip-btn field-help-btn";
   btn.setAttribute("aria-label", "Ajuda: " + title);
-  btn.textContent = "i";
+  btn.replaceChildren(createHelpIcon("help-icon--field"));
   btn.addEventListener("click", function (ev) {
     ev.preventDefault();
     ev.stopPropagation();
@@ -95,7 +96,7 @@ export function createDevelopmentPointCard(point, hooks) {
   overviewBtn.type = "button";
   overviewBtn.className = "tip-btn field-help-btn";
   overviewBtn.setAttribute("aria-label", "Ajuda do ponto");
-  overviewBtn.textContent = "i";
+  overviewBtn.replaceChildren(createHelpIcon("help-icon--field"));
   overviewBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
     ev.stopPropagation();

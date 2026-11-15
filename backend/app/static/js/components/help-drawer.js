@@ -1,8 +1,11 @@
 /** Gaveta de ajuda à direita (padrão da app). */
 
+import { createHelpIcon, ensureHelpDrawerTitleIcon } from "./help-icon.js";
+
 let _drawerEl = null;
 let _drawerBody = null;
 let _drawerTitle = null;
+let _drawerTitleText = null;
 let _backdropEl = null;
 let _drawerCloseBtn = null;
 let _lastTrigger = null;
@@ -28,6 +31,12 @@ export function initGlobalHelpDrawer() {
 
   _drawerTitle = document.createElement("h3");
   _drawerTitle.id = "getHelpDrawerTitle";
+  _drawerTitleText = document.createElement("span");
+  _drawerTitleText.className = "help-drawer__title-text";
+  _drawerTitleText.textContent = "Ajuda";
+  _drawerTitle.appendChild(createHelpIcon("help-icon--header"));
+  _drawerTitle.appendChild(_drawerTitleText);
+  _drawerTitle.classList.add("help-drawer__title");
 
   _drawerCloseBtn = document.createElement("button");
   _drawerCloseBtn.type = "button";
@@ -64,7 +73,8 @@ export function openHelpDrawer({ title, content, trigger }) {
   initGlobalHelpDrawer();
   closeLocalHelpDrawers();
   _lastTrigger = trigger || null;
-  _drawerTitle.textContent = title || "Ajuda";
+  if (_drawerTitleText) _drawerTitleText.textContent = title || "Ajuda";
+  else if (_drawerTitle) _drawerTitle.textContent = title || "Ajuda";
   _drawerBody.replaceChildren();
   if (content) {
     if (content instanceof DocumentFragment) {
