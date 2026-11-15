@@ -1,0 +1,207 @@
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.35rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.card h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.card p.lead {
+  color: var(--color-muted);
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+.field {
+  margin-top: 0.85rem;
+}
+
+.field label,
+label.field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.field input,
+.field textarea,
+.field select,
+input,
+textarea,
+select {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+textarea {
+  min-height: 5rem;
+}
+
+input[type="checkbox"],
+input[type="file"] {
+  width: auto;
+}
+
+label.choice-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-top: 0.85rem;
+}
+
+label.choice-inline input[type="checkbox"] {
+  margin-top: 0.25rem;
+}
+
+.choice-hint {
+  display: block;
+  font-weight: 400;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  margin-top: 0.15rem;
+}
+
+button,
+.btn {
+  margin-top: 1rem;
+  margin-right: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+button.secondary,
+.btn.secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error,
+.text-error {
+  color: var(--color-danger);
+  margin-top: 0.75rem;
+}
+
+.item {
+  border-top: 1px solid var(--color-border);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.tip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: help;
+  padding: 0;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.tip-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.tip-popover {
+  position: absolute;
+  z-index: 50;
+  max-width: 320px;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  color: var(--color-text);
+}
+
+.tree-ascii {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  overflow: auto;
+  max-height: 420px;
+  margin: 0 0 0.75rem;
+}
+
+.tree-ascii button.tree-line {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 0;
+  padding: 0.1rem 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.tree-ascii button.tree-line:hover,
+.tree-ascii button.tree-line.is-selected {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.tree-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+pre.code-block {
+  background: #f1f5f9;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  overflow: auto;
+  font-size: 0.82rem;
+}
+
+.empty-state {
+  color: var(--color-muted);
+  font-style: italic;
+  padding: 0.5rem 0;
+}

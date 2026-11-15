@@ -3,6 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.routers import (
     backups,
@@ -20,7 +21,8 @@ from app.routers import (
     workspace,
 )
 
-_STATIC_INDEX = Path(__file__).resolve().parent / "static" / "index.html"
+_STATIC_DIR = Path(__file__).resolve().parent / "static"
+_STATIC_INDEX = _STATIC_DIR / "index.html"
 
 app = FastAPI(title="GET — Gerador de Especificações Funcionais", version="0.1.0")
 
@@ -48,6 +50,8 @@ app.include_router(baseline.router, prefix="/api")
 app.include_router(export.router, prefix="/api")
 app.include_router(import_review.router, prefix="/api")
 app.include_router(workbook.router, prefix="/api")
+
+app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
 
 @app.get("/")

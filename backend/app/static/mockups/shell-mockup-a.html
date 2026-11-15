@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GET — Mockup A (referência visual)</title>
+    <link rel="stylesheet" href="/static/css/tokens.css" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+    <link rel="stylesheet" href="/static/css/components.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <div class="app-header__brand">GET — Especificações Funcionais</div>
+        <span class="status-pill status-pill--ok">Workspace: …\workspace-get</span>
+        <span class="status-pill">Projecto: Belo Jardim</span>
+        <span class="status-pill status-pill--ok">Baseline: publicada</span>
+      </header>
+      <div class="app-body">
+        <nav class="app-nav" aria-label="Exemplo de menu">
+          <div class="nav-group-title">Projecto</div>
+          <button type="button" class="nav-link">Projecto (geral)</button>
+          <button type="button" class="nav-link is-active">Estrutura documental</button>
+          <button type="button" class="nav-link">Árvore técnica</button>
+        </nav>
+        <main class="app-main">
+          <div class="breadcrumb">Projecto / Estrutura documental</div>
+          <section class="card route-panel is-active">
+            <h2>Estrutura documental</h2>
+            <p class="lead">Exemplo estático — a aplicação real usa a mesma grelha e classes.</p>
+            <div class="split-explorer">
+              <div>
+                <pre class="tree-ascii" style="margin:0">F01  Fascículo — Enquadramento
+├── F01_B01  Bloco — Contexto
+└── F01_B02  Bloco — Requisitos</pre>
+              </div>
+              <div class="card" style="margin:0">
+                <h3>Detalhe F01_B02</h3>
+                <p class="lead">Associações e acções do nó seleccionado.</p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
