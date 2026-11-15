@@ -393,10 +393,21 @@ function refreshBlockPremises() {
     if (!list) return;
     list.replaceChildren();
     (rows || []).forEach(function (prem) {
-      const row = document.createElement("p");
-      row.className = "be-premise-row";
-      row.textContent =
+      const row = document.createElement("div");
+      row.className = "be-premise-row list-item-row";
+      const text = document.createElement("span");
+      text.textContent =
         "[" + prem.importance + "] " + prem.statement + " (" + prem.confidence + ")";
+      row.appendChild(text);
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "secondary danger";
+      del.textContent = "Apagar";
+      del.addEventListener("click", function () {
+        if (!window.confirm("Apagar esta premissa?")) return;
+        api("/api/premises/" + prem.id, { method: "DELETE" }, "Falha ao apagar.").then(refreshBlockPremises);
+      });
+      row.appendChild(del);
       list.appendChild(row);
     });
   });
@@ -449,6 +460,11 @@ function refreshBlockEditor() {
           );
         },
         action: function (id, kind) {
+          if (kind === "delete") {
+            return api("/api/development-points/" + id, { method: "DELETE" }, "Falha ao eliminar.").then(
+              refreshBlockEditor
+            );
+          }
           const path =
             kind === "duplicate"
               ? "/api/development-points/" + id + "/duplicate"

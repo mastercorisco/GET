@@ -10,6 +10,8 @@ from app.schemas.knowledge import (
     TechnicalProfileResponse,
     TechnicalProfileUpdateRequest,
 )
+from app.schemas.deletion import DeletionResponse
+from app.services.deletion_service import delete_knowledge_item, delete_knowledge_relation
 from app.services.knowledge_service import (
     KnowledgeError,
     conclude_revision,
@@ -61,6 +63,17 @@ def knowledge_create(body: KnowledgeCreateRequest) -> KnowledgeResponse:
 @router.post("/relations", response_model=RelationResponse)
 def knowledge_relate(body: RelationCreateRequest) -> RelationResponse:
     return _run(lambda: create_relation(get_settings(), body))
+
+
+@router.delete("/relations/{relation_id}", status_code=204)
+def knowledge_relation_delete(relation_id: str) -> None:
+    _run(lambda: delete_knowledge_relation(get_settings(), relation_id))
+
+
+@router.delete("/{item_id}", response_model=DeletionResponse)
+def knowledge_delete(item_id: str) -> DeletionResponse:
+    result = _run(lambda: delete_knowledge_item(get_settings(), item_id))
+    return DeletionResponse(mode=result.mode, detail=result.detail)
 
 
 @router.get("/{item_id}", response_model=KnowledgeResponse)

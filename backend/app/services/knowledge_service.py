@@ -233,7 +233,7 @@ def list_items(
         result: list[KnowledgeResponse] = []
         for item in items:
             draft = session.get(KnowledgeDraft, item.id)
-            if draft is None:
+            if draft is None or draft.lifecycle == "archived":
                 continue
             result.append(_to_response(session, item, draft))
         return result
@@ -445,7 +445,7 @@ def search_items(
             if scope_id and item.scope_id != scope_id:
                 continue
             draft = session.get(KnowledgeDraft, item.id)
-            if draft is None:
+            if draft is None or draft.lifecycle == "archived":
                 continue
             result.append(_to_response(session, item, draft))
         return result

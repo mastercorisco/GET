@@ -9,6 +9,7 @@ from app.schemas.document import (
     DocumentNodeMoveRequest,
     DocumentNodeMutationResponse,
 )
+from app.services.deletion_service import delete_document_association, delete_document_node
 from app.services.document_service import (
     DocumentError,
     create_association,
@@ -59,3 +60,13 @@ def document_associations_list(node_id: str) -> list[AssociationResponse]:
 @router.post("/document-nodes/{node_id}/associations", response_model=AssociationResponse)
 def document_associations_create(node_id: str, body: AssociationCreateRequest) -> AssociationResponse:
     return _run(lambda: create_association(get_settings(), node_id, body))
+
+
+@router.delete("/projects/{project_id}/document-nodes/{node_id}", status_code=204)
+def document_nodes_delete(project_id: str, node_id: str) -> None:
+    _run(lambda: delete_document_node(get_settings(), project_id, node_id))
+
+
+@router.delete("/document-nodes/associations/{association_id}", status_code=204)
+def document_associations_delete(association_id: str) -> None:
+    _run(lambda: delete_document_association(get_settings(), association_id))

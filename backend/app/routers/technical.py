@@ -7,6 +7,7 @@ from app.schemas.technical import (
     TechnicalInstanceCreateRequest,
     TechnicalInstanceResponse,
 )
+from app.services.deletion_service import delete_technical_instance
 from app.services.technical_service import (
     TechnicalError,
     create_class,
@@ -49,3 +50,8 @@ def technical_instance_create(
     body: TechnicalInstanceCreateRequest,
 ) -> TechnicalInstanceResponse:
     return _run(lambda: create_instance(get_settings(), project_id, body))
+
+
+@router.delete("/projects/{project_id}/instances/{instance_id}", status_code=204)
+def technical_instance_delete(project_id: str, instance_id: str) -> None:
+    _run(lambda: delete_technical_instance(get_settings(), project_id, instance_id))

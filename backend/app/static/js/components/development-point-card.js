@@ -313,10 +313,15 @@ function renderExpanded(body, detail, hooks) {
   [
     ["Duplicar", "duplicate"],
     ["Arquivar", "archive"],
+    ["Eliminar", "delete"],
   ].forEach(function (pair) {
-    const b = el("button", "secondary", pair[0]);
+    const className = pair[1] === "delete" ? "secondary danger" : "secondary";
+    const b = el("button", className, pair[0]);
     b.type = "button";
     b.addEventListener("click", function () {
+      if (pair[1] === "delete" && !window.confirm("Eliminar este ponto de desenvolvimento?")) {
+        return;
+      }
       hooks.action(detail.id, pair[1]);
     });
     actions.appendChild(b);

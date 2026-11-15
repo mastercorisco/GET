@@ -41,6 +41,7 @@ export function mountDocumentTree(container, nodes, options) {
   const selectedId = options.selectedId;
   const onSelect = options.onSelect;
   const onMove = options.onMove;
+  const onDelete = options.onDelete;
 
   container.replaceChildren();
   const pre = document.createElement("div");
@@ -95,12 +96,24 @@ export function mountDocumentTree(container, nodes, options) {
       });
       actions.appendChild(up);
       actions.appendChild(down);
+      if (onDelete) {
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "secondary danger";
+        del.textContent = "Apagar nó";
+        del.addEventListener("click", function () {
+          onDelete(sel);
+        });
+        actions.appendChild(del);
+      }
     }
   }
   container.appendChild(actions);
 }
 
-export function mountTechnicalTree(container, instances) {
+export function mountTechnicalTree(container, instances, options) {
+  options = options || {};
+  const onDelete = options.onDelete;
   container.replaceChildren();
   const pre = document.createElement("div");
   pre.className = "tree-ascii";
@@ -131,11 +144,29 @@ export function mountTechnicalTree(container, instances) {
   lines.forEach(function (entry) {
     const kind = labelFromMap(TECH_KIND_LABELS, entry.node.node_type);
     const code = entry.node.display_code ? entry.node.display_code + " " : "";
-    const line = document.createElement("div");
+    const row = document.createElement("div");
+    row.className = "list-item-row";
+    const line = document.createElement("span");
     line.className = "tree-line";
     line.style.cursor = "default";
     line.textContent = entry.line.replace(nodePrefix(entry.node), code + kind + " — " + entry.node.title);
-    pre.appendChild(line);
+    row.appendChild(line);
+    if (onDelete) {
+      const inst = instances.find(function (r) {
+        return r.id === entry.node.id;
+      });
+      if (inst) {
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "secondary danger";
+        del.textContent = "Apagar";
+        del.addEventListener("click", function () {
+          onDelete(inst);
+        });
+        row.appendChild(del);
+      }
+    }
+    pre.appendChild(row);
   });
 
   container.appendChild(pre);

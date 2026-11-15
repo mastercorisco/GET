@@ -337,15 +337,15 @@
             <div class="screen-guide-panel" data-screen-guide="project-structure" hidden></div>
             <h2>Estrutura documental</h2>
             <p class="lead">Árvore do caderno de encargos. Seleccione um nó para associar conhecimento.</p>
-            <div class="split-explorer">
-              <div>
+            <div class="split-explorer doc-structure-split">
+              <div class="doc-structure-tree">
                 <p id="docDepthWarn" class="error" hidden>Aviso: profundidade ≥ 5.</p>
-                <div id="docList"></div>
+                <div id="docList" class="list-panel doc-tree-panel"></div>
               </div>
-              <div>
+              <aside class="card-surface doc-structure-detail">
                 <h3>Detalhe e associações</h3>
                 <p id="docSelectedMeta">Nenhum nó seleccionado.</p>
-                <div id="docAssocList"></div>
+                <div id="docAssocList" class="list-panel doc-assoc-panel"></div>
                 <label for="docAssocItem" class="field-label">Unidade de conhecimento</label>
                 <select id="docAssocItem"><option value="">—</option></select>
                 <label for="docAssocRole" class="field-label">Papel</label>
@@ -362,7 +362,7 @@
                 <label for="docAssocInstruction" class="field-label">Instrução de uso (opcional)</label>
                 <input id="docAssocInstruction" />
                 <button type="button" id="docAssocCreate" class="secondary">Associar</button>
-              </div>
+              </aside>
             </div>
             <h3>Novo nó</h3>
             <label for="docType">Tipo de nó</label>

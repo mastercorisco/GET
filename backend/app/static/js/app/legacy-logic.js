@@ -22,6 +22,21 @@ const rootPath = document.getElementById("rootPath");
         return fallback;
       }
 
+      function confirmDelete(message) {
+        return window.confirm(message || "Confirma eliminação? Pode ser irreversível.");
+      }
+
+      function actionDeleteButton(label, onDelete) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "secondary danger";
+        btn.textContent = label || "Apagar";
+        btn.addEventListener("click", function () {
+          if (confirmDelete()) onDelete();
+        });
+        return btn;
+      }
+
       function setError(message) {
         if (!message) {
           errorEl.hidden = true;
@@ -111,9 +126,34 @@ const rootPath = document.getElementById("rootPath");
           list.appendChild(p);
         } else {
           projectCatalog.forEach(function (p) {
-            const line = document.createElement("p");
-            line.textContent = p.name + " · modelo v" + p.template_version + " · biblioteca v" + p.library_version;
-            list.appendChild(line);
+            const row = document.createElement("div");
+            row.className = "list-item-row";
+            const line = document.createElement("span");
+            line.textContent =
+              p.name + " · modelo v" + p.template_version + " · biblioteca v" + p.library_version;
+            row.appendChild(line);
+            row.appendChild(
+              actionDeleteButton("Apagar projecto", function () {
+                if (
+                  !confirmDelete(
+                    "Apagar o projecto «" +
+                      p.name +
+                      "» e toda a estrutura, conhecimento, baselines e importações?"
+                  )
+                ) {
+                  return;
+                }
+                knowledgeRequest("/api/projects/" + p.id, { method: "DELETE" }, "Falha ao apagar projecto.")
+                  .then(function () {
+                    if (selectedDocumentNodeId) selectedDocumentNodeId = null;
+                    return loadProjects();
+                  })
+                  .catch(function (err) {
+                    setProjectError(err.message);
+                  });
+              })
+            );
+            list.appendChild(row);
           });
         }
         const active = document.getElementById("pActive");
@@ -170,6 +210,29 @@ const rootPath = document.getElementById("rootPath");
             onMove: function (node, direction) {
               moveDocumentNode(node.project_id, node.id, { direction: direction });
             },
+            onDelete: function (node) {
+              if (
+                !confirmDelete(
+                  "Apagar «" +
+                    node.display_code +
+                    "» e todos os subnós? Blocos com pontos de desenvolvimento serão removidos."
+                )
+              ) {
+                return;
+              }
+              knowledgeRequest(
+                "/api/projects/" + node.project_id + "/document-nodes/" + node.id,
+                { method: "DELETE" },
+                "Falha ao apagar nó."
+              )
+                .then(function () {
+                  if (selectedDocumentNodeId === node.id) selectedDocumentNodeId = null;
+                  return loadDocumentTree(node.project_id);
+                })
+                .catch(function (err) {
+                  setProjectError(err.message);
+                });
+            },
           });
           return;
         }
@@ -197,9 +260,30 @@ const rootPath = document.getElementById("rootPath");
           return;
         }
         rows.forEach(function (row) {
-          const line = document.createElement("p");
-          line.textContent = row.role + " → " + row.knowledge_item_id +
+          const line = document.createElement("div");
+          line.className = "list-item-row";
+          const text = document.createElement("span");
+          text.textContent =
+            row.role +
+            " → " +
+            row.knowledge_item_id +
             (row.usage_instruction ? " · " + row.usage_instruction : "");
+          line.appendChild(text);
+          line.appendChild(
+            actionDeleteButton("Apagar", function () {
+              knowledgeRequest(
+                "/api/document-nodes/associations/" + row.id,
+                { method: "DELETE" },
+                "Falha ao apagar associação."
+              )
+                .then(function () {
+                  return loadDocumentAssociations(nodeId);
+                })
+                .catch(function (err) {
+                  setProjectError(err.message);
+                });
+            })
+          );
           target.appendChild(line);
         });
       }
@@ -239,7 +323,21 @@ const rootPath = document.getElementById("rootPath");
         const instances = await knowledgeRequest("/api/projects/" + projectId + "/instances", {}, "Falha ao listar instâncias.");
         const iList = document.getElementById("iList");
         if (mountTechnicalTree) {
-          mountTechnicalTree(iList, instances);
+          mountTechnicalTree(iList, instances, {
+            onDelete: function (inst) {
+              knowledgeRequest(
+                "/api/projects/" + projectId + "/instances/" + inst.id,
+                { method: "DELETE" },
+                "Falha ao apagar instância."
+              )
+                .then(function () {
+                  return loadProjectDetail(projectId);
+                })
+                .catch(function (err) {
+                  setProjectError(err.message);
+                });
+            },
+          });
         } else {
           iList.replaceChildren();
           instances.forEach(function (row) {
@@ -543,7 +641,10 @@ const rootPath = document.getElementById("rootPath");
           }
           throw new Error(msg);
         }
-        return res.json();
+        if (res.status === 204) return null;
+        const text = await res.text();
+        if (!text) return null;
+        return JSON.parse(text);
       }
 
       function applyProfileToForm(prefix, item) {
@@ -600,9 +701,24 @@ const rootPath = document.getElementById("rootPath");
         const list = document.getElementById("libRefList");
         list.replaceChildren();
         rows.forEach(function (row) {
-          const p = document.createElement("p");
-          p.textContent = row.title + (row.standard_profile && row.standard_profile.contractual_role
-            ? " · " + row.standard_profile.contractual_role : "");
+          const p = document.createElement("div");
+          p.className = "list-item-row";
+          const text = document.createElement("span");
+          text.textContent =
+            row.title +
+            (row.standard_profile && row.standard_profile.contractual_role
+              ? " · " + row.standard_profile.contractual_role
+              : "");
+          p.appendChild(text);
+          p.appendChild(
+            actionDeleteButton("Apagar", function () {
+              knowledgeRequest("/api/references/" + row.id, { method: "DELETE" }, "Falha ao apagar referência.")
+                .then(loadLibraryReferences)
+                .catch(function (err) {
+                  setKnowledgeError(err.message);
+                });
+            })
+          );
           list.appendChild(p);
         });
       }
@@ -612,8 +728,20 @@ const rootPath = document.getElementById("rootPath");
         const list = document.getElementById("libTermList");
         list.replaceChildren();
         libraryTerms.forEach(function (row) {
-          const p = document.createElement("p");
-          p.textContent = row.preferred_term + " — " + row.definition.substring(0, 80);
+          const p = document.createElement("div");
+          p.className = "list-item-row";
+          const text = document.createElement("span");
+          text.textContent = row.preferred_term + " — " + row.definition.substring(0, 80);
+          p.appendChild(text);
+          p.appendChild(
+            actionDeleteButton("Apagar", function () {
+              knowledgeRequest("/api/terminology/" + row.id, { method: "DELETE" }, "Falha ao apagar termo.")
+                .then(loadLibraryTerminology)
+                .catch(function (err) {
+                  setKnowledgeError(err.message);
+                });
+            })
+          );
           list.appendChild(p);
         });
         const conceptSel = document.getElementById("termOverrideConcept");
@@ -645,8 +773,22 @@ const rootPath = document.getElementById("rootPath");
         empty.textContent = "—";
         sel.appendChild(empty);
         rows.forEach(function (row) {
-          const p = document.createElement("p");
-          p.textContent = row.title + (row.standard_profile ? " · norma" : "");
+          const p = document.createElement("div");
+          p.className = "list-item-row";
+          const text = document.createElement("span");
+          text.textContent = row.title + (row.standard_profile ? " · norma" : "");
+          p.appendChild(text);
+          p.appendChild(
+            actionDeleteButton("Apagar", function () {
+              knowledgeRequest("/api/references/" + row.id, { method: "DELETE" }, "Falha ao apagar referência.")
+                .then(function () {
+                  return loadProjectReferences(projectId);
+                })
+                .catch(function (err) {
+                  setProjectError(err.message);
+                });
+            })
+          );
           list.appendChild(p);
           const opt = document.createElement("option");
           opt.value = row.id;
@@ -664,8 +806,26 @@ const rootPath = document.getElementById("rootPath");
         const list = document.getElementById("projTermOverrideList");
         list.replaceChildren();
         rows.forEach(function (row) {
-          const p = document.createElement("p");
-          p.textContent = row.preferred_term + " → legado: " + (row.legacy_term || "—");
+          const p = document.createElement("div");
+          p.className = "list-item-row";
+          const text = document.createElement("span");
+          text.textContent = row.preferred_term + " → legado: " + (row.legacy_term || "—");
+          p.appendChild(text);
+          p.appendChild(
+            actionDeleteButton("Apagar", function () {
+              knowledgeRequest(
+                "/api/projects/" + projectId + "/terminology-overrides/" + row.id,
+                { method: "DELETE" },
+                "Falha ao apagar override."
+              )
+                .then(function () {
+                  return loadProjectTerminologyOverrides(projectId);
+                })
+                .catch(function (err) {
+                  setProjectError(err.message);
+                });
+            })
+          );
           list.appendChild(p);
         });
       }
@@ -719,6 +879,22 @@ const rootPath = document.getElementById("rootPath");
             });
             block.appendChild(conclude);
           }
+          const remove = actionDeleteButton("Apagar", function () {
+            knowledgeRequest("/api/knowledge/" + item.id, { method: "DELETE" }, "Falha ao apagar unidade.")
+              .then(function (result) {
+                if (isLibrary && selectedLibraryItemId === item.id) selectedLibraryItemId = null;
+                if (isProject && selectedProjectItemId === item.id) selectedProjectItemId = null;
+                const msg = result && result.detail ? result.detail : "";
+                if (msg) setKnowledgeError(msg);
+                if (isLibrary) return loadKnowledge();
+                return loadProjectDetail(document.getElementById("pActive").value);
+              })
+              .catch(function (err) {
+                if (isLibrary) setKnowledgeError(err.message);
+                else setProjectError(err.message);
+              });
+          });
+          block.appendChild(remove);
           target.appendChild(block);
         });
       }

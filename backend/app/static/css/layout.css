@@ -180,4 +180,8 @@ body {
   .split-explorer {
     grid-template-columns: 1fr;
   }
+
+  .doc-structure-detail {
+    min-height: auto;
+  }
 }

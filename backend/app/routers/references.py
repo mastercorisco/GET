@@ -7,6 +7,7 @@ from app.schemas.reference import (
     ReferenceUpdateRequest,
     StandardProfileUpsertRequest,
 )
+from app.services.deletion_service import delete_reference
 from app.services.reference_service import (
     ReferenceError,
     create_reference,
@@ -57,3 +58,8 @@ def references_standard_profile(
     reference_id: str, body: StandardProfileUpsertRequest
 ) -> ReferenceResponse:
     return _run(lambda: upsert_standard_profile(get_settings(), reference_id, body))
+
+
+@router.delete("/{reference_id}", status_code=204)
+def references_delete(reference_id: str) -> None:
+    _run(lambda: delete_reference(get_settings(), reference_id))

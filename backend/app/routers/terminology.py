@@ -8,6 +8,7 @@ from app.schemas.terminology import (
     TerminologyResponse,
     TerminologyUpdateRequest,
 )
+from app.services.deletion_service import delete_terminology, delete_terminology_override
 from app.services.terminology_service import (
     TerminologyError,
     create_terminology,
@@ -70,3 +71,16 @@ def terminology_overrides_create(
     project_id: str, body: TerminologyOverrideCreateRequest
 ) -> TerminologyOverrideResponse:
     return _run(lambda: create_terminology_override(get_settings(), project_id, body))
+
+
+@router.delete("/terminology/{concept_id}", status_code=204)
+def terminology_delete(concept_id: str) -> None:
+    _run(lambda: delete_terminology(get_settings(), concept_id))
+
+
+@router.delete(
+    "/projects/{project_id}/terminology-overrides/{override_id}",
+    status_code=204,
+)
+def terminology_override_delete(project_id: str, override_id: str) -> None:
+    _run(lambda: delete_terminology_override(get_settings(), project_id, override_id))
