@@ -63,8 +63,87 @@
         <button type="button" id="kSearch" class="secondary">Pesquisar</button>
         <div id="kResults"></div>
 
-        <h2>Unidades</h2>
+        <h2>Unidades (biblioteca)</h2>
         <div id="kList"></div>
+      </section>
+
+      <section class="card" id="projects" hidden>
+        <h2>Projetos</h2>
+        <label for="pTemplateVersion">Modelo (versão)</label>
+        <select id="pTemplateVersion"></select>
+        <label for="pName">Nome do projeto</label>
+        <input id="pName" placeholder="Ex.: Central Vale do Sousa — fase 1" />
+        <label for="pIntervention">Tipo de intervenção</label>
+        <input id="pIntervention" value="brownfield" />
+        <button type="button" id="pCreate">Criar projeto</button>
+        <p id="pError" class="error" hidden></p>
+
+        <h2>Lista de projetos</h2>
+        <div id="pList"></div>
+
+        <h2>Projeto activo</h2>
+        <label for="pActive">Seleccionar</label>
+        <select id="pActive"></select>
+
+        <h3>Instâncias técnicas</h3>
+        <label for="iName">Nome da instância</label>
+        <input id="iName" />
+        <label for="iKind">Tipo</label>
+        <select id="iKind">
+          <option value="system">system</option>
+          <option value="equipment">equipment</option>
+          <option value="function">function</option>
+        </select>
+        <label for="iParent">Pai (opcional)</label>
+        <select id="iParent"><option value="">—</option></select>
+        <button type="button" id="iCreate" class="secondary">Adicionar instância</button>
+        <div id="iList"></div>
+
+        <h3>Estrutura documental</h3>
+        <p id="docDepthWarn" class="error" hidden>Aviso: existe pelo menos um nó com profundidade ≥ 5 (5.º nível ou inferior).</p>
+        <div id="docList"></div>
+        <label for="docType">Tipo de nó</label>
+        <select id="docType">
+          <option value="fascicle">fascicle</option>
+          <option value="block">block</option>
+          <option value="section">section</option>
+          <option value="subsection">subsection</option>
+        </select>
+        <label for="docTitle">Título</label>
+        <input id="docTitle" />
+        <label for="docParent">Pai (vazio = raiz, só fascicle)</label>
+        <select id="docParent"><option value="">— raiz —</option></select>
+        <button type="button" id="docCreate" class="secondary">Adicionar nó</button>
+
+        <h4>Associações no nó seleccionado</h4>
+        <p id="docSelectedMeta">Nenhum nó seleccionado.</p>
+        <div id="docAssocList"></div>
+        <label for="docAssocItem">Unidade de conhecimento</label>
+        <select id="docAssocItem"><option value="">—</option></select>
+        <label for="docAssocRole">Papel</label>
+        <select id="docAssocRole">
+          <option value="mandatory_content">mandatory_content</option>
+          <option value="supporting_context">supporting_context</option>
+          <option value="constraint">constraint</option>
+          <option value="example">example</option>
+          <option value="cross_reference">cross_reference</option>
+          <option value="verification_basis">verification_basis</option>
+          <option value="open_issue">open_issue</option>
+          <option value="excluded_content">excluded_content</option>
+        </select>
+        <label for="docAssocInstruction">Instrução de uso (opcional)</label>
+        <input id="docAssocInstruction" />
+        <button type="button" id="docAssocCreate" class="secondary">Associar</button>
+
+        <h3>Conhecimento do projeto</h3>
+        <label for="pkTitle">Título</label>
+        <input id="pkTitle" />
+        <label for="pkContent">Conteúdo</label>
+        <textarea id="pkContent"></textarea>
+        <label for="pkContext">Contexto</label>
+        <input id="pkContext" />
+        <button type="button" id="pkCreate">Criar unidade no projeto</button>
+        <div id="pkList"></div>
       </section>
     </main>
     <script>
@@ -115,11 +194,235 @@
             "Importações: " + data.imports_path,
           ].join("\n");
           document.getElementById("knowledge").hidden = false;
+          document.getElementById("projects").hidden = false;
           loadKnowledge().catch(function (err) { setKnowledgeError(err.message); });
+          loadProjects().catch(function (err) { setProjectError(err.message); });
         } else {
           stateEl.hidden = true;
           emptyEl.hidden = false;
           document.getElementById("knowledge").hidden = true;
+          document.getElementById("projects").hidden = true;
+        }
+      }
+
+      function setProjectError(message) {
+        const el = document.getElementById("pError");
+        if (!message) { el.hidden = true; el.textContent = ""; return; }
+        el.hidden = false;
+        el.textContent = message;
+      }
+
+      let projectCatalog = [];
+      let selectedDocumentNodeId = null;
+      let projectKnowledgeItems = [];
+
+      async function loadProjects() {
+        setProjectError("");
+        const templates = await knowledgeRequest("/api/projects/templates", {}, "Falha ao listar modelos.");
+        const versionSelect = document.getElementById("pTemplateVersion");
+        versionSelect.replaceChildren();
+        templates.forEach(function (tpl) {
+          tpl.versions.forEach(function (ver) {
+            const opt = document.createElement("option");
+            opt.value = ver.id;
+            opt.textContent = tpl.name + " (v" + ver.version + ")";
+            versionSelect.appendChild(opt);
+          });
+        });
+        projectCatalog = await knowledgeRequest("/api/projects", {}, "Falha ao listar projetos.");
+        const list = document.getElementById("pList");
+        list.replaceChildren();
+        if (!projectCatalog.length) {
+          const p = document.createElement("p");
+          p.textContent = "Nenhum projeto.";
+          list.appendChild(p);
+        } else {
+          projectCatalog.forEach(function (p) {
+            const line = document.createElement("p");
+            line.textContent = p.name + " · modelo v" + p.template_version + " · biblioteca v" + p.library_version;
+            list.appendChild(line);
+          });
+        }
+        const active = document.getElementById("pActive");
+        active.replaceChildren();
+        projectCatalog.forEach(function (p) {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.name;
+          active.appendChild(opt);
+        });
+        if (projectCatalog.length) {
+          await loadProjectDetail(projectCatalog[0].id);
+        } else {
+          document.getElementById("iList").replaceChildren();
+          document.getElementById("pkList").replaceChildren();
+          document.getElementById("docList").replaceChildren();
+          document.getElementById("docAssocList").replaceChildren();
+        }
+      }
+
+      function renderDocumentTree(nodes) {
+        const list = document.getElementById("docList");
+        list.replaceChildren();
+        const warnEl = document.getElementById("docDepthWarn");
+        const anyWarn = nodes.some(function (n) { return n.depth_warning; });
+        warnEl.hidden = !anyWarn;
+
+        const parentSelect = document.getElementById("docParent");
+        parentSelect.replaceChildren();
+        const rootOpt = document.createElement("option");
+        rootOpt.value = "";
+        rootOpt.textContent = "— raiz —";
+        parentSelect.appendChild(rootOpt);
+        nodes.forEach(function (n) {
+          const opt = document.createElement("option");
+          opt.value = n.id;
+          opt.textContent = n.display_code + " · " + n.title;
+          parentSelect.appendChild(opt);
+        });
+
+        if (!nodes.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "Nenhum nó documental.";
+          list.appendChild(empty);
+          return;
+        }
+
+        nodes.forEach(function (node) {
+          const row = document.createElement("div");
+          row.style.marginLeft = ((node.depth - 1) * 1.25) + "rem";
+          row.style.display = "flex";
+          row.style.gap = "0.5rem";
+          row.style.alignItems = "center";
+          row.style.flexWrap = "wrap";
+
+          const label = document.createElement("button");
+          label.type = "button";
+          label.className = "secondary";
+          label.textContent = node.display_code + " [" + node.node_type + "] " + node.title;
+          if (node.depth_warning) label.style.borderColor = "#c00";
+          if (node.id === selectedDocumentNodeId) label.style.fontWeight = "bold";
+          label.addEventListener("click", function () {
+            selectedDocumentNodeId = node.id;
+            document.getElementById("docSelectedMeta").textContent =
+              node.display_code + " — " + node.title + " (" + node.id + ")";
+            loadDocumentAssociations(node.id).catch(function (err) { setProjectError(err.message); });
+            renderDocumentTree(nodes);
+          });
+          row.appendChild(label);
+
+          const up = document.createElement("button");
+          up.type = "button";
+          up.textContent = "Subir";
+          up.className = "secondary";
+          up.addEventListener("click", function () {
+            moveDocumentNode(node.project_id, node.id, { direction: "up" });
+          });
+          row.appendChild(up);
+
+          const down = document.createElement("button");
+          down.type = "button";
+          down.textContent = "Descer";
+          down.className = "secondary";
+          down.addEventListener("click", function () {
+            moveDocumentNode(node.project_id, node.id, { direction: "down" });
+          });
+          row.appendChild(down);
+
+          list.appendChild(row);
+        });
+      }
+
+      async function loadDocumentAssociations(nodeId) {
+        const rows = await knowledgeRequest(
+          "/api/document-nodes/" + nodeId + "/associations",
+          {},
+          "Falha ao listar associações."
+        );
+        const target = document.getElementById("docAssocList");
+        target.replaceChildren();
+        if (!rows.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "Sem associações.";
+          target.appendChild(empty);
+          return;
+        }
+        rows.forEach(function (row) {
+          const line = document.createElement("p");
+          line.textContent = row.role + " → " + row.knowledge_item_id +
+            (row.usage_instruction ? " · " + row.usage_instruction : "");
+          target.appendChild(line);
+        });
+      }
+
+      async function loadDocumentTree(projectId) {
+        const data = await knowledgeRequest(
+          "/api/projects/" + projectId + "/document-nodes",
+          {},
+          "Falha ao carregar estrutura documental."
+        );
+        if (selectedDocumentNodeId && !data.nodes.some(function (n) { return n.id === selectedDocumentNodeId; })) {
+          selectedDocumentNodeId = null;
+          document.getElementById("docSelectedMeta").textContent = "Nenhum nó seleccionado.";
+          document.getElementById("docAssocList").replaceChildren();
+        }
+        renderDocumentTree(data.nodes);
+      }
+
+      function moveDocumentNode(projectId, nodeId, body) {
+        knowledgeRequest("/api/projects/" + projectId + "/document-nodes/" + nodeId + "/move", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }, "Falha ao mover nó.")
+          .then(function () { return loadDocumentTree(projectId); })
+          .catch(function (err) { setProjectError(err.message); });
+      }
+
+      async function loadProjectDetail(projectId) {
+        const instances = await knowledgeRequest("/api/projects/" + projectId + "/instances", {}, "Falha ao listar instâncias.");
+        const iList = document.getElementById("iList");
+        iList.replaceChildren();
+        instances.forEach(function (row) {
+          const line = document.createElement("p");
+          line.style.marginLeft = (row.depth * 1.25) + "rem";
+          line.textContent = row.kind + ": " + row.name + (row.export_code ? " [" + row.export_code + "]" : "");
+          iList.appendChild(line);
+        });
+        const parentSelect = document.getElementById("iParent");
+        parentSelect.replaceChildren();
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = "—";
+        parentSelect.appendChild(empty);
+        instances.forEach(function (row) {
+          const opt = document.createElement("option");
+          opt.value = row.id;
+          opt.textContent = row.name;
+          parentSelect.appendChild(opt);
+        });
+        const pk = await knowledgeRequest(
+          "/api/knowledge?scope_type=project&scope_id=" + encodeURIComponent(projectId),
+          {},
+          "Falha ao listar conhecimento do projeto."
+        );
+        projectKnowledgeItems = pk;
+        const assocSelect = document.getElementById("docAssocItem");
+        assocSelect.replaceChildren();
+        const emptyItem = document.createElement("option");
+        emptyItem.value = "";
+        emptyItem.textContent = "—";
+        assocSelect.appendChild(emptyItem);
+        pk.forEach(function (item) {
+          const opt = document.createElement("option");
+          opt.value = item.id;
+          opt.textContent = item.title + " (" + item.id + ")";
+          assocSelect.appendChild(opt);
+        });
+        renderItems(document.getElementById("pkList"), pk, false);
+        await loadDocumentTree(projectId);
+        if (selectedDocumentNodeId) {
+          await loadDocumentAssociations(selectedDocumentNodeId);
         }
       }
 
@@ -151,7 +454,8 @@
         return res.json();
       }
 
-      function renderItems(target, items) {
+      function renderItems(target, items, showConclude) {
+        if (showConclude === undefined) showConclude = target.id === "kList";
         target.replaceChildren();
         if (!items.length) {
           const empty = document.createElement("p");
@@ -165,10 +469,10 @@
           const title = document.createElement("strong");
           title.textContent = item.title;
           const meta = document.createElement("p");
-          meta.textContent = item.status_label + " · biblioteca · " + item.id;
+          meta.textContent = item.status_label + " · " + item.scope_type + " · " + item.id;
           block.appendChild(title);
           block.appendChild(meta);
-          if (target.id === "kList") {
+          if (showConclude) {
             const conclude = document.createElement("button");
             conclude.type = "button";
             conclude.textContent = "Concluir revisão";
@@ -185,7 +489,7 @@
 
       async function loadKnowledge() {
         setKnowledgeError("");
-        const items = await knowledgeRequest("/api/knowledge", {}, "Falha ao listar unidades.");
+        const items = await knowledgeRequest("/api/knowledge?scope_type=library", {}, "Falha ao listar unidades.");
         renderItems(document.getElementById("kList"), items);
       }
 
@@ -254,6 +558,125 @@
           })
           .catch(function (err) { setKnowledgeError(err.message); });
       });
+      document.getElementById("pCreate").addEventListener("click", function () {
+        const body = {
+          template_version_id: document.getElementById("pTemplateVersion").value,
+          name: document.getElementById("pName").value.trim(),
+          intervention_type: document.getElementById("pIntervention").value.trim() || "brownfield",
+        };
+        if (!body.template_version_id || !body.name) {
+          setProjectError("Seleccione o modelo e indique o nome do projeto.");
+          return;
+        }
+        knowledgeRequest("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }, "Falha ao criar projeto.")
+          .then(function () {
+            document.getElementById("pName").value = "";
+            return loadProjects();
+          })
+          .catch(function (err) { setProjectError(err.message); });
+      });
+      document.getElementById("pActive").addEventListener("change", function () {
+        loadProjectDetail(this.value).catch(function (err) { setProjectError(err.message); });
+      });
+      document.getElementById("iCreate").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        const name = document.getElementById("iName").value.trim();
+        if (!projectId || !name) {
+          setProjectError("Seleccione um projeto e indique o nome da instância.");
+          return;
+        }
+        const parent = document.getElementById("iParent").value;
+        knowledgeRequest("/api/projects/" + projectId + "/instances", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kind: document.getElementById("iKind").value,
+            name: name,
+            parent_id: parent || null,
+          }),
+        }, "Falha ao criar instância.")
+          .then(function () {
+            document.getElementById("iName").value = "";
+            return loadProjectDetail(projectId);
+          })
+          .catch(function (err) { setProjectError(err.message); });
+      });
+      document.getElementById("docCreate").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        const title = document.getElementById("docTitle").value.trim();
+        const parent = document.getElementById("docParent").value;
+        if (!projectId || !title) {
+          setProjectError("Seleccione o projeto e indique o título do nó.");
+          return;
+        }
+        knowledgeRequest("/api/projects/" + projectId + "/document-nodes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            node_type: document.getElementById("docType").value,
+            title: title,
+            parent_id: parent || null,
+          }),
+        }, "Falha ao criar nó documental.")
+          .then(function () {
+            document.getElementById("docTitle").value = "";
+            return loadDocumentTree(projectId);
+          })
+          .catch(function (err) { setProjectError(err.message); });
+      });
+      document.getElementById("docAssocCreate").addEventListener("click", function () {
+        const nodeId = selectedDocumentNodeId;
+        const itemId = document.getElementById("docAssocItem").value;
+        if (!nodeId || !itemId) {
+          setProjectError("Seleccione um nó e uma unidade de conhecimento.");
+          return;
+        }
+        knowledgeRequest("/api/document-nodes/" + nodeId + "/associations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            knowledge_item_id: itemId,
+            role: document.getElementById("docAssocRole").value,
+            usage_instruction: document.getElementById("docAssocInstruction").value.trim() || null,
+          }),
+        }, "Falha ao criar associação.")
+          .then(function () {
+            document.getElementById("docAssocInstruction").value = "";
+            return loadDocumentAssociations(nodeId);
+          })
+          .catch(function (err) { setProjectError(err.message); });
+      });
+      document.getElementById("pkCreate").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        const body = {
+          title: document.getElementById("pkTitle").value.trim(),
+          content: document.getElementById("pkContent").value.trim(),
+          origin_context: document.getElementById("pkContext").value.trim(),
+          scope_type: "project",
+          scope_id: projectId,
+        };
+        if (!projectId || !body.title || !body.content || !body.origin_context) {
+          setProjectError("Preencha o projeto activo e os campos da unidade.");
+          return;
+        }
+        knowledgeRequest("/api/knowledge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }, "Falha ao criar unidade no projeto.")
+          .then(function () {
+            document.getElementById("pkTitle").value = "";
+            document.getElementById("pkContent").value = "";
+            document.getElementById("pkContext").value = "";
+            return loadProjectDetail(projectId);
+          })
+          .catch(function (err) { setProjectError(err.message); });
+      });
+
       document.getElementById("kSearch").addEventListener("click", function () {
         const q = document.getElementById("kQuery").value.trim();
         knowledgeRequest("/api/knowledge/search?q=" + encodeURIComponent(q) + "&scope_type=library", {}, "Falha na pesquisa.")

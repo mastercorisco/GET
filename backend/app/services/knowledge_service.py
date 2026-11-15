@@ -17,6 +17,7 @@ from app.models.knowledge import (
     LibraryVersion,
     RelationType,
 )
+from app.models.project import Project
 from app.schemas.knowledge import (
     DraftUpdateRequest,
     KnowledgeCreateRequest,
@@ -105,7 +106,7 @@ def _to_response(session: Session, item: KnowledgeItem, draft: KnowledgeDraft) -
     latest = revisions[-1] if revisions else None
     return KnowledgeResponse(
         id=item.id,
-        scope_type="library",
+        scope_type=item.scope_type,  # type: ignore[arg-type]
         scope_id=item.scope_id,
         human_code=item.human_code,
         title=draft.title,
@@ -138,7 +139,7 @@ def _to_response(session: Session, item: KnowledgeItem, draft: KnowledgeDraft) -
 
 def _require_item(session: Session, item_id: str) -> tuple[KnowledgeItem, KnowledgeDraft]:
     item = session.get(KnowledgeItem, item_id)
-    if item is None or item.scope_type != "library":
+    if item is None:
         raise KnowledgeError("Unidade não encontrada.")
     draft = session.get(KnowledgeDraft, item_id)
     if draft is None:
@@ -167,16 +168,21 @@ def _replace_draft_index(session: Session, draft: KnowledgeDraft) -> None:
     )
 
 
-def list_items(app_settings: AppSettings) -> list[KnowledgeResponse]:
+def list_items(
+    app_settings: AppSettings,
+    scope_type: str = "library",
+    scope_id: str | None = None,
+) -> list[KnowledgeResponse]:
+    if scope_type not in {"library", "project"}:
+        raise KnowledgeError("Âmbito inválido.")
+    if scope_type == "project" and not scope_id:
+        raise KnowledgeError("scope_id é obrigatório para unidades de projeto.")
     with workspace_session(app_settings) as (session, _paths):
         _ensure_library(session)
-        items = list(
-            session.scalars(
-                select(KnowledgeItem)
-                .where(KnowledgeItem.scope_type == "library")
-                .order_by(KnowledgeItem.created_at)
-            )
-        )
+        query = select(KnowledgeItem).where(KnowledgeItem.scope_type == scope_type)
+        if scope_id:
+            query = query.where(KnowledgeItem.scope_id == scope_id)
+        items = list(session.scalars(query.order_by(KnowledgeItem.created_at)))
         result: list[KnowledgeResponse] = []
         for item in items:
             draft = session.get(KnowledgeDraft, item.id)
@@ -196,10 +202,17 @@ def get_item(app_settings: AppSettings, item_id: str) -> KnowledgeResponse:
 def create_item(app_settings: AppSettings, body: KnowledgeCreateRequest) -> KnowledgeResponse:
     with workspace_session(app_settings) as (session, _paths):
         library = _ensure_library(session)
+        if body.scope_type == "library":
+            scope_id = library.id
+        else:
+            project = session.get(Project, body.scope_id)
+            if project is None:
+                raise KnowledgeError("Projeto não encontrado.")
+            scope_id = project.id
         item = KnowledgeItem(
             id=str(uuid.uuid4()),
-            scope_type="library",
-            scope_id=library.id,
+            scope_type=body.scope_type,
+            scope_id=scope_id,
             human_code=body.human_code,
             created_at=_utcnow(),
         )
@@ -308,9 +321,16 @@ def _fts_query(raw: str) -> str:
     return " AND ".join(f'"{token}"' for token in tokens)
 
 
-def search_items(app_settings: AppSettings, query: str, scope_type: str = "library") -> list[KnowledgeResponse]:
-    if scope_type != "library":
-        raise KnowledgeError("Nesta fase a pesquisa só cobre a biblioteca.")
+def search_items(
+    app_settings: AppSettings,
+    query: str,
+    scope_type: str = "library",
+    scope_id: str | None = None,
+) -> list[KnowledgeResponse]:
+    if scope_type not in {"library", "project"}:
+        raise KnowledgeError("Âmbito inválido.")
+    if scope_type == "project" and not scope_id:
+        raise KnowledgeError("scope_id é obrigatório para pesquisa de projeto.")
     match = _fts_query(query)
     with workspace_session(app_settings) as (session, _paths):
         _ensure_library(session)
@@ -328,6 +348,8 @@ def search_items(app_settings: AppSettings, query: str, scope_type: str = "libra
         for (item_id,) in rows:
             item = session.get(KnowledgeItem, item_id)
             if item is None or item.scope_type != scope_type:
+                continue
+            if scope_id and item.scope_id != scope_id:
                 continue
             draft = session.get(KnowledgeDraft, item.id)
             if draft is None:

@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 KnowledgeType = Literal[
     "fact",
@@ -18,18 +18,26 @@ KnowledgeType = Literal[
 Maturity = Literal["captured", "structured", "reviewed", "mature"]
 Approval = Literal["unreviewed", "proposed", "confirmed", "approved", "rejected"]
 Lifecycle = Literal["active", "superseded", "withdrawn", "archived"]
-ScopeType = Literal["library"]
+ScopeType = Literal["library", "project"]
 
 
 class KnowledgeCreateRequest(BaseModel):
     title: str = Field(min_length=1)
     content: str = Field(min_length=1)
     origin_context: str = Field(min_length=1)
+    scope_type: ScopeType = "library"
+    scope_id: str | None = None
     knowledge_type: KnowledgeType = "unclassified"
     human_code: str | None = None
     maturity: Maturity = "captured"
     approval: Approval = "unreviewed"
     lifecycle: Lifecycle = "active"
+
+    @model_validator(mode="after")
+    def project_requires_scope_id(self) -> "KnowledgeCreateRequest":
+        if self.scope_type == "project" and not (self.scope_id and self.scope_id.strip()):
+            raise ValueError("scope_id é obrigatório para unidades de projeto.")
+        return self
 
 
 class DraftUpdateRequest(BaseModel):

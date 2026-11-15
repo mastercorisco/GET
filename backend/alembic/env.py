@@ -8,13 +8,22 @@ from sqlalchemy import engine_from_config, pool
 
 from app.db.base import Base
 from app.models import (  # noqa: F401
+    AssociationRole,
     BackupRecord,
+    DocumentAssociation,
+    DocumentNode,
     KnowledgeDraft,
     KnowledgeItem,
     KnowledgeRelation,
     KnowledgeRevision,
     Library,
+    Project,
+    ProjectLibraryPin,
+    ProjectTemplate,
+    ProjectTemplateVersion,
     RelationType,
+    TechnicalClass,
+    TechnicalInstance,
     WorkspaceSettings,
 )
 

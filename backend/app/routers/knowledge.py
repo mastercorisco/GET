@@ -33,16 +33,20 @@ def _run(action):
 
 
 @router.get("", response_model=list[KnowledgeResponse])
-def knowledge_list() -> list[KnowledgeResponse]:
-    return _run(lambda: list_items(get_settings()))
+def knowledge_list(
+    scope_type: str = Query(default="library"),
+    scope_id: str | None = Query(default=None),
+) -> list[KnowledgeResponse]:
+    return _run(lambda: list_items(get_settings(), scope_type, scope_id))
 
 
 @router.get("/search", response_model=list[KnowledgeResponse])
 def knowledge_search(
     q: str = Query(min_length=1),
     scope_type: str = Query(default="library"),
+    scope_id: str | None = Query(default=None),
 ) -> list[KnowledgeResponse]:
-    return _run(lambda: search_items(get_settings(), q, scope_type))
+    return _run(lambda: search_items(get_settings(), q, scope_type, scope_id))
 
 
 @router.post("", response_model=KnowledgeResponse)
