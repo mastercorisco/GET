@@ -256,14 +256,48 @@ pre.code-block {
   left: 50%;
   transform: translateX(-50%);
   bottom: 1rem;
-  max-width: min(22rem, 100vw - 2rem);
-  min-width: 320px;
+  max-width: min(48rem, 96vw - 1.5rem);
+  min-width: min(22rem, 96vw - 1.5rem);
   z-index: 2000;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 1rem;
+  padding: 0.65rem 0.9rem;
   box-shadow: var(--shadow-sm);
+  font-size: 0.6em;
+  line-height: 1.25;
+}
+
+.field-help-modal h4 {
+  font-size: 1.2em;
+  line-height: 1.2;
+  margin: 0 0 0.4em;
+}
+
+.field-help-modal p,
+.field-help-modal li {
+  margin: 0.12em 0 0.28em;
+  line-height: 1.25;
+}
+
+.field-help-modal ul {
+  margin: 0.2em 0 0.35em;
+  padding-left: 1.15em;
+}
+
+.field-help-modal .field-help-section-title {
+  font-weight: 600;
+  margin: 0.45em 0 0.1em;
+  line-height: 1.2;
+}
+
+.field-help-modal .field-help-bad {
+  margin: 0.2em 0;
+}
+
+.field-help-modal button {
+  margin-top: 0.45em;
+  margin-right: 0.35em;
 }
 
 .field-help-btn {
@@ -281,13 +315,15 @@ pre.code-block {
   bottom: auto;
   top: 50%;
   transform: translate(-50%, -50%);
-  max-height: min(85vh, 32rem);
+  max-height: min(88vh, 42rem);
   overflow: auto;
 }
 
 .field-help-concept-snippet {
-  margin-top: 0.75rem;
-  padding: 0.65rem 0.75rem;
+  margin-top: 0.4em;
+  padding: 0.4em 0.55em;
+  font-size: inherit;
+  line-height: 1.25;
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface-elevated, var(--color-surface));
@@ -337,7 +373,7 @@ button.linkish.field-help-concept-btn {
 }
 
 .method-overview-modal {
-  max-height: min(90vh, 36rem);
+  max-height: min(90vh, 44rem);
 }
 
 .screen-guide-panel:not(.screen-guide-panel--compact) {
