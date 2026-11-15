@@ -212,9 +212,13 @@ button.ghost:hover,
 
 /* Estrutura documental: árvore mais larga e alta */
 .split-explorer.doc-structure-split {
-  grid-template-columns: minmax(22rem, 1.45fr) minmax(20rem, 1.05fr);
+  grid-template-columns: minmax(31rem, 2.05fr) minmax(18rem, 0.9fr);
   gap: 1.25rem;
   align-items: stretch;
+}
+
+.doc-structure-tree {
+  min-width: 0;
 }
 
 .doc-structure-detail {
@@ -233,6 +237,8 @@ button.ghost:hover,
 .doc-tree-panel {
   max-height: min(47rem, 85vh);
   min-height: min(26rem, 52vh);
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .doc-tree-toolbar {
@@ -249,22 +255,25 @@ button.ghost:hover,
 .doc-tree-ascii {
   max-height: min(36.5rem, 72vh);
   margin-bottom: 0.5rem;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .doc-tree-row {
   display: flex;
   align-items: center;
   gap: 0.2rem;
-  min-width: 0;
+  width: max-content;
+  min-width: 100%;
 }
 
 .doc-tree-row .tree-line {
   display: block;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   width: auto;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: unset;
   white-space: nowrap;
 }
 
@@ -304,7 +313,7 @@ button.ghost:hover,
 
 @media (min-width: 1200px) {
   .split-explorer.doc-structure-split {
-    grid-template-columns: minmax(26rem, 1.55fr) minmax(22rem, 1fr);
+    grid-template-columns: minmax(36rem, 2.15fr) minmax(20rem, 0.85fr);
   }
 
   .doc-structure-detail {
