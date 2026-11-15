@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eda.local/get/schemas/workbook-import-v1.schema.json",
+  "title": "GET workbook import mapping v1",
+  "type": "object",
+  "required": ["schema", "header_row", "data_start_row", "sheets"],
+  "properties": {
+    "schema": { "const": "workbook-import-v1" },
+    "header_row": { "type": "integer", "const": 4 },
+    "data_start_row": { "type": "integer", "const": 5 },
+    "sheets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "columns"],
+        "properties": {
+          "name": { "type": "string" },
+          "data_sheet": { "type": "boolean" },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["key", "header", "required"],
+              "properties": {
+                "key": { "type": "string" },
+                "header": { "type": "string" },
+                "required": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

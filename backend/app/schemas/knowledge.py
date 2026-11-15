@@ -1,6 +1,14 @@
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
+
+ProfileType = Literal[
+    "control_function",
+    "interface",
+    "requirement",
+    "decision",
+    "open_question",
+]
 
 KnowledgeType = Literal[
     "fact",
@@ -75,6 +83,17 @@ class RelationResponse(BaseModel):
     target_item_id: str
 
 
+class TechnicalProfileResponse(BaseModel):
+    profile_type: ProfileType
+    data: dict[str, Any] = Field(default_factory=dict)
+    validation_warnings: list[str] = Field(default_factory=list)
+
+
+class TechnicalProfileUpdateRequest(BaseModel):
+    profile_type: ProfileType | None = None
+    data: dict[str, Any] = Field(default_factory=dict)
+
+
 class KnowledgeResponse(BaseModel):
     id: str
     scope_type: ScopeType
@@ -92,3 +111,4 @@ class KnowledgeResponse(BaseModel):
     latest_revision_num: int | None
     revisions: list[RevisionResponse] = Field(default_factory=list)
     relations: list[RelationResponse] = Field(default_factory=list)
+    technical_profile: TechnicalProfileResponse | None = None

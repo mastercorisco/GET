@@ -79,6 +79,55 @@ def _backend_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
+def _revision_num(rev: str) -> int:
+    return int(rev)
+
+
+def _table_names(conn) -> set[str]:
+    import sqlite3
+
+    if not isinstance(conn, sqlite3.Connection):
+        raise TypeError("expected sqlite3.Connection")
+    return {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+
+
+def _read_alembic_version(conn) -> str | None:
+    import sqlite3
+
+    if "alembic_version" not in _table_names(conn):
+        return None
+    row = conn.execute("SELECT version_num FROM alembic_version").fetchone()
+    return row[0] if row else None
+
+
+def _inferred_schema_revision(conn) -> str | None:
+    names = _table_names(conn)
+    if "import_record" in names:
+        return "007"
+    if "baseline" in names and "export_record" in names:
+        return "006"
+    return None
+
+
+def _stamp_alembic(db_path: Path, revision: str) -> None:
+    env = {
+        **os.environ,
+        "GET_ALEMBIC_URL": f"sqlite:///{db_path.resolve()}",
+    }
+    backend = _backend_root()
+    stamp = subprocess.run(
+        [sys.executable, "-m", "alembic", "stamp", revision],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    if stamp.returncode != 0:
+        raise WorkspaceError(
+            f"Carimbo Alembic ({revision}) falhou: {stamp.stderr or stamp.stdout or 'erro desconhecido'}"
+        )
+
+
 def migrate_workspace_database(db_path: Path) -> None:
     """Apply Alembic migrations to the workspace database."""
     import sqlite3
@@ -102,20 +151,22 @@ def migrate_workspace_database(db_path: Path) -> None:
             has_workspace = conn.execute(
                 "SELECT 1 FROM sqlite_master WHERE type='table' AND name='workspace_settings'"
             ).fetchone()
+            recorded = _read_alembic_version(conn)
+            inferred = _inferred_schema_revision(conn)
         if has_workspace and not has_version:
-            stamp = subprocess.run(
-                [sys.executable, "-m", "alembic", "stamp", "head"],
-                cwd=backend,
-                env=env,
-                capture_output=True,
-                text=True,
-            )
-            if stamp.returncode != 0:
-                raise WorkspaceError(
-                    f"Carimbo Alembic falhou: {stamp.stderr or stamp.stdout or 'erro desconhecido'}"
-                )
+            _stamp_alembic(db_path, "head")
             _migrated_databases.add(key)
             return
+        if recorded and inferred and _revision_num(inferred) > _revision_num(recorded):
+            _stamp_alembic(db_path, inferred)
+        elif recorded and _revision_num(recorded) < 6:
+            with sqlite3.connect(db_path) as conn:
+                names = _table_names(conn)
+            if "baseline" in names and "export_record" not in names:
+                raise WorkspaceError(
+                    "Schema E06 incompleto (existe baseline, falta export_record). "
+                    "Restaure um backup crítico ou crie um workspace novo."
+                )
 
     result = subprocess.run(
         [sys.executable, "-m", "alembic", "upgrade", "head"],

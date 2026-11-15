@@ -27,11 +27,16 @@ class WorkspacePaths:
     def imports_dir(self) -> Path:
         return self.root / "imports"
 
+    @property
+    def migration_reports_dir(self) -> Path:
+        return self.root / "migration_reports"
+
     def ensure_layout(self) -> None:
         for path in (
             self.data_dir,
             self.backups_dir,
             self.exports_dir,
             self.imports_dir,
+            self.migration_reports_dir,
         ):
             path.mkdir(parents=True, exist_ok=True)

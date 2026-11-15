@@ -7,6 +7,8 @@ from app.schemas.knowledge import (
     KnowledgeResponse,
     RelationCreateRequest,
     RelationResponse,
+    TechnicalProfileResponse,
+    TechnicalProfileUpdateRequest,
 )
 from app.services.knowledge_service import (
     KnowledgeError,
@@ -14,9 +16,11 @@ from app.services.knowledge_service import (
     create_item,
     create_relation,
     get_item,
+    get_technical_profile,
     list_items,
     search_items,
     update_draft,
+    update_technical_profile,
 )
 from app.services.workspace_service import WorkspaceError
 
@@ -72,3 +76,15 @@ def knowledge_update_draft(item_id: str, body: DraftUpdateRequest) -> KnowledgeR
 @router.post("/{item_id}/conclude", response_model=KnowledgeResponse)
 def knowledge_conclude(item_id: str) -> KnowledgeResponse:
     return _run(lambda: conclude_revision(get_settings(), item_id))
+
+
+@router.get("/{item_id}/technical-profile", response_model=TechnicalProfileResponse | None)
+def knowledge_get_technical_profile(item_id: str) -> TechnicalProfileResponse | None:
+    return _run(lambda: get_technical_profile(get_settings(), item_id))
+
+
+@router.patch("/{item_id}/technical-profile", response_model=TechnicalProfileResponse | None)
+def knowledge_update_technical_profile(
+    item_id: str, body: TechnicalProfileUpdateRequest
+) -> TechnicalProfileResponse | None:
+    return _run(lambda: update_technical_profile(get_settings(), item_id, body))

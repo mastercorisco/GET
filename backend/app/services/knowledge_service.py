@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import uuid
 from datetime import datetime, timezone
@@ -18,6 +19,7 @@ from app.models.knowledge import (
     RelationType,
 )
 from app.models.project import Project
+from app.models.technical_profile import TechnicalProfileDraft, TechnicalProfilePayload
 from app.schemas.knowledge import (
     DraftUpdateRequest,
     KnowledgeCreateRequest,
@@ -25,6 +27,8 @@ from app.schemas.knowledge import (
     RelationCreateRequest,
     RelationResponse,
     RevisionResponse,
+    TechnicalProfileResponse,
+    TechnicalProfileUpdateRequest,
 )
 from app.services.workspace_service import workspace_session
 
@@ -32,6 +36,10 @@ _RELATION_TYPES = (
     ("depends_on", "Depende de"),
     ("related_to", "Relacionado com"),
     ("supersedes", "Substitui"),
+)
+
+_PROFILE_TYPES = frozenset(
+    {"control_function", "interface", "requirement", "decision", "open_question"}
 )
 
 
@@ -101,6 +109,44 @@ def _relations(session: Session, item_id: str) -> list[RelationResponse]:
     ]
 
 
+def _profile_warnings(profile_type: str, data: dict) -> list[str]:
+    warnings: list[str] = []
+    if profile_type == "decision" and not data:
+        warnings.append("Ficha decision: recomenda-se preencher decision_scope ou technical_parameters.")
+    if profile_type == "open_question" and "blocking" not in data:
+        warnings.append("Ficha open_question: campo blocking em falta.")
+    return warnings
+
+
+def _draft_profile(session: Session, item_id: str) -> TechnicalProfileResponse | None:
+    row = session.get(TechnicalProfileDraft, item_id)
+    if row is None:
+        return None
+    try:
+        data = json.loads(row.data_json)
+    except json.JSONDecodeError:
+        data = {}
+    if not isinstance(data, dict):
+        data = {}
+    return TechnicalProfileResponse(
+        profile_type=row.profile_type,  # type: ignore[arg-type]
+        data=data,
+        validation_warnings=_profile_warnings(row.profile_type, data),
+    )
+
+
+def _validate_profile_update(body: TechnicalProfileUpdateRequest) -> tuple[str | None, dict]:
+    if body.profile_type is None:
+        if body.data:
+            raise KnowledgeError("Indique profile_type quando data não está vazio.")
+        return None, {}
+    if body.profile_type not in _PROFILE_TYPES:
+        raise KnowledgeError("profile_type inválido.")
+    if not isinstance(body.data, dict):
+        raise KnowledgeError("data deve ser um objeto JSON.")
+    return body.profile_type, body.data
+
+
 def _to_response(session: Session, item: KnowledgeItem, draft: KnowledgeDraft) -> KnowledgeResponse:
     revisions = _revisions(session, item.id)
     latest = revisions[-1] if revisions else None
@@ -134,6 +180,7 @@ def _to_response(session: Session, item: KnowledgeItem, draft: KnowledgeDraft) -
             for revision in revisions
         ],
         relations=_relations(session, item.id),
+        technical_profile=_draft_profile(session, item.id),
     )
 
 
@@ -271,6 +318,16 @@ def conclude_revision(app_settings: AppSettings, item_id: str) -> KnowledgeRespo
         )
         session.add(revision)
         session.flush()
+        profile_draft = session.get(TechnicalProfileDraft, item.id)
+        if profile_draft is not None:
+            session.add(
+                TechnicalProfilePayload(
+                    revision_id=revision.id,
+                    profile_type=profile_draft.profile_type,
+                    data_json=profile_draft.data_json,
+                )
+            )
+            session.flush()
         session.execute(
             text(
                 """
@@ -286,6 +343,42 @@ def conclude_revision(app_settings: AppSettings, item_id: str) -> KnowledgeRespo
             },
         )
         return _to_response(session, item, draft)
+
+
+def get_technical_profile(app_settings: AppSettings, item_id: str) -> TechnicalProfileResponse | None:
+    with workspace_session(app_settings) as (session, _paths):
+        _ensure_library(session)
+        _require_item(session, item_id)
+        return _draft_profile(session, item_id)
+
+
+def update_technical_profile(
+    app_settings: AppSettings, item_id: str, body: TechnicalProfileUpdateRequest
+) -> TechnicalProfileResponse | None:
+    profile_type, data = _validate_profile_update(body)
+    with workspace_session(app_settings) as (session, _paths):
+        _ensure_library(session)
+        _require_item(session, item_id)
+        existing = session.get(TechnicalProfileDraft, item_id)
+        if profile_type is None:
+            if existing is not None:
+                session.delete(existing)
+                session.flush()
+            return None
+        data_json = json.dumps(data, ensure_ascii=False)
+        if existing is None:
+            session.add(
+                TechnicalProfileDraft(
+                    item_id=item_id,
+                    profile_type=profile_type,
+                    data_json=data_json,
+                )
+            )
+        else:
+            existing.profile_type = profile_type
+            existing.data_json = data_json
+        session.flush()
+        return _draft_profile(session, item_id)
 
 
 def create_relation(app_settings: AppSettings, body: RelationCreateRequest) -> RelationResponse:

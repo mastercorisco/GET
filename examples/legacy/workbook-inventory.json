@@ -1,0 +1,311 @@
+{
+  "workbook": "C:\\PROGRAMACAO\\GET_aux\\GET_Estrutura_CE_Belo_Jardim_v1.xlsx",
+  "sheets": [
+    {
+      "name": "00_Leitura",
+      "header_row_4": [
+        "Finalidade",
+        "Estruturar fascículos, blocos e artefactos transversais para posterior geração controlada de especificações técnicas no framework GET.",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "data_rows": 0
+    },
+    {
+      "name": "01_Fasciculos",
+      "header_row_4": [
+        "Código",
+        "Designação",
+        "Natureza",
+        "Objetivo"
+      ],
+      "data_rows": 17
+    },
+    {
+      "name": "02_Blocos",
+      "header_row_4": [
+        "Código do bloco",
+        "Fascículo",
+        "Designação do fascículo",
+        "Designação do bloco",
+        "Natureza",
+        "Estado",
+        "Prioridade",
+        "Observações"
+      ],
+      "data_rows": 517
+    },
+    {
+      "name": "03_Filosofia_Controlo",
+      "header_row_4": [
+        "ID",
+        "Princípio",
+        "Definição",
+        "Aplicação",
+        null
+      ],
+      "data_rows": 12
+    },
+    {
+      "name": "04_Artefactos_GET",
+      "header_row_4": [
+        "Código",
+        "Artefacto",
+        "Finalidade",
+        "Fascículos relacionados",
+        "Estado contratual"
+      ],
+      "data_rows": 11
+    },
+    {
+      "name": "05_A01_Alocacao",
+      "header_row_4": [
+        "function_id",
+        "process_system",
+        "function",
+        "criticality",
+        "normal_execution_level",
+        "control_authority",
+        "local_control",
+        "automatic_control",
+        "distributed_control",
+        "remote_reference_source",
+        "remote_reference_required",
+        "reference_validity_criteria",
+        "communication_dependency",
+        "hardwired_critical_interface",
+        "local_autonomy",
+        "loss_of_reference_behaviour",
+        "fallback_reference",
+        "fallback_strategy",
+        "continuity_safe_state",
+        "final_safe_state",
+        "return_strategy",
+        "safety_related",
+        "machinery_related",
+        "responsible_system",
+        "verification_method",
+        "acceptance_criterion"
+      ],
+      "data_rows": 3
+    },
+    {
+      "name": "06_Mapa_Normativo",
+      "header_row_4": [
+        "Norma/Regulamento",
+        "Aplicação",
+        "Fascículos",
+        "Prioridade",
+        "Nota",
+        null
+      ],
+      "data_rows": 18
+    }
+  ],
+  "mapping": {
+    "schema": "workbook-import-v1",
+    "header_row": 4,
+    "data_start_row": 5,
+    "sheets": [
+      {
+        "name": "00_Leitura",
+        "data_sheet": false,
+        "columns": []
+      },
+      {
+        "name": "01_Fasciculos",
+        "data_sheet": true,
+        "columns": [
+          {
+            "key": "codigo",
+            "header": "Código",
+            "required": true
+          },
+          {
+            "key": "designacao",
+            "header": "Designação",
+            "required": true
+          },
+          {
+            "key": "natureza",
+            "header": "Natureza",
+            "required": false
+          },
+          {
+            "key": "objetivo",
+            "header": "Objetivo",
+            "required": false
+          }
+        ]
+      },
+      {
+        "name": "02_Blocos",
+        "data_sheet": true,
+        "columns": [
+          {
+            "key": "block_code",
+            "header": "Código do bloco",
+            "required": true
+          },
+          {
+            "key": "fasciculo",
+            "header": "Fascículo",
+            "required": true
+          },
+          {
+            "key": "fasciculo_designacao",
+            "header": "Designação do fascículo",
+            "required": false
+          },
+          {
+            "key": "block_title",
+            "header": "Designação do bloco",
+            "required": true
+          },
+          {
+            "key": "natureza",
+            "header": "Natureza",
+            "required": false
+          },
+          {
+            "key": "estado",
+            "header": "Estado",
+            "required": false
+          },
+          {
+            "key": "prioridade",
+            "header": "Prioridade",
+            "required": false
+          },
+          {
+            "key": "observacoes",
+            "header": "Observações",
+            "required": false
+          }
+        ]
+      },
+      {
+        "name": "03_Filosofia_Controlo",
+        "data_sheet": true,
+        "columns": [
+          {
+            "key": "human_code",
+            "header": "ID",
+            "required": true
+          },
+          {
+            "key": "title",
+            "header": "Princípio",
+            "required": true
+          },
+          {
+            "key": "definition",
+            "header": "Definição",
+            "required": true
+          },
+          {
+            "key": "application",
+            "header": "Aplicação",
+            "required": false
+          }
+        ]
+      },
+      {
+        "name": "04_Artefactos_GET",
+        "data_sheet": true,
+        "columns": [
+          {
+            "key": "human_code",
+            "header": "Código",
+            "required": true
+          },
+          {
+            "key": "title",
+            "header": "Artefacto",
+            "required": true
+          },
+          {
+            "key": "purpose",
+            "header": "Finalidade",
+            "required": false
+          },
+          {
+            "key": "related_fasciculos",
+            "header": "Fascículos relacionados",
+            "required": false
+          },
+          {
+            "key": "contract_state",
+            "header": "Estado contratual",
+            "required": false
+          }
+        ]
+      },
+      {
+        "name": "05_A01_Alocacao",
+        "data_sheet": true,
+        "columns": [
+          {
+            "key": "function_id",
+            "header": "function_id",
+            "required": true
+          },
+          {
+            "key": "process_system",
+            "header": "process_system",
+            "required": false
+          },
+          {
+            "key": "function",
+            "header": "function",
+            "required": false
+          }
+        ]
+      },
+      {
+        "name": "06_Mapa_Normativo",
+        "data_sheet": true,
+        "columns": [
+          {
+            "key": "title",
+            "header": "Norma/Regulamento",
+            "required": true
+          },
+          {
+            "key": "application",
+            "header": "Aplicação",
+            "required": false
+          },
+          {
+            "key": "fasciculos",
+            "header": "Fascículos",
+            "required": false
+          },
+          {
+            "key": "priority",
+            "header": "Prioridade",
+            "required": false
+          },
+          {
+            "key": "note",
+            "header": "Nota",
+            "required": false
+          }
+        ]
+      }
+    ]
+  },
+  "extract_counts": {
+    "fascicles": 17,
+    "blocks": 517,
+    "principles": 12,
+    "artefacts": 11,
+    "a01_rows": 3,
+    "references": 18
+  },
+  "issues": []
+}

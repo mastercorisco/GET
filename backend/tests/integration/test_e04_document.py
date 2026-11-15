@@ -62,6 +62,17 @@ def _create_node(client: TestClient, project_id: str, node_type: str, title: str
     return response.json()
 
 
+def test_create_first_node_empty_renumber_changes(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    project = _project(client)
+    created = client.post(
+        f"/api/projects/{project['id']}/document-nodes",
+        json={"node_type": "fascicle", "title": "Raiz", "parent_id": None},
+    )
+    assert created.status_code == 200
+    assert created.json()["renumber_changes"] == []
+
+
 def test_document_tree_display_codes(client: TestClient, tmp_path: Path) -> None:
     _workspace(client, tmp_path)
     project = _project(client)

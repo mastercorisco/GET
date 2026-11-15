@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import os
+import sqlite3
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -9,6 +12,7 @@ from fastapi.testclient import TestClient
 from app.config import AppSettings
 from app.deps import get_settings
 from app.main import app
+from app.services.workspace_service import migrate_workspace_database
 
 
 @pytest.fixture
@@ -56,6 +60,29 @@ def test_create_open_workspace_and_backup(client: TestClient, tmp_path: Path) ->
 def test_bind_host_defaults_localhost() -> None:
     settings = AppSettings()
     assert settings.host == "127.0.0.1"
+
+
+def test_migrate_reconciles_stale_alembic_version(tmp_path: Path) -> None:
+    backend = Path(__file__).resolve().parents[2]
+    db = tmp_path / "data" / "get.db"
+    db.parent.mkdir(parents=True)
+    env = {**os.environ, "GET_ALEMBIC_URL": f"sqlite:///{db.resolve()}"}
+    subprocess.run(
+        [sys.executable, "-m", "alembic", "upgrade", "006"],
+        cwd=backend,
+        env=env,
+        check=True,
+    )
+    with sqlite3.connect(db) as conn:
+        conn.execute("UPDATE alembic_version SET version_num = '005'")
+        conn.commit()
+    migrate_workspace_database(db)
+    with sqlite3.connect(db) as conn:
+        version = conn.execute("SELECT version_num FROM alembic_version").fetchone()[0]
+    assert version == "007"
+    assert {row[0] for row in sqlite3.connect(db).execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    )}.__contains__("import_record")
 
 
 def test_restore_requires_confirm(client: TestClient, tmp_path: Path) -> None:

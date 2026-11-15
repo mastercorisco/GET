@@ -94,6 +94,10 @@ def _is_descendant(session, ancestor_id: str, node_id: str) -> bool:
     return False
 
 
+def compute_display_codes(nodes: list[DocumentNode]) -> dict[str, str]:
+    return _compute_display_codes(nodes)
+
+
 def _compute_display_codes(nodes: list[DocumentNode]) -> dict[str, str]:
     children = _children_map(nodes)
 
@@ -124,7 +128,7 @@ def _diff_codes(before: dict[str, str], after: dict[str, str]) -> list[RenumberC
         new = after.get(node_id)
         if new is None:
             continue
-        if old != new:
+        if old is not None and old != new:
             changes.append(RenumberChange(node_id=node_id, old_code=old, new_code=new))
     return changes
 

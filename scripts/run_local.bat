@@ -26,6 +26,10 @@ if errorlevel 1 (
 )
 
 echo [2/2] A iniciar a aplicacao (sem Node.js)...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :4810 ^| findstr LISTENING') do (
+  echo       A terminar processo antigo na porta 4810 PID %%a...
+  taskkill /F /PID %%a >nul 2>&1
+)
 start "GET" cmd /k "cd /d %ROOT%\backend & python -m uvicorn app.main:app --host 127.0.0.1 --port 4810"
 timeout /t 2 /nobreak >nul
 start "" http://127.0.0.1:4810/

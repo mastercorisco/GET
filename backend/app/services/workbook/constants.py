@@ -1,0 +1,26 @@
+from __future__ import annotations
+
+WORKBOOK_IMPORT_VERSION = "workbook-import-v1"
+HEADER_ROW = 4
+DATA_START_ROW = 5
+
+CONFIRM_PHRASE = "I_UNDERSTAND"
+
+DEFAULT_WORKBOOK = r"C:\PROGRAMACAO\GET_aux\GET_Estrutura_CE_Belo_Jardim_v1.xlsx"
+
+SHEET_LEITURA = "00_Leitura"
+SHEET_FASCICULOS = "01_Fasciculos"
+SHEET_BLOCOS = "02_Blocos"
+SHEET_FILOSOFIA = "03_Filosofia_Controlo"
+SHEET_ARTEFACTOS = "04_Artefactos_GET"
+SHEET_A01 = "05_A01_Alocacao"
+SHEET_MAPA = "06_Mapa_Normativo"
+
+DATA_SHEETS = (
+    SHEET_FASCICULOS,
+    SHEET_BLOCOS,
+    SHEET_FILOSOFIA,
+    SHEET_ARTEFACTOS,
+    SHEET_A01,
+    SHEET_MAPA,
+)

@@ -4,7 +4,21 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from app.routers import backups, document, health, knowledge, projects, technical, workspace
+from app.routers import (
+    backups,
+    baseline,
+    document,
+    export,
+    import_review,
+    workbook,
+    health,
+    knowledge,
+    projects,
+    references,
+    technical,
+    terminology,
+    workspace,
+)
 
 _STATIC_INDEX = Path(__file__).resolve().parent / "static" / "index.html"
 
@@ -28,6 +42,12 @@ app.include_router(knowledge.router, prefix="/api")
 app.include_router(projects.router, prefix="/api")
 app.include_router(technical.router, prefix="/api")
 app.include_router(document.router, prefix="/api")
+app.include_router(references.router, prefix="/api")
+app.include_router(terminology.router, prefix="/api")
+app.include_router(baseline.router, prefix="/api")
+app.include_router(export.router, prefix="/api")
+app.include_router(import_review.router, prefix="/api")
+app.include_router(workbook.router, prefix="/api")
 
 
 @app.get("/")
