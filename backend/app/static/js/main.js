@@ -12,6 +12,7 @@ import { renderScreenGuide } from "./components/screen-guide.js";
 import { applyFriendlySelectLabels } from "./labels.js";
 import { hydrateAppearanceFromStorage, initAppearance } from "./components/appearance.js";
 import { initBackupsView } from "./views/backups.js";
+import { initWorkbookImport } from "./views/workbook-import.js";
 import { initBlockEditor, openBlockEditor } from "./views/block-editor.js";
 import { initSettingsView, setSettingsWorkspaceOpen } from "./views/settings.js";
 import { initRouteTabs } from "./components/route-tabs.js";
@@ -95,6 +96,7 @@ if (expBaselineMeta) {
 }
 
 initBackupsView();
+initWorkbookImport(router);
 initBlockEditor(router);
 
 function wireProjectWatcher() {

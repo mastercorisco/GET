@@ -23,7 +23,7 @@ Assets servidos em `GET /static/...` via FastAPI `StaticFiles`.
 ## Navegação
 
 1. **Preparar workspace** — criar/abrir pasta de dados.
-2. **Modelo Excel** — transferir/validar XLSX v1 (sem BD).
+2. **Importação Excel** — modelo v1: validar, dry-run e consolidar (novo projecto ou activo).
 3. **Biblioteca** — conhecimento transversal, referências, terminologia.
 4. **Projecto** — criação, conhecimento do projecto, fichas, referências, overrides.
 5. **Estrutura documental** — árvore ASCII, associações, novo nó.
@@ -44,7 +44,7 @@ Botões junto a campos críticos; textos em `TIPS` em `tip.js`. Para novo campo:
 - [ ] Projecto: criar, fascículo + bloco — árvore ASCII visível.
 - [ ] Exportar: publicar baseline + export mestre.
 - [ ] Reimportar: upload JSON + merge (se fixture disponível).
-- [ ] Excel: validar ficheiro `.xlsx`.
+- [ ] Excel: validar → dry-run → aplicar com `I_UNDERSTAND` (ou só validar se for teste).
 - [ ] Backups: criar backup crítico e listar.
 
 ## Evolução (React)

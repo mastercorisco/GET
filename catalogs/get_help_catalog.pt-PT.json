@@ -404,6 +404,100 @@
       ],
       "related_screen": "settings"
     },
+    "workbook.template_library": {
+      "label": "Modelo biblioteca",
+      "short_help": "Folhas para conhecimento transversal e referências.",
+      "definition": "Template controlado `library_import_v1`.",
+      "guiding_question": "Precisa só de biblioteca?",
+      "instructions": "Use para referências e artefactos reutilizáveis; consolidação só-biblioteca ainda é validação + dry-run.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Download do modelo Excel para conhecimento de biblioteca.",
+      "workflow_context": "Importação Excel, passo 1.",
+      "when_to_use": "Quando o workbook não inclui estrutura documental de projecto.",
+      "what_happens_next": "Preenche folhas e valida antes do dry-run.",
+      "related_concepts": [],
+      "related_screen": "workbook",
+      "common_confusions": []
+    },
+    "workbook.template_project": {
+      "label": "Modelo projecto",
+      "short_help": "Fascículos, blocos, A01 e conhecimento de projecto.",
+      "definition": "Template controlado `project_import_v1`.",
+      "guiding_question": "Vai importar estrutura documental?",
+      "instructions": "Preencha fascículos e blocos com códigos coerentes (ex. F01, F01_B01).",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Download do modelo Excel completo de projecto.",
+      "workflow_context": "Importação Excel, passo 1.",
+      "when_to_use": "Migração inicial ou enriquecimento de projecto.",
+      "what_happens_next": "Validar estrutura e executar dry-run.",
+      "related_concepts": [],
+      "related_screen": "workbook",
+      "common_confusions": []
+    },
+    "workbook.dry_run": {
+      "label": "Pré-importação",
+      "short_help": "Relatório e staging sem gravar na base.",
+      "definition": "Equivalente ao passo 2 do CLI `migrate_workbook_get.py`.",
+      "guiding_question": "O workbook está pronto para consolidar?",
+      "instructions": "Revise erros bloqueantes e avisos no relatório antes de confirmar.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Gera `migration_reports/{run_id}/report.json` e cópia em `imports/workbook/{run_id}/`.",
+      "workflow_context": "Importação Excel, passo 3.",
+      "when_to_use": "Sempre antes de aplicar; reutiliza o mesmo ficheiro no apply.",
+      "what_happens_next": "Consolidar com confirmação `I_UNDERSTAND`.",
+      "related_concepts": [],
+      "related_screen": "workbook",
+      "common_confusions": [
+        "Dry-run não cria projecto — isso só no passo 4."
+      ]
+    },
+    "workbook.apply_target": {
+      "label": "Destino da consolidação",
+      "short_help": "Novo projecto ou enriquecer o activo.",
+      "definition": "`new_project` cria projecto; `existing_project` só acrescenta (sem eliminações por omissão).",
+      "guiding_question": "Substituir ou complementar?",
+      "instructions": "Projecto activo deve estar seleccionado no ecrã Projectos.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Escolhe o ramo de apply no motor workbook.",
+      "workflow_context": "Importação Excel, passo 4.",
+      "when_to_use": "Após dry-run com estado `ready`.",
+      "what_happens_next": "Backup crítico automático e escrita no SQLite.",
+      "related_concepts": [
+        "project"
+      ],
+      "related_screen": "workbook",
+      "common_confusions": []
+    },
+    "workbook.apply_confirm": {
+      "label": "Confirmação de consolidação",
+      "short_help": "Frase exacta `I_UNDERSTAND`.",
+      "definition": "Protecção humana após rever o relatório.",
+      "guiding_question": "Leu o relatório de migração?",
+      "instructions": "Digite sem espaços extra a frase pedida.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Mesma regra que o CLI `--confirm`.",
+      "workflow_context": "Importação Excel, passo 4.",
+      "when_to_use": "Imediatamente antes de aplicar.",
+      "what_happens_next": "Resposta com `project_id` e resumo de linhas acrescentadas.",
+      "related_concepts": [],
+      "related_screen": "workbook",
+      "common_confusions": []
+    },
     "workbook.validate_file": {
       "label": "Validar Excel",
       "short_help": "Confirma cabeçalhos do modelo v1.",
@@ -2184,17 +2278,21 @@
       ]
     },
     "workbook": {
-      "title": "Modelo Excel",
-      "objective": "Validar modelo controlado.",
+      "title": "Importação Excel GET v1",
+      "objective": "Transferir modelo, validar, dry-run e consolidar no SQLite.",
       "steps": [
-        "Transfira modelo",
-        "Valide estrutura"
+        "Transfira o modelo",
+        "Valide a estrutura",
+        "Execute dry-run",
+        "Consolide com I_UNDERSTAND"
       ],
-      "next": "project-structure",
-      "audience_note": "O Excel valida estrutura de requisitos legados; não substitui o método de pontos no GET.",
+      "next": "project",
+      "audience_note": "Apenas o template controlado v1; não é importador Excel universal. Enriquecimento de projecto existente é append-only.",
       "purpose_steps": [
-        "Validar ficheiro — relatório sem importação automática para o SQLite.",
-        "Usar como referência — conhecimento estruturado entra via biblioteca ou projecto."
+        "Modelo — descarregue `project_import_v1` ou `library_import_v1` e preencha as folhas.",
+        "Validação — confirma cabeçalhos e tipos sem tocar na base.",
+        "Dry-run — gera relatório em migration_reports e preserva o upload em imports/workbook.",
+        "Consolidação — backup crítico; novo projecto ou projecto activo; confirmação explícita."
       ]
     },
     "project-technical": {

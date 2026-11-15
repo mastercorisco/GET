@@ -1026,36 +1026,6 @@ const rootPath = document.getElementById("rootPath");
         }, "Falha ao abrir workspace.").catch(function (err) { setError(err.message); });
       });
 
-      function downloadWorkbookTemplate(templateId) {
-        window.location.href = "/api/workbook/templates/" + encodeURIComponent(templateId);
-      }
-      document.getElementById("wbTplLibrary").addEventListener("click", function () {
-        downloadWorkbookTemplate("library_import_v1");
-      });
-      document.getElementById("wbTplProject").addEventListener("click", function () {
-        downloadWorkbookTemplate("project_import_v1");
-      });
-      document.getElementById("wbValidateBtn").addEventListener("click", function () {
-        const input = document.getElementById("wbValidateFile");
-        const out = document.getElementById("wbValidateOut");
-        out.hidden = true;
-        if (!input.files || !input.files.length) {
-          setError("Seleccione um ficheiro .xlsx para validar.");
-          return;
-        }
-        const form = new FormData();
-        form.append("file", input.files[0]);
-        fetch("/api/workbook/validate", { method: "POST", body: form })
-          .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, body: body }; }); })
-          .then(function (result) {
-            setError("");
-            out.hidden = false;
-            out.textContent = JSON.stringify(result.body, null, 2);
-            if (!result.ok) throw new Error(result.body.detail || "Validação falhou.");
-          })
-          .catch(function (err) { setError(err.message); });
-      });
-
       document.getElementById("kCreate").addEventListener("click", function () {
         const body = knowledgePayload();
         if (!body.title || !body.content || !body.origin_context) {

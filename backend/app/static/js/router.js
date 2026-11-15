@@ -1,6 +1,6 @@
 const ROUTES = [
   { id: "workspace", label: "Preparar workspace", group: "Início" },
-  { id: "workbook", label: "Modelo Excel", group: "Início" },
+  { id: "workbook", label: "Importação Excel", group: "Início" },
   { id: "library", label: "Biblioteca", group: "Conhecimento" },
   { id: "project", label: "Projecto (geral)", group: "Projecto" },
   { id: "project-structure", label: "Estrutura documental", group: "Projecto" },
@@ -32,7 +32,7 @@ const ROUTE_ICONS = {
 
 const BREADCRUMBS = {
   workspace: "Início / Workspace",
-  workbook: "Início / Modelo Excel",
+  workbook: "Início / Importação Excel",
   library: "Biblioteca",
   project: "Projecto / Geral",
   "project-structure": "Projecto / Estrutura documental",

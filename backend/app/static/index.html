@@ -77,16 +77,55 @@
 
       <section class="route-panel card " data-route="workbook">
         <div class="screen-guide-panel" data-screen-guide="workbook" hidden></div>
-        <h2>Modelo Excel GET v1</h2>
-        <p class="lead">Transferir ou validar o modelo controlado (não importa para a base de dados).</p>
-        <h3>Modelo Excel GET v1</h3>
-        <p>Transferir modelo controlado ou validar estrutura (sem importar para a base de dados).</p>
-        <button type="button" id="wbTplLibrary" class="secondary">Transferir modelo (biblioteca)</button>
-        <button type="button" id="wbTplProject" class="secondary">Transferir modelo (projecto)</button>
-        <label for="wbValidateFile" data-help-key="workbook.validate_file">Validar ficheiro .xlsx</label>
-        <input type="file" id="wbValidateFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-        <button type="button" id="wbValidateBtn" class="secondary">Validar estrutura</button>
-        <pre id="wbValidateOut" hidden></pre>
+        <h2>Importação Excel GET v1</h2>
+        <p class="lead">Modelo controlado: transferir, validar, pré-importação (dry-run) e consolidação na base de dados.</p>
+        <p id="wbStatus" class="route-status" hidden></p>
+
+        <details class="compact-section compact-section--content" open>
+          <summary>1. Modelo</summary>
+          <div class="compact-section__body">
+            <p>Transfira o modelo adequado, preencha as folhas e guarde como .xlsx.</p>
+            <button type="button" id="wbTplLibrary" class="secondary" data-help-key="workbook.template_library">Transferir modelo (biblioteca)</button>
+            <button type="button" id="wbTplProject" class="secondary" data-help-key="workbook.template_project">Transferir modelo (projecto)</button>
+          </div>
+        </details>
+
+        <details class="compact-section compact-section--content" open>
+          <summary>2. Validar estrutura</summary>
+          <div class="compact-section__body">
+            <label for="wbValidateFile" data-help-key="workbook.validate_file">Ficheiro .xlsx</label>
+            <input type="file" id="wbValidateFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            <button type="button" id="wbValidateBtn" class="secondary">Validar estrutura</button>
+            <pre id="wbValidateOut" class="code-block" hidden></pre>
+          </div>
+        </details>
+
+        <details class="compact-section compact-section--content" open>
+          <summary>3. Pré-importação (dry-run)</summary>
+          <div class="compact-section__body">
+            <p data-help-key="workbook.dry_run">Gera relatório e staging no workspace; não altera a base de dados.</p>
+            <label for="wbMigrateFile">Ficheiro .xlsx</label>
+            <input type="file" id="wbMigrateFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            <button type="button" id="wbMigrateBtn" class="secondary">Executar dry-run</button>
+            <pre id="wbMigrateOut" class="code-block" hidden></pre>
+          </div>
+        </details>
+
+        <details class="compact-section compact-section--content" open>
+          <summary>4. Consolidar</summary>
+          <div class="compact-section__body">
+            <fieldset>
+              <legend data-help-key="workbook.apply_target">Destino</legend>
+              <label><input type="radio" name="wbTarget" id="wbTargetNew" value="new_project" checked /> Novo projecto</label>
+              <label><input type="radio" name="wbTarget" id="wbTargetExisting" value="existing_project" /> Projecto activo (ecrã Projectos)</label>
+            </fieldset>
+            <label for="wbApplyConfirm" data-help-key="workbook.apply_confirm">Confirmação</label>
+            <input type="text" id="wbApplyConfirm" autocomplete="off" placeholder="I_UNDERSTAND" />
+            <button type="button" id="wbApplyBtn">Aplicar importação</button>
+            <button type="button" id="wbOpenProjectBtn" class="secondary" hidden>Abrir projecto</button>
+            <pre id="wbApplyOut" class="code-block" hidden></pre>
+          </div>
+        </details>
       </section>
 
       <section class="route-panel card " data-route="library">

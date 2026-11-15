@@ -4,6 +4,7 @@ import { setHelpTriggerLabel } from "./help-icon.js";
 
 const ROUTE_LABELS = {
   library: "Biblioteca",
+  workbook: "Importação Excel",
   project: "Projecto",
   "project-structure": "Estrutura documental",
   "block-editor": "Preparação do bloco",

@@ -22,6 +22,7 @@ def run_workbook_migration(
     *,
     dry_run: bool = True,
     confirm: str | None = None,
+    run_id: str | None = None,
 ) -> MigrationRunResult:
     workbook_path = workbook_path.resolve()
     if not workbook_path.is_file():
@@ -39,6 +40,7 @@ def run_workbook_migration(
                 paths.migration_reports_dir,
                 bundle,
                 issues,
+                run_id=run_id,
                 mode="dry-run" if dry_run else "apply",
             )
             run_id = report_path.parent.name

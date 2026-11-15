@@ -152,3 +152,99 @@ def test_workbook_validate_api(client: TestClient) -> None:
     )
     assert response.status_code == 200
     assert response.json()["valid"] is True
+
+
+def test_workbook_migrate_api_new_project(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+
+    data = _minimal_workbook_bytes()
+    dry = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true"},
+        files={"file": ("test.xlsx", data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    assert dry.status_code == 200
+    body = dry.json()
+    assert body["status"] == "ready"
+    assert body["run_id"]
+    assert body["counts"]["fascicles"] == 1
+
+    report = client.get(f"/api/workbook/migration-reports/{body['run_id']}")
+    assert report.status_code == 200
+    assert report.json()["run_id"] == body["run_id"]
+
+    bad_apply = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": body["run_id"],
+            "confirm": "WRONG",
+            "target": "new_project",
+        },
+    )
+    assert bad_apply.status_code == 400
+
+    applied = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": body["run_id"],
+            "confirm": "I_UNDERSTAND",
+            "target": "new_project",
+        },
+    )
+    assert applied.status_code == 200
+    project_id = applied.json()["project_id"]
+    assert project_id
+
+    projects = client.get("/api/projects")
+    assert any(p["id"] == project_id for p in projects.json())
+
+
+def test_workbook_migrate_api_existing_project(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    data = _minimal_workbook_bytes()
+
+    first_dry = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true"},
+        files={"file": ("test.xlsx", data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    assert first_dry.status_code == 200
+    first_apply = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": first_dry.json()["run_id"],
+            "confirm": "I_UNDERSTAND",
+            "target": "new_project",
+        },
+    )
+    assert first_apply.status_code == 200
+    project_id = first_apply.json()["project_id"]
+    assert project_id
+
+    nodes_before = client.get(f"/api/projects/{project_id}/document-nodes").json()["nodes"]
+    fascicle_count = sum(1 for n in nodes_before if n["node_type"] == "fascicle")
+
+    dry = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true"},
+        files={"file": ("test2.xlsx", data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    assert dry.status_code == 200
+    run_id = dry.json()["run_id"]
+
+    applied = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": run_id,
+            "confirm": "I_UNDERSTAND",
+            "target": "existing_project",
+            "project_id": project_id,
+        },
+    )
+    assert applied.status_code == 200
+    summary = applied.json().get("summary") or {}
+    assert summary.get("fascicles_added", 0) == 0
+    assert summary.get("blocks_added", 0) == 0
+
+    nodes_after = client.get(f"/api/projects/{project_id}/document-nodes").json()["nodes"]
+    assert sum(1 for n in nodes_after if n["node_type"] == "fascicle") == fascicle_count

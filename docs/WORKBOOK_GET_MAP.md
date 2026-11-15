@@ -22,10 +22,23 @@ Versão do mapeamento: `workbook-import-v1` (ver `schemas/workbook-import-v1.sch
 
 ## Fluxo operacional
 
+Pela **UI** (ecrã «Importação Excel») ou **API**:
+
+| Passo | UI / API | Efeito |
+|-------|----------|--------|
+| 1 | Transferir modelo | Download `GET /api/workbook/templates/{id}` |
+| 2 | `POST /api/workbook/validate` | Validação estrutural (sem BD) |
+| 3 | `POST /api/workbook/migrate` (multipart, `dry_run=true`) | Upload para `{workspace}/imports/workbook/{run_id}/source.xlsx` + relatório |
+| 4 | `POST /api/workbook/migrate/apply` | Backup crítico; `new_project` ou `existing_project` |
+
+Relatório: `{workspace}/migration_reports/{run_id}/report.json`. Consulta: `GET /api/workbook/migration-reports/{run_id}`.
+
+Equivalente **CLI**:
+
 1. `python scripts/workbook_inspect.py` — inventário e contagens.
-2. `python scripts/migrate_workbook_get.py --workspace-root PATH` — **dry-run** (relatório em `{workspace}/migration_reports/{run_id}/report.json`).
+2. `python scripts/migrate_workbook_get.py --workspace-root PATH` — **dry-run**.
 3. Revisão humana do relatório.
-4. `... --apply --confirm I_UNDERSTAND` — backup crítico + consolidação.
+4. `... --apply --confirm I_UNDERSTAND` — backup crítico + consolidação (novo projecto).
 
 ## Workbook de referência
 
