@@ -310,6 +310,36 @@ button.linkish.field-help-concept-btn {
   margin: 0 0 0.5rem;
 }
 
+.prep-method-summary {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.method-flow {
+  margin: 0.25rem 0 0.75rem 1.1rem;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.method-flow-step::after {
+  content: " →";
+  color: var(--color-muted);
+}
+
+.prep-boundaries-wrap ul,
+.prep-boundaries {
+  margin: 0.35rem 0 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.prep-exchange p {
+  margin: 0.15rem 0 0.5rem;
+}
+
+.method-overview-modal {
+  max-height: min(90vh, 36rem);
+}
+
 .screen-guide-panel:not(.screen-guide-panel--compact) {
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;

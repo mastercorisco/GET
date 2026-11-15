@@ -146,11 +146,11 @@
         <h2>Projecto</h2>
         <p class="lead">Crie projectos e gira conhecimento e referências do âmbito.</p>
         <h2>Projetos</h2>
-        <label for="pTemplateVersion">Modelo (versão)</label>
+        <label for="pTemplateVersion" data-help-key="project.template_version">Modelo (versão)</label>
         <select id="pTemplateVersion"></select>
-        <label for="pName">Nome do projeto</label>
+        <label for="pName" data-help-key="project.name">Nome do projeto</label>
         <input id="pName" placeholder="Ex.: Central Vale do Sousa — fase 1" />
-        <label for="pIntervention">Tipo de intervenção</label>
+        <label for="pIntervention" data-help-key="project.intervention">Tipo de intervenção</label>
         <input id="pIntervention" value="brownfield" />
         <button type="button" id="pCreate">Criar projeto</button>
         <p id="pError" class="error" hidden></p>
@@ -159,7 +159,7 @@
         <div id="pList"></div>
 
         <h2>Projeto activo</h2>
-        <label for="pActive">Seleccionar</label>
+        <label for="pActive" data-help-key="project.active">Seleccionar</label>
         <select id="pActive"></select>
 
         <h3>Conhecimento do projeto</h3>
@@ -274,8 +274,14 @@
                   <button type="button" class="prep-tab-btn" data-prep-tab="export">Exportação</button>
                 </div>
                 <div class="prep-tab-panel" data-prep-panel="routing">
+                  <p class="field-help-section-title">Método GET</p>
+                  <p id="prepMethodSummary" class="prep-method-summary"></p>
+                  <ol id="prepMethodFlow" class="method-flow"></ol>
+                  <button type="button" id="prepMethodOpen" class="secondary">Ver método completo</button>
+                  <p class="field-help-section-title">O que controla</p>
                   <ul id="prepChecklist" class="prep-checklist"></ul>
                   <p id="prepLlmRole" class="lead"></p>
+                  <div id="prepLlmBoundaries" class="prep-boundaries-wrap"></div>
                 </div>
                 <div class="prep-tab-panel" data-prep-panel="concepts" hidden>
                   <div id="prepConcepts" class="prep-concepts"></div>
@@ -284,6 +290,8 @@
                   <div id="prepValidation"></div>
                 </div>
                 <div class="prep-tab-panel" data-prep-panel="export" hidden>
+                  <p class="field-help-section-title">Semântica do pacote</p>
+                  <div id="prepExchangeSemantics" class="prep-exchange"></div>
                   <label class="choice-inline" data-help-key="block.include_draft">
                     <input type="checkbox" id="beIncludeDraft" />
                     <span>Incluir rascunhos na exportação</span>
@@ -371,13 +379,14 @@
         <p class="lead">Publique a baseline e gere JSON para discussão ou redação.</p>
         <h3>Exportação</h3>
         <p id="expBaselineMeta">Baseline: desconhecida — publique antes do mestre.</p>
+        <label class="section-label field-label" data-help-key="export.baseline">Baseline do projecto</label>
         <button type="button" id="expBaselinePublish" class="secondary">Publicar baseline</button>
         <label for="expProfile" data-help-key="export.profile">Perfil</label>
         <select id="expProfile">
           <option value="discussion">discussion</option>
           <option value="redaction">redaction</option>
         </select>
-        <label class="choice-inline" for="expWriteZip">
+        <label class="choice-inline" for="expWriteZip" data-help-key="export.zip">
           <input type="checkbox" id="expWriteZip" />
           <span>
             <span class="choice-text">Incluir pacote ZIP</span>
@@ -385,7 +394,7 @@
           </span>
         </label>
         <button type="button" id="expMaster">Exportar mestre</button>
-        <label for="expFascicle">Fascículo (raiz)</label>
+        <label for="expFascicle" data-help-key="export.fascicle">Fascículo (raiz)</label>
         <select id="expFascicle"><option value="">—</option></select>
         <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo</button>
         <p id="expStatus" class="error" hidden></p>

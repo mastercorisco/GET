@@ -1,7 +1,8 @@
-import { getHelpCatalog, openHelpModal } from "../components/help-ui.js";
+import { getHelpCatalog, getHelpLevel, openHelpModal, openMethodOverview } from "../components/help-ui.js";
 
 let _blockId = null;
 let _router = null;
+let _methodBtnWired = false;
 
 export function initBlockPrepPanel(router) {
   _router = router;
@@ -16,6 +17,13 @@ export function initBlockPrepPanel(router) {
       });
     });
   });
+  const methodBtn = document.getElementById("prepMethodOpen");
+  if (methodBtn && !_methodBtnWired) {
+    methodBtn.addEventListener("click", function () {
+      openMethodOverview({ trigger: methodBtn });
+    });
+    _methodBtnWired = true;
+  }
 }
 
 export function refreshBlockPrepPanel(blockId, validation) {
@@ -23,6 +31,39 @@ export function refreshBlockPrepPanel(blockId, validation) {
   const catalog = getHelpCatalog() || {};
   const wf = catalog.workflows || {};
   const concepts = catalog.concepts || {};
+  const method = catalog.method || {};
+  const helpLevel = getHelpLevel();
+
+  const methodSummary = document.getElementById("prepMethodSummary");
+  if (methodSummary && method.principle) {
+    methodSummary.textContent = method.principle;
+  }
+
+  const flowEl = document.getElementById("prepMethodFlow");
+  if (flowEl && method.flow_steps) {
+    flowEl.replaceChildren();
+    method.flow_steps.forEach(function (step, i) {
+      const li = document.createElement("li");
+      li.textContent = step;
+      if (i < method.flow_steps.length - 1) {
+        li.className = "method-flow-step";
+      }
+      flowEl.appendChild(li);
+    });
+  }
+
+  const boundariesEl = document.getElementById("prepLlmBoundaries");
+  if (boundariesEl && wf.method_llm_boundaries) {
+    boundariesEl.replaceChildren();
+    const ul = document.createElement("ul");
+    ul.className = "prep-boundaries";
+    wf.method_llm_boundaries.forEach(function (line) {
+      const li = document.createElement("li");
+      li.textContent = line;
+      ul.appendChild(li);
+    });
+    boundariesEl.appendChild(ul);
+  }
 
   const checklist = document.getElementById("prepChecklist");
   if (checklist && wf.user_controls) {
@@ -48,9 +89,37 @@ export function refreshBlockPrepPanel(blockId, validation) {
       s.textContent = c.label || key;
       d.appendChild(s);
       const p = document.createElement("p");
-      p.textContent = c.summary || "";
+      p.textContent = c.role_in_get || c.summary || "";
       d.appendChild(p);
+      if (helpLevel === "detailed" && c.not_this) {
+        const nt = document.createElement("p");
+        nt.className = "field-help-bad";
+        nt.textContent = "Não é: " + c.not_this;
+        d.appendChild(nt);
+      }
       conceptsEl.appendChild(d);
+    });
+  }
+
+  const exchEl = document.getElementById("prepExchangeSemantics");
+  const sem = method.exchange_semantics || {};
+  if (exchEl && Object.keys(sem).length) {
+    exchEl.replaceChildren();
+    const labels = {
+      authoritative_content: "Autoritativo",
+      supporting_context: "Suporte",
+      unresolved_matters: "Em aberto",
+      generation_instructions: "Instruções LLM",
+    };
+    Object.keys(labels).forEach(function (k) {
+      if (!sem[k]) return;
+      const dt = document.createElement("p");
+      dt.className = "field-help-section-title";
+      dt.textContent = labels[k];
+      exchEl.appendChild(dt);
+      const dd = document.createElement("p");
+      dd.textContent = sem[k];
+      exchEl.appendChild(dd);
     });
   }
 

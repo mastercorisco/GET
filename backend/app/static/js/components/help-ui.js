@@ -267,6 +267,79 @@ function createHelpButton(fieldKey, inputEl, onUseExample) {
   return btn;
 }
 
+/** Modal só leitura com o bloco `method` do catálogo (Método GET). */
+export function openMethodOverview(options) {
+  options = options || {};
+  const method = (_catalog && _catalog.method) || {};
+  closeModal();
+  _lastTrigger = options.trigger || null;
+
+  const dlg = document.createElement("div");
+  dlg.className = "field-help-modal field-help-modal--centered method-overview-modal";
+  dlg.setAttribute("role", "dialog");
+  dlg.setAttribute("aria-modal", "true");
+  dlg.setAttribute("aria-labelledby", "method-modal-title");
+  dlg.tabIndex = -1;
+
+  const title = document.createElement("h4");
+  title.id = "method-modal-title";
+  title.textContent = method.title || "Método GET";
+  dlg.appendChild(title);
+
+  function addSection(heading, text) {
+    if (!text) return;
+    const h = document.createElement("p");
+    h.className = "field-help-section-title";
+    h.textContent = heading;
+    dlg.appendChild(h);
+    const p = document.createElement("p");
+    p.textContent = text;
+    dlg.appendChild(p);
+  }
+
+  function addList(heading, items) {
+    if (!items || !items.length) return;
+    const h = document.createElement("p");
+    h.className = "field-help-section-title";
+    h.textContent = heading;
+    dlg.appendChild(h);
+    const ul = document.createElement("ul");
+    items.forEach(function (item) {
+      const li = document.createElement("li");
+      li.textContent = item;
+      ul.appendChild(li);
+    });
+    dlg.appendChild(ul);
+  }
+
+  addSection("Princípio", method.principle);
+  addList("Fluxo", method.flow_steps);
+  addSection("Hierarquia", method.hierarchy_summary);
+  const sem = method.exchange_semantics || {};
+  addSection("Conteúdo autoritativo", sem.authoritative_content);
+  addSection("Contexto de suporte", sem.supporting_context);
+  addSection("Assuntos em aberto", sem.unresolved_matters);
+  addSection("Instruções de geração", sem.generation_instructions);
+  addList("Governação", method.governance_rules);
+  if (method.help_system_note) {
+    addSection("Ajuda na aplicação", method.help_system_note);
+  }
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.textContent = "Fechar";
+  closeBtn.addEventListener("click", closeModal);
+  dlg.appendChild(closeBtn);
+
+  document.body.appendChild(dlg);
+  _openModal = dlg;
+  dlg.focus();
+  document.addEventListener("keydown", onEsc, true);
+  setTimeout(function () {
+    document.addEventListener("click", onOutside, true);
+  }, 0);
+}
+
 export function openHelpModal(fieldKey, options) {
   options = options || {};
   const entry = fieldEntry(fieldKey);
