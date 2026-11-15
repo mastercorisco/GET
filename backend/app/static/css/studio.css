@@ -422,6 +422,36 @@ button.ghost:hover,
   font-size: 1.02rem;
 }
 
+.be-premise-attrs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.35rem 0 0.55rem;
+}
+
+.block-editor-main .be-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.65rem;
+}
+
+.block-editor-main .be-field-row label {
+  margin: 0;
+  min-width: 5.75rem;
+  flex: 0 0 auto;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.block-editor-main .be-field-row select {
+  margin: 0;
+  flex: 1 1 10rem;
+  width: auto;
+  min-width: 9.5rem;
+  max-width: 16rem;
+}
+
 .block-prep-help-open {
   position: absolute;
   top: 0;
@@ -532,6 +562,13 @@ button.secondary.danger:hover {
   background: var(--color-bg);
 }
 
+.be-points-panel[open] {
+  display: flex;
+  flex-direction: column;
+  max-height: min(58rem, calc(100vh - 5.5rem));
+  overflow: hidden;
+}
+
 .be-points-summary {
   display: flex;
   align-items: baseline;
@@ -579,14 +616,97 @@ button.secondary.danger:hover {
 }
 
 .be-points-list {
-  max-height: min(12.5rem, 32vh);
-  overflow-y: auto;
   margin-top: 0.25rem;
   gap: 0.35rem;
+  font-size: 78%;
+  line-height: 1.35;
+  min-width: 0;
+}
+
+.be-points-panel[open] .be-points-list {
+  flex: 1 1 auto;
+  min-height: min(22rem, 42vh);
+  max-height: none;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.be-points-panel[open] .be-points-list::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
 .be-points-list.dp-list {
   margin-top: 0.25rem;
+  gap: 0.4rem;
+}
+
+.be-points-list .dp-card {
+  padding: 0.35rem 0.5rem;
+  min-width: min(100%, 22rem);
+}
+
+.be-points-list .dp-card-head {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  row-gap: 0.2rem;
+}
+
+.be-points-list .dp-card-head .error {
+  flex: 1 1 100%;
+  font-size: inherit;
+  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.be-points-list .dp-card-toggle {
+  font-size: inherit;
+  line-height: 1.3;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.be-points-list .dp-card-meta {
+  font-size: inherit;
+}
+
+.be-points-list .dp-card-body {
+  margin-top: 0.45rem;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.be-points-list .dp-section {
+  margin: 0.35rem 0;
+  padding: 0.28rem 0.4rem;
+}
+
+.be-points-list .dp-section-body {
+  margin-top: 0.35rem;
+}
+
+.be-points-list label.field-label,
+.be-points-list .field-microhelp {
+  font-size: inherit;
+}
+
+.be-points-list input,
+.be-points-list textarea,
+.be-points-list select {
+  font-size: inherit;
+  margin-top: 0.2rem;
+  padding: 0.28rem 0.45rem;
+}
+
+.be-points-list textarea {
+  min-height: 3.2em;
+}
+
+.be-points-list .dp-list-row,
+.be-points-list .dp-list-editor {
+  font-size: inherit;
 }
 
 .dp-card .tip-btn.field-help-btn {

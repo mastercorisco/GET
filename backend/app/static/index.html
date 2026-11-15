@@ -276,28 +276,36 @@
                 <div id="bePremiseList" class="be-premise-list"></div>
                 <label for="bePremiseStatement" data-help-key="premise.statement">Nova premissa</label>
                 <textarea id="bePremiseStatement" rows="2"></textarea>
-                <label for="bePremiseImportance" data-help-key="premise.importance">Importância</label>
-                <select id="bePremiseImportance">
-                  <option value="mandatory">mandatory</option>
-                  <option value="recommended">recommended</option>
-                  <option value="informative">informative</option>
-                </select>
-                <label for="bePremiseSource" data-help-key="premise.source_type">Origem</label>
-                <select id="bePremiseSource">
-                  <option value="project_decision">project_decision</option>
-                  <option value="functional_requirement">functional_requirement</option>
-                  <option value="standard">standard</option>
-                  <option value="existing_document">existing_document</option>
-                  <option value="operational_experience">operational_experience</option>
-                  <option value="technical_recommendation">technical_recommendation</option>
-                  <option value="unconfirmed_information">unconfirmed_information</option>
-                </select>
-                <label for="bePremiseConfidence" data-help-key="premise.confidence">Confiança</label>
-                <select id="bePremiseConfidence">
-                  <option value="confirmed">confirmed</option>
-                  <option value="provisional">provisional</option>
-                  <option value="unverified">unverified</option>
-                </select>
+                <div class="be-premise-attrs">
+                  <div class="be-field-row">
+                    <label for="bePremiseImportance" data-help-key="premise.importance">Importância</label>
+                    <select id="bePremiseImportance">
+                      <option value="mandatory">mandatory</option>
+                      <option value="recommended">recommended</option>
+                      <option value="informative">informative</option>
+                    </select>
+                  </div>
+                  <div class="be-field-row">
+                    <label for="bePremiseSource" data-help-key="premise.source_type">Origem</label>
+                    <select id="bePremiseSource">
+                      <option value="project_decision">project_decision</option>
+                      <option value="functional_requirement">functional_requirement</option>
+                      <option value="standard">standard</option>
+                      <option value="existing_document">existing_document</option>
+                      <option value="operational_experience">operational_experience</option>
+                      <option value="technical_recommendation">technical_recommendation</option>
+                      <option value="unconfirmed_information">unconfirmed_information</option>
+                    </select>
+                  </div>
+                  <div class="be-field-row">
+                    <label for="bePremiseConfidence" data-help-key="premise.confidence">Confiança</label>
+                    <select id="bePremiseConfidence">
+                      <option value="confirmed">confirmed</option>
+                      <option value="provisional">provisional</option>
+                      <option value="unverified">unverified</option>
+                    </select>
+                  </div>
+                </div>
                 <button type="button" id="bePremiseAdd" class="secondary">Adicionar premissa</button>
                 <details class="be-points-panel" id="bePointsPanel">
                   <summary class="be-points-summary" data-help-key="block.points_overview">
