@@ -4,7 +4,7 @@ Este pacote contém a definição de produto, decisões arquiteturais, contratos
 
 ## Objetivo do produto
 
-O GET Gerador de Especificações Funcionais é uma aplicação web local, sem IA incorporada, destinada a armazenar, organizar, versionar, relacionar, validar e exportar conhecimento técnico de cadernos de encargos. A aplicação exporta JSON para discussão ou redação em LLM externas e reimporta apenas JSON estruturado para revisão humana.
+O 0ET Gerador de Especificações Funcionais é uma aplicação web local, sem IA incorporada, destinada a armazenar, organizar, versionar, relacionar, validar e exportar conhecimento técnico de cadernos de encargos. A aplicação exporta JSON para discussão ou redação em LLM externas e reimporta apenas JSON estruturado para revisão humana.
 
 ## Ordem recomendada no Cursor
 
@@ -38,6 +38,12 @@ O GET Gerador de Especificações Funcionais é uma aplicação web local, sem I
 ## Regra central
 
 A base de dados SQLite é a fonte de verdade. JSON e Markdown são artefactos derivados. A aplicação não chama LLM, não gera texto técnico e não converte Markdown em Word.
+
+## Windows — instalar sem Origin
+
+Não use `git clone` de `origin.cursor.com` no PowerShell (pede token Cursor). Guia completo: **`docs/WINDOWS_SETUP.md`**.
+
+Resumo: descarregue `releases/GET-src.zip`, expanda para `C:\PROGRAMACAO\GET`, depois `scripts\setup_windows.ps1` ou `run_local.bat`.
 
 ## Execução local (Fase 1 — E01)
 
