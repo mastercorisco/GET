@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/get/schemas/get_exchange_package.schema.json",
+  "title": "GET Exchange Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "exported_at", "scope", "authoritative_content", "supporting_context", "unresolved_matters", "generation_instructions"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "package_id": {"type": "string", "minLength": 1},
+    "exported_at": {"type": "string", "format": "date-time"},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id", "fascicle_id", "block_id"],
+      "properties": {
+        "project_id": {"type": "string", "minLength": 1},
+        "fascicle_id": {"type": "string", "minLength": 1},
+        "block_id": {"type": "string", "minLength": 1},
+        "display_code": {"type": "string"},
+        "title": {"type": "string"}
+      }
+    },
+    "authoritative_content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["block", "applicable_premises", "development_points"],
+      "properties": {
+        "block": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["objective", "scope", "target_output"],
+          "properties": {
+            "objective": {"type": "string"},
+            "scope": {"type": "string"},
+            "target_output": {"type": "object"}
+          }
+        },
+        "applicable_premises": {"type": "array", "items": {"$ref": "#/$defs/resolvedPremise"}},
+        "development_points": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/developmentPoint"}
+        }
+      }
+    },
+    "supporting_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["knowledge_items", "references", "examples"],
+      "properties": {
+        "knowledge_items": {"type": "array", "items": {"type": "object"}},
+        "references": {"type": "array", "items": {"type": "object"}},
+        "examples": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "unresolved_matters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["open_questions", "missing_information"],
+      "properties": {
+        "open_questions": {"type": "array", "items": {"type": "object"}},
+        "missing_information": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "generation_instructions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["develop_each_point", "preserve_point_order", "do_not_invent_requirements", "do_not_resolve_open_questions", "identify_suggestions_separately"],
+      "properties": {
+        "develop_each_point": {"const": true},
+        "preserve_point_order": {"const": true},
+        "do_not_invent_requirements": {"const": true},
+        "do_not_resolve_open_questions": {"const": true},
+        "identify_suggestions_separately": {"const": true},
+        "output_language": {"type": "string", "default": "pt-PT"},
+        "additional_instructions": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "$defs": {
+    "resolvedPremise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "importance", "source_type", "confidence", "origin_level", "origin_id"],
+      "properties": {
+        "id": {"type": "string"},
+        "statement": {"type": "string", "minLength": 1},
+        "importance": {"enum": ["mandatory", "recommended", "informative"]},
+        "source_type": {"enum": ["project_decision", "eda_philosophy", "functional_requirement", "standard", "existing_document", "operational_experience", "technical_recommendation", "unconfirmed_information"]},
+        "confidence": {"enum": ["confirmed", "provisional", "unverified"]},
+        "origin_level": {"enum": ["project", "fascicle", "block", "development_point"]},
+        "origin_id": {"type": "string"},
+        "reference_id": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      }
+    },
+    "developmentPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "order", "title", "core_idea", "llm_freedom", "status", "development_guidance", "perspectives", "questions_to_answer", "premises", "must_include", "limits_and_exclusions", "examples", "knowledge_item_ids", "reference_ids", "open_questions", "acceptance_criteria"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "order": {"type": "integer", "minimum": 1},
+        "title": {"type": "string", "minLength": 1, "maxLength": 120},
+        "core_idea": {"type": "string", "minLength": 1},
+        "intended_outcome": {"type": "string"},
+        "development_guidance": {"type": "array", "items": {"type": "string"}},
+        "perspectives": {"type": "array", "items": {"enum": ["functional", "operational", "architecture", "implementation", "safety", "availability", "maintenance", "cybersecurity", "testing", "documentation", "contractual"]}},
+        "questions_to_answer": {"type": "array", "items": {"type": "object"}},
+        "premises": {"type": "array", "items": {"$ref": "#/$defs/resolvedPremise"}},
+        "must_include": {"type": "array", "items": {"type": "object"}},
+        "limits_and_exclusions": {"type": "array", "items": {"type": "object"}},
+        "examples": {"type": "array", "items": {"type": "object"}},
+        "knowledge_item_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "reference_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "open_questions": {"type": "array", "items": {"type": "object"}},
+        "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
+        "llm_freedom": {"enum": ["strict", "bounded", "exploratory"], "default": "strict"},
+        "status": {"enum": ["ready", "approved"]}
+      }
+    }
+  }
+}

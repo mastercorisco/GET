@@ -24,3 +24,4 @@ class WorkspaceSettings(Base):
     retention_critical: Mapped[int] = mapped_column(Integer, default=10)
     retention_daily: Mapped[int] = mapped_column(Integer, default=14)
     retention_weekly: Mapped[int] = mapped_column(Integer, default=8)
+    help_level: Mapped[str] = mapped_column(String(16), nullable=False, default="normal")

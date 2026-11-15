@@ -14,6 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
     [
         ("master.example.json", "master.schema.json"),
         ("fascicle-roundtrip.example.json", "fascicle-roundtrip.schema.json"),
+        ("exchange-package.example.json", "get_exchange_package.schema.json"),
     ],
 )
 def test_examples_validate(example_name: str, schema_name: str) -> None:

@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.domain.block.router import router as block_router
 from app.routers import (
     backups,
     baseline,
@@ -50,6 +51,7 @@ app.include_router(baseline.router, prefix="/api")
 app.include_router(export.router, prefix="/api")
 app.include_router(import_review.router, prefix="/api")
 app.include_router(workbook.router, prefix="/api")
+app.include_router(block_router, prefix="/api")
 
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 

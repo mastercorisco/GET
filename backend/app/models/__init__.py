@@ -19,6 +19,7 @@ from app.models.knowledge import (
     RelationType,
 )
 from app.models.project import Project, ProjectLibraryPin, ProjectTemplate, ProjectTemplateVersion
+from app.domain.block.models import DevelopmentPoint, Premise
 from app.models.document import AssociationRole, DocumentAssociation, DocumentNode
 from app.models.reference import Reference, StandardProfile
 from app.models.technical import TechnicalClass, TechnicalInstance
@@ -39,8 +40,10 @@ __all__ = [
     "ImportRecord",
     "ImportStagingItem",
     "MergeSession",
+    "DevelopmentPoint",
     "DocumentAssociation",
     "DocumentNode",
+    "Premise",
     "KnowledgeDraft",
     "KnowledgeItem",
     "KnowledgeItemAlias",

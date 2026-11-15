@@ -2,6 +2,7 @@ export function initLegacyApp(deps = {}) {
   const mountDocumentTree = deps.mountDocumentTree;
   const mountTechnicalTree = deps.mountTechnicalTree;
   const onWorkspaceChange = deps.onWorkspaceChange;
+  const onBlockSelect = deps.onBlockSelect;
 const rootPath = document.getElementById("rootPath");
       const userName = document.getElementById("userName");
       const createBtn = document.getElementById("createBtn");
@@ -161,6 +162,9 @@ const rootPath = document.getElementById("rootPath");
               document.getElementById("docSelectedMeta").textContent =
                 node.display_code + " — " + node.title;
               loadDocumentAssociations(node.id).catch(function (err) { setProjectError(err.message); });
+              if (node.node_type === "block" && onBlockSelect) {
+                onBlockSelect(node.id);
+              }
               renderDocumentTree(nodes);
             },
             onMove: function (node, direction) {

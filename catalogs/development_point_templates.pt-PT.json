@@ -1,0 +1,54 @@
+{
+  "catalog_version": "1.0.0",
+  "locale": "pt-PT",
+  "templates": [
+    {
+      "id": "architecture_principle",
+      "name": "Princípio de arquitetura",
+      "description": "Estrutura um princípio e as suas consequências sem preencher a decisão técnica.",
+      "prompts": ["princípio", "fundamentação", "âmbito de aplicação", "consequências", "exceções"]
+    },
+    {
+      "id": "failure_behavior",
+      "name": "Comportamento perante falha",
+      "description": "Estrutura o comportamento esperado perante uma falha sem inventar valores ou soluções.",
+      "prompts": ["condição desencadeadora", "comportamento esperado", "estado seguro", "sinalização", "condições de recuperação", "intervenção do operador", "assuntos remetidos para engenharia de detalhe"]
+    },
+    {
+      "id": "interface_requirement",
+      "name": "Requisito de interface",
+      "description": "Estrutura origem, destino, conteúdo, qualidade, periodicidade e falhas da interface.",
+      "prompts": ["sistemas envolvidos", "informação trocada", "direção", "qualidade e validade", "periodicidade", "comportamento perante falha", "responsabilidades"]
+    },
+    {
+      "id": "operational_requirement",
+      "name": "Requisito operacional",
+      "description": "Estrutura objetivo operacional, intervenientes, condições e exceções.",
+      "prompts": ["objetivo operacional", "atores", "pré-condições", "sequência esperada", "alarmes e confirmação", "exceções"]
+    },
+    {
+      "id": "maintenance_requirement",
+      "name": "Requisito de manutenção",
+      "description": "Estrutura diagnóstico, isolamento, substituição, teste e reposição.",
+      "prompts": ["objeto de manutenção", "diagnóstico", "isolamento", "substituição", "ensaio", "reposição", "registos"]
+    },
+    {
+      "id": "cybersecurity_requirement",
+      "name": "Requisito de cibersegurança",
+      "description": "Estrutura ativo, ameaça, controlo e evidência sem atribuir níveis normativos não aprovados.",
+      "prompts": ["ativo ou função", "cenário de ameaça", "controlo esperado", "limites de confiança", "registo e monitorização", "evidência de conformidade"]
+    },
+    {
+      "id": "test_requirement",
+      "name": "Requisito de ensaio",
+      "description": "Estrutura condições, estímulo, resultado esperado, evidência e aceitação.",
+      "prompts": ["objetivo", "pré-condições", "estímulo", "resultado esperado", "evidência", "critério de aceitação", "tratamento de desvios"]
+    },
+    {
+      "id": "pending_decision",
+      "name": "Decisão pendente",
+      "description": "Regista uma decisão ainda não tomada sem a resolver automaticamente.",
+      "prompts": ["questão", "alternativas conhecidas", "impactos", "informação necessária", "responsável", "marco de decisão"]
+    }
+  ]
+}

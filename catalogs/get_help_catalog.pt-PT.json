@@ -1,0 +1,153 @@
+{
+  "catalog_version": "1.0.0",
+  "locale": "pt-PT",
+  "default_help_level": "normal",
+  "fields": {
+    "development_point.title": {
+      "label": "Título do ponto",
+      "short_help": "Identifique de forma curta o assunto que será desenvolvido.",
+      "definition": "O título identifica o assunto do ponto, mas não substitui a posição técnica registada na ideia central.",
+      "guiding_question": "Qual é o assunto que deve ser desenvolvido?",
+      "good_examples": [
+        "Autonomia perante indisponibilidade do SCADA"
+      ],
+      "bad_examples": [
+        {
+          "text": "SCADA",
+          "reason": "É demasiado genérico para identificar o assunto concreto."
+        }
+      ],
+      "tips": ["Use uma expressão curta e específica.", "Não escreva aqui o requisito completo."],
+      "allow_use_example": true
+    },
+    "development_point.core_idea": {
+      "label": "Ideia central",
+      "short_help": "Defina a afirmação técnica que a LLM deve preservar.",
+      "definition": "Representa a posição técnica autoritativa que não pode ser alterada durante o desenvolvimento.",
+      "guiding_question": "O que deve ficar tecnicamente estabelecido?",
+      "good_examples": [
+        "A indisponibilidade do SCADA não deve impedir a operação segura das funções de controlo local."
+      ],
+      "bad_examples": [
+        {
+          "text": "Explicar a importância do controlo local.",
+          "reason": "É uma instrução de redação, não uma afirmação técnica."
+        }
+      ],
+      "tips": ["Use uma afirmação completa.", "Evite juntar requisitos independentes.", "Não introduza valores ainda não confirmados."],
+      "allow_use_example": true
+    },
+    "development_point.intended_outcome": {
+      "label": "Resultado pretendido",
+      "short_help": "Indique o que deverá ficar claro após a leitura do ponto.",
+      "definition": "Define a conclusão ou compreensão esperada do leitor, sem substituir a ideia central.",
+      "guiding_question": "Depois de ler este ponto, o que deverá ficar claramente estabelecido?",
+      "good_examples": [
+        "Deverá ficar estabelecido que a perda do SCADA não implica a perda das funções locais de comando, controlo e proteção."
+      ],
+      "bad_examples": [],
+      "tips": ["Formule o resultado do ponto, não uma lista de tarefas."],
+      "allow_use_example": true
+    },
+    "development_point.development_guidance": {
+      "label": "Orientações de desenvolvimento",
+      "short_help": "Indique como o assunto deve ser explicado, estruturado ou relacionado.",
+      "definition": "As orientações controlam a forma de desenvolvimento sem introduzir requisitos ocultos.",
+      "guiding_question": "Como deve este assunto ser desenvolvido?",
+      "good_examples": [
+        "Distinguir controlo local de supervisão.",
+        "Relacionar autonomia funcional com disponibilidade."
+      ],
+      "bad_examples": [
+        {
+          "text": "O PLC deve ter alimentação redundante.",
+          "reason": "É um requisito e deve ser registado como elemento obrigatório ou requisito associado."
+        }
+      ],
+      "tips": ["Registe uma orientação por item."],
+      "allow_use_example": true
+    },
+    "development_point.premises": {
+      "label": "Premissas",
+      "short_help": "Registe condições consideradas verdadeiras e que limitam o desenvolvimento.",
+      "definition": "Uma premissa é uma condição de enquadramento, não um requisito a impor ao adjudicatário.",
+      "guiding_question": "Que condições devem ser consideradas verdadeiras?",
+      "good_examples": [
+        "O controlador local dispõe das variáveis necessárias para executar a função sem depender continuamente do SCADA."
+      ],
+      "bad_examples": [
+        {
+          "text": "O PLC deve ter duas fontes de alimentação.",
+          "reason": "É um requisito técnico, não uma condição assumida."
+        }
+      ],
+      "tips": ["Indique origem e confiança.", "Não esconda decisões pendentes numa premissa."],
+      "allow_use_example": true
+    },
+    "development_point.must_include": {
+      "label": "Elementos obrigatórios",
+      "short_help": "Registe o que terá obrigatoriamente de aparecer no desenvolvimento.",
+      "definition": "Cada item representa matéria obrigatória, sem prescrever automaticamente a redação final.",
+      "guiding_question": "O que não pode faltar no resultado?",
+      "good_examples": ["Deteção de qualidade inválida ou timeout.", "Sinalização da condição ao operador."],
+      "bad_examples": [],
+      "tips": ["Registe um elemento por item.", "Acrescente justificação quando o motivo não for evidente."],
+      "allow_use_example": true
+    },
+    "development_point.limits_and_exclusions": {
+      "label": "Limites e exclusões",
+      "short_help": "Indique o que não pode ser assumido, definido ou incluído.",
+      "definition": "Protege o conteúdo contra invenções, decisões prematuras e expansão indevida do âmbito.",
+      "guiding_question": "O que deve ficar fora, por definir ou remetido para detalhe?",
+      "good_examples": ["Não fixar o valor do timeout; depende da dinâmica específica do processo."],
+      "bad_examples": [],
+      "tips": ["Classifique como não definir, não assumir, não incluir, engenharia de detalhe ou fora do âmbito."],
+      "allow_use_example": true
+    },
+    "development_point.questions_to_answer": {
+      "label": "Questões a responder",
+      "short_help": "Liste perguntas que o texto desenvolvido deverá responder.",
+      "definition": "As perguntas orientam a cobertura temática sem converter respostas desconhecidas em factos.",
+      "guiding_question": "Que perguntas devem ficar respondidas?",
+      "good_examples": ["O que desencadeia o fallback?", "Como ocorre o regresso ao modo normal?"],
+      "bad_examples": [],
+      "tips": ["Marque as perguntas obrigatórias.", "Mova para questões pendentes o que ainda não tem resposta aprovada."],
+      "allow_use_example": true
+    },
+    "development_point.open_questions": {
+      "label": "Questões pendentes",
+      "short_help": "Registe lacunas que a LLM não pode resolver por iniciativa própria.",
+      "definition": "Identifica decisões ou informação ainda indisponível que deve permanecer explicitamente pendente.",
+      "guiding_question": "O que continua por decidir ou confirmar?",
+      "good_examples": ["O retorno ao modo remoto será automático ou sujeito a confirmação do operador?"],
+      "bad_examples": [],
+      "tips": ["Atribua estado e, quando possível, responsável ou marco de decisão."],
+      "allow_use_example": true
+    },
+    "development_point.acceptance_criteria": {
+      "label": "Critérios de aceitação",
+      "short_help": "Defina como será verificado se o desenvolvimento respeita os inputs.",
+      "definition": "Os critérios permitem avaliar o resultado sem depender apenas de apreciação subjetiva.",
+      "guiding_question": "Quando será considerado adequado o desenvolvimento?",
+      "good_examples": ["Distingue claramente supervisão e controlo.", "Não introduz valores temporais não aprovados."],
+      "bad_examples": [
+        {
+          "text": "O texto deve ficar bom.",
+          "reason": "Não é verificável."
+        }
+      ],
+      "tips": ["Use critérios observáveis e verificáveis."],
+      "allow_use_example": true
+    },
+    "development_point.llm_freedom": {
+      "label": "Liberdade da LLM",
+      "short_help": "Defina o grau de liberdade permitido no desenvolvimento externo.",
+      "definition": "Strict limita a LLM aos inputs; bounded permite melhorar estrutura e explicação; exploratory permite sugestões separadas.",
+      "guiding_question": "Que liberdade pode a LLM ter sem alterar a intenção técnica?",
+      "good_examples": ["strict"],
+      "bad_examples": [],
+      "tips": ["Use strict por defeito em cadernos de encargos."],
+      "allow_use_example": false
+    }
+  }
+}

@@ -183,6 +183,33 @@
       
       </section>
 
+          <section class="route-panel card" data-route="block-editor">
+            <h2>Preparação do bloco</h2>
+            <p class="lead">Pontos de desenvolvimento, premissas e exportação para LLM externa.</p>
+            <div id="block-editor-root" class="split-explorer">
+              <div>
+                <p id="beHeader" class="field-label">—</p>
+                <label for="beObjective">Objectivo do bloco</label>
+                <textarea id="beObjective" rows="2"></textarea>
+                <label for="beScope">Âmbito do bloco</label>
+                <textarea id="beScope" rows="2"></textarea>
+                <label for="beTemplate">Modelo estrutural (opcional)</label>
+                <select id="beTemplate"><option value="">— vazio —</option></select>
+                <button type="button" id="beNewPoint" class="secondary">Novo ponto</button>
+                <button type="button" id="beRefresh" class="secondary">Actualizar</button>
+                <div id="bePointList" class="dp-list"></div>
+              </div>
+              <div>
+                <h3>Ajuda e exportação</h3>
+                <label class="choice-inline"><input type="checkbox" id="beIncludeDraft" /> Incluir rascunhos na exportação</label>
+                <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
+                <button type="button" id="beExportWrite">Exportar pacote</button>
+                <p id="beStatus" class="lead"></p>
+                <pre id="bePreview" class="tree-ascii" style="max-height:24rem;overflow:auto"></pre>
+              </div>
+            </div>
+          </section>
+
           <section class="route-panel card" data-route="project-structure">
             <h2>Estrutura documental</h2>
             <p class="lead">Árvore do caderno de encargos. Seleccione um nó para associar conhecimento.</p>

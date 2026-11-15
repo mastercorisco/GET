@@ -1,0 +1,1 @@
+"""Bloco documental: pontos de desenvolvimento, premissas e exportação LLM."""

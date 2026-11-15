@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "11111111-1111-4111-8111-111111111111",
+  "exported_at": "2026-11-15T12:00:00+00:00",
+  "scope": {
+    "project_id": "22222222-2222-4222-8222-222222222222",
+    "fascicle_id": "33333333-3333-4333-8333-333333333333",
+    "block_id": "44444444-4444-4444-8444-444444444444",
+    "display_code": "F04_B34",
+    "title": "Perda de referências remotas"
+  },
+  "authoritative_content": {
+    "block": {
+      "objective": "Definir comportamento perante perda de supervisão remota.",
+      "scope": "Funções de controlo local",
+      "target_output": {"kind": "spec_section"}
+    },
+    "applicable_premises": [
+      {
+        "id": "55555555-5555-4555-8555-555555555555",
+        "statement": "O controlador local dispõe das variáveis necessárias.",
+        "importance": "mandatory",
+        "source_type": "operational_experience",
+        "confidence": "confirmed",
+        "origin_level": "block",
+        "origin_id": "44444444-4444-4444-8444-444444444444",
+        "reference_id": null,
+        "notes": null
+      }
+    ],
+    "development_points": [
+      {
+        "id": "66666666-6666-4666-8666-666666666666",
+        "order": 1,
+        "title": "Autonomia perante indisponibilidade do SCADA",
+        "core_idea": "A indisponibilidade do SCADA não impede a operação segura das funções de controlo local.",
+        "intended_outcome": "Fica clara a separação entre supervisão e controlo local.",
+        "development_guidance": ["Distinguir controlo local de supervisão."],
+        "perspectives": ["operational"],
+        "questions_to_answer": [{"prompt": "O que desencadeia o fallback?", "answer": ""}],
+        "premises": [],
+        "must_include": [{"text": "Sinalização ao operador"}],
+        "limits_and_exclusions": [],
+        "examples": [],
+        "knowledge_item_ids": [],
+        "reference_ids": [],
+        "open_questions": [],
+        "acceptance_criteria": ["Não introduz valores temporais não aprovados."],
+        "llm_freedom": "strict",
+        "status": "ready"
+      }
+    ]
+  },
+  "supporting_context": {
+    "knowledge_items": [],
+    "references": [],
+    "examples": []
+  },
+  "unresolved_matters": {
+    "open_questions": [],
+    "missing_information": []
+  },
+  "generation_instructions": {
+    "develop_each_point": true,
+    "preserve_point_order": true,
+    "do_not_invent_requirements": true,
+    "do_not_resolve_open_questions": true,
+    "identify_suggestions_separately": true,
+    "output_language": "pt-PT",
+    "additional_instructions": []
+  }
+}

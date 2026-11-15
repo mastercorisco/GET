@@ -5,6 +5,7 @@ import { mountDocumentTree, mountTechnicalTree } from "./components/tree.js";
 import { wireTips } from "./components/tip.js";
 import { applyFriendlySelectLabels } from "./labels.js";
 import { initBackupsView } from "./views/backups.js";
+import { initBlockEditor, openBlockEditor } from "./views/block-editor.js";
 
 const router = initRouter({
   onRouteChange: function (routeId) {
@@ -18,6 +19,9 @@ const shell = createShell(router);
 initLegacyApp({
   mountDocumentTree: mountDocumentTree,
   mountTechnicalTree: mountTechnicalTree,
+  onBlockSelect: function (blockId) {
+    openBlockEditor(blockId, router);
+  },
   onWorkspaceChange: function (data) {
     shell.onWorkspaceChange(data);
     document.dispatchEvent(new CustomEvent("get:workspace-open", { detail: data }));
@@ -49,6 +53,7 @@ if (expBaselineMeta) {
 }
 
 initBackupsView();
+initBlockEditor(router);
 
 function wireProjectWatcher() {
   applyFriendlySelectLabels();
