@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -12,14 +13,14 @@ def test_alembic_upgrade_downgrade(tmp_path: Path) -> None:
         "GET_ALEMBIC_URL": f"sqlite:///{db}",
     }
     subprocess.run(
-        ["python3", "-m", "alembic", "upgrade", "head"],
+        [sys.executable, "-m", "alembic", "upgrade", "head"],
         cwd=backend,
         check=True,
         env=env,
         capture_output=True,
     )
     subprocess.run(
-        ["python3", "-m", "alembic", "downgrade", "base"],
+        [sys.executable, "-m", "alembic", "downgrade", "base"],
         cwd=backend,
         check=True,
         env=env,

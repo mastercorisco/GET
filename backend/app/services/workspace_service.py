@@ -21,6 +21,17 @@ class WorkspaceError(Exception):
     pass
 
 
+_migrated_databases: set[str] = set()
+
+
+def _ensure_workspace_schema(db_path: Path) -> None:
+    key = str(db_path.resolve())
+    if key in _migrated_databases:
+        return
+    migrate_workspace_database(db_path)
+    _migrated_databases.add(key)
+
+
 def _to_response(settings: WorkspaceSettings, paths: WorkspacePaths) -> WorkspaceResponse:
     return WorkspaceResponse(
         id=settings.id,
@@ -42,6 +53,7 @@ def get_workspace_db_path(app_settings: AppSettings) -> Path:
 
 def require_workspace_session(app_settings: AppSettings) -> tuple[Session, WorkspacePaths]:
     db_path = get_workspace_db_path(app_settings)
+    _ensure_workspace_schema(db_path)
     _, factory = get_session_factory_for_workspace(db_path)
     root = get_active_workspace_root(app_settings)
     if root is None:
@@ -71,6 +83,10 @@ def migrate_workspace_database(db_path: Path) -> None:
     """Apply Alembic migrations to the workspace database."""
     import sqlite3
 
+    key = str(db_path.resolve())
+    if key in _migrated_databases:
+        return
+
     db_path.parent.mkdir(parents=True, exist_ok=True)
     env = {
         **os.environ,
@@ -98,6 +114,7 @@ def migrate_workspace_database(db_path: Path) -> None:
                 raise WorkspaceError(
                     f"Carimbo Alembic falhou: {stamp.stderr or stamp.stdout or 'erro desconhecido'}"
                 )
+            _migrated_databases.add(key)
             return
 
     result = subprocess.run(
@@ -111,6 +128,7 @@ def migrate_workspace_database(db_path: Path) -> None:
         raise WorkspaceError(
             f"Migração Alembic falhou: {result.stderr or result.stdout or 'erro desconhecido'}"
         )
+    _migrated_databases.add(key)
 
 
 def get_current_workspace(app_settings: AppSettings) -> WorkspaceResponse | None:

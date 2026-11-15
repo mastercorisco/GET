@@ -7,7 +7,16 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.db.base import Base
-from app.models import BackupRecord, WorkspaceSettings  # noqa: F401
+from app.models import (  # noqa: F401
+    BackupRecord,
+    KnowledgeDraft,
+    KnowledgeItem,
+    KnowledgeRelation,
+    KnowledgeRevision,
+    Library,
+    RelationType,
+    WorkspaceSettings,
+)
 
 config = context.config
 if config.config_file_name is not None:

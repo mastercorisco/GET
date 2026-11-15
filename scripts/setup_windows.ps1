@@ -4,7 +4,7 @@
   Prepara e arranca o GET em Windows (sem credenciais origin.cursor.com).
 
 .DESCRIPTION
-  Instala dependencias (Python + npm) e chama run_local.bat.
+  Instala dependencias Python e chama run_local.bat.
   Executa na raiz do projeto ou a partir de scripts\.
 #>
 param(
@@ -28,19 +28,11 @@ function Require-Command {
 }
 
 Require-Command python "Instale Python 3.12+ e marque 'Add to PATH'."
-Require-Command npm "Instale Node.js LTS (inclui npm)."
 
-Write-Host "[1/2] Backend (pip install -e .[dev])..."
+Write-Host "[1/1] Backend (pip install -e .[dev])..."
 Set-Location "$Root\backend"
 python -m pip install -e ".[dev]"
 if ($LASTEXITCODE -ne 0) { throw "Falha no pip install." }
-
-Write-Host "[2/2] Frontend (npm install se necessario)..."
-Set-Location "$Root\frontend"
-if (-not (Test-Path "node_modules")) {
-    npm install
-    if ($LASTEXITCODE -ne 0) { throw "Falha no npm install." }
-}
 
 Set-Location $Root
 Write-Host ""

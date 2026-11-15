@@ -16,14 +16,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-where npm >nul 2>&1
-if errorlevel 1 (
-  echo [ERRO] npm nao encontrado no PATH. Instale Node.js LTS e tente de novo.
-  pause
-  exit /b 1
-)
-
-echo [1/3] A preparar backend...
+echo [1/2] A preparar backend Python...
 cd /d "%ROOT%\backend"
 python -m pip install -e ".[dev]" -q
 if errorlevel 1 (
@@ -32,27 +25,16 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo [2/3] A preparar frontend...
-cd /d "%ROOT%\frontend"
-if not exist "node_modules\" (
-  call npm install
-  if errorlevel 1 (
-    echo [ERRO] Falha no npm install.
-    pause
-    exit /b 1
-  )
-)
-
-echo [3/3] A iniciar servidores...
-start "GET API" cmd /k "cd /d %ROOT%\backend & python -m uvicorn app.main:app --host 127.0.0.1 --port 4810"
+echo [2/2] A iniciar a aplicacao (sem Node.js)...
+start "GET" cmd /k "cd /d %ROOT%\backend & python -m uvicorn app.main:app --host 127.0.0.1 --port 4810"
 timeout /t 2 /nobreak >nul
-start "GET Web" cmd /k "cd /d %ROOT%\frontend & npm run dev"
+start "" http://127.0.0.1:4810/
 
 echo.
+echo  App:  http://127.0.0.1:4810/
 echo  API:  http://127.0.0.1:4810/api/health
-echo  App:  http://127.0.0.1:4811/
 echo.
-echo  Feche as janelas "GET API" e "GET Web" para parar.
+echo  Feche a janela "GET" para parar.
 echo.
 pause
 endlocal

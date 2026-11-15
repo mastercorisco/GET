@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GET — Gerador de Especificações Funcionais</title>
+    <style>
+      :root { font-family: system-ui, sans-serif; color: #0f172a; background: #f8fafc; line-height: 1.5; }
+      body { margin: 0; }
+      main { max-width: 720px; margin: 0 auto; padding: 2rem 1rem; }
+      .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; margin-top: 1rem; }
+      label { display: block; font-weight: 600; margin-top: 0.75rem; }
+      input, textarea, select { width: 100%; box-sizing: border-box; margin-top: 0.35rem; padding: 0.55rem 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+      textarea { min-height: 5rem; }
+      .item { border-top: 1px solid #e2e8f0; margin-top: 0.75rem; padding-top: 0.75rem; }
+      button { margin-top: 1rem; margin-right: 0.5rem; padding: 0.55rem 0.9rem; border-radius: 6px; border: 1px solid #0f172a; background: #0f172a; color: white; cursor: pointer; }
+      button.secondary { background: white; color: #0f172a; }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      .error { color: #b91c1c; margin-top: 0.75rem; }
+      pre { background: #f1f5f9; padding: 0.75rem; border-radius: 6px; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>GET — Gerador de Especificações Funcionais</h1>
+      <p>Aplicação local (127.0.0.1). SQLite como fonte de verdade. Interface servida por Python.</p>
+
+      <section class="card">
+        <h2>Workspace</h2>
+        <p>Crie ou abra um workspace de dados separado da aplicação.</p>
+        <label for="rootPath">Caminho do workspace</label>
+        <input id="rootPath" placeholder="C:\caminho\para\workspace-get" />
+        <label for="userName">Utilizador local (proveniência)</label>
+        <input id="userName" value="local_user" />
+        <button type="button" id="createBtn" disabled>Criar workspace</button>
+        <button type="button" id="openBtn" class="secondary" disabled>Abrir workspace</button>
+        <p id="status" hidden></p>
+        <p id="error" class="error" hidden></p>
+      </section>
+
+      <section class="card">
+        <h2>Estado actual</h2>
+        <p id="loading">A carregar…</p>
+        <pre id="state" hidden></pre>
+        <p id="empty" hidden>Nenhum workspace aberto.</p>
+      </section>
+
+      <section class="card" id="knowledge" hidden>
+        <h2>Biblioteca</h2>
+        <p>Crie uma unidade. O rascunho fica separado da revisão até carregar em «Concluir revisão».</p>
+        <label for="kTitle">Título</label>
+        <input id="kTitle" />
+        <label for="kContent">Conteúdo</label>
+        <textarea id="kContent"></textarea>
+        <label for="kContext">Contexto de origem</label>
+        <input id="kContext" />
+        <button type="button" id="kCreate">Criar unidade</button>
+        <p id="kError" class="error" hidden></p>
+
+        <h2>Pesquisa</h2>
+        <label for="kQuery">Texto</label>
+        <input id="kQuery" />
+        <button type="button" id="kSearch" class="secondary">Pesquisar</button>
+        <div id="kResults"></div>
+
+        <h2>Unidades</h2>
+        <div id="kList"></div>
+      </section>
+    </main>
+    <script>
+      const rootPath = document.getElementById("rootPath");
+      const userName = document.getElementById("userName");
+      const createBtn = document.getElementById("createBtn");
+      const openBtn = document.getElementById("openBtn");
+      const statusEl = document.getElementById("status");
+      const errorEl = document.getElementById("error");
+      const loadingEl = document.getElementById("loading");
+      const stateEl = document.getElementById("state");
+      const emptyEl = document.getElementById("empty");
+
+      function apiErrorMessage(body, fallback) {
+        if (body && typeof body === "object" && "detail" in body) {
+          const detail = body.detail;
+          if (typeof detail === "string") return detail;
+          if (Array.isArray(detail)) return detail.map(function (item) { return JSON.stringify(item); }).join("; ");
+        }
+        return fallback;
+      }
+
+      function setError(message) {
+        if (!message) {
+          errorEl.hidden = true;
+          errorEl.textContent = "";
+          return;
+        }
+        errorEl.hidden = false;
+        errorEl.textContent = message;
+      }
+
+      function showWorkspace(data) {
+        loadingEl.hidden = true;
+        if (data) {
+          stateEl.hidden = false;
+          emptyEl.hidden = true;
+          rootPath.value = data.root_path;
+          userName.value = data.local_user_name || "local_user";
+          syncButtons();
+          stateEl.textContent = [
+            "Workspace aberto",
+            "Pasta: " + data.root_path,
+            "Utilizador: " + data.local_user_name,
+            "Base de dados: " + data.database_path,
+            "Backups: " + data.backups_path,
+            "Exportações: " + data.exports_path,
+            "Importações: " + data.imports_path,
+          ].join("\n");
+          document.getElementById("knowledge").hidden = false;
+          loadKnowledge().catch(function (err) { setKnowledgeError(err.message); });
+        } else {
+          stateEl.hidden = true;
+          emptyEl.hidden = false;
+          document.getElementById("knowledge").hidden = true;
+        }
+      }
+
+      function setKnowledgeError(message) {
+        const el = document.getElementById("kError");
+        if (!message) {
+          el.hidden = true;
+          el.textContent = "";
+          return;
+        }
+        el.hidden = false;
+        el.textContent = message;
+      }
+
+      function knowledgePayload() {
+        return {
+          title: document.getElementById("kTitle").value.trim(),
+          content: document.getElementById("kContent").value.trim(),
+          origin_context: document.getElementById("kContext").value.trim(),
+        };
+      }
+
+      async function knowledgeRequest(url, options, fallback) {
+        const res = await fetch(url, options);
+        if (!res.ok) {
+          const payload = await res.json().catch(function () { return {}; });
+          throw new Error(apiErrorMessage(payload, fallback));
+        }
+        return res.json();
+      }
+
+      function renderItems(target, items) {
+        target.replaceChildren();
+        if (!items.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "Nenhuma unidade.";
+          target.appendChild(empty);
+          return;
+        }
+        items.forEach(function (item) {
+          const block = document.createElement("div");
+          block.className = "item";
+          const title = document.createElement("strong");
+          title.textContent = item.title;
+          const meta = document.createElement("p");
+          meta.textContent = item.status_label + " · biblioteca · " + item.id;
+          block.appendChild(title);
+          block.appendChild(meta);
+          if (target.id === "kList") {
+            const conclude = document.createElement("button");
+            conclude.type = "button";
+            conclude.textContent = "Concluir revisão";
+            conclude.addEventListener("click", function () {
+              knowledgeRequest("/api/knowledge/" + item.id + "/conclude", { method: "POST" }, "Falha ao concluir revisão.")
+                .then(loadKnowledge)
+                .catch(function (err) { setKnowledgeError(err.message); });
+            });
+            block.appendChild(conclude);
+          }
+          target.appendChild(block);
+        });
+      }
+
+      async function loadKnowledge() {
+        setKnowledgeError("");
+        const items = await knowledgeRequest("/api/knowledge", {}, "Falha ao listar unidades.");
+        renderItems(document.getElementById("kList"), items);
+      }
+
+      async function refresh() {
+        loadingEl.hidden = false;
+        emptyEl.hidden = true;
+        stateEl.hidden = true;
+        const res = await fetch("/api/workspace");
+        if (!res.ok) throw new Error("Falha ao obter workspace.");
+        const data = await res.json();
+        showWorkspace(data);
+      }
+
+      async function postWorkspace(url, body, fallback) {
+        setError("");
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          const payload = await res.json().catch(function () { return {}; });
+          throw new Error(apiErrorMessage(payload, fallback));
+        }
+        const opened = await res.json();
+        statusEl.hidden = false;
+        statusEl.textContent = "Workspace aberto: " + (opened.root_path || rootPath.value.trim());
+        await refresh();
+      }
+
+      function syncButtons() {
+        const disabled = !rootPath.value.trim();
+        createBtn.disabled = disabled;
+        openBtn.disabled = disabled;
+      }
+
+      rootPath.addEventListener("input", syncButtons);
+      createBtn.addEventListener("click", function () {
+        postWorkspace("/api/workspace/create", {
+          root_path: rootPath.value.trim(),
+          local_user_name: userName.value.trim() || "local_user",
+        }, "Falha ao criar workspace.").catch(function (err) { setError(err.message); });
+      });
+      openBtn.addEventListener("click", function () {
+        postWorkspace("/api/workspace/open", {
+          root_path: rootPath.value.trim(),
+        }, "Falha ao abrir workspace.").catch(function (err) { setError(err.message); });
+      });
+
+      document.getElementById("kCreate").addEventListener("click", function () {
+        const body = knowledgePayload();
+        if (!body.title || !body.content || !body.origin_context) {
+          setKnowledgeError("Preencha título, conteúdo e contexto de origem.");
+          return;
+        }
+        knowledgeRequest("/api/knowledge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }, "Falha ao criar unidade.")
+          .then(function () {
+            document.getElementById("kTitle").value = "";
+            document.getElementById("kContent").value = "";
+            document.getElementById("kContext").value = "";
+            return loadKnowledge();
+          })
+          .catch(function (err) { setKnowledgeError(err.message); });
+      });
+      document.getElementById("kSearch").addEventListener("click", function () {
+        const q = document.getElementById("kQuery").value.trim();
+        knowledgeRequest("/api/knowledge/search?q=" + encodeURIComponent(q) + "&scope_type=library", {}, "Falha na pesquisa.")
+          .then(function (items) { renderItems(document.getElementById("kResults"), items); })
+          .catch(function (err) { setKnowledgeError(err.message); });
+      });
+
+      refresh().catch(function (err) {
+        loadingEl.hidden = true;
+        setError(err.message);
+      });
+    </script>
+  </body>
+</html>

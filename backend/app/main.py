@@ -1,8 +1,12 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
-from app.deps import get_settings
-from app.routers import backups, health, workspace
+from app.routers import backups, health, knowledge, workspace
+
+_STATIC_INDEX = Path(__file__).resolve().parent / "static" / "index.html"
 
 app = FastAPI(title="GET — Gerador de Especificações Funcionais", version="0.1.0")
 
@@ -20,13 +24,9 @@ app.add_middleware(
 app.include_router(health.router, prefix="/api")
 app.include_router(workspace.router, prefix="/api")
 app.include_router(backups.router, prefix="/api")
+app.include_router(knowledge.router, prefix="/api")
 
 
 @app.get("/")
-def root() -> dict[str, str]:
-    settings = get_settings()
-    return {
-        "name": "GET",
-        "api": "/api/health",
-        "host": settings.host,
-    }
+def root() -> FileResponse:
+    return FileResponse(_STATIC_INDEX)

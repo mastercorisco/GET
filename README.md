@@ -45,24 +45,22 @@ Não use `git clone` de `origin.cursor.com` no PowerShell (pede token Cursor). G
 
 Resumo: descarregue `releases/GET-src.zip`, expanda para `C:\PROGRAMACAO\GET`, depois `scripts\setup_windows.ps1` ou `run_local.bat`.
 
-## Execução local (Fase 1 — E01)
+## Execução local (E01+)
 
 ```bash
-# Backend (127.0.0.1:4810)
 cd backend
 pip install -e ".[dev]"
 uvicorn app.main:app --host 127.0.0.1 --port 4810
-
-# Frontend (127.0.0.1:4811, proxy /api → backend)
-cd frontend
-npm install
-npm run dev
 ```
+
+Aplicação e API: `http://127.0.0.1:4810/` (interface servida pelo Python; **não precisa de Node.js**).
 
 Ou:
 
-- **Windows:** duplo clique em `scripts\run_local.bat` (ou executar na linha de comandos)
+- **Windows:** duplo clique em `Arranque GET.bat` ou `scripts\run_local.bat`
 - **Linux/macOS:** `scripts/run_local.sh`
+
+Opcional (desenvolvimento React): `frontend/` com `npm run dev` na porta `4811`.
 
 ### Testes
 
