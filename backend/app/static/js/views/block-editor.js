@@ -11,19 +11,72 @@ let headerWired = false;
 let _templates = [];
 
 const TARGET_OUTPUT_PRESETS = [
-  { label: "— Não definido —", value: {} },
-  { label: "Secção de especificação", value: { format: "spec_section" } },
   {
-    label: "Especificação técnica (pt-PT, formal)",
+    label: "— Não definido —",
+    value: {},
+    description: "Sem indicação de formato; a LLM desenvolve só a partir dos pontos.",
+  },
+  {
+    label: "Secção de especificação (capítulo ESF)",
+    value: {
+      format: "spec_section",
+      language: "pt-PT",
+      tone: "formal_technical",
+    },
+    description:
+      "Capítulo para o fascículo: estrutura de ESF com títulos e requisitos em prosa técnica.",
+  },
+  {
+    label: "Especificação técnica aprofundada",
     value: {
       format: "technical_specification",
       language: "pt-PT",
       tone: "formal_technical",
       indicative_length_words: 1200,
     },
+    description:
+      "Documento formal mais longo (~1200 palavras indicativas); não é só um capítulo curto.",
   },
-  { label: "Secção (kind legado)", value: { kind: "spec_section" } },
+  {
+    label: "Tabela de requisitos",
+    value: {
+      format: "requirements_table",
+      language: "pt-PT",
+      tone: "formal_technical",
+    },
+    description: "Saída tabular (requisito, critério, notas) para rastreabilidade e revisão.",
+  },
+  {
+    label: "Texto funcional (narrativa)",
+    value: {
+      format: "functional_narrative",
+      language: "pt-PT",
+      tone: "clear_operational",
+    },
+    description:
+      "Narrativa sobre comportamento e operação; menos rigor de capítulo ESF.",
+  },
+  {
+    label: "Esboço para discussão (perfil discussion)",
+    value: {
+      format: "discussion_outline",
+      language: "pt-PT",
+      tone: "collaborative",
+      indicative_length_words: 400,
+    },
+    description:
+      "Resposta breve para iterar ideias com a LLM antes da redação final.",
+  },
 ];
+
+/** Dados antigos com `kind: spec_section` alinham ao preset `format`. */
+function normalizeTargetOutputForUi(obj) {
+  if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
+  if (Object.keys(obj).length === 1 && obj.kind === "spec_section") {
+    return { format: "spec_section" };
+  }
+  return obj;
+}
 
 function stableTargetOutputKey(obj) {
   const normalized = obj && typeof obj === "object" && !Array.isArray(obj) ? obj : {};
@@ -45,6 +98,51 @@ function parseTargetOutputSelectValue(raw) {
   }
 }
 
+function isKnownTargetOutputKey(key) {
+  if (key === "{}") return true;
+  return TARGET_OUTPUT_PRESETS.some(function (p) {
+    return stableTargetOutputKey(p.value) === key;
+  });
+}
+
+function resolveTargetOutputSelectKey(currentObj) {
+  const normalized = normalizeTargetOutputForUi(currentObj);
+  const exact = stableTargetOutputKey(normalized);
+  if (isKnownTargetOutputKey(exact)) return exact;
+  const fmt = normalized.format;
+  if (fmt) {
+    const candidates = TARGET_OUTPUT_PRESETS.filter(function (p) {
+      return p.value.format === fmt;
+    });
+    if (candidates.length === 1) {
+      return stableTargetOutputKey(candidates[0].value);
+    }
+    if (candidates.length > 1 && Object.keys(normalized).length === 1) {
+      return stableTargetOutputKey(candidates[0].value);
+    }
+  }
+  return exact;
+}
+
+function updateTargetOutputHint(select) {
+  const hint = document.getElementById("beTargetOutputHint");
+  if (!hint || !select) return;
+  const key = select.value;
+  const preset = TARGET_OUTPUT_PRESETS.find(function (p) {
+    return stableTargetOutputKey(p.value) === key;
+  });
+  if (preset?.description) {
+    hint.textContent = preset.description;
+    hint.hidden = false;
+  } else if (key !== "{}") {
+    hint.textContent = "Valor guardado que não corresponde a um formato standard.";
+    hint.hidden = false;
+  } else {
+    hint.hidden = true;
+    hint.textContent = "";
+  }
+}
+
 function syncTargetOutputSelect(select, currentObj) {
   if (!select) return;
   if (!select.dataset.presetsBuilt) {
@@ -60,22 +158,20 @@ function syncTargetOutputSelect(select, currentObj) {
   select.querySelectorAll("option[data-custom]").forEach(function (o) {
     o.remove();
   });
-  const currentKey = stableTargetOutputKey(currentObj);
-  let matched = false;
-  for (let i = 0; i < select.options.length; i++) {
-    if (select.options[i].value === currentKey) {
-      matched = true;
-      break;
-    }
-  }
-  if (!matched && currentKey !== "{}") {
+  const normalized = normalizeTargetOutputForUi(currentObj);
+  const storedKey = stableTargetOutputKey(normalized);
+  const resolvedKey = resolveTargetOutputSelectKey(currentObj);
+  if (!isKnownTargetOutputKey(storedKey) && storedKey !== "{}") {
     const opt = document.createElement("option");
-    opt.value = currentKey;
+    opt.value = storedKey;
     opt.textContent = "Personalizado (valor guardado)";
     opt.dataset.custom = "1";
     select.appendChild(opt);
+    select.value = storedKey;
+  } else {
+    select.value = resolvedKey;
   }
-  select.value = currentKey;
+  updateTargetOutputHint(select);
 }
 
 async function api(path, options, fallback) {
@@ -251,7 +347,10 @@ export function initBlockEditor(router) {
     }
     obj?.addEventListener("change", saveHeader);
     sc?.addEventListener("change", saveHeader);
-    tgt?.addEventListener("change", saveHeader);
+    tgt?.addEventListener("change", function () {
+      updateTargetOutputHint(tgt);
+      saveHeader();
+    });
   }
 }
 

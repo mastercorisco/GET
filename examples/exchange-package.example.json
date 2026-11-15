@@ -13,7 +13,7 @@
     "block": {
       "objective": "Definir comportamento perante perda de supervisão remota.",
       "scope": "Funções de controlo local",
-      "target_output": {"kind": "spec_section"}
+      "target_output": {"format": "spec_section"}
     },
     "applicable_premises": [
       {
