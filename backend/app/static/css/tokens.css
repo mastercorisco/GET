@@ -1,4 +1,6 @@
 :root {
+  /* Referência de leitura: 75% do browser × +15% (popups de ajuda) = normal da app */
+  --text-base-scale: 0.8625;
   --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
   --color-bg: #f1f5f9;
