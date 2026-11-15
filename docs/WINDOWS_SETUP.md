@@ -2,7 +2,7 @@
 
 O repositório do agente Cloud vive no **Origin** (`origin.cursor.com`). Fora do Cursor, o Git pede um **token Cursor**, não a password do GitHub. Para evitar isso, use um destes métodos.
 
-## Método 1 — Abrar no Cursor Desktop (mais simples)
+## Método 1 — Abrir no Cursor Desktop (mais simples)
 
 1. Abra o agente [Gerador especificações técnicas](https://cursor.com/agents/bc-ea5e56fa-c110-42ce-be59-3529b8ee18a0).
 2. Abra o projeto no Cursor Desktop a partir do agente (checkout local / pasta do agente).

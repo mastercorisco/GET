@@ -17,7 +17,7 @@ git remote add origin https://github.com/mastercorisco/GET.git
 git push -u origin main
 ```
 
-3. A partir da­: `git pull` / `git push` normal no GitHub.
+3. A partir daí: `git pull` / `git push` normal no GitHub.
 
 ## Opção B — PAT (sem `gh`)
 
@@ -32,8 +32,8 @@ git push -u origin main
 
 ## Opção C — Integração Cursor + agente (para pushes futuros)
 
-1. [cursor.com/dashboard](https://cursor.com/dashboard) → **Integrations** → **GitHub** → confirmar accesso à conta **mastercorisco** e ao repo **GET** (write).
-2. Volte a este agente e epea: *“faz push para o GitHub”*.
+1. [cursor.com/dashboard](https://cursor.com/dashboard) → **Integrations** → **GitHub** → confirmar acesso à conta **mastercorisco** e ao repo **GET** (write).
+2. Volte a este agente e peça: *“faz push para o GitHub”*.
 
 Se ainda falhar na VM, use a Opção A uma vez; depois o GitHub passa a ser a cópia de trabalho.
 

@@ -4,7 +4,7 @@ Este pacote contém a definição de produto, decisões arquiteturais, contratos
 
 ## Objetivo do produto
 
-O 0ET Gerador de Especificações Funcionais é uma aplicação web local, sem IA incorporada, destinada a armazenar, organizar, versionar, relacionar, validar e exportar conhecimento técnico de cadernos de encargos. A aplicação exporta JSON para discussão ou redação em LLM externas e reimporta apenas JSON estruturado para revisão humana.
+O GET Gerador de Especificações Funcionais é uma aplicação web local, sem IA incorporada, destinada a armazenar, organizar, versionar, relacionar, validar e exportar conhecimento técnico de cadernos de encargos. A aplicação exporta JSON para discussão ou redação em LLM externas e reimporta apenas JSON estruturado para revisão humana.
 
 ## Ordem recomendada no Cursor
 

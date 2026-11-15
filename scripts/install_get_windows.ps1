@@ -35,7 +35,7 @@ if (-not (Test-Path $Parent)) {
 if ($FromGitHub) {
     Require-Command git "Instale Git for Windows."
     if (Test-Path $TargetDir) {
-        Write-Error "A pasta ja existe: $TargetDir. Remove-a ou escolha outro destino."
+        Write-Error "A pasta ja existe: $TargetDir. Remova-a ou escolha outro destino."
     }
     Write-Host "A clonar do GitHub..."
     git clone https://github.com/mastercorisco/GET.git $TargetDir
@@ -100,4 +100,4 @@ if ($ext -eq ".zip") {
     exit 0
 }
 
-Write-Error "Extensao nao suportada (use .bundle or .zip): $BundlePath"
+Write-Error "Extensao nao suportada (use .bundle ou .zip): $BundlePath"

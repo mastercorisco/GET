@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Prepara a arranca o GET em Windows (sem credenciais origin.cursor.com).
+  Prepara e arranca o GET em Windows (sem credenciais origin.cursor.com).
 
 .DESCRIPTION
   Instala dependencias (Python + npm) e chama run_local.bat.
@@ -47,6 +47,6 @@ Write-Host ""
 Write-Host " Setup concluido."
 
 if (-not $SkipStart) {
-    Write-Host "A inciar servedores (run_local.bat)..."
+    Write-Host "A iniciar servidores (run_local.bat)..."
     & "$Root\scripts\run_local.bat"
 }
