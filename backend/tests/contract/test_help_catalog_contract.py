@@ -24,10 +24,41 @@ def test_help_catalog_field_schema() -> None:
     catalog = _load_catalog()
     fields = catalog.get("fields") or {}
     assert fields, "fields vazio"
+    assert catalog.get("catalog_version") == "1.2.0"
     for key, entry in fields.items():
         assert isinstance(entry, dict), key
         for required in ("label", "short_help", "definition"):
             assert entry.get(required), f"{key} falta {required}"
+
+
+def test_shell_help_keys_v12_user_oriented() -> None:
+    """Chaves data-help-key no HTML: contexto GET (fase 1)."""
+    catalog = _load_catalog()
+    fields = catalog.get("fields") or {}
+    concepts = catalog.get("concepts") or {}
+    html = SHELL_HTML.read_text(encoding="utf-8")
+    keys = sorted(set(HELP_KEY_RE.findall(html)))
+    missing_ctx: list[str] = []
+    bad_concepts: list[str] = []
+    for key in keys:
+        entry = fields.get(key) or {}
+        if not entry.get("purpose_in_app") or not entry.get("workflow_context"):
+            missing_ctx.append(key)
+        for cid in entry.get("related_concepts") or []:
+            if cid not in concepts:
+                bad_concepts.append(f"{key} -> {cid}")
+    assert not missing_ctx, "Sem purpose_in_app/workflow_context: " + ", ".join(missing_ctx)
+    assert not bad_concepts, "related_concepts inválidos: " + ", ".join(bad_concepts)
+
+
+def test_concepts_v12_shape() -> None:
+    catalog = _load_catalog()
+    concepts = catalog.get("concepts") or {}
+    assert concepts
+    for cid, c in concepts.items():
+        assert c.get("summary"), cid
+        assert c.get("role_in_get"), cid
+        assert c.get("not_this"), cid
 
 
 def test_shell_help_keys_in_catalog() -> None:

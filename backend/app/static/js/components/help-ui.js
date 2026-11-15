@@ -85,12 +85,38 @@ function fieldEntry(key) {
       definition: "",
       guiding_question: "",
       instructions: "",
+      purpose_in_app: "",
+      workflow_context: "",
+      when_to_use: "",
+      what_happens_next: "",
+      related_concepts: [],
+      related_screen: "",
+      common_confusions: [],
       good_examples: [],
       bad_examples: [],
       tips: [],
       allow_use_example: false,
     }
   );
+}
+
+function firstSentence(text) {
+  if (!text || typeof text !== "string") return "";
+  const t = text.trim();
+  const m = t.match(/^[^.!?]+[.!?]?/);
+  return m ? m[0].trim() : t.slice(0, 120);
+}
+
+function conceptLabel(conceptId) {
+  const concepts = (_catalog && _catalog.concepts) || {};
+  const c = concepts[conceptId];
+  return (c && (c.label || conceptId)) || conceptId;
+}
+
+function screenTitle(screenId) {
+  const screens = (_catalog && _catalog.screens) || {};
+  const s = screens[screenId];
+  return (s && s.title) || screenId;
 }
 
 function inputForLabel(label) {
@@ -127,6 +153,103 @@ function onOutside(ev) {
   if (_openModal && !_openModal.contains(ev.target) && ev.target !== _lastTrigger) {
     closeModal();
   }
+}
+
+function openConceptSnippet(conceptId, anchorDlg) {
+  const concepts = (_catalog && _catalog.concepts) || {};
+  const c = concepts[conceptId];
+  if (!c) return;
+  const pop = document.createElement("div");
+  pop.className = "field-help-concept-snippet";
+  pop.setAttribute("role", "region");
+  pop.setAttribute("aria-label", "Conceito: " + (c.label || conceptId));
+
+  const h = document.createElement("p");
+  h.className = "field-help-section-title";
+  h.textContent = c.label || conceptId;
+  pop.appendChild(h);
+
+  if (c.role_in_get) {
+    const p = document.createElement("p");
+    p.textContent = c.role_in_get;
+    pop.appendChild(p);
+  } else if (c.summary) {
+    const p = document.createElement("p");
+    p.textContent = c.summary;
+    pop.appendChild(p);
+  }
+
+  if (c.not_this) {
+    const nt = document.createElement("p");
+    nt.className = "field-help-bad";
+    nt.textContent = "Não é: " + c.not_this;
+    pop.appendChild(nt);
+  }
+
+  const closeC = document.createElement("button");
+  closeC.type = "button";
+  closeC.className = "secondary field-help-concept-close";
+  closeC.textContent = "Fechar conceito";
+  closeC.addEventListener("click", function () {
+    pop.remove();
+  });
+  pop.appendChild(closeC);
+
+  anchorDlg.appendChild(pop);
+  closeC.focus();
+}
+
+/**
+ * Secções do modal (v1.2) — útil para testes de contrato no cliente.
+ * @returns {Array<{id: string, heading: string, body?: string, list?: string[]}>}
+ */
+export function helpModalSections(entry, helpLevel) {
+  const level = helpLevel || _helpLevel;
+  const sections = [];
+
+  if (entry.purpose_in_app) {
+    sections.push({ id: "purpose_in_app", heading: "Para que serve no GET", body: entry.purpose_in_app });
+  }
+
+  if (entry.workflow_context) {
+    let flow = entry.workflow_context;
+    if (entry.related_screen) {
+      const st = screenTitle(entry.related_screen);
+      flow += " Ecrã relacionado: «" + st + "».";
+    }
+    sections.push({ id: "workflow_context", heading: "No fluxo de trabalho", body: flow });
+  }
+
+  if (entry.definition) {
+    sections.push({ id: "definition", heading: "O que é", body: entry.definition });
+  }
+
+  if (entry.when_to_use) {
+    sections.push({ id: "when_to_use", heading: "Quando preencher", body: entry.when_to_use });
+  }
+
+  const instr = entry.instructions || (entry.tips && entry.tips[0]) || "";
+  const howParts = [];
+  if (entry.guiding_question) howParts.push(entry.guiding_question);
+  if (instr) howParts.push(typeof instr === "string" ? instr : instr.join(" "));
+  if (howParts.length) {
+    sections.push({ id: "how", heading: "Como preencher", body: howParts.join(" ") });
+  }
+
+  if (entry.what_happens_next) {
+    sections.push({ id: "what_happens_next", heading: "Depois de guardar", body: entry.what_happens_next });
+  }
+
+  const conf = entry.common_confusions;
+  if (conf && conf.length) {
+    sections.push({ id: "common_confusions", heading: "Erros comuns", list: conf });
+  }
+
+  if (level !== "essential" && entry.short_help && !entry.purpose_in_app) {
+    sections.push({ id: "short_help", heading: "Resumo", body: entry.short_help });
+  }
+
+  return sections;
 }
 
 function createHelpButton(fieldKey, inputEl, onUseExample) {
@@ -175,13 +298,51 @@ export function openHelpModal(fieldKey, options) {
     dlg.appendChild(p);
   }
 
-  if (_helpLevel !== "essential" && entry.short_help) {
-    addSection("Resumo", entry.short_help);
+  function addListSection(heading, items) {
+    if (!items || !items.length) return;
+    const h = document.createElement("p");
+    h.className = "field-help-section-title";
+    h.textContent = heading;
+    dlg.appendChild(h);
+    const ul = document.createElement("ul");
+    items.forEach(function (item) {
+      const li = document.createElement("li");
+      li.textContent = item;
+      ul.appendChild(li);
+    });
+    dlg.appendChild(ul);
   }
-  addSection("Definição", entry.definition);
-  addSection("Pergunta orientadora", entry.guiding_question);
-  const instr = entry.instructions || (entry.tips && entry.tips[0]) || "";
-  addSection("Instruções", typeof instr === "string" ? instr : instr.join(" "));
+
+  helpModalSections(entry, _helpLevel).forEach(function (sec) {
+    if (sec.list) addListSection(sec.heading, sec.list);
+    else if (sec.body) addSection(sec.heading, sec.body);
+  });
+
+  const rel = entry.related_concepts;
+  if (rel && rel.length) {
+    const h = document.createElement("p");
+    h.className = "field-help-section-title";
+    h.textContent = "Conceitos relacionados";
+    dlg.appendChild(h);
+    const row = document.createElement("p");
+    row.className = "field-help-concepts-row";
+    rel.forEach(function (cid, i) {
+      if (i > 0) row.appendChild(document.createTextNode(", "));
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "linkish field-help-concept-btn";
+      btn.textContent = conceptLabel(cid);
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        dlg.querySelectorAll(".field-help-concept-snippet").forEach(function (el) {
+          el.remove();
+        });
+        openConceptSnippet(cid, dlg);
+      });
+      row.appendChild(btn);
+    });
+    dlg.appendChild(row);
+  }
 
   const showAllExamples = _helpLevel === "detailed";
   const goods = entry.good_examples || [];
@@ -255,10 +416,12 @@ export function attachFieldHelp(container, fieldKey, options) {
 
   if (_helpLevel === "detailed") {
     const existing = container.querySelector(".field-microhelp");
-    if (!existing && entry.short_help) {
+    const microText =
+      firstSentence(entry.purpose_in_app) || entry.short_help || "";
+    if (!existing && microText) {
       const micro = document.createElement("p");
       micro.className = "field-microhelp";
-      micro.textContent = entry.short_help;
+      micro.textContent = microText;
       container.appendChild(micro);
     }
   }

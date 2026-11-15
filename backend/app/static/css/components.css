@@ -281,8 +281,33 @@ pre.code-block {
   bottom: auto;
   top: 50%;
   transform: translate(-50%, -50%);
-  max-height: min(80vh, 28rem);
+  max-height: min(85vh, 32rem);
   overflow: auto;
+}
+
+.field-help-concept-snippet {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-elevated, var(--color-surface));
+}
+
+.field-help-concept-btn.linkish,
+button.linkish.field-help-concept-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-accent, var(--color-link));
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+
+.screen-guide-audience {
+  font-size: 0.95rem;
+  color: var(--color-muted);
+  margin: 0 0 0.5rem;
 }
 
 .screen-guide-panel:not(.screen-guide-panel--compact) {

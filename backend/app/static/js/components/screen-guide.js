@@ -27,16 +27,29 @@ export function renderScreenGuide(routeId) {
     details.appendChild(summary);
     const body = document.createElement("div");
     body.className = "compact-section__body";
+    if (meta.audience_note) {
+      const note = document.createElement("p");
+      note.className = "screen-guide-audience";
+      note.textContent = meta.audience_note;
+      body.appendChild(note);
+    }
     if (meta.objective) {
       const p = document.createElement("p");
       p.className = "lead";
       p.textContent = meta.objective;
       body.appendChild(p);
     }
-    if (meta.steps && meta.steps.length) {
+    const stepItems = (meta.purpose_steps && meta.purpose_steps.length
+      ? meta.purpose_steps
+      : meta.steps) || [];
+    if (stepItems.length) {
+      const h = document.createElement("p");
+      h.className = "field-help-section-title";
+      h.textContent = "O que fazer e porquê";
+      body.appendChild(h);
       const ol = document.createElement("ol");
       ol.className = "screen-guide-steps";
-      meta.steps.forEach(function (step) {
+      stepItems.forEach(function (step) {
         const li = document.createElement("li");
         li.textContent = step;
         ol.appendChild(li);

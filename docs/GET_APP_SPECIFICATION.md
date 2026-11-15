@@ -28,6 +28,10 @@ A aplicação não produz texto com IA. O conhecimento é exportado em JSON para
 - Operação offline obrigatoriamente possível.
 - **Aparência da interface:** tema, densidade e tipografia são preferências **locais da máquina** (`~/.get/ui-preferences.json`); não entram em exportações JSON nem no SQLite do workspace. O nível de ajuda contextual permanece nas preferências do workspace.
 
+### 3.1 Catálogo de ajuda (v1.2.0)
+
+Ficheiro `catalogs/get_help_catalog.pt-PT.json`, servido por `GET /api/catalogs/help`. Por campo: `purpose_in_app`, `workflow_context`, `when_to_use`, `what_happens_next`, `related_concepts`, `related_screen`, `common_confusions`. Conceitos incluem `role_in_get` e `not_this`. Guias de ecrã usam `audience_note` e `purpose_steps`. O popup (i) segue a narrativa GET → fluxo → definição → exemplos; não há geração de ajuda por LLM em runtime.
+
 ## 4. Áreas funcionais
 
 ### 4.1 Biblioteca EDA

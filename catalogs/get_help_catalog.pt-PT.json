@@ -1,5 +1,5 @@
 {
-  "catalog_version": "1.1.0",
+  "catalog_version": "1.2.0",
   "locale": "pt-PT",
   "default_help_level": "normal",
   "fields": {
@@ -22,7 +22,18 @@
         "Não escreva aqui o requisito completo."
       ],
       "allow_use_example": true,
-      "instructions": "Use uma expressão curta e específica."
+      "instructions": "Use uma expressão curta e específica.",
+      "purpose_in_app": "No GET, este campo «Título do ponto» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Título do ponto».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.core_idea": {
       "label": "Ideia central",
@@ -44,7 +55,18 @@
         "Não introduza valores ainda não confirmados."
       ],
       "allow_use_example": true,
-      "instructions": "Use uma afirmação completa."
+      "instructions": "Use uma afirmação completa.",
+      "purpose_in_app": "No GET, este campo «Ideia central» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Ideia central».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.intended_outcome": {
       "label": "Resultado pretendido",
@@ -59,7 +81,18 @@
         "Formule o resultado do ponto, não uma lista de tarefas."
       ],
       "allow_use_example": true,
-      "instructions": "Formule o resultado do ponto, não uma lista de tarefas."
+      "instructions": "Formule o resultado do ponto, não uma lista de tarefas.",
+      "purpose_in_app": "No GET, este campo «Resultado pretendido» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Resultado pretendido».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.development_guidance": {
       "label": "Orientações de desenvolvimento",
@@ -80,7 +113,18 @@
         "Registe uma orientação por item."
       ],
       "allow_use_example": true,
-      "instructions": "Registe uma orientação por item."
+      "instructions": "Registe uma orientação por item.",
+      "purpose_in_app": "No GET, este campo «Orientações de desenvolvimento» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Orientações de desenvolvimento».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.premises": {
       "label": "Premissas",
@@ -101,7 +145,18 @@
         "Não esconda decisões pendentes numa premissa."
       ],
       "allow_use_example": true,
-      "instructions": "Indique origem e confiança."
+      "instructions": "Indique origem e confiança.",
+      "purpose_in_app": "No GET, este campo «Premissas» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Premissas».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.must_include": {
       "label": "Elementos obrigatórios",
@@ -118,7 +173,18 @@
         "Acrescente justificação quando o motivo não for evidente."
       ],
       "allow_use_example": true,
-      "instructions": "Registe um elemento por item."
+      "instructions": "Registe um elemento por item.",
+      "purpose_in_app": "No GET, este campo «Elementos obrigatórios» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Elementos obrigatórios».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.limits_and_exclusions": {
       "label": "Limites e exclusões",
@@ -133,7 +199,18 @@
         "Classifique como não definir, não assumir, não incluir, engenharia de detalhe ou fora do âmbito."
       ],
       "allow_use_example": true,
-      "instructions": "Classifique como não definir, não assumir, não incluir, engenharia de detalhe ou fora do âmbito."
+      "instructions": "Classifique como não definir, não assumir, não incluir, engenharia de detalhe ou fora do âmbito.",
+      "purpose_in_app": "No GET, este campo «Limites e exclusões» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Limites e exclusões».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.questions_to_answer": {
       "label": "Questões a responder",
@@ -150,7 +227,18 @@
         "Mova para questões pendentes o que ainda não tem resposta aprovada."
       ],
       "allow_use_example": true,
-      "instructions": "Marque as perguntas obrigatórias."
+      "instructions": "Marque as perguntas obrigatórias.",
+      "purpose_in_app": "No GET, este campo «Questões a responder» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Questões a responder».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.open_questions": {
       "label": "Questões pendentes",
@@ -165,7 +253,18 @@
         "Atribua estado e, quando possível, responsável ou marco de decisão."
       ],
       "allow_use_example": true,
-      "instructions": "Atribua estado e, quando possível, responsável ou marco de decisão."
+      "instructions": "Atribua estado e, quando possível, responsável ou marco de decisão.",
+      "purpose_in_app": "No GET, este campo «Questões pendentes» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Questões pendentes».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.acceptance_criteria": {
       "label": "Critérios de aceitação",
@@ -186,7 +285,18 @@
         "Use critérios observáveis e verificáveis."
       ],
       "allow_use_example": true,
-      "instructions": "Use critérios observáveis e verificáveis."
+      "instructions": "Use critérios observáveis e verificáveis.",
+      "purpose_in_app": "No GET, este campo «Critérios de aceitação» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Critérios de aceitação».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.llm_freedom": {
       "label": "Liberdade da LLM",
@@ -201,11 +311,22 @@
         "Use strict por defeito em cadernos de encargos."
       ],
       "allow_use_example": false,
-      "instructions": "Use strict por defeito em cadernos de encargos."
+      "instructions": "Use strict por defeito em cadernos de encargos.",
+      "purpose_in_app": "No GET, este campo «Liberdade da LLM» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Liberdade da LLM».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "workspace.root_path": {
       "label": "Caminho do workspace",
-      "short_help": "Pasta no disco para SQLite, exportações e importações.",
+      "short_help": "Pasta local onde o GET guarda o SQLite e os exports.",
       "definition": "Separa o código da aplicação dos dados do projecto.",
       "guiding_question": "Onde quer guardar os dados?",
       "instructions": "Use um caminho dedicado fora do repositório Git.",
@@ -214,7 +335,19 @@
       "tips": [
         "Use um caminho dedicado fora do repositório Git."
       ],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Indica ao GET onde guardar a base de dados, backups e ficheiros exportados — a «pasta de trabalho» do caderno na sua máquina.",
+      "workflow_context": "Primeiro passo ao usar o GET: sem workspace não há biblioteca, projectos nem exportações.",
+      "when_to_use": "Antes de criar ou abrir qualquer dado. Use uma pasta dedicada (ex.: D:\\GET-dados\\obra-X).",
+      "what_happens_next": "Ao criar ou abrir, o GET regista o caminho em configuração local e mostra o menu completo da aplicação.",
+      "common_confusions": [
+        "Confundir com a pasta do código-fonte GET.",
+        "Usar uma pasta partilhada em rede sem controlo de concorrência (MVP é um utilizador local)."
+      ],
+      "related_concepts": [
+        "workspace"
+      ],
+      "related_screen": "workspace"
     },
     "workspace.user_name": {
       "label": "Utilizador local",
@@ -225,18 +358,38 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Nome gravado nas operações para saber quem alterou conteúdo (proveniência). O GET não tem login.",
+      "workflow_context": "Ao criar o workspace; pode ser o mesmo em todas as sessões.",
+      "when_to_use": "Sempre que cria workspace novo; ao abrir pode manter o anterior.",
+      "what_happens_next": "Aparece em metadados de revisão e exportação; não bloqueia funcionalidades.",
+      "common_confusions": [
+        "Pensar que é palavra-passe ou conta de utilizador."
+      ],
+      "related_concepts": [
+        "workspace"
+      ],
+      "related_screen": "workspace"
     },
     "workspace.help_level": {
       "label": "Nível de ajuda",
-      "short_help": "Normal usa ícone (i) e popup; Detailed acrescenta microajuda sob o campo.",
+      "short_help": "Normal: ajuda em popup ao carregar em (i).",
       "definition": "Essential: só ícones (i); Normal (predefinido): popup com resumo, definição e exemplos; Detailed: popup + texto curto inline.",
       "guiding_question": "Quanto detalhe de orientação pretende?",
       "instructions": "",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Controla quanta ajuda vê na interface: ícones (i), popups explicativos ou também microtexto sob campos.",
+      "workflow_context": "Pode ajustar no ecrã Configurações quando o workspace está aberto.",
+      "when_to_use": "Se os popups forem suficientes use Normal; se quiser pistas sempre visíveis use Detailed.",
+      "what_happens_next": "Gravado nas preferências do workspace; afecta todos os ecrãs com ícone (i).",
+      "common_confusions": [],
+      "related_concepts": [
+        "workspace"
+      ],
+      "related_screen": "settings"
     },
     "workbook.validate_file": {
       "label": "Validar Excel",
@@ -247,7 +400,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Valida estrutura do modelo Excel de requisitos sem importar para o SQLite.",
+      "workflow_context": "Ecrã modelo workbook, antes de ligações ao projecto.",
+      "when_to_use": "Ao receber ou actualizar a folha de requisitos.",
+      "what_happens_next": "Relatório de erros/avisos; não altera conhecimento automaticamente.",
+      "related_concepts": [],
+      "related_screen": "workbook",
+      "common_confusions": [
+        "Confundir com reimportação JSON da LLM."
+      ]
     },
     "knowledge.title": {
       "label": "Título",
@@ -258,7 +420,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Identifica a unidade na lista e nas exportações — o «nome» do conhecimento na biblioteca.",
+      "workflow_context": "Biblioteca EDA, antes de associar conhecimento a nós da árvore ou a pontos.",
+      "when_to_use": "Ao criar qualquer entrada na biblioteca; título curto e único no seu contexto.",
+      "what_happens_next": "Fica na SQLite; pesquisa FTS usa o título.",
+      "common_confusions": [],
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library"
     },
     "knowledge.content": {
       "label": "Conteúdo",
@@ -269,7 +440,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Corpo técnico do conhecimento (texto sanitizado). É o que exporta para discussão com a LLM.",
+      "workflow_context": "Biblioteca ou conhecimento do projecto; depois pode associar a estrutura documental.",
+      "when_to_use": "Sempre que regista facto, requisito, decisão, etc.",
+      "what_happens_next": "Revisões futuras criam nova versão; conteúdo aprovado não é apagado silenciosamente.",
+      "common_confusions": [
+        "Colar aqui o capítulo inteiro do Word em vez de unidades atómicas."
+      ],
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library"
     },
     "knowledge.origin_context": {
       "label": "Contexto de origem",
@@ -280,7 +462,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Explica de onde veio a informação (reunião, documento, decisão) para quem lê exportações meses depois.",
+      "workflow_context": "Obrigatório na captura mínima; acompanha a unidade em exportações JSON.",
+      "when_to_use": "No momento de criar ou rever a unidade.",
+      "what_happens_next": "Visível em exportações; não é texto que a LLM devolve na reimportação para alterar.",
+      "common_confusions": [],
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library"
     },
     "knowledge.search": {
       "label": "Pesquisa",
@@ -291,7 +482,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Pesquisa texto nas unidades da biblioteca (FTS) sem substituir estrutura ou revisões.",
+      "workflow_context": "Biblioteca EDA, antes de abrir ou editar uma unidade.",
+      "when_to_use": "Quando procura conhecimento existente para reutilizar ou rever.",
+      "what_happens_next": "Mostra lista filtrada; não altera dados até abrir uma unidade.",
+      "common_confusions": [],
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library"
     },
     "knowledge.profile_type": {
       "label": "Tipo de ficha",
@@ -302,7 +502,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Classifica a unidade (ex.: fact, requirement) para exportações e validação.",
+      "workflow_context": "Formulário da biblioteca ou detalhe de conhecimento.",
+      "when_to_use": "Ao criar ou rever metadados da unidade.",
+      "what_happens_next": "Influencia perfis de exportação discussion/redaction.",
+      "common_confusions": [],
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library"
     },
     "knowledge.profile_data": {
       "label": "Dados da ficha",
@@ -313,7 +522,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Atributos extra do perfil em JSON; estende o tipo sem mudar o corpo principal.",
+      "workflow_context": "Biblioteca, quando o tipo exige campos adicionais.",
+      "when_to_use": "Quando o profile_type pede estrutura complementar documentada.",
+      "what_happens_next": "Validado como JSON; exportado com a unidade.",
+      "common_confusions": [],
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library"
     },
     "knowledge.draft": {
       "label": "Rascunho vs revisão",
@@ -335,7 +553,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Nome curto da referência na biblioteca global (normas, manuais, decisões).",
+      "workflow_context": "Biblioteca → referências.",
+      "when_to_use": "Ao registar uma fonte citável reutilizável em vários projectos.",
+      "what_happens_next": "Pode associar-se a conhecimento, premissas ou pontos por ID.",
+      "related_concepts": [
+        "reference"
+      ],
+      "related_screen": "library",
+      "common_confusions": []
     },
     "library.ref_citation": {
       "label": "Citação",
@@ -346,7 +573,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Texto de citação (edição, secção, data) para exportações e rastreio.",
+      "workflow_context": "Junto com título da referência na biblioteca.",
+      "when_to_use": "Sempre que a referência deve ser localizável fora do GET.",
+      "what_happens_next": "Aparece nas ligações exportadas, não como PDF anexo.",
+      "related_concepts": [
+        "reference"
+      ],
+      "related_screen": "library",
+      "common_confusions": []
     },
     "library.term_preferred": {
       "label": "Termo preferencial",
@@ -357,7 +593,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Termo canónico do glossário EDA para consistência entre projectos.",
+      "workflow_context": "Biblioteca → termos.",
+      "when_to_use": "Ao definir vocabulário comum (siglas, conceitos).",
+      "what_happens_next": "Sinónimos apontam para este termo nas exportações.",
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library",
+      "common_confusions": []
     },
     "library.term_definition": {
       "label": "Definição",
@@ -368,7 +613,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Definição acordada do termo preferencial.",
+      "workflow_context": "Glossário da biblioteca.",
+      "when_to_use": "Quando o termo precisa de enquadramento técnico explícito.",
+      "what_happens_next": "Reutilizado em validações e texto exportado por referência.",
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library",
+      "common_confusions": []
     },
     "library.term_synonyms": {
       "label": "Sinónimos",
@@ -379,7 +633,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Variantes aceites que mapeiam para o termo preferencial.",
+      "workflow_context": "Glossário, após o termo preferencial.",
+      "when_to_use": "Há nomes alternativos usados em documentos legados.",
+      "what_happens_next": "Ajuda pesquisa e consistência; não cria entradas duplicadas.",
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "library",
+      "common_confusions": []
     },
     "project.template_version": {
       "label": "Modelo de projecto",
@@ -390,7 +653,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Modelo de projecto» pertence a Projecto: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Projecto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Projecto e precisa de registar ou ajustar «Modelo de projecto».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "project",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "project.name": {
       "label": "Nome do projecto",
@@ -401,7 +675,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "No GET, este campo «Nome do projecto» pertence a Projecto: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Projecto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Projecto e precisa de registar ou ajustar «Nome do projecto».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "project",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "project.intervention": {
       "label": "Tipo de intervenção",
@@ -412,7 +697,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Tipo de intervenção» pertence a Projecto: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Projecto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Projecto e precisa de registar ou ajustar «Tipo de intervenção».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "project",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "project.active": {
       "label": "Projecto activo",
@@ -423,7 +719,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Projecto activo» pertence a Projecto: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Projecto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Projecto e precisa de registar ou ajustar «Projecto activo».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "knowledge_item"
+      ],
+      "related_screen": "project",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "block.objective": {
       "label": "Objectivo do bloco",
@@ -434,7 +741,17 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Diz à LLM o que este bloco do caderno deve produzir como mensagem global (nível capítulo).",
+      "workflow_context": "Preparação do bloco, antes dos pontos e da exportação exchange.",
+      "when_to_use": "Ao abrir um bloco na estrutura; revise quando o âmbito do capítulo mudar.",
+      "what_happens_next": "Gravado no SQLite; incluído no pacote JSON para a LLM.",
+      "common_confusions": [],
+      "related_concepts": [
+        "block",
+        "exchange_package"
+      ],
+      "related_screen": "block-editor"
     },
     "block.scope": {
       "label": "Âmbito do bloco",
@@ -445,7 +762,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Limita o que pertence a este bloco e o que fica fora, para a LLM não alargar o assunto.",
+      "workflow_context": "Junto com objectivo; lê-se antes dos pontos na exportação.",
+      "when_to_use": "Sempre que o bloco ganha fronteiras novas (sistemas, locais, fases).",
+      "what_happens_next": "Exportado no cabeçalho do bloco no pacote exchange.",
+      "common_confusions": [],
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "block-editor"
     },
     "block.target_output": {
       "label": "Resultado documental",
@@ -456,7 +782,17 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Descreve em JSON o formato esperado do resultado (ex.: secção de especificação, tabela). Orienta a LLM sem ser texto final.",
+      "workflow_context": "Opcional mas útil antes de exportar; validado como JSON.",
+      "when_to_use": "Quando o adjudicatário ou o modelo exige estrutura concreta de entrega.",
+      "what_happens_next": "Incluído no JSON do bloco na exportação.",
+      "common_confusions": [],
+      "related_concepts": [
+        "block",
+        "exchange_package"
+      ],
+      "related_screen": "block-editor"
     },
     "block.template": {
       "label": "Modelo estrutural",
@@ -467,7 +803,17 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Copia estrutura de outro ponto ao criar um novo, para acelerar preparação.",
+      "workflow_context": "Preparação do bloco → adicionar ponto.",
+      "when_to_use": "Pontos repetem o mesmo esqueleto (orientações, critérios).",
+      "what_happens_next": "Novo ponto herda listas; títulos e ideia central deve rever-se.",
+      "related_concepts": [
+        "block",
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": []
     },
     "block.points_overview": {
       "label": "Pontos de desenvolvimento",
@@ -478,7 +824,17 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Secção onde ordena e edita pontos — o núcleo do pacote exchange para a LLM.",
+      "workflow_context": "Depois de objectivo/âmbito; antes de validar e exportar.",
+      "when_to_use": "Sempre que o bloco precisa de conteúdo desenvolvido por pontos.",
+      "what_happens_next": "Cada ponto guardado entra na validação e no JSON do bloco.",
+      "related_concepts": [
+        "development_point",
+        "exchange_package"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": []
     },
     "block.include_draft": {
       "label": "Incluir rascunhos",
@@ -489,7 +845,17 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Inclui pontos ainda em rascunho na exportação exchange (com aviso).",
+      "workflow_context": "Imediatamente antes de exportar o pacote do bloco.",
+      "when_to_use": "Quer enviar trabalho em curso à LLM com responsabilidade explícita.",
+      "what_happens_next": "JSON marca estado draft; validação pode listar problemas.",
+      "related_concepts": [
+        "block",
+        "exchange_package"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": []
     },
     "premise.statement": {
       "label": "Enunciado da premissa",
@@ -500,7 +866,19 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Regista uma condição assumida verdadeira para este bloco (ou ponto), não um requisito.",
+      "workflow_context": "Preparação do bloco → premissas; aparecem no pacote para a LLM.",
+      "when_to_use": "Há pressupostos de projeto, normas ou decisões que devem ser explícitos.",
+      "what_happens_next": "Gravado em SQLite; visível na exportação exchange.",
+      "common_confusions": [
+        "Escrever aqui um requisito «deve» em vez de «assume-se que»."
+      ],
+      "related_concepts": [
+        "premise",
+        "block"
+      ],
+      "related_screen": "block-editor"
     },
     "premise.importance": {
       "label": "Importância",
@@ -511,7 +889,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Prioriza premissas: críticas devem ser lidas antes de pontos dependentes.",
+      "workflow_context": "Formulário de premissa no bloco.",
+      "when_to_use": "Várias premissas competem por atenção na exportação.",
+      "what_happens_next": "Ordenação e destaque na lista exportada.",
+      "related_concepts": [
+        "premise"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": []
     },
     "premise.source_type": {
       "label": "Origem",
@@ -522,7 +909,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Indica se a premissa vem de decisão, norma, reunião, etc.",
+      "workflow_context": "Ao criar premissa no bloco.",
+      "when_to_use": "Para rastreio e confiança na reimportação futura.",
+      "what_happens_next": "Metadado no SQLite e no JSON exportado.",
+      "related_concepts": [
+        "premise"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": []
     },
     "premise.confidence": {
       "label": "Confiança",
@@ -533,7 +929,17 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Grau de certeza da premissa — evita que a LLM trate hipóteses como factos.",
+      "workflow_context": "Junto com o enunciado da premissa.",
+      "when_to_use": "A condição não está totalmente confirmada.",
+      "what_happens_next": "A LLM deve respeitar baixa confiança com questões ou ressalvas.",
+      "related_concepts": [
+        "premise",
+        "open_question"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": []
     },
     "document.tree": {
       "label": "Árvore documental",
@@ -544,7 +950,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Árvore documental» pertence a Estrutura documental: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no árvore fascículo/bloco, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Estrutura documental e precisa de registar ou ajustar «Árvore documental».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "document.assoc_item": {
       "label": "Unidade de conhecimento",
@@ -555,7 +972,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "No GET, este campo «Unidade de conhecimento» pertence a Estrutura documental: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no árvore fascículo/bloco, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Estrutura documental e precisa de registar ou ajustar «Unidade de conhecimento».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "document.assoc_role": {
       "label": "Papel da associação",
@@ -566,7 +994,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "No GET, este campo «Papel da associação» pertence a Estrutura documental: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no árvore fascículo/bloco, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Estrutura documental e precisa de registar ou ajustar «Papel da associação».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "document.assoc_instruction": {
       "label": "Instrução de uso",
@@ -577,7 +1016,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "No GET, este campo «Instrução de uso» pertence a Estrutura documental: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no árvore fascículo/bloco, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Estrutura documental e precisa de registar ou ajustar «Instrução de uso».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "document.node_type": {
       "label": "Tipo de nó",
@@ -588,7 +1038,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Tipo de nó» pertence a Estrutura documental: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no árvore fascículo/bloco, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Estrutura documental e precisa de registar ou ajustar «Tipo de nó».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "document.title": {
       "label": "Título do nó",
@@ -599,7 +1060,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "No GET, este campo «Título do nó» pertence a Estrutura documental: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no árvore fascículo/bloco, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Estrutura documental e precisa de registar ou ajustar «Título do nó».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "document.parent": {
       "label": "Nó pai",
@@ -610,7 +1082,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Nó pai» pertence a Estrutura documental: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no árvore fascículo/bloco, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Estrutura documental e precisa de registar ou ajustar «Nó pai».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "block"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "technical.instance_name": {
       "label": "Nome da instância",
@@ -621,7 +1104,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "No GET, este campo «Nome da instância» pertence a Árvore técnica: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Árvore técnica, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Árvore técnica e precisa de registar ou ajustar «Nome da instância».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [],
+      "related_screen": "project-technical",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "technical.kind": {
       "label": "Tipo técnico",
@@ -632,7 +1124,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Tipo técnico» pertence a Árvore técnica: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Árvore técnica, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Árvore técnica e precisa de registar ou ajustar «Tipo técnico».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [],
+      "related_screen": "project-technical",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "technical.parent": {
       "label": "Pai técnico",
@@ -643,7 +1144,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Pai técnico» pertence a Árvore técnica: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Árvore técnica, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Árvore técnica e precisa de registar ou ajustar «Pai técnico».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [],
+      "related_screen": "project-technical",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "export.baseline": {
       "label": "Baseline",
@@ -654,7 +1164,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Baseline» pertence a Exportação: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Exportar para LLM, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Exportação e precisa de registar ou ajustar «Baseline».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "baseline"
+      ],
+      "related_screen": "export",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "export.profile": {
       "label": "Perfil de exportação",
@@ -665,7 +1186,19 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Escolhe se o JSON destina-se a discussão (mais contexto) ou redação (mais focado em texto).",
+      "workflow_context": "Ecrã Exportar, após baseline; não confundir com o pacote exchange por bloco.",
+      "when_to_use": "Ao exportar fascículo ou mestre para a LLM externa.",
+      "what_happens_next": "Gera ficheiros na pasta exports do workspace; perfis têm campos diferentes.",
+      "common_confusions": [
+        "Confundir com exportação do bloco (preparação) que usa get_exchange_package."
+      ],
+      "related_concepts": [
+        "baseline",
+        "exchange_package"
+      ],
+      "related_screen": "export"
     },
     "export.zip": {
       "label": "Pacote ZIP",
@@ -676,7 +1209,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Pacote ZIP» pertence a Exportação: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Exportar para LLM, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Exportação e precisa de registar ou ajustar «Pacote ZIP».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "baseline"
+      ],
+      "related_screen": "export",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "export.fascicle": {
       "label": "Fascículo a exportar",
@@ -687,7 +1231,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Fascículo a exportar» pertence a Exportação: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Exportar para LLM, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Exportação e precisa de registar ou ajustar «Fascículo a exportar».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "baseline"
+      ],
+      "related_screen": "export",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "import.file": {
       "label": "Ficheiro JSON",
@@ -698,7 +1253,19 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Carrega JSON devolvido pela LLM para análise de diferenças — não consolida automaticamente.",
+      "workflow_context": "Depois de trabalhar o JSON exportado fora do GET; reimportação → propostas → aprovação humana.",
+      "when_to_use": "Quando recebe ficheiro roundtrip estruturado da LLM.",
+      "what_happens_next": "Entra em staging; merge three-way antes de aprovar alterações.",
+      "common_confusions": [
+        "Achar que omissão no JSON apaga dados no GET.",
+        "Importar Word ou Markdown (não suportado como reimportação)."
+      ],
+      "related_concepts": [
+        "baseline"
+      ],
+      "related_screen": "import"
     },
     "import.fascicle": {
       "label": "Fascículo do merge",
@@ -709,7 +1276,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Fascículo do merge» pertence a Reimportação: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Reimportar, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Reimportação e precisa de registar ou ajustar «Fascículo do merge».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "baseline"
+      ],
+      "related_screen": "import",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "import.omission": {
       "label": "Omissões no JSON",
@@ -720,7 +1298,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Omissões no JSON» pertence a Reimportação: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Reimportar, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Reimportação e precisa de registar ou ajustar «Omissões no JSON».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "baseline"
+      ],
+      "related_screen": "import",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "backup.critical": {
       "label": "Backup crítico",
@@ -731,7 +1320,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Backup crítico» pertence a Backups: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no ecrã Backups, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Backups e precisa de registar ou ajustar «Backup crítico».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "workspace"
+      ],
+      "related_screen": "backups",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.status": {
       "label": "Estado do ponto",
@@ -742,7 +1342,18 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "No GET, este campo «Estado do ponto» pertence a Ponto de desenvolvimento: ajuda a preparar dados que ficam na base SQLite e podem sair em exportações JSON.",
+      "workflow_context": "Preenchido no cartão expandido do ponto, no fluxo de construção do caderno antes de exportar para a LLM externa.",
+      "when_to_use": "Quando trabalha em Ponto de desenvolvimento e precisa de registar ou ajustar «Estado do ponto».",
+      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "related_concepts": [
+        "development_point"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+      ]
     },
     "development_point.overview": {
       "label": "Ponto de desenvolvimento",
@@ -753,7 +1364,17 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": true
+      "allow_use_example": true,
+      "purpose_in_app": "Visão geral do cartão de ponto: resume o que é um ponto dentro do GET.",
+      "workflow_context": "Ao expandir um ponto na lista do bloco.",
+      "when_to_use": "Quando cria o primeiro ponto ou precisa de rever a estrutura.",
+      "what_happens_next": "O detalhe guarda-se ao expandir o cartão.",
+      "common_confusions": [],
+      "related_concepts": [
+        "development_point",
+        "block"
+      ],
+      "related_screen": "block-editor"
     },
     "settings.theme": {
       "label": "Tema",
@@ -764,7 +1385,16 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Esquema claro/escuro só nesta máquina; não altera exportações.",
+      "workflow_context": "Configurações com workspace aberto.",
+      "when_to_use": "Conforto visual ou ambiente de trabalho.",
+      "what_happens_next": "Gravado em ui-preferences local.",
+      "related_concepts": [
+        "workspace"
+      ],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.accent": {
       "label": "Cor de destaque",
@@ -775,7 +1405,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Escolhe preset ou cor personalizada dos botões e realces.",
+      "workflow_context": "Configurações → aparência.",
+      "when_to_use": "Quer destacar acções principais com cor habitual da equipa.",
+      "what_happens_next": "CSS variables actualizadas na hora.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.font": {
       "label": "Tipo de letra",
@@ -786,7 +1423,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Família tipográfica da UI local.",
+      "workflow_context": "Configurações.",
+      "when_to_use": "Legibilidade ou alinhamento com outros documentos.",
+      "what_happens_next": "Não afecta tipografia do caderno exportado.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.density": {
       "label": "Densidade",
@@ -797,7 +1441,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Controlos compactos ou confortáveis — densidade global dos campos.",
+      "workflow_context": "Configurações.",
+      "when_to_use": "Monitor pequeno vs. leitura prolongada.",
+      "what_happens_next": "Combina com rem de padding e altura de textarea.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.content_width": {
       "label": "Largura do conteúdo",
@@ -808,7 +1459,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Limita largura da coluna principal (lectura confortável).",
+      "workflow_context": "Configurações.",
+      "when_to_use": "Ecrã muito largo dispersa o foco.",
+      "what_happens_next": "Opção personalizada usa pixels máximos.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.accent_color": {
       "label": "Cor personalizada",
@@ -819,7 +1477,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Cor hexadecimal exacta quando o preset não chega.",
+      "workflow_context": "Configurações, modo personalizado de destaque.",
+      "when_to_use": "Marca ou contraste específico.",
+      "what_happens_next": "Validação de formato #RRGGBB.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.font_custom": {
       "label": "Família tipográfica",
@@ -830,7 +1495,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "font-family CSS quando escolhe tipo personalizado.",
+      "workflow_context": "Configurações → tipo de letra personalizado.",
+      "when_to_use": "A lista preset não inclui a fonte desejada.",
+      "what_happens_next": "Aplicado a toda a interface GET nesta máquina.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.control_font_size": {
       "label": "Tamanho do texto",
@@ -841,7 +1513,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Tamanho base em rem dos textos nos formulários.",
+      "workflow_context": "Configurações, modo detalhado de densidade.",
+      "when_to_use": "Ajuste fino além do preset de densidade.",
+      "what_happens_next": "Afecta inputs e etiquetas via CSS variables.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.control_padding_block": {
       "label": "Padding vertical",
@@ -852,7 +1531,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Espaço vertical dentro dos campos de entrada.",
+      "workflow_context": "Configurações avançadas de aparência.",
+      "when_to_use": "Campos parecem apertados ou demasiado altos.",
+      "what_happens_next": "Preview reflecte valor antes de gravar.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.control_padding_inline": {
       "label": "Padding horizontal",
@@ -863,7 +1549,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Espaço horizontal dentro dos campos.",
+      "workflow_context": "Configurações avançadas.",
+      "when_to_use": "Texto encosta às bordas dos inputs.",
+      "what_happens_next": "Gravado em ui-preferences.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.textarea_min_height": {
       "label": "Altura mínima textarea",
@@ -874,7 +1567,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Altura mínima de áreas multilinha (objectivos, conteúdo).",
+      "workflow_context": "Configurações.",
+      "when_to_use": "Escreve parágrafos longos na Preparação do bloco ou biblioteca.",
+      "what_happens_next": "Aplica-se a textareas em todos os ecrãs.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.content_max_px": {
       "label": "Largura máxima",
@@ -885,7 +1585,14 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Largura máxima em pixels do conteúdo central.",
+      "workflow_context": "Quando content_width é personalizado.",
+      "when_to_use": "Quer valor exacto (ex.: 1200px).",
+      "what_happens_next": "Preview e ecrãs principais seguem o limite.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     },
     "settings.ui_scale": {
       "label": "Escala global",
@@ -896,33 +1603,70 @@
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
-      "allow_use_example": false
+      "allow_use_example": false,
+      "purpose_in_app": "Escala percentual de toda a interface (acessibilidade).",
+      "workflow_context": "Configurações.",
+      "when_to_use": "Precisa de zoom global sem mudar resolução do OS.",
+      "what_happens_next": "Pode combinar com largura máxima de conteúdo.",
+      "related_concepts": [],
+      "related_screen": "settings",
+      "common_confusions": []
     }
   },
   "concepts": {
     "block": {
       "label": "Bloco",
-      "summary": "Delimita a unidade documental a produzir (ex.: F04_B03)."
+      "summary": "Unidade documental (ex.: capítulo F04_B03) que vai para o caderno.",
+      "role_in_get": "No GET, o bloco é o recipiente onde prepara objectivo, âmbito e pontos de desenvolvimento antes de exportar um pacote JSON para a LLM. Não é o texto final do caderno — é a instrução estruturada.",
+      "not_this": "Não é um ficheiro Word, nem a resposta da LLM; é a unidade de trabalho dentro da árvore documental."
     },
     "development_point": {
       "label": "Ponto de desenvolvimento",
-      "summary": "Cada assunto que a LLM deve desenvolver, por ordem."
+      "summary": "Um assunto técnico que a LLM deve desenvolver, por ordem.",
+      "role_in_get": "Cada ponto traduz uma ideia técnica em instruções verificáveis (ideia, obrigatórios, limites, critérios). A app valida e exporta; a LLM redige fora do GET.",
+      "not_this": "Não é um parágrafo do caderno nem um requisito solto no Excel — é o contrato de desenvolvimento para um tema."
     },
     "premise": {
       "label": "Premissa",
-      "summary": "Condição considerada verdadeira; limita o desenvolvimento."
+      "summary": "Condição assumida verdadeira para enquadrar o desenvolvimento.",
+      "role_in_get": "Premissas entram no pacote exchange para a LLM não inventar contexto. Podem existir ao nível do bloco, fascículo, projecto ou ponto.",
+      "not_this": "Não é um requisito ao adjudicatário; é «consideramos que…» até decisão contrária."
     },
     "knowledge_item": {
-      "label": "KnowledgeItem",
-      "summary": "Conhecimento reutilizável que suporta um ou mais pontos."
+      "label": "Unidade de conhecimento",
+      "summary": "Conteúdo técnico reutilizável (biblioteca ou projecto).",
+      "role_in_get": "A biblioteca EDA alimenta vários projectos. No projecto, o conhecimento pode ser específico do caderno. Exportações referenciam unidades aprovadas.",
+      "not_this": "Não é texto livre na exportação final; tem identidade, revisão e ciclo de vida na base de dados."
     },
     "reference": {
       "label": "Referência",
-      "summary": "Fonte documental, normativa ou técnica."
+      "summary": "Fonte normativa, documental ou técnica citável.",
+      "role_in_get": "Associa-se a conhecimento, premissas ou fichas normativas. Aparece nas exportações como suporte, não como texto integral.",
+      "not_this": "Não substitui o conteúdo técnico escrito pelo utilizador ou pela LLM."
     },
     "open_question": {
       "label": "Questão pendente",
-      "summary": "Lacuna que a LLM não pode resolver por iniciativa própria."
+      "summary": "Lacuna que ninguém deve fechar sem decisão humana.",
+      "role_in_get": "Regista incertezas para a LLM não assumir respostas. Pode surgir em pontos ou em conhecimento.",
+      "not_this": "Não é um requisito nem uma premissa confirmada."
+    },
+    "workspace": {
+      "label": "Workspace",
+      "summary": "Pasta local com a base SQLite e exportações do GET.",
+      "role_in_get": "Separa dados do código da aplicação. Um workspace = um conjunto de projectos e backups na sua máquina.",
+      "not_this": "Não é o repositório Git nem a pasta do executável GET."
+    },
+    "baseline": {
+      "label": "Baseline",
+      "summary": "Instantâneo aprovado antes de exportações mestres.",
+      "role_in_get": "Fixa revisões para exportações determinísticas. Sem baseline publicada, algumas exportações avisam que o estado não está congelado.",
+      "not_this": "Não é um backup de ficheiros; é um marco de versão dentro do SQLite."
+    },
+    "exchange_package": {
+      "label": "Pacote exchange",
+      "summary": "JSON por bloco para trabalho com LLM externa.",
+      "role_in_get": "Sai da Preparação do bloco; contém objectivo, pontos, premissas e listas. A LLM devolve JSON noutro fluxo (reimportação), não neste pacote.",
+      "not_this": "Não é o export mestre do projecto inteiro nem um .docx."
     }
   },
   "workflows": {
@@ -947,7 +1691,13 @@
         "Crie ou abra",
         "Configure o nível de ajuda"
       ],
-      "next": "library"
+      "next": "library",
+      "audience_note": "Se chegou agora ao GET: comece aqui — nada mais funciona até existir uma pasta de dados (workspace).",
+      "purpose_steps": [
+        "Indicar o caminho — para o GET saber onde criar a base SQLite e as pastas exports/imports.",
+        "Criar ou abrir — para carregar ou inicializar o ficheiro get.db.",
+        "Opcional: ajustar ajuda em Configurações — para ver mais ou menos explicações na interface."
+      ]
     },
     "library": {
       "title": "Biblioteca EDA",
@@ -957,7 +1707,13 @@
         "Conclua revisões",
         "Adicione referências"
       ],
-      "next": "project"
+      "next": "project",
+      "audience_note": "A biblioteca é conhecimento reutilizável; ainda não está ligada a um capítulo específico do caderno.",
+      "purpose_steps": [
+        "Criar unidades com título, conteúdo e contexto — para poder reutilizar e pesquisar depois.",
+        "Rever estados quando o conhecimento amadurecer — para exportações fiáveis.",
+        "Adicionar referências e termos — para consistência em todos os projectos."
+      ]
     },
     "project": {
       "title": "Projecto",
@@ -977,7 +1733,13 @@
         "Seleccione um bloco",
         "Abre Preparação do bloco"
       ],
-      "next": "block-editor"
+      "next": "block-editor",
+      "audience_note": "A árvore não é o texto do caderno: é o índice de fascículos, blocos e secções.",
+      "purpose_steps": [
+        "Criar fascículos e blocos — para espelhar a estrutura do documento final.",
+        "Seleccionar um bloco — para abrir a Preparação do bloco (pontos para a LLM).",
+        "Associar conhecimento a nós — para exportar ligações, não o texto integral solto."
+      ]
     },
     "block-editor": {
       "title": "Preparação do bloco",
@@ -989,7 +1751,13 @@
         "Exportar JSON para LLM"
       ],
       "empty_state": "Crie o primeiro ponto ou escolha um modelo estrutural.",
-      "next": "export"
+      "next": "export",
+      "audience_note": "Aqui define instruções para a LLM; o GET não escreve o caderno por si.",
+      "purpose_steps": [
+        "Objectivo e âmbito — enquadram o capítulo no pacote JSON.",
+        "Premissas e pontos ordenados — contrato do que a LLM pode e não pode inventar.",
+        "Validação e exportação exchange — gera o ficheiro que envia à LLM externa."
+      ]
     },
     "export": {
       "title": "Exportar",
@@ -998,7 +1766,13 @@
         "Publique baseline",
         "Exporte mestre ou fascículo"
       ],
-      "next": "import"
+      "next": "import",
+      "audience_note": "Exportar mestre/fascículo é diferente do pacote por bloco na Preparação.",
+      "purpose_steps": [
+        "Publicar baseline quando o conjunto estiver fixo — para exportações reproduzíveis.",
+        "Escolher perfil discussion/redaction — para a LLM receber o nível certo de contexto.",
+        "Gravar JSON na pasta exports — para trabalho offline com Copilot/Claude/etc."
+      ]
     },
     "import": {
       "title": "Reimportar",
@@ -1008,7 +1782,13 @@
         "Decida propostas",
         "Consolide"
       ],
-      "next": null
+      "next": null,
+      "audience_note": "Reimportação é revisão humana: nada entra na base sem aprovação.",
+      "purpose_steps": [
+        "Carregar JSON devolvido — entra em staging, não substitui tudo.",
+        "Analisar merge — compara base exportada, estado actual e ficheiro devolvido.",
+        "Decidir proposta a proposta — consolida só o que aprovar."
+      ]
     },
     "workbook": {
       "title": "Modelo Excel",
@@ -1050,12 +1830,18 @@
         "Escolha tema e densidade",
         "Opcional: nível de ajuda com workspace aberto"
       ],
-      "next": "workspace"
+      "next": "workspace",
+      "audience_note": "Aparência é só desta máquina; não viaja no JSON do caderno.",
+      "purpose_steps": [
+        "Ajustar tema e densidade — conforto visual local.",
+        "Nível de ajuda — mais popups ou também texto sob campos."
+      ]
     }
   },
   "example_library": {
     "autonomy_scada_title": "Autonomia perante indisponibilidade do SCADA",
     "autonomy_scada_idea": "A indisponibilidade do SCADA não deve impedir a operação segura das funções de controlo local.",
     "premise_local_vars": "O controlador local dispõe das variáveis necessárias para executar a função sem depender continuamente do SCADA."
-  }
+  },
+  "_schema_note": "Campos de campo (fields.*): purpose_in_app, workflow_context, when_to_use, what_happens_next, related_concepts, related_screen, common_confusions."
 }
