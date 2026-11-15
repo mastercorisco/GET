@@ -32,6 +32,8 @@ A aplicação não produz texto com IA. O conhecimento é exportado em JSON para
 
 Narrativa funcional consolidada: [GET_METHOD.md](GET_METHOD.md) (estruturar no GET → LLM externa → revisão humana).
 
+**Edição externa dos textos:** exportar `catalogs/get_help_editorial.pt-PT.json` com `python backend/scripts/export_help_editorial.py`, rever fora do repo, e voltar a importar com `python backend/scripts/import_help_editorial.py` (incrementa patch de `catalog_version`). A app continua a usar apenas `get_help_catalog.pt-PT.json`.
+
 Ficheiro `catalogs/get_help_catalog.pt-PT.json`, servido por `GET /api/catalogs/help`. Inclui bloco `method` (princípio, fluxo, semântica do pacote exchange, governação). Por campo: `purpose_in_app`, `workflow_context`, `when_to_use`, `what_happens_next`, `related_concepts`, `related_screen`, `common_confusions`. Conceitos incluem `role_in_get` e `not_this`. Guias de ecrã usam `audience_note` e `purpose_steps`. O popup (i) segue a narrativa GET → fluxo → definição → exemplos; painel de preparação do bloco expõe o método. Não há geração de ajuda por LLM em runtime.
 
 ## 4. Áreas funcionais

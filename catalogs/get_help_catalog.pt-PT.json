@@ -1,5 +1,5 @@
 {
-  "catalog_version": "1.3.0",
+  "catalog_version": "1.3.1",
   "locale": "pt-PT",
   "default_help_level": "normal",
   "fields": {
@@ -26,7 +26,7 @@
       "purpose_in_app": "Nomeia o assunto no índice do bloco e no JSON; não substitui a ideia central técnica.",
       "workflow_context": "Cartão do ponto na Preparação do bloco, antes de exportar o pacote exchange.",
       "when_to_use": "Ao criar ou renomear um ponto; mantenha curto e específico.",
-      "what_happens_next": "Aparece ordenado na exportação; a LLM desenvolve cada título em sequência.",
+      "what_happens_next": "O título aparece no cartão e define o cabeçalho do ponto exportado; a ordem do cartão determina a sequência.",
       "related_concepts": [
         "development_point",
         "block"
@@ -61,7 +61,7 @@
       "purpose_in_app": "Afirmação técnica autoritativa que a LLM deve preservar — âncora do ponto.",
       "workflow_context": "Primeira secção substantive do cartão expandido.",
       "when_to_use": "Sempre; é o campo mais crítico do método.",
-      "what_happens_next": "Entra em authoritative_content no JSON; validação alerta tarefas de redação disfarçadas.",
+      "what_happens_next": "A ideia entra em authoritative_content e funciona como âncora técnica que a LLM deve preservar.",
       "related_concepts": [
         "development_point",
         "authoritative_content"
@@ -89,7 +89,7 @@
       "purpose_in_app": "Estado de compreensão esperado após leitura do texto desenvolvido.",
       "workflow_context": "Após ideia central no cartão.",
       "when_to_use": "Quando o resultado esperado não é óbvio só pela ideia central.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O resultado esperado ajuda a LLM a fechar o desenvolvimento e ajuda o utilizador a rever o texto recebido.",
       "related_concepts": [
         "development_point"
       ],
@@ -121,7 +121,7 @@
       "purpose_in_app": "Como estruturar ou relacionar o assunto — sem esconder requisitos aqui.",
       "workflow_context": "Secção Orientações; uma ideia por item na lista.",
       "when_to_use": "Quando precisa de ênfases (funcional vs operacional, falhas, etc.).",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "Cada orientação é exportada como regra de abordagem; não será promovida automaticamente a requisito.",
       "related_concepts": [
         "development_point"
       ],
@@ -153,7 +153,7 @@
       "purpose_in_app": "Condições assumidas verdadeiras para este ponto (além das herdadas do projecto/bloco).",
       "workflow_context": "Secção Premissas do cartão; exportação inclui nível e confiança.",
       "when_to_use": "Pressupostos de projeto, normas ou decisões aplicáveis só a este assunto.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "As premissas do ponto são combinadas com as herdadas, mantendo origem e confiança.",
       "related_concepts": [
         "premise",
         "development_point"
@@ -182,7 +182,7 @@
       "purpose_in_app": "Matéria que tem de constar no desenvolvimento — contrato explícito.",
       "workflow_context": "Secção Obrigatórios; um item por linha.",
       "when_to_use": "Elementos não negociáveis (deteção, sinalização, fallback, etc.).",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "Os itens entram em authoritative_content e devem aparecer de forma inequívoca no resultado.",
       "related_concepts": [
         "development_point",
         "authoritative_content"
@@ -209,7 +209,7 @@
       "purpose_in_app": "Protecção contra invenção: o que não definir, assumir ou incluir.",
       "workflow_context": "Secção Limites; tipos: não definir, fora do âmbito, remeter a detalhe.",
       "when_to_use": "Evitar que a LLM fixe valores ou marcas não aprovados.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "Os limites entram em authoritative_content para impedir inferências e decisões não autorizadas.",
       "related_concepts": [
         "development_point",
         "authoritative_content"
@@ -238,7 +238,7 @@
       "purpose_in_app": "Perguntas que o desenvolvimento deve responder explicitamente; na UI também liga IDs de conhecimento/referência nesta secção.",
       "workflow_context": "Secção Conhecimento e referências / listas de perguntas.",
       "when_to_use": "Questões obrigatórias (o quê desencadeia, como sinaliza, recuperação).",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "As perguntas são exportadas como cobertura obrigatória; perguntas sem resposta aprovada devem passar para Questões pendentes.",
       "related_concepts": [
         "development_point",
         "knowledge_item",
@@ -267,7 +267,7 @@
       "purpose_in_app": "Decisões em falta que a LLM não pode fechar sozinha.",
       "workflow_context": "Secção Questões pendentes → unresolved_matters na exportação.",
       "when_to_use": "TBD, «confirmar com cliente», escolhas não fechadas.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "As questões entram em unresolved_matters e devem permanecer visíveis, sem resposta inventada.",
       "related_concepts": [
         "open_question",
         "unresolved_matters"
@@ -300,7 +300,7 @@
       "purpose_in_app": "Como verificar se o texto desenvolvido respeitou os inputs.",
       "workflow_context": "Secção Critérios; antes de marcar ready/approved.",
       "when_to_use": "Sempre que a revisão humana pós-LLM precisa de checklist.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "Os critérios tornam-se a checklist de revisão humana do texto devolvido.",
       "related_concepts": [
         "development_point",
         "validation"
@@ -327,7 +327,7 @@
       "purpose_in_app": "strict: só o fornecido; bounded: clareza sem novos requisitos; exploratory: sugestões separadas. Recomendado strict em cadernos.",
       "workflow_context": "Secção Estado e LLM do cartão; incluído nas generation_instructions.",
       "when_to_use": "Por defeito strict; bounded para texto mais didático; exploratory só com revisão rigorosa.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "A escolha segue em generation_instructions e limita a margem de atuação da LLM.",
       "related_concepts": [
         "development_point",
         "generation_instructions"
@@ -429,7 +429,7 @@
       "short_help": "Nome legível da unidade.",
       "definition": "Identifica o conhecimento na biblioteca ou projecto.",
       "guiding_question": "Como nomear esta unidade?",
-      "instructions": "",
+      "instructions": "Registe uma unidade suficientemente autónoma para poder ser pesquisada, revista e reutilizada.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -438,7 +438,9 @@
       "workflow_context": "Biblioteca EDA, antes de associar conhecimento a nós da árvore ou a pontos.",
       "when_to_use": "Ao criar qualquer entrada na biblioteca; título curto e único no seu contexto.",
       "what_happens_next": "Fica na SQLite; pesquisa FTS usa o título.",
-      "common_confusions": [],
+      "common_confusions": [
+        "Criar uma unidade demasiado extensa, com vários factos, decisões e requisitos misturados."
+      ],
       "related_concepts": [
         "knowledge_item"
       ],
@@ -449,7 +451,7 @@
       "short_help": "Texto Markdown limitado.",
       "definition": "Corpo do conhecimento reutilizável.",
       "guiding_question": "Qual é a afirmação ou descrição?",
-      "instructions": "",
+      "instructions": "Registe uma unidade suficientemente autónoma para poder ser pesquisada, revista e reutilizada.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -471,7 +473,7 @@
       "short_help": "De onde vem este conhecimento.",
       "definition": "Proveniência para revisão futura.",
       "guiding_question": "Qual o contexto de captura?",
-      "instructions": "",
+      "instructions": "Registe uma unidade suficientemente autónoma para poder ser pesquisada, revista e reutilizada.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -480,7 +482,9 @@
       "workflow_context": "Obrigatório na captura mínima; acompanha a unidade em exportações JSON.",
       "when_to_use": "No momento de criar ou rever a unidade.",
       "what_happens_next": "Visível em exportações; não é texto que a LLM devolve na reimportação para alterar.",
-      "common_confusions": [],
+      "common_confusions": [
+        "Criar uma unidade demasiado extensa, com vários factos, decisões e requisitos misturados."
+      ],
       "related_concepts": [
         "knowledge_item"
       ],
@@ -491,7 +495,7 @@
       "short_help": "Procure na biblioteca.",
       "definition": "Pesquisa FTS local.",
       "guiding_question": "Que termo procura?",
-      "instructions": "",
+      "instructions": "Registe uma unidade suficientemente autónoma para poder ser pesquisada, revista e reutilizada.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -500,7 +504,9 @@
       "workflow_context": "Biblioteca EDA, antes de abrir ou editar uma unidade.",
       "when_to_use": "Quando procura conhecimento existente para reutilizar ou rever.",
       "what_happens_next": "Mostra lista filtrada; não altera dados até abrir uma unidade.",
-      "common_confusions": [],
+      "common_confusions": [
+        "Criar uma unidade demasiado extensa, com vários factos, decisões e requisitos misturados."
+      ],
       "related_concepts": [
         "knowledge_item"
       ],
@@ -511,7 +517,7 @@
       "short_help": "Ficha estruturada opcional.",
       "definition": "Classifica a unidade para exportação.",
       "guiding_question": "Que tipo de ficha se aplica?",
-      "instructions": "",
+      "instructions": "Registe uma unidade suficientemente autónoma para poder ser pesquisada, revista e reutilizada.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -520,7 +526,9 @@
       "workflow_context": "Formulário da biblioteca ou detalhe de conhecimento.",
       "when_to_use": "Ao criar ou rever metadados da unidade.",
       "what_happens_next": "Influencia perfis de exportação discussion/redaction.",
-      "common_confusions": [],
+      "common_confusions": [
+        "Criar uma unidade demasiado extensa, com vários factos, decisões e requisitos misturados."
+      ],
       "related_concepts": [
         "knowledge_item"
       ],
@@ -531,7 +539,7 @@
       "short_help": "JSON da ficha técnica.",
       "definition": "Parâmetros em texto livre no MVP.",
       "guiding_question": "Que campos estruturados anotar?",
-      "instructions": "",
+      "instructions": "Registe uma unidade suficientemente autónoma para poder ser pesquisada, revista e reutilizada.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -540,7 +548,9 @@
       "workflow_context": "Biblioteca, quando o tipo exige campos adicionais.",
       "when_to_use": "Quando o profile_type pede estrutura complementar documentada.",
       "what_happens_next": "Validado como JSON; exportado com a unidade.",
-      "common_confusions": [],
+      "common_confusions": [
+        "Criar uma unidade demasiado extensa, com vários factos, decisões e requisitos misturados."
+      ],
       "related_concepts": [
         "knowledge_item"
       ],
@@ -551,7 +561,7 @@
       "short_help": "O rascunho é editável até concluir revisão.",
       "definition": "Só após concluir revisão o conteúdo fica imutável na base.",
       "guiding_question": "Já está pronto para revisão?",
-      "instructions": "",
+      "instructions": "Registe uma unidade suficientemente autónoma para poder ser pesquisada, revista e reutilizada.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -563,14 +573,17 @@
       "related_concepts": [
         "knowledge_item"
       ],
-      "related_screen": "library"
+      "related_screen": "library",
+      "common_confusions": [
+        "Criar uma unidade demasiado extensa, com vários factos, decisões e requisitos misturados."
+      ]
     },
     "library.ref_title": {
       "label": "Título da referência",
       "short_help": "Designação da fonte.",
       "definition": "Referência genérica ou norma.",
       "guiding_question": "Como identificar a fonte?",
-      "instructions": "",
+      "instructions": "Registe a informação de forma estável e reutilizável entre projetos.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -583,14 +596,16 @@
         "reference"
       ],
       "related_screen": "library",
-      "common_confusions": []
+      "common_confusions": [
+        "Criar uma entrada específica de um projeto na biblioteca comum."
+      ]
     },
     "library.ref_citation": {
       "label": "Citação",
       "short_help": "Como citar a referência.",
       "definition": "Formato bibliográfico ou interno.",
       "guiding_question": "Como citar?",
-      "instructions": "",
+      "instructions": "Registe a informação de forma estável e reutilizável entre projetos.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -603,14 +618,16 @@
         "reference"
       ],
       "related_screen": "library",
-      "common_confusions": []
+      "common_confusions": [
+        "Criar uma entrada específica de um projeto na biblioteca comum."
+      ]
     },
     "library.term_preferred": {
       "label": "Termo preferencial",
       "short_help": "Vocabulário controlado.",
       "definition": "Termo a usar na redação.",
       "guiding_question": "Qual o termo preferido?",
-      "instructions": "",
+      "instructions": "Registe a informação de forma estável e reutilizável entre projetos.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -623,14 +640,16 @@
         "knowledge_item"
       ],
       "related_screen": "library",
-      "common_confusions": []
+      "common_confusions": [
+        "Criar uma entrada específica de um projeto na biblioteca comum."
+      ]
     },
     "library.term_definition": {
       "label": "Definição",
       "short_help": "Significado do termo.",
       "definition": "Evita ambiguidade no caderno.",
       "guiding_question": "O que significa?",
-      "instructions": "",
+      "instructions": "Registe a informação de forma estável e reutilizável entre projetos.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -643,14 +662,16 @@
         "knowledge_item"
       ],
       "related_screen": "library",
-      "common_confusions": []
+      "common_confusions": [
+        "Criar uma entrada específica de um projeto na biblioteca comum."
+      ]
     },
     "library.term_synonyms": {
       "label": "Sinónimos",
       "short_help": "Variantes aceites.",
       "definition": "Lista separada por vírgulas.",
       "guiding_question": "Que sinónimos registar?",
-      "instructions": "",
+      "instructions": "Registe a informação de forma estável e reutilizável entre projetos.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -663,7 +684,9 @@
         "knowledge_item"
       ],
       "related_screen": "library",
-      "common_confusions": []
+      "common_confusions": [
+        "Criar uma entrada específica de um projeto na biblioteca comum."
+      ]
     },
     "project.template_version": {
       "label": "Modelo de projecto",
@@ -678,14 +701,12 @@
       "purpose_in_app": "Versão do modelo de projecto usada ao criar — rastreio e compatibilidade.",
       "workflow_context": "Ecrã Projecto, ao criar nova empreitada.",
       "when_to_use": "Ao criar projecto; alinhar com templates aprovados pela equipa.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "project"
       ],
       "related_screen": "project",
-      "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
-      ]
+      "common_confusions": []
     },
     "project.name": {
       "label": "Nome do projecto",
@@ -700,14 +721,12 @@
       "purpose_in_app": "Designação legível da obra ou estudo — listas e exportações mestres.",
       "workflow_context": "Criação do projecto; contexto comum a fascículos.",
       "when_to_use": "Sempre ao criar; único no seu workspace.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "project"
       ],
       "related_screen": "project",
-      "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
-      ]
+      "common_confusions": []
     },
     "project.intervention": {
       "label": "Tipo de intervenção",
@@ -722,14 +741,12 @@
       "purpose_in_app": "Tipo de contexto (ex. brownfield/greenfield) para enquadrar premissas e risco.",
       "workflow_context": "Metadados do projecto.",
       "when_to_use": "Ao criar; influencia documentação esperada.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "project"
       ],
       "related_screen": "project",
-      "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
-      ]
+      "common_confusions": []
     },
     "project.active": {
       "label": "Projecto activo",
@@ -744,31 +761,42 @@
       "purpose_in_app": "Selecciona qual projecto recebe estrutura, blocos e exportações.",
       "workflow_context": "Após criar vários projectos.",
       "when_to_use": "Sempre que muda de obra no mesmo workspace.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "project",
         "workspace"
       ],
       "related_screen": "project",
-      "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
-      ]
+      "common_confusions": []
     },
     "block.objective": {
       "label": "Objectivo do bloco",
-      "short_help": "O que este bloco deve produzir.",
-      "definition": "Delimita a unidade documental a desenvolver.",
-      "guiding_question": "Qual o objectivo do bloco documental?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Defina a finalidade global deste bloco numa ou duas frases.",
+      "definition": "O objetivo declara o resultado documental que o bloco deve alcançar. Enquadra todos os pontos, mas não substitui os assuntos específicos de cada ponto.",
+      "guiding_question": "Que finalidade deve cumprir este bloco no caderno de encargos?",
+      "instructions": "Comece por um verbo claro, como definir, especificar, estabelecer ou descrever. Indique o domínio e o resultado esperado, sem antecipar todo o conteúdo.",
+      "good_examples": [
+        "Estabelecer os requisitos funcionais e de arquitetura aplicáveis aos controladores locais, assegurando autonomia segura perante indisponibilidade dos níveis superiores."
+      ],
+      "bad_examples": [
+        {
+          "text": "Falar sobre PLC, SCADA e comunicações.",
+          "reason": "É vago, não define um resultado documental nem a posição pretendida."
+        }
+      ],
+      "tips": [
+        "Mantenha o objetivo estável e relativamente curto.",
+        "Use os pontos de desenvolvimento para decompor os assuntos."
+      ],
       "allow_use_example": true,
-      "purpose_in_app": "Diz à LLM o que este bloco do caderno deve produzir como mensagem global (nível capítulo).",
-      "workflow_context": "Preparação do bloco, antes dos pontos e da exportação exchange.",
-      "when_to_use": "Ao abrir um bloco na estrutura; revise quando o âmbito do capítulo mudar.",
-      "what_happens_next": "Gravado no SQLite; incluído no pacote JSON para a LLM.",
-      "common_confusions": [],
+      "purpose_in_app": "Funciona como a instrução de nível superior do bloco. É exportado como conteúdo autoritativo antes dos pontos de desenvolvimento.",
+      "workflow_context": "Preencha antes de criar os pontos. Se o objetivo mudar, reveja o âmbito e confirme se os pontos continuam coerentes.",
+      "when_to_use": "Sempre que criar um bloco ou alterar a finalidade do capítulo correspondente.",
+      "what_happens_next": "A LLM recebe este objetivo como enquadramento global; cada ponto será desenvolvido dentro desta finalidade.",
+      "common_confusions": [
+        "Confundir objetivo com âmbito: o objetivo diz para quê; o âmbito diz o que entra e o que fica fora.",
+        "Escrever um índice de assuntos em vez de uma finalidade global."
+      ],
       "related_concepts": [
         "block",
         "exchange_package"
@@ -777,19 +805,32 @@
     },
     "block.scope": {
       "label": "Âmbito do bloco",
-      "short_help": "Limites temáticos.",
-      "definition": "O que entra e o que fica fora do bloco.",
-      "guiding_question": "Qual o âmbito?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Delimite os sistemas, funções, fases e exclusões abrangidos.",
+      "definition": "O âmbito estabelece as fronteiras temáticas do bloco. Evita sobreposição com outros blocos e impede que a LLM alargue o conteúdo por iniciativa própria.",
+      "guiding_question": "Que matéria pertence a este bloco e que matéria deve ficar noutro bloco?",
+      "instructions": "Indique inclusões e exclusões concretas: sistemas, níveis de controlo, fases do ciclo de vida, interfaces ou localizações abrangidas.",
+      "good_examples": [
+        "Inclui PLC, controladores dedicados, variadores de frequência e interfaces locais. Exclui servidores SCADA, postos de operação e infraestrutura central de virtualização, tratados no fascículo de Comando e controlo."
+      ],
+      "bad_examples": [
+        {
+          "text": "Toda a automação necessária.",
+          "reason": "Não identifica fronteiras e permite uma expansão indeterminada do conteúdo."
+        }
+      ],
+      "tips": [
+        "Nomeie explicitamente as exclusões relevantes.",
+        "Se uma exclusão exigir decisão posterior, registe também uma questão pendente."
+      ],
       "allow_use_example": true,
-      "purpose_in_app": "Limita o que pertence a este bloco e o que fica fora, para a LLM não alargar o assunto.",
-      "workflow_context": "Junto com objectivo; lê-se antes dos pontos na exportação.",
-      "when_to_use": "Sempre que o bloco ganha fronteiras novas (sistemas, locais, fases).",
-      "what_happens_next": "Exportado no cabeçalho do bloco no pacote exchange.",
-      "common_confusions": [],
+      "purpose_in_app": "Define a fronteira autoritativa dentro da qual os pontos podem ser desenvolvidos.",
+      "workflow_context": "Preencha em conjunto com o objetivo e reveja quando mover pontos entre blocos.",
+      "when_to_use": "Sempre. É especialmente importante quando existem blocos próximos, como Automação de campo e Comando e controlo.",
+      "what_happens_next": "A exportação apresenta o âmbito antes dos pontos, para limitar a interpretação da LLM.",
+      "common_confusions": [
+        "Usar o âmbito para repetir o objetivo.",
+        "Escrever «tudo o que for necessário», eliminando a fronteira que o campo deve criar."
+      ],
       "related_concepts": [
         "block"
       ],
@@ -797,19 +838,32 @@
     },
     "block.target_output": {
       "label": "Resultado documental",
-      "short_help": "Formato ou tipo de saída.",
-      "definition": "Describe target_output para a LLM.",
-      "guiding_question": "Que tipo de texto ou secção se espera?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Descreva a forma esperada do resultado, não o seu conteúdo técnico.",
+      "definition": "Target output define o tipo de entrega que a LLM deve produzir, como secção de especificação, tabela de requisitos ou texto funcional.",
+      "guiding_question": "Em que formato e com que características deve ser apresentado o desenvolvimento?",
+      "instructions": "Use JSON válido. Indique tipo, idioma, tom e extensão indicativa apenas quando forem úteis. Não coloque aqui requisitos da instalação.",
+      "good_examples": [
+        "{\"format\":\"technical_specification\",\"language\":\"pt-PT\",\"tone\":\"formal_technical\",\"indicative_length_words\":1200}"
+      ],
+      "bad_examples": [
+        {
+          "text": "Explicar que os PLC devem ser redundantes.",
+          "reason": "Isto é conteúdo técnico e deve estar nos pontos ou elementos obrigatórios."
+        }
+      ],
+      "tips": [
+        "Prefira poucas propriedades estáveis.",
+        "Use pt-PT para documentos formais da EDA."
+      ],
       "allow_use_example": false,
-      "purpose_in_app": "Descreve em JSON o formato esperado do resultado (ex.: secção de especificação, tabela). Orienta a LLM sem ser texto final.",
-      "workflow_context": "Opcional mas útil antes de exportar; validado como JSON.",
-      "when_to_use": "Quando o adjudicatário ou o modelo exige estrutura concreta de entrega.",
-      "what_happens_next": "Incluído no JSON do bloco na exportação.",
-      "common_confusions": [],
+      "purpose_in_app": "Configura a apresentação da saída sem alterar o conteúdo autoritativo dos pontos.",
+      "workflow_context": "Preencha depois de definir o objetivo e antes da exportação.",
+      "when_to_use": "Quando pretende controlar formato, granularidade, idioma ou tom da resposta externa.",
+      "what_happens_next": "O objeto é validado e incluído no cabeçalho do pacote exchange.",
+      "common_confusions": [
+        "Colocar requisitos técnicos dentro do target_output.",
+        "Escrever texto livre que não seja JSON válido."
+      ],
       "related_concepts": [
         "block",
         "exchange_package"
@@ -829,7 +883,7 @@
       "purpose_in_app": "Copia estrutura de outro ponto ao criar um novo, para acelerar preparação.",
       "workflow_context": "Preparação do bloco → adicionar ponto.",
       "when_to_use": "Pontos repetem o mesmo esqueleto (orientações, critérios).",
-      "what_happens_next": "Novo ponto herda listas; títulos e ideia central deve rever-se. Modelos no catálogo: Princípio de arquitetura, Comportamento perante falha, Requisito de interface, Requisito operacional, Requisito de manutenção, Requisito de cibersegurança, etc. Criam prompts vazios, não decisões. Modelos no catálogo: Princípio de arquitetura, Comportamento perante falha, Requisito de interface, Requisito operacional, Requisito de manutenção, Requisito de cibersegurança, etc. Criam prompts vazios, não decisões.",
+      "what_happens_next": "É criado um novo ponto com secções e perguntas orientadoras vazias. O utilizador continua responsável por preencher e validar todo o conteúdo técnico.",
       "related_concepts": [
         "block",
         "development_point"
@@ -839,62 +893,92 @@
     },
     "block.points_overview": {
       "label": "Pontos de desenvolvimento",
-      "short_help": "Lista ordenada de assuntos.",
-      "definition": "Cada ponto é um assunto que a LLM desenvolve sem escolher autonomamente.",
-      "guiding_question": "Quantos assuntos precisa de desenvolver?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Decomponha o bloco nos assuntos concretos que a LLM terá de desenvolver.",
+      "definition": "Cada ponto é um contrato editorial e técnico para um assunto. A ordem dos cartões define a ordem de desenvolvimento no pacote exchange.",
+      "guiding_question": "Que assuntos independentes precisam de ficar explicitamente desenvolvidos?",
+      "instructions": "Crie um ponto por ideia técnica coerente. Divida pontos que contenham decisões independentes e ordene-os segundo a lógica de leitura do futuro capítulo.",
+      "good_examples": [
+        "Autonomia perante indisponibilidade do SCADA",
+        "Comportamento perante perda de referência remota",
+        "Sinalização e diagnóstico para níveis superiores"
+      ],
+      "bad_examples": [
+        {
+          "text": "Automação",
+          "reason": "É demasiado amplo para controlar o desenvolvimento."
+        }
+      ],
+      "tips": [
+        "Use títulos paralelos e específicos.",
+        "Ordene do princípio geral para o comportamento, interfaces, exceções e verificação."
+      ],
       "allow_use_example": true,
-      "purpose_in_app": "Secção onde ordena e edita pontos — o núcleo do pacote exchange para a LLM.",
-      "workflow_context": "Depois de objectivo/âmbito; antes de validar e exportar.",
-      "when_to_use": "Sempre que o bloco precisa de conteúdo desenvolvido por pontos.",
-      "what_happens_next": "Cada ponto guardado entra na validação e no JSON do bloco.",
+      "purpose_in_app": "É o núcleo do método GET: o utilizador escolhe os assuntos; a LLM apenas os desenvolve.",
+      "workflow_context": "Depois de objetivo e âmbito, antes de validar e exportar.",
+      "when_to_use": "Use em todos os blocos destinados a desenvolvimento externo.",
+      "what_happens_next": "Os pontos válidos são exportados pela ordem apresentada. Pontos draft só entram se essa opção for ativada.",
       "related_concepts": [
         "development_point",
         "exchange_package"
       ],
       "related_screen": "block-editor",
-      "common_confusions": []
+      "common_confusions": [
+        "Criar um único ponto com todo o capítulo.",
+        "Confundir ponto de desenvolvimento com KnowledgeItem reutilizável."
+      ]
     },
     "block.include_draft": {
       "label": "Incluir rascunhos",
-      "short_help": "Exporta pontos ainda não ready.",
-      "definition": "Por defeito só ready/approved entram no pacote.",
-      "guiding_question": "Quer expor rascunhos à LLM?",
-      "instructions": "",
+      "short_help": "Inclua trabalho incompleto apenas quando quiser discussão exploratória.",
+      "definition": "Por defeito, a exportação inclui apenas pontos ready e approved. Esta opção acrescenta pontos draft ou incomplete e mantém o respetivo estado visível.",
+      "guiding_question": "A LLM deve ver pontos ainda incompletos, sabendo que não estão validados?",
+      "instructions": "Ative apenas para exploração ou revisão intermédia. Antes de redação contratual, prefira corrigir os alertas e marcar os pontos como ready.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Se o ponto contém uma lacuna real, registe-a em Questões pendentes."
+      ],
       "allow_use_example": false,
-      "purpose_in_app": "Inclui pontos ainda em rascunho na exportação exchange (com aviso).",
-      "workflow_context": "Imediatamente antes de exportar o pacote do bloco.",
-      "when_to_use": "Quer enviar trabalho em curso à LLM com responsabilidade explícita.",
-      "what_happens_next": "JSON marca estado draft; validação pode listar problemas.",
+      "purpose_in_app": "Permite discutir trabalho em curso sem o apresentar como input validado.",
+      "workflow_context": "Decisão tomada imediatamente antes de exportar o bloco.",
+      "when_to_use": "Use numa sessão de análise, nunca como atalho habitual para ignorar validações.",
+      "what_happens_next": "O JSON inclui os rascunhos com estado explícito e a validação acompanha o pacote.",
       "related_concepts": [
         "block",
         "exchange_package"
       ],
       "related_screen": "block-editor",
-      "common_confusions": []
+      "common_confusions": [
+        "Interpretar um rascunho exportado como conteúdo aprovado."
+      ]
     },
     "premise.statement": {
       "label": "Enunciado da premissa",
-      "short_help": "Condição assumida verdadeira.",
-      "definition": "Enquadramento, não requisito ao adjudicatário.",
-      "guiding_question": "Que condição é assumida?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Registe uma condição assumida verdadeira para enquadrar o desenvolvimento.",
+      "definition": "A premissa descreve o contexto de partida. Não impõe por si só uma obrigação ao adjudicatário.",
+      "guiding_question": "Que condição pode ser considerada verdadeira ao desenvolver este assunto?",
+      "instructions": "Formule como condição verificável. Se pretende impor uma solução ou comportamento, use um requisito ou elemento obrigatório.",
+      "good_examples": [
+        "A remodelação será executada com a central em exploração e por fases planeadas."
+      ],
+      "bad_examples": [
+        {
+          "text": "O adjudicatário deve instalar PLC redundante.",
+          "reason": "É um requisito dirigido ao adjudicatário, não uma condição de enquadramento."
+        }
+      ],
+      "tips": [
+        "Use confiança provisional ou unverified quando adequado.",
+        "Crie uma questão pendente se a premissa precisar de confirmação."
+      ],
       "allow_use_example": true,
-      "purpose_in_app": "Regista uma condição assumida verdadeira para este bloco (ou ponto), não um requisito.",
-      "workflow_context": "Preparação do bloco → premissas; aparecem no pacote para a LLM.",
-      "when_to_use": "Há pressupostos de projeto, normas ou decisões que devem ser explícitos.",
-      "what_happens_next": "Gravado em SQLite; visível na exportação exchange.",
+      "purpose_in_app": "Fornece contexto autoritativo e rastreável à LLM.",
+      "workflow_context": "Pode existir ao nível do projeto, fascículo, bloco ou ponto e é consolidada na exportação.",
+      "when_to_use": "Quando o raciocínio depende de uma condição já decidida, conhecida ou provisoriamente assumida.",
+      "what_happens_next": "A premissa é exportada com importância, confiança, origem e nível de aplicação.",
       "common_confusions": [
-        "Escrever aqui um requisito «deve» em vez de «assume-se que»."
+        "Escrever uma obrigação com «deve» e classificá-la como premissa.",
+        "Apresentar como confirmada uma hipótese ainda em validação."
       ],
       "related_concepts": [
         "premise",
@@ -968,7 +1052,7 @@
       "short_help": "Seleccione nó para associar conhecimento.",
       "definition": "Fascículos, blocos, secções.",
       "guiding_question": "Que parte do caderno editar?",
-      "instructions": "",
+      "instructions": "Defina este valor como metadado estruturado da árvore; não escreva aqui o texto final do caderno.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -976,14 +1060,14 @@
       "purpose_in_app": "Visualiza fascículos e blocos — índice do caderno, não o texto.",
       "workflow_context": "Estrutura documental.",
       "when_to_use": "Ao organizar F04, blocos e ordem.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "fascicle",
         "block"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a estrutura documental com a redação final do capítulo."
       ]
     },
     "document.assoc_item": {
@@ -991,7 +1075,7 @@
       "short_help": "Ligação qualificada ao nó.",
       "definition": "Não duplica a unidade na base.",
       "guiding_question": "Que conhecimento associar?",
-      "instructions": "",
+      "instructions": "Defina este valor como metadado estruturado da árvore; não escreva aqui o texto final do caderno.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -999,14 +1083,14 @@
       "purpose_in_app": "Liga conhecimento da biblioteca ou projecto a um nó da árvore.",
       "workflow_context": "Associações na estrutura.",
       "when_to_use": "Quando um capítulo referencia unidades aprovadas.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "knowledge_item",
         "block"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a estrutura documental com a redação final do capítulo."
       ]
     },
     "document.assoc_role": {
@@ -1014,7 +1098,7 @@
       "short_help": "Como usar na exportação.",
       "definition": "Papéis como mandatory_content, example.",
       "guiding_question": "Com que papel exportar?",
-      "instructions": "",
+      "instructions": "Defina este valor como metadado estruturado da árvore; não escreva aqui o texto final do caderno.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1022,13 +1106,13 @@
       "purpose_in_app": "Papel da ligação (fundamentação, requisito citado, etc.).",
       "workflow_context": "Ao associar conhecimento a nó.",
       "when_to_use": "Para a exportação distinguir suporte de obrigatoriedade.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "knowledge_item"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a estrutura documental com a redação final do capítulo."
       ]
     },
     "document.assoc_instruction": {
@@ -1036,7 +1120,7 @@
       "short_help": "Nota para exportação.",
       "definition": "Orienta a LLM sobre o uso.",
       "guiding_question": "Como deve ser usada?",
-      "instructions": "",
+      "instructions": "Defina este valor como metadado estruturado da árvore; não escreva aqui o texto final do caderno.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1044,13 +1128,13 @@
       "purpose_in_app": "Instrução específica de como usar a unidade ligada neste nó.",
       "workflow_context": "Associação documental.",
       "when_to_use": "Quando a mesma unidade serve papéis diferentes em blocos.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "knowledge_item"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a estrutura documental com a redação final do capítulo."
       ]
     },
     "document.node_type": {
@@ -1058,7 +1142,7 @@
       "short_help": "fascicle, block, section, subsection.",
       "definition": "Estrutura do caderno.",
       "guiding_question": "Que tipo criar?",
-      "instructions": "",
+      "instructions": "Defina este valor como metadado estruturado da árvore; não escreva aqui o texto final do caderno.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1066,14 +1150,14 @@
       "purpose_in_app": "Distingue fascículo, bloco, secção na árvore.",
       "workflow_context": "Criação de nós.",
       "when_to_use": "Ao expandir estrutura; blocos recebem pontos.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "fascicle",
         "block"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a estrutura documental com a redação final do capítulo."
       ]
     },
     "document.title": {
@@ -1081,7 +1165,7 @@
       "short_help": "Designação na árvore.",
       "definition": "Aparece na numeração calculada.",
       "guiding_question": "Qual o título?",
-      "instructions": "",
+      "instructions": "Defina este valor como metadado estruturado da árvore; não escreva aqui o texto final do caderno.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1089,14 +1173,14 @@
       "purpose_in_app": "Título apresentado do nó na árvore e exportações.",
       "workflow_context": "Estrutura documental.",
       "when_to_use": "Ao criar fascículo ou bloco.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "fascicle",
         "block"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a estrutura documental com a redação final do capítulo."
       ]
     },
     "document.parent": {
@@ -1104,7 +1188,7 @@
       "short_help": "Posição na hierarquia.",
       "definition": "Blocos pertencem a fascículos.",
       "guiding_question": "Onde inserir?",
-      "instructions": "",
+      "instructions": "Defina este valor como metadado estruturado da árvore; não escreva aqui o texto final do caderno.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1112,14 +1196,14 @@
       "purpose_in_app": "Posiciona o nó na hierarquia projecto → fascículo → bloco.",
       "workflow_context": "Criação/edição de nós.",
       "when_to_use": "Ao aninhar ou mover na árvore.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "fascicle",
         "block"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a estrutura documental com a redação final do capítulo."
       ]
     },
     "technical.instance_name": {
@@ -1127,7 +1211,7 @@
       "short_help": "Sistema, equipamento ou função.",
       "definition": "Árvore técnica do projecto.",
       "guiding_question": "Como nomear?",
-      "instructions": "",
+      "instructions": "Use uma designação técnica consistente e mantenha separadas a árvore técnica e a árvore documental.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1135,13 +1219,13 @@
       "purpose_in_app": "Nome da instância técnica (sistema, equipamento, função).",
       "workflow_context": "Árvore técnica do projecto.",
       "when_to_use": "Modelar instâncias exportáveis.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "project"
       ],
       "related_screen": "project-technical",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a hierarquia física ou funcional da instalação com a estrutura de fascículos e blocos."
       ]
     },
     "technical.kind": {
@@ -1149,7 +1233,7 @@
       "short_help": "system, equipment, function.",
       "definition": "Código legível na exportação.",
       "guiding_question": "Que tipo é?",
-      "instructions": "",
+      "instructions": "Use uma designação técnica consistente e mantenha separadas a árvore técnica e a árvore documental.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1157,13 +1241,13 @@
       "purpose_in_app": "Tipo da instância (sistema, equipamento, função).",
       "workflow_context": "Árvore técnica.",
       "when_to_use": "Ao criar nó técnico.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "project"
       ],
       "related_screen": "project-technical",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a hierarquia física ou funcional da instalação com a estrutura de fascículos e blocos."
       ]
     },
     "technical.parent": {
@@ -1171,7 +1255,7 @@
       "short_help": "Hierarquia opcional.",
       "definition": "Relação sistema-equipamento.",
       "guiding_question": "Tem pai?",
-      "instructions": "",
+      "instructions": "Use uma designação técnica consistente e mantenha separadas a árvore técnica e a árvore documental.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1179,13 +1263,13 @@
       "purpose_in_app": "Hierarquia técnica pai/filho.",
       "workflow_context": "Árvore técnica.",
       "when_to_use": "Ao aninhar sistemas e funções.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "project"
       ],
       "related_screen": "project-technical",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir a hierarquia física ou funcional da instalação com a estrutura de fascículos e blocos."
       ]
     },
     "export.baseline": {
@@ -1193,7 +1277,7 @@
       "short_help": "Congela códigos e revisões.",
       "definition": "Publique antes do pacote mestre.",
       "guiding_question": "Já publicou baseline?",
-      "instructions": "",
+      "instructions": "Confirme o âmbito, a versão e o destino antes de gerar o ficheiro.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1201,14 +1285,14 @@
       "purpose_in_app": "Congela revisões aprovadas antes de export mestre ou fascículo — reprodutibilidade.",
       "workflow_context": "Ecrã Exportar; distinto do pacote exchange por bloco.",
       "when_to_use": "Quando o conjunto está fixo para discussão/redacção externa.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "baseline",
         "project"
       ],
       "related_screen": "export",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir exportação para trabalho externo com aprovação técnica do conteúdo."
       ]
     },
     "export.profile": {
@@ -1216,7 +1300,7 @@
       "short_help": "Discussão ou redacção.",
       "definition": "Controla contexto enviado à LLM.",
       "guiding_question": "Discussão ou redacção?",
-      "instructions": "",
+      "instructions": "Confirme o âmbito, a versão e o destino antes de gerar o ficheiro.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1239,7 +1323,7 @@
       "short_help": "JSON, Markdown e validation.",
       "definition": "Arquivo para partilha manual.",
       "guiding_question": "Precisa de ZIP?",
-      "instructions": "",
+      "instructions": "Confirme o âmbito, a versão e o destino antes de gerar o ficheiro.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1247,13 +1331,13 @@
       "purpose_in_app": "Arquiva JSON, Markdown derivado e validation.json em ZIP — arquivo, não reimportação.",
       "workflow_context": "Opção no export mestre/fascículo.",
       "when_to_use": "Entrega a terceiros ou arquivo; JSON continua canónico.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "baseline"
       ],
       "related_screen": "export",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir exportação para trabalho externo com aprovação técnica do conteúdo."
       ]
     },
     "export.fascicle": {
@@ -1261,7 +1345,7 @@
       "short_help": "Raiz do fascículo.",
       "definition": "Exportação roundtrip clássica.",
       "guiding_question": "Qual fascículo?",
-      "instructions": "",
+      "instructions": "Confirme o âmbito, a versão e o destino antes de gerar o ficheiro.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1269,33 +1353,42 @@
       "purpose_in_app": "Limita exportação a um fascículo (subconjunto do projecto).",
       "workflow_context": "Exportar fascículo após baseline.",
       "when_to_use": "Trabalho incremental por domínio (F04, F05, …).",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "fascicle",
         "baseline"
       ],
       "related_screen": "export",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Confundir exportação para trabalho externo com aprovação técnica do conteúdo."
       ]
     },
     "import.file": {
       "label": "Ficheiro JSON",
-      "short_help": "Devolução da LLM.",
-      "definition": "Só JSON reimportável.",
-      "guiding_question": "Tem o JSON devolvido?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Selecione apenas o JSON estruturado devolvido para roundtrip.",
+      "definition": "A reimportação coloca propostas em staging para comparação. Não substitui automaticamente a base de dados.",
+      "guiding_question": "Este ficheiro deriva de uma exportação GET compatível e mantém os IDs originais?",
+      "instructions": "Confirme projeto, fascículo, schema_version e package_id. Não importe Word, PDF ou Markdown neste fluxo.",
+      "good_examples": [
+        "Ficheiro JSON devolvido a partir do mesmo package_id e schema_version."
+      ],
+      "bad_examples": [
+        {
+          "text": "Documento Word revisto pela LLM.",
+          "reason": "Pode ser consultado, mas não é um pacote reimportável pelo fluxo estruturado."
+        }
+      ],
+      "tips": [
+        "Crie ou confirme um backup antes de consolidar muitas alterações."
+      ],
       "allow_use_example": true,
-      "purpose_in_app": "Carrega JSON devolvido pela LLM para análise de diferenças — não consolida automaticamente.",
-      "workflow_context": "Depois de trabalhar o JSON exportado fora do GET; reimportação → propostas → aprovação humana.",
-      "when_to_use": "Quando recebe ficheiro roundtrip estruturado da LLM.",
-      "what_happens_next": "Entra em staging; merge three-way antes de aprovar alterações.",
+      "purpose_in_app": "Permite comparar contributos externos com a baseline e com o estado atual.",
+      "workflow_context": "Depois de a LLM ou o revisor devolver o JSON estruturado.",
+      "when_to_use": "Quando pretende incorporar propostas mantendo rastreabilidade e revisão humana.",
+      "what_happens_next": "O ficheiro é validado e colocado em staging; o utilizador aceita ou rejeita cada proposta.",
       "common_confusions": [
-        "Achar que omissão no JSON apaga dados no GET.",
-        "Importar Word ou Markdown (não suportado como reimportação)."
+        "Pensar que carregar o ficheiro aplica imediatamente as alterações.",
+        "Interpretar campos omitidos como ordens de eliminação."
       ],
       "related_concepts": [
         "baseline"
@@ -1307,7 +1400,7 @@
       "short_help": "Âmbito da reimportação.",
       "definition": "Alterações estruturais limitadas ao fascículo.",
       "guiding_question": "Que fascículo?",
-      "instructions": "",
+      "instructions": "Valide a origem e reveja cada alteração antes de consolidar.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1315,13 +1408,13 @@
       "purpose_in_app": "Contexto do roundtrip: qual fascículo o JSON devolvido pretende actualizar.",
       "workflow_context": "Reimportação após trabalho LLM.",
       "when_to_use": "Validar origem do ficheiro.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "reimport"
       ],
       "related_screen": "import",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Assumir que o conteúdo recebido deve substituir automaticamente o que existe no GET."
       ]
     },
     "import.omission": {
@@ -1329,7 +1422,7 @@
       "short_help": "Omitir não é eliminar.",
       "definition": "Campos omitidos não apagam conteúdo aprovado.",
       "guiding_question": "Entendeu a regra de omissão?",
-      "instructions": "",
+      "instructions": "Valide a origem e reveja cada alteração antes de consolidar.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],
@@ -1337,13 +1430,13 @@
       "purpose_in_app": "Lembra que omissão no JSON não apaga dados no GET.",
       "workflow_context": "Antes de aprovar merge.",
       "when_to_use": "Sempre na reimportação.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "reimport"
       ],
       "related_screen": "import",
       "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
+        "Assumir que o conteúdo recebido deve substituir automaticamente o que existe no GET."
       ]
     },
     "backup.critical": {
@@ -1359,29 +1452,37 @@
       "purpose_in_app": "Operações de backup/restauro da base SQLite do workspace.",
       "workflow_context": "Ecrã Backups.",
       "when_to_use": "Antes de consolidação grande ou migração.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
       "related_concepts": [
         "workspace"
       ],
       "related_screen": "backups",
-      "common_confusions": [
-        "Tratar este campo como se fosse redação final do Word, em vez de dado estruturado do GET."
-      ]
+      "common_confusions": []
     },
     "development_point.status": {
       "label": "Estado do ponto",
-      "short_help": "draft, ready, approved, etc.",
-      "definition": "Controla exportação e revisão.",
-      "guiding_question": "Qual o estado?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Indique a maturidade dos inputs, não a qualidade do texto da LLM.",
+      "definition": "O estado controla revisão e exportação: draft está em elaboração; incomplete tem lacunas; ready cumpre os mínimos; approved foi validado pelo utilizador; obsolete fica apenas para histórico.",
+      "guiding_question": "Os inputs deste ponto já estão suficientemente completos e validados?",
+      "instructions": "Use ready quando o ponto puder ser enviado à LLM sem ocultar lacunas. Use approved apenas após revisão humana dos inputs.",
+      "good_examples": [
+        "ready — ideia central definida, limites registados e decisões em falta identificadas."
+      ],
+      "bad_examples": [
+        {
+          "text": "approved — porque o texto parece bem escrito.",
+          "reason": "A aprovação aqui refere-se aos inputs estruturados."
+        }
+      ],
+      "tips": [
+        "Questões pendentes explicitadas não impedem necessariamente ready.",
+        "Approved valida os inputs, não a redação externa."
+      ],
       "allow_use_example": false,
-      "purpose_in_app": "draft/incomplete: trabalho; ready: exportável com mínimos; approved: inputs validados; obsolete: histórico. Não confundir com aprovação do texto da LLM.",
-      "workflow_context": "Secção Estado e LLM; exportação inclui ready/approved, draft opcional.",
-      "when_to_use": "Actualizar quando o ponto ganha lacunas resolvidas ou conteúdo mínimo.",
-      "what_happens_next": "Ao guardar (ou ao sair do campo, nos cartões de ponto), o valor fica no workspace e entra em validações e exportações conforme o tipo de dado.",
+      "purpose_in_app": "Impede que material incompleto seja tratado como instrução validada.",
+      "workflow_context": "Revise depois de preencher o cartão e antes da exportação.",
+      "when_to_use": "Atualize sempre que resolver lacunas ou alterar conteúdo aprovado.",
+      "what_happens_next": "Ready e approved entram por defeito na exportação. Uma alteração posterior a conteúdo aprovado deve exigir nova revisão.",
       "related_concepts": [
         "development_point",
         "validation",
@@ -1389,25 +1490,37 @@
       ],
       "related_screen": "block-editor",
       "common_confusions": [
-        "Marcar approved só porque a LLM devolveu texto."
+        "Marcar approved porque a LLM devolveu um texto convincente.",
+        "Marcar ready enquanto existem lacunas não identificadas."
       ]
     },
     "development_point.overview": {
       "label": "Ponto de desenvolvimento",
-      "short_help": "Define um assunto para a LLM.",
-      "definition": "A LLM transforma em texto, não escolhe o conteúdo.",
-      "guiding_question": "O que precisa de ser desenvolvido?",
-      "instructions": "",
-      "good_examples": [],
-      "bad_examples": [],
-      "tips": [],
+      "short_help": "Um ponto define um assunto, a posição técnica e os limites do seu desenvolvimento.",
+      "definition": "O ponto de desenvolvimento é o contrato de trabalho entre o utilizador e a LLM para um tema concreto do bloco.",
+      "guiding_question": "Qual é o assunto e que controlo precisa de manter sobre a forma como será desenvolvido?",
+      "instructions": "Comece pelo título e pela ideia central. Depois acrescente apenas as orientações, premissas, obrigatórios, limites e questões que forem necessárias.",
+      "good_examples": [
+        "Perda de referências remotas: comportamento seguro, sinalização e recuperação."
+      ],
+      "bad_examples": [
+        {
+          "text": "Escrever o capítulo de automação.",
+          "reason": "É amplo e não controla o conteúdo nem os limites."
+        }
+      ],
+      "tips": [
+        "Um ponto deve poder ser resumido numa ideia central.",
+        "Se houver duas decisões independentes, crie dois pontos."
+      ],
       "allow_use_example": true,
-      "purpose_in_app": "Visão do cartão: um ponto é o contrato de desenvolvimento de um assunto no bloco.",
-      "workflow_context": "Ajuda ao expandir o primeiro ponto na Preparação do bloco.",
-      "when_to_use": "Quando começa a usar pontos ou precisa de rever o método.",
-      "what_happens_next": "O detalhe guarda-se ao expandir o cartão.",
+      "purpose_in_app": "Transforma intenção técnica dispersa num input estruturado, verificável e ordenado.",
+      "workflow_context": "É editado no cartão do bloco e exportado em authoritative_content.",
+      "when_to_use": "Crie um ponto quando o assunto puder ser compreendido e revisto como uma unidade coerente.",
+      "what_happens_next": "Quando atingir os mínimos de qualidade, marque-o ready; depois poderá ser exportado.",
       "common_confusions": [
-        "Confundir ponto com unidade de conhecimento da biblioteca."
+        "Escrever já o parágrafo final.",
+        "Copiar uma unidade de conhecimento sem explicar como deve ser usada neste bloco."
       ],
       "related_concepts": [
         "development_point",
@@ -1421,10 +1534,12 @@
       "short_help": "Claro, escuro ou seguir o sistema.",
       "definition": "Define o esquema de cores da interface.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Esquema claro/escuro só nesta máquina; não altera exportações.",
       "workflow_context": "Configurações com workspace aberto.",
@@ -1434,17 +1549,21 @@
         "workspace"
       ],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.accent": {
       "label": "Cor de destaque",
       "short_help": "Botões e ligações activas.",
       "definition": "Paleta de acento visual.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Escolhe preset ou cor personalizada dos botões e realces.",
       "workflow_context": "Configurações → aparência.",
@@ -1452,17 +1571,21 @@
       "what_happens_next": "CSS variables actualizadas na hora.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.font": {
       "label": "Tipo de letra",
       "short_help": "Família tipográfica da UI.",
       "definition": "Não afecta texto exportado em JSON.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Família tipográfica da UI local.",
       "workflow_context": "Configurações.",
@@ -1470,17 +1593,21 @@
       "what_happens_next": "Não afecta tipografia do caderno exportado.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.density": {
       "label": "Densidade",
       "short_help": "Tamanho de campos e margens.",
       "definition": "Compacta reduz a mancha gráfica dos formulários.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Controlos compactos ou confortáveis — densidade global dos campos.",
       "workflow_context": "Configurações.",
@@ -1488,17 +1615,21 @@
       "what_happens_next": "Combina com rem de padding e altura de textarea.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.content_width": {
       "label": "Largura do conteúdo",
       "short_help": "Largura máxima dos painéis.",
       "definition": "Útil em ecrãs largos.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Limita largura da coluna principal (lectura confortável).",
       "workflow_context": "Configurações.",
@@ -1506,17 +1637,21 @@
       "what_happens_next": "Opção personalizada usa pixels máximos.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.accent_color": {
       "label": "Cor personalizada",
       "short_help": "Hex #RRGGBB",
       "definition": "Use com acento Personalizada.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Cor hexadecimal exacta quando o preset não chega.",
       "workflow_context": "Configurações, modo personalizado de destaque.",
@@ -1524,17 +1659,21 @@
       "what_happens_next": "Validação de formato #RRGGBB.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.font_custom": {
       "label": "Família tipográfica",
       "short_help": "Valor CSS font-family",
       "definition": "Use com fonte Manual.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "font-family CSS quando escolhe tipo personalizado.",
       "workflow_context": "Configurações → tipo de letra personalizado.",
@@ -1542,17 +1681,21 @@
       "what_happens_next": "Aplicado a toda a interface GET nesta máquina.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.control_font_size": {
       "label": "Tamanho do texto",
       "short_help": "rem nos campos",
       "definition": "Só com densidade Manual.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Tamanho base em rem dos textos nos formulários.",
       "workflow_context": "Configurações, modo detalhado de densidade.",
@@ -1560,17 +1703,21 @@
       "what_happens_next": "Afecta inputs e etiquetas via CSS variables.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.control_padding_block": {
       "label": "Padding vertical",
       "short_help": "rem",
       "definition": "Só com densidade Manual.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Espaço vertical dentro dos campos de entrada.",
       "workflow_context": "Configurações avançadas de aparência.",
@@ -1578,17 +1725,21 @@
       "what_happens_next": "Preview reflecte valor antes de gravar.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.control_padding_inline": {
       "label": "Padding horizontal",
       "short_help": "rem",
       "definition": "Só com densidade Manual.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Espaço horizontal dentro dos campos.",
       "workflow_context": "Configurações avançadas.",
@@ -1596,17 +1747,21 @@
       "what_happens_next": "Gravado em ui-preferences.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.textarea_min_height": {
       "label": "Altura mínima textarea",
       "short_help": "rem",
       "definition": "Só com densidade Manual.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Altura mínima de áreas multilinha (objectivos, conteúdo).",
       "workflow_context": "Configurações.",
@@ -1614,17 +1769,21 @@
       "what_happens_next": "Aplica-se a textareas em todos os ecrãs.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.content_max_px": {
       "label": "Largura máxima",
       "short_help": "pixels",
       "definition": "Com largura personalizada.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Largura máxima em pixels do conteúdo central.",
       "workflow_context": "Quando content_width é personalizado.",
@@ -1632,17 +1791,21 @@
       "what_happens_next": "Preview e ecrãs principais seguem o limite.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "settings.ui_scale": {
       "label": "Escala global",
       "short_help": "percentagem",
       "definition": "Multiplica tamanhos dos controlos.",
       "guiding_question": "",
-      "instructions": "",
+      "instructions": "Escolha a opção mais confortável. Esta preferência altera apenas a interface local e não muda o conteúdo exportado.",
       "good_examples": [],
       "bad_examples": [],
-      "tips": [],
+      "tips": [
+        "Use a pré-visualização antes de guardar."
+      ],
       "allow_use_example": false,
       "purpose_in_app": "Escala percentual de toda a interface (acessibilidade).",
       "workflow_context": "Configurações.",
@@ -1650,7 +1813,9 @@
       "what_happens_next": "Pode combinar com largura máxima de conteúdo.",
       "related_concepts": [],
       "related_screen": "settings",
-      "common_confusions": []
+      "common_confusions": [
+        "Confundir uma preferência visual da aplicação com uma propriedade do documento exportado."
+      ]
     },
     "development_point.perspectives": {
       "label": "Perspectivas",
@@ -1678,7 +1843,7 @@
       "common_confusions": [
         "Perspectiva vazia com tudo nas orientações — ok, mas menos filtrável."
       ],
-      "what_happens_next": "Valor gravado no workspace; pode entrar em validações e exportações."
+      "what_happens_next": "As perspetivas selecionadas seguem no ponto para recordar os ângulos técnicos a cobrir."
     }
   },
   "concepts": {
@@ -1810,7 +1975,60 @@
       "Não promover exemplos ou contexto de suporte a requisito.",
       "Separar sugestões exploratórias do conteúdo aprovado."
     ],
-    "example_walkthrough": "Bloco «Controladores locais»: ponto sobre perda de referências remotas com ideia central, orientações, premissas, obrigatórios, limites e critério que proíbe valores não aprovados."
+    "example_walkthrough": "Bloco «Controladores locais»: ponto sobre perda de referências remotas com ideia central, orientações, premissas, obrigatórios, limites e critério que proíbe valores não aprovados.",
+    "field_selection_guide": [
+      {
+        "need": "Quero fixar a posição técnica",
+        "use": "Ideia central"
+      },
+      {
+        "need": "Quero dizer como explicar",
+        "use": "Orientações de desenvolvimento"
+      },
+      {
+        "need": "Quero declarar uma condição de partida",
+        "use": "Premissa"
+      },
+      {
+        "need": "Quero garantir que algo aparece",
+        "use": "Elementos obrigatórios"
+      },
+      {
+        "need": "Quero impedir uma inferência ou decisão",
+        "use": "Limites e exclusões"
+      },
+      {
+        "need": "Quero que o texto responda a uma pergunta",
+        "use": "Questões a responder"
+      },
+      {
+        "need": "Ainda falta decisão ou informação",
+        "use": "Questões pendentes"
+      },
+      {
+        "need": "Quero verificar o texto recebido",
+        "use": "Critérios de aceitação"
+      }
+    ],
+    "worked_example": {
+      "block": "Controladores locais e autonomia funcional",
+      "point_title": "Perda de referências remotas",
+      "core_idea": "Qualquer função que perca uma referência remota necessária deve transitar para um estado de funcionamento seguro previamente definido.",
+      "guidance": [
+        "Distinguir perda de comunicação, qualidade inválida e desatualização temporal.",
+        "Explicar sinalização e recuperação."
+      ],
+      "premise": "O controlador local dispõe das variáveis necessárias para executar o fallback.",
+      "must_include": [
+        "Critério de deteção",
+        "Comportamento de fallback",
+        "Sinalização ao operador",
+        "Condições de recuperação"
+      ],
+      "limit": "Não fixar o timeout sem análise da dinâmica do processo.",
+      "open_question": "O retorno ao modo remoto exige confirmação do operador?",
+      "acceptance": "Não introduz valores ou decisões ainda não aprovados."
+    }
   },
   "screens": {
     "workspace": {
@@ -1886,14 +2104,15 @@
         "Marcar ready",
         "Exportar JSON para LLM"
       ],
-      "empty_state": "Crie o primeiro ponto ou escolha um modelo estrutural.",
+      "empty_state": "Comece por um ponto simples: título, ideia central e um elemento obrigatório. Use um modelo estrutural se precisar de perguntas orientadoras.",
       "next": "export",
-      "audience_note": "Aqui define instruções para a LLM; o GET não escreve o caderno. Cada ponto é um cartão recolhível com secções independentes (§ método).",
+      "audience_note": "Este é o núcleo do GET. Não escreva o capítulo final: defina, por pontos, o que a LLM deve desenvolver, o que deve respeitar e o que não pode inventar.",
       "purpose_steps": [
-        "Objectivo e âmbito — enquadram o capítulo no pacote JSON.",
-        "Premissas e pontos ordenados — contrato do que a LLM pode e não pode inventar.",
-        "Painel de preparação à direita — método, conceitos, validação e exportação exchange.",
-        "Validação e exportar pacote — ficheiro para a LLM externa."
+        "Definir objetivo e âmbito para enquadrar e limitar o bloco.",
+        "Criar um ponto por assunto coerente e ordenar pela lógica de leitura.",
+        "Em cada ponto, fixar a ideia central e acrescentar apenas o controlo necessário.",
+        "Registar premissas, obrigatórios, limites e questões pendentes nos campos corretos.",
+        "Verificar os alertas, marcar pontos como ready e exportar o pacote exchange."
       ]
     },
     "export": {
@@ -2000,10 +2219,9 @@
     "autonomy_scada_idea": "A indisponibilidade do SCADA não deve impedir a operação segura das funções de controlo local.",
     "premise_local_vars": "O controlador local dispõe das variáveis necessárias para executar a função sem depender continuamente do SCADA."
   },
-  "_schema_note": "Campos de campo (fields.*): purpose_in_app, workflow_context, when_to_use, what_happens_next, related_concepts, related_screen, common_confusions.",
   "method": {
-    "title": "Método GET",
-    "principle": "Três actividades separadas: (1) estruturar conhecimento no GET, (2) desenvolver texto numa LLM externa, (3) validar tecnicamente o resultado. O GET controla o input autoritativo; a LLM não é autoridade técnica.",
+    "title": "Método GET — do conhecimento ao texto controlado",
+    "principle": "O GET prepara um contrato estruturado de desenvolvimento. O utilizador decide o conteúdo técnico; a LLM externa apenas o desenvolve; o utilizador revê e aprova o resultado.",
     "flow_steps": [
       "Utilizador de engenharia",
       "GET (estrutura, validação, exportação)",
@@ -2032,6 +2250,23 @@
       "generation_instructions": "Ordem dos pontos, idioma, tom, liberdade configurada; sugestões separadas do conteúdo aprovado."
     },
     "help_system_note": "Ajuda em get_help_catalog.pt-PT.json: níveis essential / normal / detailed; popup (i) com narrativa GET; painel de preparação do bloco expõe este método. Ver docs/GET_METHOD.md.",
-    "example_walkthrough": "Bloco «Controladores locais»: ponto sobre perda de referências remotas com ideia central, orientações, premissas, obrigatórios, limites e critério que proíbe valores não aprovados."
-  }
+    "example_walkthrough": "Bloco «Controladores locais»: ponto sobre perda de referências remotas com ideia central, orientações, premissas, obrigatórios, limites e critério que proíbe valores não aprovados.",
+    "first_use_path": [
+      "1. Criar ou abrir o workspace.",
+      "2. Registar conhecimento reutilizável na biblioteca.",
+      "3. Criar o projeto e a estrutura de fascículos e blocos.",
+      "4. Preparar cada bloco através de pontos de desenvolvimento.",
+      "5. Validar e exportar JSON.",
+      "6. Rever externamente e reimportar propostas, se necessário."
+    ],
+    "decision_test": {
+      "premise": "É uma condição assumida verdadeira?",
+      "must_include": "É matéria que tem obrigatoriamente de aparecer?",
+      "development_guidance": "É uma instrução sobre como explicar ou relacionar?",
+      "open_question": "Ainda não existe uma resposta aprovada?",
+      "limit": "É algo que a LLM não pode assumir, definir ou incluir?",
+      "acceptance_criterion": "É uma verificação observável do resultado?"
+    }
+  },
+  "_editorial_imported_at": "2026-11-15T12:36:00Z"
 }
