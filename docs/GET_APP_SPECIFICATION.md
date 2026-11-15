@@ -26,6 +26,7 @@ A aplicação não produz texto com IA. O conhecimento é exportado em JSON para
 - Sem autenticação no MVP.
 - O utilizador local é registado apenas para proveniência.
 - Operação offline obrigatoriamente possível.
+- **Aparência da interface:** tema, densidade e tipografia são preferências **locais da máquina** (`~/.get/ui-preferences.json`); não entram em exportações JSON nem no SQLite do workspace. O nível de ajuda contextual permanece nas preferências do workspace.
 
 ## 4. Áreas funcionais
 

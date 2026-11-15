@@ -20,6 +20,9 @@ class AppSettings(BaseSettings):
     app_config_path: Path = Field(
         default_factory=lambda: Path.home() / ".get" / "app-config.json"
     )
+    ui_preferences_path: Path = Field(
+        default_factory=lambda: Path.home() / ".get" / "ui-preferences.json"
+    )
 
 
 def load_app_config(path: Path) -> dict[str, Any]:

@@ -285,6 +285,12 @@
       "topic": "deletion",
       "decision": "Soft delete/lifecycle por defeito; eliminação física apenas para rascunhos nunca utilizados.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-048",
+      "topic": "ui_preferences",
+      "decision": "Preferências de aparência (tema, densidade, tipografia) guardadas por máquina em ~/.get/ui-preferences.json; fora do SQLite do workspace e fora de exportações JSON.",
+      "status": "accepted"
     }
   ]
 }

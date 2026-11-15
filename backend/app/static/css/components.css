@@ -2,7 +2,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 1.25rem 1.35rem;
+  padding: var(--card-padding);
   margin-bottom: 1rem;
   box-shadow: var(--shadow-sm);
 }
@@ -44,14 +44,15 @@ textarea,
 select {
   width: 100%;
   margin-top: 0.35rem;
-  padding: 0.55rem 0.65rem;
-  border: 1px solid #cbd5e1;
+  padding: var(--control-padding);
+  font-size: var(--control-font-size);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
   font: inherit;
 }
 
 textarea {
-  min-height: 5rem;
+  min-height: var(--textarea-min-height);
 }
 
 input[type="checkbox"],
@@ -87,7 +88,7 @@ button,
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-accent);
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font: inherit;
   cursor: pointer;
 }
@@ -157,8 +158,8 @@ button:disabled {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   line-height: 1.45;
-  background: #0f172a;
-  color: #e2e8f0;
+  background: var(--color-code-bg);
+  color: var(--color-code-text);
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
   overflow: auto;
@@ -193,7 +194,7 @@ button:disabled {
 }
 
 pre.code-block {
-  background: #f1f5f9;
+  background: var(--color-code-bg);
   padding: 0.75rem;
   border-radius: var(--radius-sm);
   overflow: auto;

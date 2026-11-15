@@ -754,6 +754,61 @@
       "bad_examples": [],
       "tips": [],
       "allow_use_example": true
+    },
+    "settings.theme": {
+      "label": "Tema",
+      "short_help": "Claro, escuro ou seguir o sistema.",
+      "definition": "Define o esquema de cores da interface.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.accent": {
+      "label": "Cor de destaque",
+      "short_help": "Botões e ligações activas.",
+      "definition": "Paleta de acento visual.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.font": {
+      "label": "Tipo de letra",
+      "short_help": "Família tipográfica da UI.",
+      "definition": "Não afecta texto exportado em JSON.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.density": {
+      "label": "Densidade",
+      "short_help": "Tamanho de campos e margens.",
+      "definition": "Compacta reduz a mancha gráfica dos formulários.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
+    },
+    "settings.content_width": {
+      "label": "Largura do conteúdo",
+      "short_help": "Largura máxima dos painéis.",
+      "definition": "Útil em ecrãs largos.",
+      "guiding_question": "",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false
     }
   },
   "concepts": {
@@ -899,6 +954,15 @@
         "Consulte estado do workspace"
       ],
       "next": null
+    },
+    "settings": {
+      "title": "Configurações",
+      "objective": "Personalizar aparência local e nível de ajuda.",
+      "steps": [
+        "Escolha tema e densidade",
+        "Opcional: nível de ajuda com workspace aberto"
+      ],
+      "next": "workspace"
     }
   },
   "example_library": {

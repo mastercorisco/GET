@@ -10,7 +10,10 @@ const ROUTES = [
   { id: "import", label: "Reimportar", group: "Ciclo LLM" },
   { id: "backups", label: "Backups", group: "Sistema" },
   { id: "diagnostics", label: "Diagnóstico", group: "Sistema" },
+  { id: "settings", label: "Configurações", group: "Sistema" },
 ];
+
+const ROUTES_ALWAYS = ["workspace", "settings"];
 
 const BREADCRUMBS = {
   workspace: "Início / Workspace",
@@ -24,6 +27,7 @@ const BREADCRUMBS = {
   import: "Reimportar e decidir",
   backups: "Sistema / Backups",
   diagnostics: "Sistema / Diagnóstico",
+  settings: "Sistema / Configurações",
 };
 
 export function initRouter(options) {
@@ -37,7 +41,7 @@ export function initRouter(options) {
     nav.replaceChildren();
     let lastGroup = "";
     ROUTES.forEach(function (route) {
-      if (!workspaceOpen && route.id !== "workspace") return;
+      if (!workspaceOpen && ROUTES_ALWAYS.indexOf(route.id) < 0) return;
       if (route.group !== lastGroup) {
         const title = document.createElement("div");
         title.className = "nav-group-title";
@@ -58,9 +62,16 @@ export function initRouter(options) {
   }
 
   function navigate(routeId) {
-    if (!ROUTES.some(function (r) {
-      return r.id === routeId;
-    })) return;
+    if (
+      !ROUTES.some(function (r) {
+        return r.id === routeId;
+      })
+    ) {
+      return;
+    }
+    if (!workspaceOpen && ROUTES_ALWAYS.indexOf(routeId) < 0) {
+      return;
+    }
     current = routeId;
     main.querySelectorAll(".route-panel").forEach(function (panel) {
       panel.classList.toggle("is-active", panel.dataset.route === routeId);
@@ -77,7 +88,7 @@ export function initRouter(options) {
 
   function setWorkspaceOpen(open) {
     workspaceOpen = open;
-    nav.hidden = !open;
+    nav.hidden = false;
     if (open) {
       if (current === "workspace" && window.location.hash.length > 1) {
         const hash = window.location.hash.slice(1);
@@ -86,7 +97,9 @@ export function initRouter(options) {
         current = "library";
       }
     } else {
-      current = "workspace";
+      if (current !== "settings" && current !== "workspace") {
+        current = "workspace";
+      }
     }
     renderNav();
     navigate(current);

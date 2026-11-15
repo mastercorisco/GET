@@ -19,6 +19,7 @@ from app.routers import (
     references,
     technical,
     terminology,
+    ui_preferences,
     workspace,
 )
 
@@ -51,6 +52,7 @@ app.include_router(baseline.router, prefix="/api")
 app.include_router(export.router, prefix="/api")
 app.include_router(import_review.router, prefix="/api")
 app.include_router(workbook.router, prefix="/api")
+app.include_router(ui_preferences.router, prefix="/api")
 app.include_router(block_router, prefix="/api")
 
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")

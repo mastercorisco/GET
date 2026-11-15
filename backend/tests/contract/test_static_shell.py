@@ -14,6 +14,7 @@ def test_root_serves_shell_with_assets() -> None:
     assert 'src="/static/js/main.js"' in body
     assert "app-nav" in body
     assert 'data-route="workspace"' in body
+    assert 'data-route="settings"' in body
 
 
 def test_static_assets_available() -> None:

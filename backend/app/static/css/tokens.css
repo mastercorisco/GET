@@ -3,14 +3,24 @@
   --font-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
   --color-bg: #f1f5f9;
   --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
   --color-border: #e2e8f0;
+  --color-border-input: #cbd5e1;
   --color-text: #0f172a;
   --color-muted: #64748b;
   --color-accent: #1d4ed8;
   --color-accent-hover: #1e40af;
+  --color-accent-subtle: #eff6ff;
+  --color-on-accent: #ffffff;
   --color-danger: #b91c1c;
   --color-success: #15803d;
+  --color-success-subtle: #f0fdf4;
+  --color-success-border: #86efac;
   --color-warn: #c2410c;
+  --color-warn-subtle: #fff7ed;
+  --color-warn-border: #fed7aa;
+  --color-code-bg: #f1f5f9;
+  --color-code-text: #0f172a;
   --radius-sm: 6px;
   --radius-md: 10px;
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -18,4 +28,87 @@
   --sidebar-width: 220px;
   --header-height: 52px;
   --content-max: 1200px;
+  --space-unit: 1rem;
+  --control-padding: 0.55rem 0.65rem;
+  --control-font-size: 1rem;
+  --textarea-min-height: 5rem;
+  --card-padding: 1.25rem 1.35rem;
+  --heading-scale: 1;
+}
+
+html[data-theme-effective="dark"] {
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-elevated: #334155;
+  --color-border: #334155;
+  --color-border-input: #475569;
+  --color-text: #f1f5f9;
+  --color-muted: #94a3b8;
+  --color-accent-subtle: #1e3a5f;
+  --color-code-bg: #0f172a;
+  --color-code-text: #e2e8f0;
+  --color-success-subtle: #14532d33;
+  --color-warn-subtle: #7c2d1233;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+html[data-accent="teal"] {
+  --color-accent: #0f766e;
+  --color-accent-hover: #0d9488;
+  --color-accent-subtle: #ccfbf1;
+}
+
+html[data-theme-effective="dark"][data-accent="teal"] {
+  --color-accent-subtle: #134e4a;
+}
+
+html[data-accent="slate"] {
+  --color-accent: #475569;
+  --color-accent-hover: #334155;
+  --color-accent-subtle: #e2e8f0;
+}
+
+html[data-theme-effective="dark"][data-accent="slate"] {
+  --color-accent-subtle: #334155;
+}
+
+html[data-accent="high_contrast"] {
+  --color-accent: #000000;
+  --color-accent-hover: #262626;
+  --color-accent-subtle: #f5f5f5;
+}
+
+html[data-theme-effective="dark"][data-accent="high_contrast"] {
+  --color-accent: #f8fafc;
+  --color-accent-hover: #e2e8f0;
+  --color-accent-subtle: #1e293b;
+}
+
+html[data-density="compact"] {
+  --space-unit: 0.75rem;
+  --control-padding: 0.35rem 0.5rem;
+  --control-font-size: 0.875rem;
+  --textarea-min-height: 3.25rem;
+  --card-padding: 0.75rem 0.85rem;
+  --heading-scale: 0.95;
+  --header-height: 46px;
+}
+
+html[data-density="comfortable"] {
+  --space-unit: 1.15rem;
+  --control-padding: 0.7rem 0.85rem;
+  --control-font-size: 1.05rem;
+  --textarea-min-height: 6.5rem;
+  --card-padding: 1.5rem 1.65rem;
+  --heading-scale: 1.05;
+  --header-height: 58px;
+}
+
+html[data-content-width="narrow"] {
+  --content-max: 960px;
+}
+
+html[data-content-width="wide"] {
+  --content-max: 1400px;
 }

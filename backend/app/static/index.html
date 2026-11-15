@@ -7,6 +7,31 @@
     <link rel="stylesheet" href="/static/css/tokens.css" />
     <link rel="stylesheet" href="/static/css/layout.css" />
     <link rel="stylesheet" href="/static/css/components.css" />
+    <link rel="stylesheet" href="/static/css/appearance.css" />
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("get:ui-prefs");
+          if (!raw) return;
+          var p = JSON.parse(raw);
+          var d = document.documentElement;
+          var eff =
+            p.theme === "dark"
+              ? "dark"
+              : p.theme === "light"
+                ? "light"
+                : window.matchMedia &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches
+                  ? "dark"
+                  : "light";
+          d.dataset.themeEffective = eff;
+          if (p.theme) d.dataset.theme = p.theme;
+          if (p.accent) d.dataset.accent = p.accent;
+          if (p.density) d.dataset.density = p.density;
+          if (p.content_width) d.dataset.contentWidth = p.content_width;
+        } catch (_e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="app">
@@ -15,6 +40,9 @@
         <span class="status-pill" id="status-workspace">Workspace: fechado</span>
         <span class="status-pill" id="status-project">Projecto: —</span>
         <span class="status-pill status-pill--warn" id="status-baseline">Baseline: —</span>
+        <button type="button" class="app-header__settings" id="headerSettings" title="Configurações">
+          Configurações
+        </button>
       </header>
       <div class="app-body">
         <nav class="app-nav" id="app-nav" hidden aria-label="Menu principal"></nav>
@@ -31,12 +59,6 @@
         <input id="rootPath" placeholder="C:\caminho\para\workspace-get" />
         <label for="userName" data-help-key="workspace.user_name">Utilizador local (proveniência)</label>
         <input id="userName" value="local_user" />
-        <label for="helpLevel" data-help-key="workspace.help_level">Nível de ajuda</label>
-        <select id="helpLevel">
-          <option value="essential">Essential — ícones</option>
-          <option value="normal" selected>Normal — microajuda e popups</option>
-          <option value="detailed">Detailed — exemplos e comparações</option>
-        </select>
         <button type="button" id="createBtn" disabled>Criar workspace</button>
         <button type="button" id="openBtn" class="secondary" disabled>Abrir workspace</button>
         
@@ -402,6 +424,67 @@
         <p id="backupStatus" hidden></p>
         <div id="backupList"></div>
 
+      </section>
+
+      <section class="route-panel card " data-route="settings">
+        <div class="screen-guide-panel" data-screen-guide="settings" hidden></div>
+        <h2>Configurações</h2>
+        <p class="lead">Aparência local desta máquina (não faz parte do pacote de conhecimento exportado).</p>
+        <section class="settings-section">
+          <h3>Aparência</h3>
+          <label for="uiTheme" data-help-key="settings.theme">Tema</label>
+          <select id="uiTheme">
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
+            <option value="system">Sistema</option>
+          </select>
+          <label for="uiAccent" data-help-key="settings.accent">Cor de destaque</label>
+          <select id="uiAccent">
+            <option value="blue">Azul</option>
+            <option value="teal">Verde-azulado</option>
+            <option value="slate">Cinzento</option>
+            <option value="high_contrast">Alto contraste</option>
+          </select>
+          <label for="uiFont" data-help-key="settings.font">Tipo de letra</label>
+          <select id="uiFont">
+            <option value="system">Sistema</option>
+            <option value="segoe">Segoe UI</option>
+            <option value="atkinson">Atkinson Hyperlegible</option>
+            <option value="source_sans">Source Sans 3</option>
+          </select>
+          <label for="uiDensity" data-help-key="settings.density">Densidade / tamanho dos controlos</label>
+          <select id="uiDensity">
+            <option value="compact">Compacta</option>
+            <option value="normal">Normal</option>
+            <option value="comfortable">Confortável</option>
+          </select>
+          <label for="uiContentWidth" data-help-key="settings.content_width">Largura do conteúdo</label>
+          <select id="uiContentWidth">
+            <option value="narrow">Estreita</option>
+            <option value="normal">Normal</option>
+            <option value="wide">Larga</option>
+          </select>
+          <button type="button" id="uiReset" class="secondary">Restaurar predefinições</button>
+          <div class="settings-preview" aria-hidden="true">
+            <h4>Pré-visualização</h4>
+            <label for="settingsPreviewInput">Campo de exemplo</label>
+            <input id="settingsPreviewInput" value="Texto de exemplo" />
+            <textarea id="settingsPreviewArea" rows="2">Área de texto de exemplo.</textarea>
+          </div>
+        </section>
+        <section class="settings-section">
+          <h3>Ajuda contextual</h3>
+          <p id="settingsHelpHint" class="settings-hint">Abra um workspace para alterar o nível de ajuda.</p>
+          <div id="settingsHelpWrap">
+            <label for="helpLevel" data-help-key="workspace.help_level">Nível de ajuda</label>
+            <select id="helpLevel" disabled>
+              <option value="essential">Essential — ícones</option>
+              <option value="normal" selected>Normal — microajuda e popups</option>
+              <option value="detailed">Detailed — exemplos e comparações</option>
+            </select>
+          </div>
+        </section>
+        <p id="settingsStatus" class="lead"></p>
       </section>
 
       <section class="route-panel card " data-route="diagnostics">

@@ -5,8 +5,12 @@ import { mountDocumentTree, mountTechnicalTree } from "./components/tree.js";
 import { initHelpSystem, wireDeclarativeHelp } from "./components/help-ui.js";
 import { renderScreenGuide } from "./components/screen-guide.js";
 import { applyFriendlySelectLabels } from "./labels.js";
+import { hydrateAppearanceFromStorage, initAppearance } from "./components/appearance.js";
 import { initBackupsView } from "./views/backups.js";
 import { initBlockEditor, openBlockEditor } from "./views/block-editor.js";
+import { initSettingsView, setSettingsWorkspaceOpen } from "./views/settings.js";
+
+hydrateAppearanceFromStorage();
 
 const router = initRouter({
   onRouteChange: function (routeId) {
@@ -37,12 +41,17 @@ initLegacyApp({
   },
   onWorkspaceChange: function (data) {
     shell.onWorkspaceChange(data);
+    setSettingsWorkspaceOpen(!!data);
     document.dispatchEvent(new CustomEvent("get:workspace-open", { detail: data }));
     if (data) {
       wireProjectWatcher();
     }
   },
 });
+
+initAppearance();
+initSettingsView(router);
+setSettingsWorkspaceOpen(false);
 
 applyFriendlySelectLabels();
 initHelpSystem().then(function () {
