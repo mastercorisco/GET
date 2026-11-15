@@ -264,7 +264,7 @@ pre.code-block {
   border-radius: var(--radius-md);
   padding: 0.65rem 0.9rem;
   box-shadow: var(--shadow-sm);
-  font-size: 0.6em;
+  font-size: 0.75em;
   line-height: 1.25;
 }
 
