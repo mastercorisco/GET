@@ -398,17 +398,17 @@
       <section class="route-panel card " data-route="project-technical">
         <div class="screen-guide-panel" data-screen-guide="project-technical" hidden></div>
         <h2>Árvore técnica</h2>
-        <p class="lead">Sistemas, equipamentos e funções exportáveis.</p>
+        <p class="lead">Instalação do projecto (sistemas, equipamentos, funções) — distinta da estrutura documental do caderno.</p>
         <h3>Instâncias técnicas</h3>
-        <label for="iName">Nome da instância</label>
+        <label for="iName" data-help-key="technical.instance_name">Nome da instância</label>
         <input id="iName" />
-        <label for="iKind">Tipo</label>
+        <label for="iKind" data-help-key="technical.kind">Tipo</label>
         <select id="iKind">
           <option value="system">system</option>
           <option value="equipment">equipment</option>
           <option value="function">function</option>
         </select>
-        <label for="iParent">Pai (opcional)</label>
+        <label for="iParent" data-help-key="technical.parent">Pai (opcional)</label>
         <select id="iParent"><option value="">—</option></select>
         <button type="button" id="iCreate" class="secondary">Adicionar instância</button>
         <div id="iList"></div>

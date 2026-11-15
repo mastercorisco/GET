@@ -2465,27 +2465,42 @@
     "technical.instance_name": {
       "group": "technical",
       "priority": "normal",
-      "in_shell": false,
-      "surfaces": [],
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
       "editable": {
         "label": "Nome da instância",
-        "short_help": "Sistema, equipamento ou função.",
-        "definition": "Árvore técnica do projecto.",
-        "guiding_question": "Como nomear?",
-        "instructions": "Use uma designação técnica consistente e mantenha separadas a árvore técnica e a árvore documental.",
-        "purpose_in_app": "Nome da instância técnica (sistema, equipamento, função).",
-        "workflow_context": "Árvore técnica do projecto.",
-        "when_to_use": "Modelar instâncias exportáveis.",
-        "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
+        "short_help": "Designação da entidade técnica no projecto.",
+        "definition": "Cada nó é uma instância concreta (sistema, equipamento ou função) com identidade própria na exportação — não é um tipo genérico reutilizado automaticamente.",
+        "guiding_question": "Esta entidade é única no projecto, um arquétipo partilhado ou uma cópia por unidade (ex. grupo)?",
+        "instructions": "Nome consistente e distinto da redacção documental. Para padrões iguais em vários grupos: um nó genérico e o detalhe no conhecimento, ou um nó por unidade quando precisar de IDs distintos na exportação.",
+        "purpose_in_app": "Título da instância que aparece na lista e no JSON (technical_instances) para a LLM externa.",
+        "workflow_context": "Ecrã Árvore técnica; projecto activo já seleccionado.",
+        "when_to_use": "Ao registar sistemas, equipamentos ou funções que o pacote de exportação deve listar com identidade estável.",
+        "what_happens_next": "A instância fica no SQLite do projecto; na exportação entra com instance_id (código ou UUID).",
         "common_confusions": [
-          "Confundir a hierarquia física ou funcional da instalação com a estrutura de fascículos e blocos."
+          "Confundir fascículo/bloco com grupo gerador ou skid.",
+          "Esperar que um nó «genérico» se replique automaticamente por todos os grupos."
         ],
-        "tips": [],
-        "good_examples": [],
-        "bad_examples": []
+        "tips": [
+          "Use arquétipo quando G10…Gn são iguais; duplique só se houver diferença ou alocação por ID.",
+          "A repetição «em todos os grupos» descreve-se no conhecimento, não se propaga sozinha na árvore."
+        ],
+        "good_examples": [
+          "Skid de alimentação de combustível (tipo)",
+          "Grupo 10 — skid combustível"
+        ],
+        "bad_examples": [
+          {
+            "text": "F04_B03 — Combustível",
+            "reason": "É código de bloco documental, não entidade da instalação."
+          }
+        ]
       },
       "protected": {
         "related_concepts": [
+          "technical_tree",
           "project"
         ],
         "related_screen": "project-technical",
@@ -2495,27 +2510,36 @@
     "technical.kind": {
       "group": "technical",
       "priority": "normal",
-      "in_shell": false,
-      "surfaces": [],
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
       "editable": {
         "label": "Tipo técnico",
-        "short_help": "system, equipment, function.",
-        "definition": "Código legível na exportação.",
-        "guiding_question": "Que tipo é?",
-        "instructions": "Use uma designação técnica consistente e mantenha separadas a árvore técnica e a árvore documental.",
-        "purpose_in_app": "Tipo da instância (sistema, equipamento, função).",
-        "workflow_context": "Árvore técnica.",
-        "when_to_use": "Ao criar nó técnico.",
-        "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
+        "short_help": "system, equipment ou function.",
+        "definition": "Classifica o papel do nó na hierarquia da instalação; na exportação MVP aparece como class_code junto do nome (não substitui códigos legíveis export_code quando definidos na API).",
+        "guiding_question": "É o conjunto (sistema), o activo (equipamento) ou a função de controlo?",
+        "instructions": "system para agregações (ex. grupo, DCS); equipment para activos (ex. skid, quadro); function para funções de comando ou protecção alocáveis.",
+        "purpose_in_app": "Tipo da instância (sistema, equipamento, função) na base e na exportação.",
+        "workflow_context": "Criação de instância na Árvore técnica.",
+        "when_to_use": "Sempre que adiciona um nó; escolha o nível mais natural na hierarquia física/funcional.",
+        "what_happens_next": "O tipo fica guardado; pode aninhar filhos compatíveis via Pai.",
         "common_confusions": [
-          "Confundir a hierarquia física ou funcional da instalação com a estrutura de fascículos e blocos."
+          "Tratar kind como código de classe de catálogo (ex. redundant_pump_skid) — isso é camada de classe, não o tipo MVP do formulário."
         ],
-        "tips": [],
-        "good_examples": [],
+        "tips": [
+          "Não use function para capítulos do caderno; isso é conteúdo documental."
+        ],
+        "good_examples": [
+          "system — Unidade Grupo 10",
+          "equipment — Skid bombas alimentação",
+          "function — Comando válvula recirculação"
+        ],
         "bad_examples": []
       },
       "protected": {
         "related_concepts": [
+          "technical_tree",
           "project"
         ],
         "related_screen": "project-technical",
@@ -2525,27 +2549,40 @@
     "technical.parent": {
       "group": "technical",
       "priority": "normal",
-      "in_shell": false,
-      "surfaces": [],
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
       "editable": {
         "label": "Pai técnico",
-        "short_help": "Hierarquia opcional.",
-        "definition": "Relação sistema-equipamento.",
-        "guiding_question": "Tem pai?",
-        "instructions": "Use uma designação técnica consistente e mantenha separadas a árvore técnica e a árvore documental.",
-        "purpose_in_app": "Hierarquia técnica pai/filho.",
-        "workflow_context": "Árvore técnica.",
-        "when_to_use": "Ao aninhar sistemas e funções.",
-        "what_happens_next": "O valor fica guardado no workspace e é usado apenas nos fluxos indicados nesta ajuda.",
+        "short_help": "Pai opcional na hierarquia da instalação.",
+        "definition": "Ligação pai/filho entre instâncias do mesmo projecto (ex. função sob equipamento, equipamento sob unidade). Não modela relações «aplica-se a todos os grupos» fora desta árvore.",
+        "guiding_question": "Este nó pertence a que sistema ou equipamento?",
+        "instructions": "Opcional. Use para organizar Grupo → skid → função. Para o mesmo skid em vários grupos, crie um pai por grupo ou um arquétipo sem filhos duplicados.",
+        "purpose_in_app": "parent_id da instância; define indentação na lista e contexto na exportação.",
+        "workflow_context": "Árvore técnica ao criar ou ao planear hierarquia.",
+        "when_to_use": "Quando a entidade não é raiz lógica do projecto.",
+        "what_happens_next": "O filho aparece aninhado na vista; eliminar o pai pode exigir reordenar filhos.",
         "common_confusions": [
-          "Confundir a hierarquia física ou funcional da instalação com a estrutura de fascículos e blocos."
+          "Confundir pai técnico com nó pai na estrutura documental.",
+          "Assumir que um filho herda automaticamente o mesmo significado em outros ramos da instalação."
         ],
-        "tips": [],
-        "good_examples": [],
-        "bad_examples": []
+        "tips": [
+          "A árvore só suporta hierarquia; equivalências entre grupos vão para decisões ou fichas de conhecimento."
+        ],
+        "good_examples": [
+          "Skid combustível G10 com pai «Unidade Grupo 10»"
+        ],
+        "bad_examples": [
+          {
+            "text": "Pai = Fascículo F04",
+            "reason": "Fascículo é nó documental; pai técnico só liga instâncias técnicas."
+          }
+        ]
       },
       "protected": {
         "related_concepts": [
+          "technical_tree",
           "project"
         ],
         "related_screen": "project-technical",
@@ -2971,14 +3008,19 @@
     },
     "project-technical": {
       "title": "Árvore técnica",
-      "objective": "Instâncias exportáveis.",
-      "audience_note": "Árvore técnica (sistemas, funções) complementa a árvore documental; ambas podem exportar.",
+      "objective": "Modelar a instalação (sistemas, equipamentos, funções) com identidades que entram nos pacotes JSON.",
+      "audience_note": "Duas hierarquias: Estrutura documental = caderno (fascículos/blocos); Árvore técnica = instalação. Não misture códigos nem pais entre elas. Cada nó aqui é uma instância concreta — padrões repetidos (ex. skid igual em todos os grupos) podem ser um arquétipo único com detalhe no conhecimento, ou um nó por grupo quando precisar de IDs distintos na exportação.",
       "purpose_steps": [
-        "Registar instâncias — para ligações técnicas reutilizáveis.",
-        "Manter hierarquia — pai/filho sem confundir com fascículos."
+        "Registar o que a LLM deve reconhecer — nomes estáveis de sistemas, equipamentos e funções do projecto activo.",
+        "Escolher genérico ou por unidade — arquétipo quando G10…Gn são equivalentes; duplicar nós quando há excepções ou alocação por código.",
+        "Usar tipo e Pai — system / equipment / function e hierarquia instalação (ex. Grupo → skid → função), nunca fascículo como pai.",
+        "Manter decisões de filosofia no conhecimento — a árvore não propaga relações «válidas para todos os grupos»; isso vive em decisões, premissas e blocos.",
+        "Exportar — após baseline, technical_instances acompanha o pacote mestre ou fascículo para contexto externo."
       ],
       "steps": [
-        "Registe sistemas e funções"
+        "Registar instâncias",
+        "Aninhar com Pai quando fizer sentido",
+        "Exportar após baseline"
       ],
       "next": "export"
     },
