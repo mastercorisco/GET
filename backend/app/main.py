@@ -11,6 +11,7 @@ from app.routers import (
     baseline,
     document,
     export,
+    packages,
     import_review,
     workbook,
     structure_export,
@@ -51,6 +52,7 @@ app.include_router(references.router, prefix="/api")
 app.include_router(terminology.router, prefix="/api")
 app.include_router(baseline.router, prefix="/api")
 app.include_router(export.router, prefix="/api")
+app.include_router(packages.router, prefix="/api")
 app.include_router(import_review.router, prefix="/api")
 app.include_router(workbook.router, prefix="/api")
 app.include_router(structure_export.router, prefix="/api")

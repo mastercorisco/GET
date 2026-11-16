@@ -1,0 +1,45 @@
+{
+  "schema": "GET-PACKAGE",
+  "schema_version": "1.0.0",
+  "scope": {
+    "kind": "block",
+    "project_id": "11111111-1111-4111-8111-111111111111",
+    "block_id": "77777777-7777-4777-8777-777777777777"
+  },
+  "rules": [
+    "Preservar todos os identificadores (UUID) existentes sem alteração.",
+    "Não inventar parâmetros técnicos, valores ou requisitos sem base no pacote.",
+    "Omissão de um objeto no JSON devolvido não significa eliminação na base.",
+    "Não alterar aprovação, ciclo de vida, maturidade nem proveniência.",
+    "Novos objetos devem usar identificadores temporários new_001, new_002, etc.",
+    "Devolver o ficheiro JSON completo, sem truncar nem omitir secções obrigatórias.",
+    "Remoções só mediante proposta explícita no payload, nunca por omissão."
+  ],
+  "rules_hash": "dd0ca578f71e5bdc9e68351f90176980284bb92401ca58e00b8d641963c80f7a",
+  "export_id": "PKG-BLK-F04_B34",
+  "payload": {
+    "block": {
+      "id": "77777777-7777-4777-8777-777777777777",
+      "display_code": "F04_B34",
+      "title": "Test",
+      "objective": "obj",
+      "scope": "scp",
+      "target_output": {}
+    },
+    "development_points": [
+      {
+        "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "sort_order": 1,
+        "title": "P1",
+        "core_idea": "c",
+        "intended_outcome": "o",
+        "lists": {},
+        "status": "draft",
+        "llm_freedom": "bounded",
+        "template_id": null,
+        "needs_review": false
+      }
+    ],
+    "premises": []
+  }
+}

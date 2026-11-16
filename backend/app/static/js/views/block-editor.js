@@ -248,6 +248,72 @@ export function initBlockEditor(router) {
       if (pre) pre.textContent = JSON.stringify(data, null, 2);
     });
   });
+  function downloadPackage(filename, text) {
+    const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename || "GET-bloco.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById("bePkgExport")?.addEventListener("click", function () {
+    if (!activeBlockId) return;
+    const projectId = document.getElementById("pActive")?.value;
+    if (!projectId) return;
+    api(
+      "/api/projects/" + projectId + "/packages/export",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scope_kind: "block", node_id: activeBlockId, profile: "discussion" }),
+      },
+      "Falha ao exportar pacote."
+    ).then(function (row) {
+      downloadPackage(row.filename, row.body);
+      const st = document.getElementById("beStatus");
+      if (st) st.textContent = "Pacote exportado: " + row.file_path;
+    });
+  });
+
+  document.getElementById("bePkgImportBtn")?.addEventListener("click", function () {
+    document.getElementById("bePkgImport")?.click();
+  });
+
+  document.getElementById("bePkgImport")?.addEventListener("change", function (ev) {
+    if (!activeBlockId) return;
+    const projectId = document.getElementById("pActive")?.value;
+    const input = ev.target;
+    if (!projectId || !input.files?.length) return;
+    const file = input.files[0];
+    const form = new FormData();
+    form.append("file", file, file.name);
+    fetch("/api/projects/" + projectId + "/packages/import", { method: "POST", body: form })
+      .then(function (res) {
+        return res.json().then(function (payload) {
+          if (!res.ok) throw new Error(payload.detail || "Ficheiro incompatível.");
+          return payload;
+        });
+      })
+      .then(function (payload) {
+        const st = document.getElementById("beStatus");
+        if (st) {
+          st.textContent =
+            "Pacote importado (" +
+            payload.import_id.slice(0, 8) +
+            "…). Abra Reimportar para rever alterações.";
+        }
+        input.value = "";
+      })
+      .catch(function (err) {
+        const st = document.getElementById("beStatus");
+        if (st) st.textContent = err.message;
+      });
+  });
+
   document.getElementById("beExportWrite")?.addEventListener("click", function () {
     if (!activeBlockId) return;
     const inc = document.getElementById("beIncludeDraft")?.checked;

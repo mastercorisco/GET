@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eda.local/get/schemas/get_package.schema.json",
+  "title": "GET Unified Discussion Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schema_version",
+    "scope",
+    "rules",
+    "rules_hash",
+    "export_id",
+    "payload"
+  ],
+  "properties": {
+    "schema": {
+      "const": "GET-PACKAGE"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "project_id"],
+      "properties": {
+        "kind": {
+          "enum": ["fascicle", "block"]
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "fascicle_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "block_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "fascicle"
+              }
+            }
+          },
+          "then": {
+            "required": ["fascicle_id"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "block"
+              }
+            }
+          },
+          "then": {
+            "required": ["block_id"]
+          }
+        }
+      ]
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    },
+    "rules_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "export_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "scope": {
+            "properties": {
+              "kind": {
+                "const": "fascicle"
+              }
+            },
+            "required": ["kind"]
+          }
+        },
+        "required": ["scope"]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://eda.local/get/schemas/fascicle-roundtrip.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scope": {
+            "properties": {
+              "kind": {
+                "const": "block"
+              }
+            },
+            "required": ["kind"]
+          }
+        },
+        "required": ["scope"]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/blockPayload"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "pointLists": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "development_guidance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "perspectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "questions_to_answer": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "must_include": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "limits_and_exclusions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "open_questions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "knowledge_item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reference_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "developmentPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sort_order", "title", "core_idea", "intended_outcome", "lists", "status", "llm_freedom"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sort_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "core_idea": {
+          "type": "string"
+        },
+        "intended_outcome": {
+          "type": "string"
+        },
+        "lists": {
+          "$ref": "#/$defs/pointLists"
+        },
+        "status": {
+          "type": "string"
+        },
+        "llm_freedom": {
+          "type": "string"
+        },
+        "template_id": {
+          "type": ["string", "null"]
+        },
+        "needs_review": {
+          "type": "boolean"
+        }
+      }
+    },
+    "premise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "importance", "source_type", "confidence"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string"
+        },
+        "importance": {
+          "type": "string"
+        },
+        "source_type": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "string"
+        },
+        "reference_id": {
+          "type": ["string", "null"]
+        },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "blockPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["block", "development_points", "premises"],
+      "properties": {
+        "block": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "display_code", "title", "objective", "scope", "target_output"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "display_code": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "objective": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            },
+            "target_output": {
+              "type": "object"
+            }
+          }
+        },
+        "development_points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/developmentPoint"
+          }
+        },
+        "premises": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/premise"
+          }
+        }
+      }
+    }
+  }
+}

@@ -503,6 +503,19 @@ const rootPath = document.getElementById("rootPath");
 
       let activeMergeSessionId = null;
       let lastUploadedImportId = null;
+      let lastUploadedImportIsPackage = false;
+
+      function downloadTextFile(filename, text) {
+        const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename || "GET-pacote.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
 
       function setImportStatus(message) {
         const el = document.getElementById("impStatus");
@@ -553,10 +566,14 @@ const rootPath = document.getElementById("rootPath");
         document.getElementById("impProposals").replaceChildren();
         document.getElementById("impConsolidate").hidden = true;
         activeMergeSessionId = null;
+        lastUploadedImportIsPackage = false;
       }
 
       function renderProposals(projectId, merge) {
         activeMergeSessionId = merge.id;
+        const mergeRoot = lastUploadedImportIsPackage
+          ? "/api/projects/" + projectId + "/packages/merge/"
+          : "/api/projects/" + projectId + "/imports/merge/";
         const target = document.getElementById("impProposals");
         target.replaceChildren();
         if (!merge.proposals.length) {
@@ -592,7 +609,7 @@ const rootPath = document.getElementById("rootPath");
               return;
             }
             knowledgeRequest(
-              "/api/projects/" + projectId + "/imports/merge/" + merge.id + "/proposals/" + prop.id,
+              mergeRoot + merge.id + "/proposals/" + prop.id,
               {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -1447,9 +1464,55 @@ const rootPath = document.getElementById("rootPath");
           })
           .then(function (payload) {
             lastUploadedImportId = payload.id;
+            lastUploadedImportIsPackage = false;
             return loadImportSection(projectId);
           })
           .then(function () { setImportStatus("Importação gravada."); })
+          .catch(function (err) { setImportStatus(err.message); });
+      });
+      document.getElementById("impPkgUpload").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        const fileInput = document.getElementById("impPkgFile");
+        if (!projectId || !fileInput.files.length) {
+          setImportStatus("Seleccione projecto e pacote JSON.");
+          return;
+        }
+        const file = fileInput.files[0];
+        const form = new FormData();
+        form.append("file", file, file.name);
+        setImportStatus("");
+        fetch("/api/projects/" + projectId + "/packages/import", { method: "POST", body: form })
+          .then(function (res) {
+            return res.json().then(function (payload) {
+              if (!res.ok) throw new Error(apiErrorMessage(payload, "Ficheiro incompatível."));
+              return payload;
+            });
+          })
+          .then(function (payload) {
+            lastUploadedImportId = payload.import_id;
+            lastUploadedImportIsPackage = true;
+            return loadImportSection(projectId);
+          })
+          .then(function () { setImportStatus("Pacote aceite. Use Rever alterações."); })
+          .catch(function (err) { setImportStatus(err.message); });
+      });
+      document.getElementById("impPkgMerge").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        const importId = lastUploadedImportId;
+        if (!projectId || !importId || !lastUploadedImportIsPackage) {
+          setImportStatus("Importe um pacote GET-PACKAGE primeiro.");
+          return;
+        }
+        setImportStatus("");
+        knowledgeRequest(
+          "/api/projects/" + projectId + "/packages/imports/" + importId + "/merge",
+          { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" },
+          "Falha ao analisar pacote."
+        )
+          .then(function (merge) {
+            renderProposals(projectId, merge);
+            setImportStatus("Alterações: " + merge.proposals.length + " proposta(s).");
+          })
           .catch(function (err) { setImportStatus(err.message); });
       });
       document.getElementById("impMerge").addEventListener("click", function () {
@@ -1486,16 +1549,43 @@ const rootPath = document.getElementById("rootPath");
           setImportStatus("Execute merge antes de consolidar.");
           return;
         }
-        knowledgeRequest(
-          "/api/projects/" + projectId + "/imports/merge/" + activeMergeSessionId + "/consolidate",
-          { method: "POST" },
-          "Falha ao consolidar."
-        )
+        const consolidateUrl = lastUploadedImportIsPackage
+          ? "/api/projects/" + projectId + "/packages/merge/" + activeMergeSessionId + "/consolidate"
+          : "/api/projects/" + projectId + "/imports/merge/" + activeMergeSessionId + "/consolidate";
+        knowledgeRequest(consolidateUrl, { method: "POST" }, "Falha ao consolidar.")
           .then(function (row) {
             setImportStatus("Consolidado. Backup: " + row.backup_id);
             return loadImportSection(projectId);
           })
           .catch(function (err) { setImportStatus(err.message); });
+      });
+      document.getElementById("expPackageBtn").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        const fascicleId = document.getElementById("expFascicle").value;
+        if (!projectId || !fascicleId) {
+          setExportStatus("Seleccione projecto e fascículo.");
+          return;
+        }
+        setExportStatus("");
+        knowledgeRequest(
+          "/api/projects/" + projectId + "/packages/export",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              scope_kind: "fascicle",
+              node_id: fascicleId,
+              profile: document.getElementById("expProfile").value,
+            }),
+          },
+          "Falha ao exportar pacote."
+        )
+          .then(function (row) {
+            downloadTextFile(row.filename || "GET-pacote.json", row.body || "");
+            setExportStatus("Pacote gravado: " + row.file_path);
+            return loadExportSection(projectId);
+          })
+          .catch(function (err) { setExportStatus(err.message); });
       });
       document.getElementById("expFascicleBtn").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;

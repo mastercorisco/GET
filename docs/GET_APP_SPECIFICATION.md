@@ -341,6 +341,10 @@ Contrato `get_llm_export.schema.json` (GET-LLM 1.0): JSON **completo** para gera
 
 `POST /api/projects/{id}/exports/llm-generation`: gera **mestre** (`export_type: project_master`), **fascículo-índice** (`export_type: fascicle`, com `block_manifest[]` e hashes) e **ficheiros de bloco** (`export_type: block`) apenas para blocos com pontos exportáveis (`ready`/`approved`, ou rascunhos se `include_draft`). Artefactos em `{workspace}/exports/EXP-LLM-…/` e ZIP `llm_generation_{profile}.zip` com `manifest.json` (schema `GET-LLM-PACKAGE`). **Não reimportável**; ortogonal ao roundtrip mestre/fascículo (que continua a exigir baseline). Âmbito opcional: projecto inteiro ou um fascículo.
 
+### Pacote GET-PACKAGE (discussão ida e volta)
+
+Contrato `get_package.schema.json` (`schema`: `GET-PACKAGE`, versão `1.0.0`): **um ficheiro JSON** com `scope` (`block` ou `fascicle`), `rules` + `rules_hash`, `export_id` e `payload`. Exportação: `POST /api/projects/{id}/packages/export`. Importação: `POST /api/projects/{id}/packages/import` — falha de validação **rejeita o ficheiro inteiro** (sem quarentena parcial). Merge e consolidação: rotas `/api/projects/{id}/packages/imports/{import_id}/merge` e `/packages/merge/{id}/consolidate`. Fascículo reutiliza three-way merge de conhecimento; bloco mergeia objectivo, pontos e premissas. O formato legado `fascicle_roundtrip` em `/imports` mantém-se. GET-LLM não é reimportável.
+
 ### Exportação estrutural legível
 
 Independente do ciclo LLM (JSON/ZIP): a partir do ecrã **Estrutura documental**, o utilizador pode gerar **Markdown, PDF ou XMind** com a árvore documental do projecto (códigos **live** do SQLite) ou de uma **subárvore** (fascículo seleccionado). Opções: modelo estrutural do bloco; pontos de desenvolvimento (nenhum, resumo, completo); premissas resolvidas nos pontos completos. Artefactos em `{workspace}/exports/document-structure/`; **não reimportáveis**.
@@ -367,6 +371,8 @@ Campos sempre protegidos:
 Novos objetos entram como propostas. Remoções são propostas explícitas; nunca são inferidas por omissão.
 
 ## 19. Reimportação
+
+Para **GET-PACKAGE**, os passos 2 e 5 aplicam-se ao ficheiro global (rejeição total). O fluxo `fascicle_roundtrip` legado mantém quarentena por unidade de conhecimento.
 
 1. Ficheiro entra em staging.
 2. Validar sintaxe e schema.

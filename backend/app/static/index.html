@@ -409,7 +409,10 @@
                     </label>
                     <div class="be-points-toolbar">
                       <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
-                      <button type="button" id="beExportWrite">Exportar pacote</button>
+                      <button type="button" id="beExportWrite" class="secondary">Exportar GET-LLM</button>
+                      <button type="button" id="bePkgExport">Exportar pacote</button>
+                      <input type="file" id="bePkgImport" accept=".json,application/json" hidden />
+                      <button type="button" id="bePkgImportBtn" class="secondary">Importar pacote</button>
                     </div>
                     <p id="beStatus" class="lead"></p>
                     <pre id="bePreview" class="tree-ascii be-preview-json"></pre>
@@ -625,6 +628,8 @@
             <label for="expFascicle" data-help-key="export.fascicle">Fascículo (raiz)</label>
             <select id="expFascicle"><option value="">—</option></select>
             <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo roundtrip</button>
+            <button type="button" id="expPackageBtn">Exportar pacote</button>
+            <p class="choice-hint">Um ficheiro JSON para discutir na LLM e reimportar depois.</p>
           </div>
           <div class="card-surface">
             <h3>Geração LLM (GET-LLM)</h3>
@@ -670,10 +675,15 @@
       <section class="route-panel card " data-route="import">
         <div class="screen-guide-panel" data-screen-guide="import" hidden></div>
         <h2>Reimportar e decidir</h2>
-        <p class="lead">Carregue o JSON devolvido pela LLM e decida proposta a proposta.</p>
-        <h3>Reimportação</h3>
-        <p id="impMeta">Envie um JSON fascicle_roundtrip devolvido pela LLM.</p>
-        <label for="impFile" data-help-key="import.file">Ficheiro JSON</label>
+        <p class="lead">Incorpore o pacote devolvido pela LLM e decida proposta a proposta.</p>
+        <h3>Incorporar pacote</h3>
+        <p id="impMeta">Ficheiro GET-PACKAGE (.json) devolvido pela LLM.</p>
+        <label for="impPkgFile">Pacote JSON</label>
+        <input type="file" id="impPkgFile" accept=".json,application/json" />
+        <button type="button" id="impPkgUpload" class="secondary">Importar pacote</button>
+        <button type="button" id="impPkgMerge">Rever alterações</button>
+        <h3>Reimportação legada</h3>
+        <label for="impFile" data-help-key="import.file">Ficheiro fascicle_roundtrip</label>
         <input type="file" id="impFile" accept=".json,application/json" />
         <button type="button" id="impUpload" class="secondary">Carregar importação</button>
         <button type="button" id="impMerge">Analisar (merge)</button>

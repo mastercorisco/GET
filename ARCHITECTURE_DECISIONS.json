@@ -315,6 +315,12 @@
       "topic": "workbook_export",
       "decision": "Exportação Excel workbook-import-v1 a partir do SQLite (projecto e biblioteca) gera artefacto derivado com o mesmo mapa de importação; reentrada via migrate mantém apply append-only com avisos no dry-run quando códigos já existem.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-054",
+      "topic": "get_package_unified_roundtrip",
+      "decision": "Contrato único GET-PACKAGE (schema 1.0.0): um ficheiro JSON com scope block|fascicle, rules/rules_hash e payload; exportação e importação usam o mesmo validador; falha rejeita o ficheiro inteiro; GET-LLM permanece não reimportável; fascicle_roundtrip legado na rota /imports.",
+      "status": "accepted"
     }
   ]
 }

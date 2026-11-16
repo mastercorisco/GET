@@ -18,6 +18,8 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
         ("llm-block-export.example.json", "get_llm_export.schema.json"),
         ("llm-fascicle-export.example.json", "get_llm_export.schema.json"),
         ("llm-master-export.example.json", "get_llm_export.schema.json"),
+        ("get-package-fascicle.example.json", "get_package.schema.json"),
+        ("get-package-block.example.json", "get_package.schema.json"),
     ],
 )
 def test_examples_validate(example_name: str, schema_name: str) -> None:
@@ -34,6 +36,9 @@ def test_examples_validate(example_name: str, schema_name: str) -> None:
             ),
             "https://eda.local/get/schemas/knowledge-item.schema.json": json.loads(
                 (REPO_ROOT / "schemas/knowledge-item.schema.json").read_text(encoding="utf-8")
+            ),
+            "https://eda.local/get/schemas/fascicle-roundtrip.schema.json": json.loads(
+                (REPO_ROOT / "schemas/fascicle-roundtrip.schema.json").read_text(encoding="utf-8")
             ),
         },
     )
