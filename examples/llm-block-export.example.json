@@ -1,0 +1,115 @@
+{
+  "get_export": {
+    "schema": "GET-LLM",
+    "schema_version": "1.0",
+    "export_type": "block",
+    "generated_at": "2026-11-16T00:00:00+00:00",
+    "language": "pt-PT"
+  },
+  "export_id": "11111111-1111-4111-8111-111111111111",
+  "project": {
+    "id": "22222222-2222-4222-8222-222222222222",
+    "code": "BJ_DCS",
+    "name": "Remodelação do Sistema de Comando e Controlo",
+    "owner": "EDA",
+    "intervention_type": "brownfield",
+    "location": {
+      "site": "Central Termoelétrica de Belo Jardim",
+      "locality": "Praia da Vitória",
+      "country": "Portugal"
+    },
+    "project_type": "Remodelação de sistema de automação",
+    "document_type": "Caderno de Encargos"
+  },
+  "generation_request": {
+    "target": "block",
+    "target_id": "F04_B03",
+    "purpose": "generate_technical_specification",
+    "output_language": "pt-PT",
+    "writing_style": "technical_procurement_specification",
+    "detail_level": "detailed",
+    "preserve_source_structure": true,
+    "export_profile": "discussion"
+  },
+  "fascicle": {
+    "id": "33333333-3333-4333-8333-333333333333",
+    "display_code": "F04",
+    "title": "Automação de Campo",
+    "purpose": "Requisitos de automação próximos do processo."
+  },
+  "block": {
+    "id": "44444444-4444-4444-8444-444444444444",
+    "display_code": "F04_B03",
+    "code": "B03",
+    "title": "Filosofia de Controlo Distribuído",
+    "purpose": "Definir os princípios de distribuição do controlo.",
+    "scope": {
+      "narrative": "Funções automáticas próximas do processo.",
+      "includes": ["Controladores locais", "PLC"],
+      "excludes": ["Arquitetura SCADA detalhada"]
+    }
+  },
+  "knowledge_units": [
+    {
+      "id": "55555555-5555-4555-8555-555555555555",
+      "code": "KN-DISTRIB",
+      "title": "Distribuição das funções de controlo",
+      "type": "principle",
+      "status": "confirmed",
+      "priority": "mandatory",
+      "statement": "As funções de controlo devem ser executadas tão próximo quanto possível do processo.",
+      "rationale": null,
+      "requirements": [],
+      "examples": [],
+      "exceptions": [],
+      "references": []
+    }
+  ],
+  "standards": [
+    {
+      "standard": "IEC 62443",
+      "application": "Cibersegurança industrial",
+      "mandatory": true
+    }
+  ],
+  "open_points": [
+    {
+      "id": "OP-001",
+      "question": "Funções durante indisponibilidade total do SCADA.",
+      "status": "open"
+    }
+  ],
+  "generation_rules": {
+    "must": ["Preservar a intenção técnica dos requisitos."],
+    "must_not": ["Inventar requisitos não suportados."],
+    "handling_missing_information": "Identificar lacunas explicitamente.",
+    "normative_language": {
+      "mandatory": "deve",
+      "recommended": "deverá preferencialmente",
+      "optional": "pode"
+    }
+  },
+  "traceability": {
+    "enabled": true,
+    "include_knowledge_unit_ids": true,
+    "include_requirement_ids": true
+  },
+  "preparation": {
+    "applicable_premises": [],
+    "development_points": [],
+    "supporting_context": {
+      "knowledge_items": [],
+      "references": [],
+      "examples": []
+    },
+    "unresolved_matters": {
+      "open_questions": [],
+      "missing_information": []
+    }
+  },
+  "validation": {
+    "status": "valid",
+    "warnings": [],
+    "errors": []
+  }
+}

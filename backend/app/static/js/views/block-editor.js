@@ -260,7 +260,12 @@ export function initBlockEditor(router) {
       "Falha ao exportar."
     ).then(function (data) {
       const st = document.getElementById("beStatus");
-      if (st) st.textContent = "Exportado: " + data.file_path;
+      if (st) {
+        st.textContent =
+          "JSON: " +
+          data.file_path +
+          (data.markdown_path ? " | MD: " + data.markdown_path : "");
+      }
     });
   });
 

@@ -117,19 +117,25 @@ def block_validation(block_id: str) -> BlockValidationResponse:
 def exchange_preview(
     block_id: str,
     include_draft: bool = Query(default=False),
+    profile: str = Query(default="discussion"),
 ) -> dict:
-    return _run(lambda: service.preview_exchange(get_settings(), block_id, include_draft))
+    return _run(lambda: service.preview_exchange(get_settings(), block_id, include_draft, profile))
 
 
 @router.post("/blocks/{block_id}/exchange-package", response_model=ExchangePackageWriteResponse)
 def exchange_write(
     block_id: str,
     include_draft: bool = Query(default=False),
+    profile: str = Query(default="discussion"),
 ) -> ExchangePackageWriteResponse:
-    path, package_id = _run(
-        lambda: service.write_exchange(get_settings(), block_id, include_draft)
+    paths = _run(
+        lambda: service.write_exchange(get_settings(), block_id, include_draft, profile)
     )
-    return ExchangePackageWriteResponse(file_path=path, package_id=package_id)
+    return ExchangePackageWriteResponse(
+        file_path=paths[0],
+        markdown_path=paths[1],
+        package_id=paths[2],
+    )
 
 
 @router.get("/catalogs/help")

@@ -603,23 +603,57 @@ def validate_block(app_settings: AppSettings, block_id: str) -> BlockValidationR
         return BlockValidationResponse(issues=issues)
 
 
-def preview_exchange(app_settings: AppSettings, block_id: str, include_draft: bool) -> dict:
+def preview_exchange(
+    app_settings: AppSettings, block_id: str, include_draft: bool, profile: str = "discussion"
+) -> dict:
     with workspace_session(app_settings) as (session, _paths):
-        return build_exchange_package(session, block_id, include_draft=include_draft)
+        from app.models.workspace import WorkspaceSettings
+        from sqlalchemy import select
+
+        settings = session.scalar(select(WorkspaceSettings).limit(1))
+        created_by = settings.local_user_name if settings else "local_user"
+        return build_exchange_package(
+            session,
+            block_id,
+            include_draft=include_draft,
+            profile=profile,
+            created_by=created_by,
+        )
 
 
-def write_exchange(app_settings: AppSettings, block_id: str, include_draft: bool) -> tuple[str, str]:
+def write_exchange(
+    app_settings: AppSettings, block_id: str, include_draft: bool, profile: str = "discussion"
+) -> tuple[str, str, str]:
     with workspace_session(app_settings) as (session, paths):
-        package = build_exchange_package(session, block_id, include_draft=include_draft)
-        from app.services.export.serializer import dumps_deterministic
+        from app.models.workspace import WorkspaceSettings
+        from sqlalchemy import select
 
+        from app.services.export.serializer import dumps_deterministic
+        from app.services.llm_export.render_md import render_llm_export_md
+
+        settings = session.scalar(select(WorkspaceSettings).limit(1))
+        created_by = settings.local_user_name if settings else "local_user"
+        package = build_exchange_package(
+            session,
+            block_id,
+            include_draft=include_draft,
+            profile=profile,
+            created_by=created_by,
+        )
         text = dumps_deterministic(package)
+        md_text = render_llm_export_md(package)
         out_dir = paths.exports_dir
         out_dir.mkdir(parents=True, exist_ok=True)
-        filename = f"exchange-{block_id[:8]}-{package['package_id'][:8]}.json"
-        out_path = out_dir / filename
-        out_path.write_text(text, encoding="utf-8")
-        return str(out_path), package["package_id"]
+        display = (package.get("block") or {}).get("display_code") or block_id[:8]
+        safe = "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in display)
+        json_name = f"{safe}_llm.json"
+        md_name = f"{safe}_llm.md"
+        json_path = out_dir / json_name
+        md_path = out_dir / md_name
+        json_path.write_text(text, encoding="utf-8")
+        md_path.write_text(md_text, encoding="utf-8")
+        export_id = package.get("export_id", "")
+        return str(json_path), str(md_path), export_id
 
 
 def list_premises(app_settings: AppSettings, owner_kind: str, owner_id: str) -> list[PremiseResponse]:

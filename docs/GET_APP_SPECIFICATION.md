@@ -333,6 +333,10 @@ Consolidado, mas seletivo: contexto global completo, estrutura, decisões transv
 
 Inclui contexto suficiente para ser compreendido isoladamente, distinguindo contexto protegido e conhecimento editável.
 
+### Exportação GET-LLM por bloco
+
+Contrato `get_llm_export.schema.json` (GET-LLM 1.0): JSON **completo** para geração de texto na LLM externa, com códigos documentais **live** (sem baseline). Inclui projecto (incl. `project.llm_context_json` opcional), fascículo, bloco, unidades de conhecimento, normas, questões abertas, regras de geração e secção `preparation` (pontos, premissas, contexto de apoio). Cada exportação grava **JSON + Markdown** derivado (Markdown não reimportável). Distinto do roundtrip mestre/fascículo.
+
 ### Exportação estrutural legível
 
 Independente do ciclo LLM (JSON/ZIP): a partir do ecrã **Estrutura documental**, o utilizador pode gerar **Markdown, PDF ou XMind** com a árvore documental do projecto (códigos **live** do SQLite) ou de uma **subárvore** (fascículo seleccionado). Opções: modelo estrutural do bloco; pontos de desenvolvimento (nenhum, resumo, completo); premissas resolvidas nos pontos completos. Artefactos em `{workspace}/exports/document-structure/`; **não reimportáveis**.

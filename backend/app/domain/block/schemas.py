@@ -162,6 +162,7 @@ class ExchangePackageOptions(BaseModel):
 
 class ExchangePackageWriteResponse(BaseModel):
     file_path: str
+    markdown_path: str
     package_id: str
 
 

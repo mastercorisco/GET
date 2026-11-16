@@ -2115,10 +2115,20 @@
       "not_this": "Não é o pacote exchange por bloco na Preparação."
     },
     "exchange_package": {
-      "label": "Pacote exchange",
-      "summary": "JSON por bloco para a LLM externa.",
-      "role_in_get": "Sai da Preparação do bloco; contrato get_exchange_package.schema.json.",
-      "not_this": "Não é export mestre nem ficheiro Word."
+      "label": "Exportação GET-LLM (bloco)",
+      "summary": "JSON completo + Markdown derivado por bloco para a LLM externa.",
+      "role_in_get": "Sai da Preparação do bloco; contrato GET-LLM (get_llm_export.schema.json), com secção preparation para pontos e premissas.",
+      "not_this": "Não é export mestre/fascículo roundtrip nem ficheiro Word."
+    },
+    "export.llm_context": {
+      "label": "Contexto LLM do projecto",
+      "short_help": "Metadados opcionais (entidade, local, tipo de documento) no JSON GET-LLM.",
+      "definition": "Complementa project.name no pacote por bloco. Não altera roundtrip mestre/fascículo.",
+      "guiding_question": "Que identificação do empreendimento a LLM deve ver no cabeçalho?",
+      "workflow_context": "Ecrã Exportar, antes de exportar blocos na Preparação.",
+      "what_happens_next": "Os campos entram em project no JSON GET-LLM quando preenchidos.",
+      "related_concepts": ["exchange_package", "project"],
+      "related_screen": "export"
     },
     "project": {
       "label": "Projeto",

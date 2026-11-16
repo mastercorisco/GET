@@ -44,6 +44,7 @@ class Project(Base):
         nullable=False,
     )
     intervention_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    llm_context_json: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

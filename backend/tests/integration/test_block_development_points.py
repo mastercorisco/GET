@@ -139,12 +139,19 @@ def test_block_points_crud_reorder_export(client: TestClient, tmp_path: Path) ->
     preview = client.get(f"/api/blocks/{block_id}/exchange-package")
     assert preview.status_code == 200
     package = preview.json()
-    assert package["schema_version"] == "1.0.0"
-    assert len(package["authoritative_content"]["development_points"]) == 1
+    assert package["get_export"]["schema"] == "GET-LLM"
+    assert len(package["preparation"]["development_points"]) == 1
 
-    schema_path = Path(__file__).resolve().parents[3] / "schemas" / "get_exchange_package.schema.json"
+    schema_path = Path(__file__).resolve().parents[3] / "schemas" / "get_llm_export.schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     jsonschema.validate(instance=package, schema=schema)
+
+    written = client.post(f"/api/blocks/{block_id}/exchange-package")
+    assert written.status_code == 200
+    body = written.json()
+    assert Path(body["file_path"]).is_file()
+    assert Path(body["markdown_path"]).is_file()
+    assert "Autonomia SCADA" in Path(body["markdown_path"]).read_text(encoding="utf-8")
 
 
 def test_failure_behavior_template_prompts_only(client: TestClient, tmp_path: Path) -> None:

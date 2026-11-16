@@ -9,7 +9,15 @@ from sqlalchemy import select
 from app.config import AppSettings
 from app.models.knowledge import Library, LibraryVersion
 from app.models.project import Project, ProjectLibraryPin, ProjectTemplate, ProjectTemplateVersion
-from app.schemas.project import ProjectCreateRequest, ProjectResponse, TemplateResponse, TemplateVersionResponse
+from app.schemas.project import (
+    ProjectCreateRequest,
+    ProjectLlmContext,
+    ProjectLlmContextPatch,
+    ProjectLlmContextResponse,
+    ProjectResponse,
+    TemplateResponse,
+    TemplateVersionResponse,
+)
 from app.services.knowledge_service import _ensure_library
 from app.services.workspace_service import workspace_session
 
@@ -179,6 +187,43 @@ def get_project(app_settings: AppSettings, project_id: str) -> ProjectResponse:
         return _project_response(session, project)
 
 
+def _parse_llm_context(raw: str) -> ProjectLlmContext:
+    try:
+        data = json.loads(raw or "{}")
+    except json.JSONDecodeError:
+        data = {}
+    if not isinstance(data, dict):
+        data = {}
+    return ProjectLlmContext.model_validate(data)
+
+
+def get_project_llm_context(app_settings: AppSettings, project_id: str) -> ProjectLlmContextResponse:
+    with workspace_session(app_settings) as (session, _paths):
+        project = session.get(Project, project_id)
+        if project is None:
+            raise ProjectError("Projeto não encontrado.")
+        return ProjectLlmContextResponse(
+            project_id=project.id,
+            context=_parse_llm_context(project.llm_context_json),
+        )
+
+
+def patch_project_llm_context(
+    app_settings: AppSettings, project_id: str, body: ProjectLlmContextPatch
+) -> ProjectLlmContextResponse:
+    with workspace_session(app_settings) as (session, _paths):
+        project = session.get(Project, project_id)
+        if project is None:
+            raise ProjectError("Projeto não encontrado.")
+        project.llm_context_json = json.dumps(
+            body.context.model_dump(exclude_none=False),
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        session.flush()
+        return ProjectLlmContextResponse(project_id=project.id, context=body.context)
+
+
 def create_project(app_settings: AppSettings, body: ProjectCreateRequest) -> ProjectResponse:
     with workspace_session(app_settings) as (session, _paths):
         _ensure_templates(session)
@@ -192,6 +237,7 @@ def create_project(app_settings: AppSettings, body: ProjectCreateRequest) -> Pro
             name=body.name.strip(),
             template_version_id=template_version.id,
             intervention_type=body.intervention_type.strip(),
+            llm_context_json="{}",
             created_at=_utcnow(),
         )
         session.add(project)

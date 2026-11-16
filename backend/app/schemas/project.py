@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -33,3 +35,31 @@ class ProjectResponse(BaseModel):
     intervention_type: str
     library_version_id: str
     library_version: int
+
+
+class ProjectLocationContext(BaseModel):
+    site: str | None = None
+    address: str | None = None
+    locality: str | None = None
+    island: str | None = None
+    region: str | None = None
+    country: str | None = None
+
+
+class ProjectLlmContext(BaseModel):
+    code: str | None = None
+    owner: str | None = None
+    location: ProjectLocationContext | None = None
+    project_type: str | None = None
+    document_type: str | None = None
+    fascicle_overrides: dict[str, str] = Field(default_factory=dict)
+
+
+class ProjectLlmContextResponse(BaseModel):
+    project_id: str
+    context: ProjectLlmContext
+
+
+class ProjectLlmContextPatch(BaseModel):
+    context: ProjectLlmContext
+

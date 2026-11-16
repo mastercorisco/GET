@@ -681,6 +681,26 @@ const rootPath = document.getElementById("rootPath");
             "…";
           list.appendChild(p);
         });
+
+        try {
+          const llmCtx = await knowledgeRequest(
+            "/api/projects/" + projectId + "/llm-context",
+            {},
+            "Falha ao carregar contexto LLM."
+          );
+          const ctx = llmCtx.context || {};
+          const loc = ctx.location || {};
+          const codeEl = document.getElementById("expLlmCode");
+          const ownerEl = document.getElementById("expLlmOwner");
+          const siteEl = document.getElementById("expLlmSite");
+          const docEl = document.getElementById("expLlmDocType");
+          if (codeEl) codeEl.value = ctx.code || "";
+          if (ownerEl) ownerEl.value = ctx.owner || "";
+          if (siteEl) siteEl.value = loc.site || "";
+          if (docEl) docEl.value = ctx.document_type || "";
+        } catch (_err) {
+          /* opcional */
+        }
       }
 
       function setKnowledgeError(message) {
@@ -1321,6 +1341,46 @@ const rootPath = document.getElementById("rootPath");
         )
           .then(function () { return loadExportSection(projectId); })
           .catch(function (err) { setExportStatus(err.message); });
+      });
+      document.getElementById("expLlmContextSave")?.addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        if (!projectId) {
+          setProjectError("Seleccione um projecto.");
+          return;
+        }
+        const statusEl = document.getElementById("expLlmContextStatus");
+        const payload = {
+          context: {
+            code: document.getElementById("expLlmCode")?.value?.trim() || null,
+            owner: document.getElementById("expLlmOwner")?.value?.trim() || null,
+            document_type: document.getElementById("expLlmDocType")?.value?.trim() || null,
+            location: {
+              site: document.getElementById("expLlmSite")?.value?.trim() || null,
+            },
+            fascicle_overrides: {},
+          },
+        };
+        knowledgeRequest(
+          "/api/projects/" + projectId + "/llm-context",
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          },
+          "Falha ao guardar contexto LLM."
+        )
+          .then(function () {
+            if (statusEl) {
+              statusEl.hidden = false;
+              statusEl.textContent = "Contexto LLM guardado.";
+            }
+          })
+          .catch(function (err) {
+            if (statusEl) {
+              statusEl.hidden = false;
+              statusEl.textContent = err.message;
+            }
+          });
       });
       document.getElementById("expMaster").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;

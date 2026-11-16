@@ -10,161 +10,51 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domain.block.catalogs import exchange_package_schema
-from app.domain.block.models import DevelopmentPoint, Premise
-from app.domain.block.schemas import PointLists
+from app.domain.block.export_support import (
+    block_level_premises,
+    export_status_for_point,
+    find_fascicle_id,
+    knowledge_snapshot,
+    load_premises,
+    parse_point_lists,
+    premise_to_resolved,
+    reference_snapshot,
+    resolved_premises_for_point,
+)
+from app.domain.block.models import DevelopmentPoint
 from app.models.document import DocumentNode
-from app.models.knowledge import KnowledgeDraft, KnowledgeItem, KnowledgeRevision
-from app.models.reference import Reference
 from app.services.document_service import compute_display_codes
 from app.services.export.serializer import dumps_deterministic
+from app.services.llm_export.builder import build_llm_block_export
 
 
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _parse_lists(raw: str) -> PointLists:
-    try:
-        data = json.loads(raw) if raw else {}
-    except json.JSONDecodeError:
-        data = {}
-    return PointLists.model_validate(data)
-
-
-def _origin_level(kind: str) -> str:
-    return kind
-
-
-def premise_to_resolved(row: Premise) -> dict[str, Any]:
-    return {
-        "id": row.id,
-        "statement": row.statement,
-        "importance": row.importance,
-        "source_type": row.source_type,
-        "confidence": row.confidence,
-        "origin_level": _origin_level(row.owner_kind),
-        "origin_id": row.owner_id,
-        "reference_id": row.reference_id,
-        "notes": row.notes,
-    }
-
-
-def load_premises(session: Session, owner_kind: str, owner_id: str) -> list[Premise]:
-    return list(
-        session.scalars(
-            select(Premise)
-            .where(Premise.owner_kind == owner_kind, Premise.owner_id == owner_id)
-            .order_by(Premise.created_at, Premise.id)
-        )
-    )
-
-
-def resolved_premises_for_point(
-    session: Session,
-    project_id: str,
-    fascicle_id: str | None,
-    block_id: str,
-    point_id: str,
-) -> list[dict[str, Any]]:
-    seen: set[str] = set()
-    result: list[dict[str, Any]] = []
-    for kind, oid in (
-        ("project", project_id),
-        ("fascicle", fascicle_id),
-        ("block", block_id),
-        ("development_point", point_id),
-    ):
-        if oid is None:
-            continue
-        for row in load_premises(session, kind, oid):
-            if row.id in seen:
-                continue
-            seen.add(row.id)
-            result.append(premise_to_resolved(row))
-    return result
-
-
-def block_level_premises(
-    session: Session,
-    project_id: str,
-    fascicle_id: str | None,
-    block_id: str,
-) -> list[dict[str, Any]]:
-    seen: set[str] = set()
-    result: list[dict[str, Any]] = []
-    for kind, oid in (("project", project_id), ("fascicle", fascicle_id), ("block", block_id)):
-        if oid is None:
-            continue
-        for row in load_premises(session, kind, oid):
-            if row.id in seen:
-                continue
-            seen.add(row.id)
-            result.append(premise_to_resolved(row))
-    return result
-
-
-def find_fascicle_id(session: Session, block: DocumentNode) -> str | None:
-    current: DocumentNode | None = block
-    while current is not None:
-        if current.node_type == "fascicle":
-            return current.id
-        if current.parent_id is None:
-            break
-        current = session.get(DocumentNode, current.parent_id)
-    return None
-
-
-def _knowledge_snapshot(session: Session, item_id: str) -> dict[str, Any] | None:
-    item = session.get(KnowledgeItem, item_id)
-    if item is None:
-        return None
-    rev = session.scalar(
-        select(KnowledgeRevision)
-        .where(KnowledgeRevision.item_id == item_id)
-        .order_by(KnowledgeRevision.revision_num.desc())
-        .limit(1)
-    )
-    if rev is not None:
-        return {
-            "id": item.id,
-            "title": rev.title,
-            "content": rev.content_md,
-            "knowledge_type": rev.knowledge_type,
-            "lifecycle": rev.lifecycle,
-            "approval": rev.approval,
-        }
-    draft = session.get(KnowledgeDraft, item_id)
-    if draft is None:
-        return {"id": item.id, "title": "", "content": ""}
-    return {
-        "id": item.id,
-        "title": draft.title,
-        "content": draft.content_md,
-        "knowledge_type": draft.knowledge_type,
-        "lifecycle": draft.lifecycle,
-        "approval": draft.approval,
-    }
-
-
-def _reference_snapshot(session: Session, ref_id: str) -> dict[str, Any] | None:
-    ref = session.get(Reference, ref_id)
-    if ref is None:
-        return None
-    return {"id": ref.id, "title": ref.title, "citation": ref.citation, "notes": ref.notes}
-
-
-def export_status_for_point(point: DevelopmentPoint, include_draft: bool) -> str | None:
-    if point.status == "obsolete":
-        return None
-    if point.status in ("ready", "approved"):
-        return point.status
-    if include_draft and point.status in ("draft", "incomplete"):
-        if point.title.strip() and point.core_idea.strip():
-            return "ready"
-    return None
-
-
 def build_exchange_package(
+    session: Session,
+    block_id: str,
+    *,
+    include_draft: bool = False,
+    package_id: str | None = None,
+    exported_at: str | None = None,
+    profile: str = "discussion",
+    created_by: str = "local_user",
+) -> dict[str, Any]:
+    """Devolve pacote GET-LLM (substitui get_exchange_package em runtime)."""
+    return build_llm_block_export(
+        session,
+        block_id,
+        include_draft=include_draft,
+        profile=profile,
+        export_id=package_id,
+        generated_at=exported_at,
+        created_by=created_by,
+    )
+
+
+def build_legacy_exchange_package(
     session: Session,
     block_id: str,
     *,
@@ -207,10 +97,8 @@ def build_exchange_package(
         export_status = export_status_for_point(point, include_draft)
         if export_status is None:
             continue
-        lists = _parse_lists(point.lists_json)
-        premises = resolved_premises_for_point(
-            session, project_id, fascicle_id, block_id, point.id
-        )
+        lists = parse_point_lists(point.lists_json)
+        premises = resolved_premises_for_point(session, project_id, fascicle_id, block_id, point.id)
         export_points.append(
             {
                 "id": point.id,
@@ -244,13 +132,13 @@ def build_exchange_package(
 
     knowledge_items = []
     for kid in sorted(all_ki_ids):
-        snap = _knowledge_snapshot(session, kid)
+        snap = knowledge_snapshot(session, kid)
         if snap:
             knowledge_items.append(snap)
 
     references = []
     for rid in sorted(all_ref_ids):
-        snap = _reference_snapshot(session, rid)
+        snap = reference_snapshot(session, rid)
         if snap:
             references.append(snap)
 
@@ -308,11 +196,11 @@ def deterministic_exchange_json(
     *,
     include_draft: bool = False,
 ) -> str:
-    package = build_exchange_package(
+    package = build_llm_block_export(
         session,
         block_id,
         include_draft=include_draft,
-        package_id="deterministic-package-id",
-        exported_at="2000-01-01T00:00:00+00:00",
+        export_id="deterministic-package-id",
+        generated_at="2000-01-01T00:00:00+00:00",
     )
     return dumps_deterministic(package)

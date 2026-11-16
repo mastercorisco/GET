@@ -36,7 +36,6 @@ from app.services.project_service import ProjectError
 from app.services.reference_service import ReferenceError
 from app.services.technical_service import TechnicalError
 from app.services.terminology_service import TerminologyError
-from app.debug_agent_log import agent_debug_log
 from app.services.workspace_service import workspace_session
 
 _project_delete_lock = threading.Lock()
@@ -346,104 +345,25 @@ def _purge_project_tail(session: Session, project_id: str) -> None:
 def delete_project(app_settings: AppSettings, project_id: str) -> None:
     if not _project_delete_lock.acquire(blocking=False):
         raise ProjectError("Já está a apagar um projecto. Aguarde a conclusão e tente de novo.")
-    phases = (
-        "require_project",
-        "purge_imports",
-        "purge_baselines_exports",
-        "purge_document_tree",
-        "purge_technical_instances",
-        "purge_project_tail",
-    )
-    agent_debug_log(
-        location="deletion_service.py:delete_project",
-        message="delete_project start",
-        data={"project_id": project_id},
-        hypothesis_id="A",
-    )
     try:
         with workspace_session(app_settings) as (session, _paths):
-            agent_debug_log(
-                location="deletion_service.py:delete_project",
-                message="phase start",
-                data={"phase": phases[0], "project_id": project_id},
-                hypothesis_id="B",
-            )
             _require_project(session, project_id)
         with workspace_session(app_settings) as (session, _paths):
-            agent_debug_log(
-                location="deletion_service.py:delete_project",
-                message="phase start",
-                data={"phase": phases[1], "project_id": project_id},
-                hypothesis_id="B",
-            )
             _purge_imports(session, project_id)
         with workspace_session(app_settings) as (session, _paths):
-            agent_debug_log(
-                location="deletion_service.py:delete_project",
-                message="phase start",
-                data={"phase": phases[2], "project_id": project_id},
-                hypothesis_id="B",
-            )
             _purge_baselines_and_exports(session, project_id)
         while True:
             with workspace_session(app_settings) as (session, _paths):
-                agent_debug_log(
-                    location="deletion_service.py:delete_project",
-                    message="phase start",
-                    data={"phase": phases[3], "project_id": project_id},
-                    hypothesis_id="C",
-                )
                 removed = _purge_document_nodes_batch(session, project_id, limit=_DOCUMENT_PURGE_BATCH)
-                remaining = session.scalar(
-                    select(func.count()).select_from(DocumentNode).where(DocumentNode.project_id == project_id)
-                )
-                agent_debug_log(
-                    location="deletion_service.py:delete_project",
-                    message="document batch",
-                    data={"removed": removed, "remaining": int(remaining or 0)},
-                    hypothesis_id="C",
-                )
                 if removed == 0:
                     session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
                     break
         while True:
             with workspace_session(app_settings) as (session, _paths):
-                agent_debug_log(
-                    location="deletion_service.py:delete_project",
-                    message="phase start",
-                    data={"phase": phases[4], "project_id": project_id},
-                    hypothesis_id="B",
-                )
                 removed = _purge_technical_leaves_batch(session, project_id, max_deletes=_DOCUMENT_PURGE_BATCH)
-                agent_debug_log(
-                    location="deletion_service.py:delete_project",
-                    message="technical batch",
-                    data={"removed": removed, "project_id": project_id},
-                    hypothesis_id="B",
-                )
                 if removed == 0:
                     break
         with workspace_session(app_settings) as (session, _paths):
-            agent_debug_log(
-                location="deletion_service.py:delete_project",
-                message="phase start",
-                data={"phase": phases[5], "project_id": project_id},
-                hypothesis_id="B",
-            )
             _purge_project_tail(session, project_id)
-        agent_debug_log(
-            location="deletion_service.py:delete_project",
-            message="delete_project success",
-            data={"project_id": project_id},
-            hypothesis_id="A",
-        )
-    except Exception as exc:
-        agent_debug_log(
-            location="deletion_service.py:delete_project",
-            message="delete_project failed",
-            data={"project_id": project_id, "error_type": type(exc).__name__, "error": str(exc)[:500]},
-            hypothesis_id="D",
-        )
-        raise
     finally:
         _project_delete_lock.release()

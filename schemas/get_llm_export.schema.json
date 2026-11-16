@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eda.local/get/schemas/get_llm_export.schema.json",
+  "title": "GET LLM Block Export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "get_export",
+    "export_id",
+    "project",
+    "generation_request",
+    "fascicle",
+    "block",
+    "knowledge_units",
+    "standards",
+    "open_points",
+    "generation_rules",
+    "traceability",
+    "preparation",
+    "validation"
+  ],
+  "properties": {
+    "get_export": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "schema_version", "export_type", "generated_at", "language"],
+      "properties": {
+        "schema": { "const": "GET-LLM" },
+        "schema_version": { "const": "1.0" },
+        "export_type": { "const": "block" },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "language": { "type": "string", "minLength": 2 }
+      }
+    },
+    "export_id": { "type": "string", "minLength": 1 },
+    "project": { "type": "object" },
+    "generation_request": { "type": "object" },
+    "fascicle": { "type": "object" },
+    "block": { "type": "object" },
+    "knowledge_units": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "standards": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "open_points": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "generation_rules": { "type": "object" },
+    "traceability": { "type": "object" },
+    "preparation": { "type": "object" },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "warnings", "errors"],
+      "properties": {
+        "status": { "enum": ["valid", "valid_with_warnings", "invalid"] },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    }
+  }
+}

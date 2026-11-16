@@ -152,12 +152,14 @@ Graus: informação, aviso, problema (bloqueio). Alertas concretos; sem pontuaç
 
 ## 15. Exportação JSON
 
-Contrato `get_exchange_package.schema.json`. Áreas semânticas:
+**Por bloco (geração de texto):** contrato `get_llm_export.schema.json` (GET-LLM). JSON completo + Markdown derivado; secção `preparation` conserva o contrato editorial (pontos, premissas, lacunas). **Roundtrip:** `master` / `fascicle-roundtrip` para reimportação após baseline.
 
-- **authoritative_content**: o que a LLM deve respeitar.
-- **supporting_context**: conhecimento e referências (não promovidos a requisito automaticamente).
-- **unresolved_matters**: questões pendentes e lacunas.
-- **generation_instructions**: ordem, não inventar requisitos, sugestões separadas.
+Áreas semânticas legadas do pacote exchange (agora dentro de `preparation` no GET-LLM):
+
+- conteúdo autoritativo e pontos de desenvolvimento;
+- contexto de apoio (conhecimento e referências);
+- questões pendentes e lacunas;
+- instruções de geração (regras em catálogo `llm_generation_rules.pt-PT.json`).
 
 ---
 

@@ -297,6 +297,12 @@
       "topic": "structure_readable_export",
       "decision": "Exportação estrutural MD/PDF/XMind é derivada, não reimportável, com códigos documentais live; separada do export JSON LLM e do módulo workbook.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-050",
+      "topic": "llm_block_export",
+      "decision": "Exportação por bloco para LLM usa contrato GET-LLM (JSON completo, códigos live, sem baseline) com Markdown derivado não reimportável; contexto opcional do projecto em project.llm_context_json; roundtrip mestre/fascículo inalterado.",
+      "status": "accepted"
     }
   ]
 }

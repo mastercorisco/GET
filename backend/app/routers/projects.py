@@ -2,9 +2,23 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy.exc import OperationalError
 
 from app.deps import get_settings
-from app.schemas.project import ProjectCreateRequest, ProjectResponse, TemplateResponse
+from app.schemas.project import (
+    ProjectCreateRequest,
+    ProjectLlmContextPatch,
+    ProjectLlmContextResponse,
+    ProjectResponse,
+    TemplateResponse,
+)
 from app.services.deletion_service import delete_project
-from app.services.project_service import ProjectError, create_project, get_project, list_projects, list_templates
+from app.services.project_service import (
+    ProjectError,
+    create_project,
+    get_project,
+    get_project_llm_context,
+    list_projects,
+    list_templates,
+    patch_project_llm_context,
+)
 from app.services.workspace_service import WorkspaceError
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -19,14 +33,6 @@ def _run(action, *, route: str = ""):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except OperationalError as exc:
         if route == "project_delete":
-            from app.debug_agent_log import agent_debug_log
-
-            agent_debug_log(
-                location="projects.py:project_delete",
-                message="OperationalError on delete",
-                data={"error": str(exc)[:500]},
-                hypothesis_id="D",
-            )
             raise HTTPException(
                 status_code=503,
                 detail=(
@@ -57,6 +63,16 @@ def project_create(body: ProjectCreateRequest) -> ProjectResponse:
 @router.get("/{project_id}", response_model=ProjectResponse)
 def project_get(project_id: str) -> ProjectResponse:
     return _run(lambda: get_project(get_settings(), project_id))
+
+
+@router.get("/{project_id}/llm-context", response_model=ProjectLlmContextResponse)
+def project_llm_context_get(project_id: str) -> ProjectLlmContextResponse:
+    return _run(lambda: get_project_llm_context(get_settings(), project_id))
+
+
+@router.patch("/{project_id}/llm-context", response_model=ProjectLlmContextResponse)
+def project_llm_context_patch(project_id: str, body: ProjectLlmContextPatch) -> ProjectLlmContextResponse:
+    return _run(lambda: patch_project_llm_context(get_settings(), project_id, body))
 
 
 @router.delete("/{project_id}", status_code=204)

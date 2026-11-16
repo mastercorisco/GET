@@ -600,6 +600,22 @@
             <select id="expFascicle"><option value="">—</option></select>
             <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo</button>
           </div>
+          <div class="card-surface">
+            <h3>Contexto LLM do projecto</h3>
+            <p class="choice-hint" data-help-key="export.llm_context">
+              Metadados opcionais incluídos no JSON GET-LLM por bloco (não reimportável).
+            </p>
+            <label for="expLlmCode">Código legível</label>
+            <input id="expLlmCode" type="text" />
+            <label for="expLlmOwner">Entidade (owner)</label>
+            <input id="expLlmOwner" type="text" />
+            <label for="expLlmSite">Local (site)</label>
+            <input id="expLlmSite" type="text" />
+            <label for="expLlmDocType">Tipo de documento</label>
+            <input id="expLlmDocType" type="text" value="Caderno de Encargos" />
+            <button type="button" id="expLlmContextSave" class="secondary">Guardar contexto</button>
+            <p id="expLlmContextStatus" class="muted" hidden></p>
+          </div>
         </div>
         <p id="expStatus" class="error" hidden></p>
         <div id="expList" class="list-panel"></div>

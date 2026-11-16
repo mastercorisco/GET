@@ -1,0 +1,27 @@
+{
+  "generation_rules": {
+    "must": [
+      "Transformar as unidades de conhecimento aprovadas em requisitos técnicos coerentes.",
+      "Preservar a intenção técnica dos requisitos.",
+      "Utilizar linguagem normativa adequada a um Caderno de Encargos.",
+      "Manter rastreabilidade entre os requisitos produzidos e as unidades de conhecimento."
+    ],
+    "must_not": [
+      "Inventar requisitos técnicos não suportados pelo conhecimento fornecido.",
+      "Transformar exemplos em requisitos obrigatórios sem indicação explícita.",
+      "Assumir valores técnicos que não tenham sido fornecidos.",
+      "Apresentar decisões em aberto como requisitos aprovados."
+    ],
+    "handling_missing_information": "Quando uma informação necessária não estiver definida, identificar explicitamente a lacuna em vez de inventar uma solução.",
+    "normative_language": {
+      "mandatory": "deve",
+      "recommended": "deverá preferencialmente",
+      "optional": "pode"
+    }
+  },
+  "traceability": {
+    "enabled": true,
+    "include_knowledge_unit_ids": true,
+    "include_requirement_ids": true
+  }
+}
