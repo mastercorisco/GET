@@ -8,9 +8,13 @@ import jsonschema
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 
 
-def validate_llm_export(instance: dict) -> list[str]:
+def _load_schema() -> dict:
     schema_path = _REPO_ROOT / "schemas" / "get_llm_export.schema.json"
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    return json.loads(schema_path.read_text(encoding="utf-8"))
+
+
+def validate_llm_export(instance: dict) -> list[str]:
+    schema = _load_schema()
     try:
         jsonschema.validate(instance=instance, schema=schema)
         return []

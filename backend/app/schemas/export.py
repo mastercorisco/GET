@@ -29,3 +29,17 @@ class ExportRecordResponse(BaseModel):
     parent_export_id: str | None
     created_at: str
     zip_path: str | None = None
+
+
+class LlmGenerationExportRequest(BaseModel):
+    profile: ExportProfile = "discussion"
+    include_draft: bool = False
+    fascicle_node_id: str | None = Field(default=None, description="Se definido, exporta só este fascículo.")
+
+
+class LlmGenerationExportResponse(BaseModel):
+    export_id: str
+    file_path: str
+    zip_path: str
+    sha256: str
+    manifest: dict

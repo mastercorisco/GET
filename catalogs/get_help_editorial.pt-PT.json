@@ -3,7 +3,7 @@
   "editorial_version": "1.0.0",
   "locale": "pt-PT",
   "source_catalog_version": "1.3.1",
-  "exported_at": "2026-11-15T12:40:41Z",
+  "exported_at": "2026-11-16T01:49:15Z",
   "workflow": {
     "purpose": "Ficheiro para revisão de textos fora do repositório (Word, folha de cálculo, revisão humana). Edite sobretudo os blocos em fields.*.editable e as secções concepts, method, screens, workflows.",
     "import_command": "python backend/scripts/import_help_editorial.py",
@@ -59,6 +59,11 @@
     "library.term_definition",
     "library.term_preferred",
     "library.term_synonyms",
+    "workbook.apply_confirm",
+    "workbook.apply_target",
+    "workbook.dry_run",
+    "workbook.template_library",
+    "workbook.template_project",
     "workbook.validate_file",
     "project.active",
     "project.intervention",
@@ -100,7 +105,10 @@
     "development_point.title",
     "export.baseline",
     "export.fascicle",
+    "export.llm_context",
+    "export.llm_generation",
     "export.profile",
+    "export.roundtrip",
     "export.zip",
     "import.fascicle",
     "import.file",
@@ -112,7 +120,13 @@
     "knowledge.profile_data",
     "knowledge.profile_type",
     "knowledge.search",
-    "knowledge.title"
+    "knowledge.title",
+    "exchange_package",
+    "structure_export.block_model",
+    "structure_export.format",
+    "structure_export.overview",
+    "structure_export.point_detail",
+    "structure_export.premises"
   ],
   "fields": {
     "backup.critical": {
@@ -1173,6 +1187,39 @@
         "allow_use_example": false
       }
     },
+    "exchange_package": {
+      "group": "other",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Exportação GET-LLM (bloco)",
+        "short_help": "JSON completo + Markdown por bloco para a LLM.",
+        "definition": "Pacote self-contained na Preparação do bloco (get_llm_export, export_type block).",
+        "guiding_question": "Vai gerar texto só deste bloco?",
+        "instructions": "Complete pontos exportáveis antes de gerar.",
+        "purpose_in_app": "Unidade de redação com preparation, conhecimento e regras de geração.",
+        "workflow_context": "Preparação do bloco — painel Exportação para LLM (GET-LLM).",
+        "when_to_use": "Trabalho fino num bloco sem exportar o projecto inteiro.",
+        "what_happens_next": "Grava JSON e MD na pasta exports; não é reimportável.",
+        "common_confusions": [
+          "Não é o pacote em camadas do ecrã Exportar."
+        ],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [
+          "exchange_package",
+          "development_point"
+        ],
+        "related_screen": "block-editor",
+        "allow_use_example": false
+      }
+    },
     "export.baseline": {
       "group": "export",
       "priority": "critical",
@@ -1239,6 +1286,72 @@
         "allow_use_example": false
       }
     },
+    "export.llm_context": {
+      "group": "export",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Contexto LLM do projecto",
+        "short_help": "Metadados opcionais (entidade, local, tipo de documento) no JSON GET-LLM.",
+        "definition": "Complementa project.name no pacote GET-LLM. Não altera roundtrip mestre/fascículo.",
+        "guiding_question": "Que identificação do empreendimento a LLM deve ver no cabeçalho?",
+        "instructions": "Preencha e guarde antes de exportar blocos ou pacote em camadas.",
+        "purpose_in_app": "Enquadramento legível (código, entidade, local) em todos os JSON GET-LLM do projecto.",
+        "workflow_context": "Ecrã Exportar — cartão Contexto LLM do projecto.",
+        "when_to_use": "Primeira configuração do projecto ou mudança de empreendimento.",
+        "what_happens_next": "Valores entram em project nos exports GET-LLM quando preenchidos.",
+        "common_confusions": [
+          "Não substitui objectivo/âmbito dos blocos."
+        ],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [
+          "exchange_package",
+          "project"
+        ],
+        "related_screen": "export",
+        "allow_use_example": false
+      }
+    },
+    "export.llm_generation": {
+      "group": "export",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Pacote geração GET-LLM",
+        "short_help": "ZIP com mestre, fascículo-índice e blocos (live).",
+        "definition": "Família GET-LLM em três camadas; manifesto no ZIP.",
+        "guiding_question": "Vai gerar texto de CE numa LLM externa?",
+        "instructions": "Escolha perfil; opcionalmente limite a um fascículo.",
+        "purpose_in_app": "Contexto completo para redação sem roundtrip.",
+        "workflow_context": "Ecrã Exportar — secção Geração LLM.",
+        "when_to_use": "Sessão com mestre + fascículo + um ou mais blocos.",
+        "what_happens_next": "Anexe ficheiros na LLM; Markdown é só leitura.",
+        "common_confusions": [
+          "Baseline não é obrigatória para este pacote."
+        ],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [
+          "exchange_package",
+          "baseline"
+        ],
+        "related_screen": "export",
+        "allow_use_example": false
+      }
+    },
     "export.profile": {
       "group": "export",
       "priority": "critical",
@@ -1267,6 +1380,39 @@
         "related_concepts": [
           "baseline",
           "exchange_package"
+        ],
+        "related_screen": "export",
+        "allow_use_example": false
+      }
+    },
+    "export.roundtrip": {
+      "group": "export",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Exportação roundtrip",
+        "short_help": "Mestre/fascículo para reimportação estruturada.",
+        "definition": "Pacotes get_project_master e fascicle-roundtrip com validation.",
+        "guiding_question": "Vai devolver JSON editado à app?",
+        "instructions": "Publique baseline antes do mestre roundtrip.",
+        "purpose_in_app": "Ciclo LLM com merge e aprovação na app.",
+        "workflow_context": "Ecrã Exportar — secção Roundtrip.",
+        "when_to_use": "Quando o objectivo é reimportar propostas.",
+        "what_happens_next": "Use Importar com o JSON devolvido.",
+        "common_confusions": [
+          "Não confundir com GET-LLM de geração de texto."
+        ],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [
+          "baseline",
+          "fascicle"
         ],
         "related_screen": "export",
         "allow_use_example": false
@@ -2462,9 +2608,153 @@
         "allow_use_example": false
       }
     },
+    "structure_export.block_model": {
+      "group": "other",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Modelo estrutural do bloco",
+        "short_help": "Objectivo, âmbito e resultado pretendido.",
+        "definition": "Campos de preparação do bloco, não o texto da LLM.",
+        "guiding_question": "O leitor precisa do enquadramento do bloco?",
+        "instructions": "Active quando exportar para equipa de engenharia.",
+        "purpose_in_app": "Inclui block_model no snapshot por bloco.",
+        "workflow_context": "Exportar estrutura com detalhe.",
+        "when_to_use": "Revisão de preparação antes do pacote exchange.",
+        "what_happens_next": "Aparece junto ao código do bloco no ficheiro.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "project-structure",
+        "allow_use_example": false
+      }
+    },
+    "structure_export.format": {
+      "group": "other",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Formato de exportação",
+        "short_help": "Markdown, PDF ou XMind.",
+        "definition": "Cada formato usa o mesmo snapshot interno.",
+        "guiding_question": "O destinatário precisa de editar o mapa mental?",
+        "instructions": "XMind para brainstorming; PDF para impressão; MD para diff em git.",
+        "purpose_in_app": "Escolhe o renderer no backend structure_export.",
+        "workflow_context": "Exportar estrutura.",
+        "when_to_use": "Ao transferir o ficheiro.",
+        "what_happens_next": "Download imediato com Content-Disposition.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "project-structure",
+        "allow_use_example": false
+      }
+    },
+    "structure_export.overview": {
+      "group": "other",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Exportar estrutura",
+        "short_help": "MD, PDF ou XMind da árvore documental.",
+        "definition": "Artefacto legível; não reimportável; códigos live.",
+        "guiding_question": "Precisa de uma lista para revisão offline?",
+        "instructions": "Seleccione um fascículo na árvore para exportar só essa subárvore.",
+        "purpose_in_app": "Gera ficheiro em exports/document-structure/ e permite transferir pela UI.",
+        "workflow_context": "Estrutura documental, secção Exportar estrutura.",
+        "when_to_use": "Após definir fascículos/blocos; antes de reuniões de revisão.",
+        "what_happens_next": "Abrir no leitor (PDF, XMind) ou partilhar o Markdown.",
+        "common_confusions": [
+          "Não substitui o export JSON para LLM (ecrã Exportar)."
+        ],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [
+          "project"
+        ],
+        "related_screen": "project-structure",
+        "allow_use_example": false
+      }
+    },
+    "structure_export.point_detail": {
+      "group": "other",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Detalhe dos pontos",
+        "short_help": "Nenhum, resumo ou completo.",
+        "definition": "Pontos de desenvolvimento por bloco.",
+        "guiding_question": "Quanta informação de preparação incluir?",
+        "instructions": "Resumo: título e contagens; completo: ideia central e listas.",
+        "purpose_in_app": "Controla point_detail no POST de exportação.",
+        "workflow_context": "Exportar estrutura.",
+        "when_to_use": "Quando a árvore sozinha não chega.",
+        "what_happens_next": "Pontos listados sob cada bloco.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "project-structure",
+        "allow_use_example": false
+      }
+    },
+    "structure_export.premises": {
+      "group": "other",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Premissas nos pontos",
+        "short_help": "Só com pontos completos.",
+        "definition": "Premissas resolvidas projecto→fascículo→bloco→ponto.",
+        "guiding_question": "Incluir contexto de premissas no export?",
+        "instructions": "Active apenas se precisa de rastreio de premissas no PDF/MD.",
+        "purpose_in_app": "include_point_premises no pedido API.",
+        "workflow_context": "Exportação estrutural detalhada.",
+        "when_to_use": "Com point_detail=full.",
+        "what_happens_next": "Lista de statements por ponto.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "project-structure",
+        "allow_use_example": false
+      }
+    },
     "technical.instance_name": {
       "group": "technical",
-      "priority": "normal",
+      "priority": "critical",
       "in_shell": true,
       "surfaces": [
         "index.html"
@@ -2509,7 +2799,7 @@
     },
     "technical.kind": {
       "group": "technical",
-      "priority": "normal",
+      "priority": "critical",
       "in_shell": true,
       "surfaces": [
         "index.html"
@@ -2548,7 +2838,7 @@
     },
     "technical.parent": {
       "group": "technical",
-      "priority": "normal",
+      "priority": "critical",
       "in_shell": true,
       "surfaces": [
         "index.html"
@@ -2586,6 +2876,150 @@
           "project"
         ],
         "related_screen": "project-technical",
+        "allow_use_example": false
+      }
+    },
+    "workbook.apply_confirm": {
+      "group": "workbook",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Confirmação de consolidação",
+        "short_help": "Frase exacta `I_UNDERSTAND`.",
+        "definition": "Protecção humana após rever o relatório.",
+        "guiding_question": "Leu o relatório de migração?",
+        "instructions": "Digite sem espaços extra a frase pedida.",
+        "purpose_in_app": "Mesma regra que o CLI `--confirm`.",
+        "workflow_context": "Importação Excel, passo 4.",
+        "when_to_use": "Imediatamente antes de aplicar.",
+        "what_happens_next": "Resposta com `project_id` e resumo de linhas acrescentadas.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "workbook",
+        "allow_use_example": false
+      }
+    },
+    "workbook.apply_target": {
+      "group": "workbook",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Destino da consolidação",
+        "short_help": "Novo projecto ou enriquecer o activo.",
+        "definition": "`new_project` cria projecto; `existing_project` só acrescenta (sem eliminações por omissão).",
+        "guiding_question": "Substituir ou complementar?",
+        "instructions": "Projecto activo deve estar seleccionado no ecrã Projectos.",
+        "purpose_in_app": "Escolhe o ramo de apply no motor workbook.",
+        "workflow_context": "Importação Excel, passo 4.",
+        "when_to_use": "Após dry-run com estado `ready`.",
+        "what_happens_next": "Backup crítico automático e escrita no SQLite.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [
+          "project"
+        ],
+        "related_screen": "workbook",
+        "allow_use_example": false
+      }
+    },
+    "workbook.dry_run": {
+      "group": "workbook",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Pré-importação",
+        "short_help": "Relatório e staging sem gravar na base.",
+        "definition": "Equivalente ao passo 2 do CLI `migrate_workbook_get.py`.",
+        "guiding_question": "O workbook está pronto para consolidar?",
+        "instructions": "Revise erros bloqueantes e avisos no relatório antes de confirmar.",
+        "purpose_in_app": "Gera `migration_reports/{run_id}/report.json` e cópia em `imports/workbook/{run_id}/`.",
+        "workflow_context": "Importação Excel, passo 3.",
+        "when_to_use": "Sempre antes de aplicar; reutiliza o mesmo ficheiro no apply.",
+        "what_happens_next": "Consolidar com confirmação `I_UNDERSTAND`.",
+        "common_confusions": [
+          "Dry-run não cria projecto — isso só no passo 4."
+        ],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "workbook",
+        "allow_use_example": false
+      }
+    },
+    "workbook.template_library": {
+      "group": "workbook",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Modelo biblioteca",
+        "short_help": "Folhas para conhecimento transversal e referências.",
+        "definition": "Template controlado `library_import_v1`.",
+        "guiding_question": "Precisa só de biblioteca?",
+        "instructions": "Use para referências e artefactos reutilizáveis; consolidação só-biblioteca ainda é validação + dry-run.",
+        "purpose_in_app": "Download do modelo Excel para conhecimento de biblioteca.",
+        "workflow_context": "Importação Excel, passo 1.",
+        "when_to_use": "Quando o workbook não inclui estrutura documental de projecto.",
+        "what_happens_next": "Preenche folhas e valida antes do dry-run.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "workbook",
+        "allow_use_example": false
+      }
+    },
+    "workbook.template_project": {
+      "group": "workbook",
+      "priority": "critical",
+      "in_shell": true,
+      "surfaces": [
+        "index.html"
+      ],
+      "editable": {
+        "label": "Modelo projecto",
+        "short_help": "Fascículos, blocos, A01 e conhecimento de projecto.",
+        "definition": "Template controlado `project_import_v1`.",
+        "guiding_question": "Vai importar estrutura documental?",
+        "instructions": "Preencha fascículos e blocos com códigos coerentes (ex. F01, F01_B01).",
+        "purpose_in_app": "Download do modelo Excel completo de projecto.",
+        "workflow_context": "Importação Excel, passo 1.",
+        "when_to_use": "Migração inicial ou enriquecimento de projecto.",
+        "what_happens_next": "Validar estrutura e executar dry-run.",
+        "common_confusions": [],
+        "tips": [],
+        "good_examples": [],
+        "bad_examples": []
+      },
+      "protected": {
+        "related_concepts": [],
+        "related_screen": "workbook",
         "allow_use_example": false
       }
     },
@@ -2767,10 +3201,10 @@
       "not_this": "Não é o pacote exchange por bloco na Preparação."
     },
     "exchange_package": {
-      "label": "Pacote exchange",
-      "summary": "JSON por bloco para a LLM externa.",
-      "role_in_get": "Sai da Preparação do bloco; contrato get_exchange_package.schema.json.",
-      "not_this": "Não é export mestre nem ficheiro Word."
+      "label": "Exportação GET-LLM (bloco)",
+      "summary": "JSON completo + Markdown derivado por bloco para a LLM externa.",
+      "role_in_get": "Sai da Preparação do bloco; contrato GET-LLM (get_llm_export.schema.json), com secção preparation para pontos e premissas.",
+      "not_this": "Não é export mestre/fascículo roundtrip nem ficheiro Word."
     },
     "project": {
       "label": "Projeto",
@@ -2825,6 +3259,12 @@
       "summary": "Esqueleto de prompts para novo ponto.",
       "role_in_get": "Catálogo development_point_templates.pt-PT.json; cria listas vazias, não decisões.",
       "not_this": "Não preenche requisitos nem valores técnicos."
+    },
+    "technical_tree": {
+      "label": "Árvore técnica",
+      "summary": "Hierarquia da instalação no projecto (sistemas, equipamentos, funções).",
+      "role_in_get": "Instâncias exportáveis em technical_instances; complementa a árvore documental sem a substituir.",
+      "not_this": "Não é fascículo/bloco; não replica padrões automaticamente por grupo; não é a ficha técnica JSON do conhecimento."
     }
   },
   "method": {
@@ -2927,17 +3367,19 @@
     },
     "project-structure": {
       "title": "Estrutura documental",
-      "objective": "Árvore fascículo/bloco.",
+      "objective": "Árvore fascículo/bloco e exportação legível.",
       "audience_note": "A árvore não é o texto do caderno: é o índice de fascículos, blocos e secções.",
       "purpose_steps": [
         "Criar fascículos e blocos — para espelhar a estrutura do documento final.",
+        "Exportar estrutura — snapshot live para revisão humana (não reimportável).",
         "Seleccionar um bloco — para abrir a Preparação do bloco (pontos para a LLM).",
         "Associar conhecimento a nós — para exportar ligações, não o texto integral solto."
       ],
       "steps": [
         "Crie fascículo e blocos",
-        "Seleccione um bloco",
-        "Abre Preparação do bloco"
+        "Opcional: seleccione fascículo para subárvore",
+        "Exportar estrutura (MD/PDF/XMind)",
+        "Seleccione um bloco para Preparação"
       ],
       "next": "block-editor"
     },
@@ -2993,18 +3435,22 @@
       "next": null
     },
     "workbook": {
-      "title": "Modelo Excel",
-      "objective": "Validar modelo controlado.",
-      "audience_note": "O Excel valida estrutura de requisitos legados; não substitui o método de pontos no GET.",
+      "title": "Importação Excel GET v1",
+      "objective": "Transferir modelo, validar, dry-run e consolidar no SQLite.",
+      "audience_note": "Apenas o template controlado v1; não é importador Excel universal. Enriquecimento de projecto existente é append-only.",
       "purpose_steps": [
-        "Validar ficheiro — relatório sem importação automática para o SQLite.",
-        "Usar como referência — conhecimento estruturado entra via biblioteca ou projecto."
+        "Modelo — descarregue `project_import_v1` ou `library_import_v1` e preencha as folhas.",
+        "Validação — confirma cabeçalhos e tipos sem tocar na base.",
+        "Dry-run — gera relatório em migration_reports e preserva o upload em imports/workbook.",
+        "Consolidação — backup crítico; novo projecto ou projecto activo; confirmação explícita."
       ],
       "steps": [
-        "Transfira modelo",
-        "Valide estrutura"
+        "Transfira o modelo",
+        "Valide a estrutura",
+        "Execute dry-run",
+        "Consolide com I_UNDERSTAND"
       ],
-      "next": "project-structure"
+      "next": "project"
     },
     "project-technical": {
       "title": "Árvore técnica",

@@ -1,8 +1,20 @@
 from fastapi import APIRouter, HTTPException
 
 from app.deps import get_settings
-from app.schemas.export import ExportRecordResponse, FascicleExportRequest, MasterExportRequest
-from app.services.export_service import ExportError, export_fascicle, export_master, list_exports
+from app.schemas.export import (
+    ExportRecordResponse,
+    FascicleExportRequest,
+    LlmGenerationExportRequest,
+    LlmGenerationExportResponse,
+    MasterExportRequest,
+)
+from app.services.export_service import (
+    ExportError,
+    export_fascicle,
+    export_llm_generation,
+    export_master,
+    list_exports,
+)
 from app.services.workspace_service import WorkspaceError
 
 router = APIRouter(tags=["export"])
@@ -20,6 +32,16 @@ def _run(action):
 @router.get("/projects/{project_id}/exports", response_model=list[ExportRecordResponse])
 def exports_list(project_id: str) -> list[ExportRecordResponse]:
     return _run(lambda: list_exports(get_settings(), project_id))
+
+
+@router.post(
+    "/projects/{project_id}/exports/llm-generation",
+    response_model=LlmGenerationExportResponse,
+)
+def exports_llm_generation(
+    project_id: str, body: LlmGenerationExportRequest
+) -> LlmGenerationExportResponse:
+    return _run(lambda: export_llm_generation(get_settings(), project_id, body))
 
 
 @router.post("/projects/{project_id}/exports/master", response_model=ExportRecordResponse)

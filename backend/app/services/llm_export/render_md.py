@@ -3,7 +3,84 @@ from __future__ import annotations
 from typing import Any
 
 
-def render_llm_export_md(payload: dict[str, Any]) -> str:
+def _header_banner(ge: dict[str, Any]) -> list[str]:
+    return [
+        "Documento derivado para leitura humana. **Não reimportável.**",
+        "",
+        f"_GET-LLM {ge.get('export_type', '')} · {ge.get('schema_version', '')} · {ge.get('generated_at', '')}_",
+        "",
+    ]
+
+
+def _project_section(project: dict[str, Any]) -> list[str]:
+    lines = ["## Projecto", f"- **Nome:** {project.get('name', '')}"]
+    if project.get("code"):
+        lines.append(f"- **Código:** {project.get('code')}")
+    if project.get("owner"):
+        lines.append(f"- **Entidade:** {project.get('owner')}")
+    lines.append("")
+    return lines
+
+
+def render_llm_master_md(payload: dict[str, Any]) -> str:
+    ge = payload.get("get_export") or {}
+    lines = ["# Pacote GET-LLM — Mestre", ""] + _header_banner(ge) + _project_section(payload.get("project") or {})
+
+    lines.append("## Fascículos")
+    for row in payload.get("fascicle_manifest") or []:
+        lines.append(
+            f"- **{row.get('display_code', '')}** {row.get('title', '')} "
+            f"({row.get('block_count', 0)} blocos) → `{row.get('filename', '')}`"
+        )
+    lines.append("")
+
+    ki = payload.get("knowledge_index") or []
+    if ki:
+        lines.append("## Índice de conhecimento (projecto)")
+        for row in ki[:30]:
+            lines.append(f"- {row.get('code') or row.get('id')}: {row.get('title', '')}")
+        if len(ki) > 30:
+            lines.append(f"- _… e mais {len(ki) - 30}_")
+        lines.append("")
+
+    oq = payload.get("global_open_questions") or []
+    if oq:
+        lines.append("## Questões abertas (projecto)")
+        for row in oq:
+            lines.append(f"- {row.get('title', '')}")
+        lines.append("")
+
+    return "\n".join(lines) + "\n"
+
+
+def render_llm_fascicle_md(payload: dict[str, Any]) -> str:
+    ge = payload.get("get_export") or {}
+    fascicle = payload.get("fascicle") or {}
+    lines = [
+        f"# Fascículo {fascicle.get('display_code', '')} — {fascicle.get('title', '')}",
+        "",
+    ] + _header_banner(ge) + _project_section(payload.get("project") or {})
+
+    lines.append("## Blocos")
+    for row in payload.get("block_summaries") or []:
+        mark = "incluído" if row.get("included_in_package") else "sem pontos exportáveis"
+        lines.append(
+            f"- **{row.get('display_code', '')}** {row.get('title', '')} "
+            f"({row.get('exportable_point_count', 0)} pontos; {mark})"
+        )
+    lines.append("")
+
+    manifest = payload.get("block_manifest") or []
+    if manifest:
+        lines.append("## Ficheiros de bloco no pacote")
+        for row in manifest:
+            lines.append(f"- `{row.get('filename', '')}` — {row.get('display_code', '')}")
+        lines.append("")
+
+    return "\n".join(lines) + "\n"
+
+
+def render_llm_block_md(payload: dict[str, Any]) -> str:
     lines: list[str] = []
     ge = payload.get("get_export") or {}
     block = payload.get("block") or {}
@@ -14,16 +91,8 @@ def render_llm_export_md(payload: dict[str, Any]) -> str:
     title = block.get("title") or ""
     lines.append(f"# {display} — {title}")
     lines.append("")
-    lines.append("Documento derivado para leitura humana. **Não reimportável.**")
-    lines.append("")
-
-    lines.append("## Projecto")
-    lines.append(f"- **Nome:** {project.get('name', '')}")
-    if project.get("code"):
-        lines.append(f"- **Código:** {project.get('code')}")
-    if project.get("owner"):
-        lines.append(f"- **Entidade:** {project.get('owner')}")
-    lines.append("")
+    lines.extend(_header_banner(ge))
+    lines.extend(_project_section(project))
 
     lines.append("## Fascículo")
     lines.append(f"- **{fascicle.get('display_code', '')}** — {fascicle.get('title', '')}")
@@ -38,16 +107,6 @@ def render_llm_export_md(payload: dict[str, Any]) -> str:
     scope = block.get("scope") or {}
     if scope.get("narrative"):
         lines.append(scope["narrative"])
-        lines.append("")
-    if scope.get("includes"):
-        lines.append("**Inclui:**")
-        for item in scope["includes"]:
-            lines.append(f"- {item}")
-        lines.append("")
-    if scope.get("excludes"):
-        lines.append("**Exclui:**")
-        for item in scope["excludes"]:
-            lines.append(f"- {item}")
         lines.append("")
 
     units = payload.get("knowledge_units") or []
@@ -70,28 +129,13 @@ def render_llm_export_md(payload: dict[str, Any]) -> str:
                 lines.append(point["core_idea"])
             lines.append("")
 
-    premises = prep.get("applicable_premises") or []
-    if premises:
-        lines.append("## Premissas aplicáveis")
-        for prem in premises:
-            imp = prem.get("importance", "")
-            lines.append(f"- ({imp}) {prem.get('statement', '')}")
-        lines.append("")
-
-    open_points = payload.get("open_points") or []
-    if open_points:
-        lines.append("## Questões em aberto")
-        for op in open_points:
-            lines.append(f"- {op.get('question', '')}")
-        lines.append("")
-
-    rules = payload.get("generation_rules") or {}
-    must = rules.get("must") or []
-    if must:
-        lines.append("## Regras de geração (resumo)")
-        for rule in must[:6]:
-            lines.append(f"- {rule}")
-        lines.append("")
-
-    lines.append(f"_Exportado GET-LLM {ge.get('schema_version', '')} em {ge.get('generated_at', '')}_")
     return "\n".join(lines) + "\n"
+
+
+def render_llm_export_md(payload: dict[str, Any]) -> str:
+    export_type = (payload.get("get_export") or {}).get("export_type", "block")
+    if export_type == "project_master":
+        return render_llm_master_md(payload)
+    if export_type == "fascicle":
+        return render_llm_fascicle_md(payload)
+    return render_llm_block_md(payload)

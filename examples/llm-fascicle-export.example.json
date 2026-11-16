@@ -1,0 +1,59 @@
+{
+  "get_export": {
+    "schema": "GET-LLM",
+    "schema_version": "1.0",
+    "export_type": "fascicle",
+    "generated_at": "2026-11-16T12:00:00+00:00",
+    "language": "pt-PT"
+  },
+  "export_id": "22222222-2222-4222-8222-222222222222",
+  "project": {
+    "id": "11111111-1111-4111-8111-111111111111",
+    "name": "Projeto exemplo",
+    "intervention_type": "brownfield"
+  },
+  "generation_request": {
+    "target": "fascicle",
+    "target_id": "F04",
+    "export_profile": "discussion"
+  },
+  "fascicle": {
+    "id": "33333333-3333-4333-8333-333333333333",
+    "display_code": "F04",
+    "title": "Automação de Campo",
+    "purpose": ""
+  },
+  "document_structure": [
+    {
+      "id": "44444444-4444-4444-8444-444444444444",
+      "node_type": "block",
+      "display_code": "F04_B01",
+      "title": "Bloco exemplo"
+    }
+  ],
+  "block_summaries": [
+    {
+      "id": "44444444-4444-4444-8444-444444444444",
+      "display_code": "F04_B01",
+      "title": "Bloco exemplo",
+      "purpose": "Objectivo",
+      "exportable_point_count": 1,
+      "included_in_package": true
+    }
+  ],
+  "block_manifest": [
+    {
+      "block_id": "44444444-4444-4444-8444-444444444444",
+      "display_code": "F04_B01",
+      "filename": "F04_B01_discussion_llm.json",
+      "markdown_filename": "F04_B01_discussion_llm.md",
+      "sha256": "abc"
+    }
+  ],
+  "knowledge_units": [],
+  "standards": [],
+  "open_points": [],
+  "generation_rules": { "must": [] },
+  "traceability": { "enabled": true },
+  "validation": { "status": "valid", "warnings": [], "errors": [] }
+}

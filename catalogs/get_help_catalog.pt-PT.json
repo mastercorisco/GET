@@ -1491,6 +1491,42 @@
         "Assumir que um filho herda automaticamente o mesmo significado em outros ramos da instalação."
       ]
     },
+    "export.roundtrip": {
+      "label": "Exportação roundtrip",
+      "short_help": "Mestre/fascículo para reimportação estruturada.",
+      "definition": "Pacotes get_project_master e fascicle-roundtrip com validation.",
+      "guiding_question": "Vai devolver JSON editado à app?",
+      "instructions": "Publique baseline antes do mestre roundtrip.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Ciclo LLM com merge e aprovação na app.",
+      "workflow_context": "Ecrã Exportar — secção Roundtrip.",
+      "when_to_use": "Quando o objectivo é reimportar propostas.",
+      "what_happens_next": "Use Importar com o JSON devolvido.",
+      "related_concepts": ["baseline", "fascicle"],
+      "related_screen": "export",
+      "common_confusions": ["Não confundir com GET-LLM de geração de texto."]
+    },
+    "export.llm_generation": {
+      "label": "Pacote geração GET-LLM",
+      "short_help": "ZIP com mestre, fascículo-índice e blocos (live).",
+      "definition": "Família GET-LLM em três camadas; manifesto no ZIP.",
+      "guiding_question": "Vai gerar texto de CE numa LLM externa?",
+      "instructions": "Escolha perfil; opcionalmente limite a um fascículo.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Contexto completo para redação sem roundtrip.",
+      "workflow_context": "Ecrã Exportar — secção Geração LLM.",
+      "when_to_use": "Sessão com mestre + fascículo + um ou mais blocos.",
+      "what_happens_next": "Anexe ficheiros na LLM; Markdown é só leitura.",
+      "related_concepts": ["exchange_package", "baseline"],
+      "related_screen": "export",
+      "common_confusions": ["Baseline não é obrigatória para este pacote."]
+    },
     "export.baseline": {
       "label": "Baseline",
       "short_help": "Congela códigos e revisões.",
@@ -2063,6 +2099,42 @@
         "Perspectiva vazia com tudo nas orientações — ok, mas menos filtrável."
       ],
       "what_happens_next": "As perspetivas selecionadas seguem no ponto para recordar os ângulos técnicos a cobrir."
+    },
+    "exchange_package": {
+      "label": "Exportação GET-LLM (bloco)",
+      "short_help": "JSON completo + Markdown por bloco para a LLM.",
+      "definition": "Pacote self-contained na Preparação do bloco (get_llm_export, export_type block).",
+      "guiding_question": "Vai gerar texto só deste bloco?",
+      "instructions": "Complete pontos exportáveis antes de gerar.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Unidade de redação com preparation, conhecimento e regras de geração.",
+      "workflow_context": "Preparação do bloco — painel Exportação para LLM (GET-LLM).",
+      "when_to_use": "Trabalho fino num bloco sem exportar o projecto inteiro.",
+      "what_happens_next": "Grava JSON e MD na pasta exports; não é reimportável.",
+      "related_concepts": ["exchange_package", "development_point"],
+      "related_screen": "block-editor",
+      "common_confusions": ["Não é o pacote em camadas do ecrã Exportar."]
+    },
+    "export.llm_context": {
+      "label": "Contexto LLM do projecto",
+      "short_help": "Metadados opcionais (entidade, local, tipo de documento) no JSON GET-LLM.",
+      "definition": "Complementa project.name no pacote GET-LLM. Não altera roundtrip mestre/fascículo.",
+      "guiding_question": "Que identificação do empreendimento a LLM deve ver no cabeçalho?",
+      "instructions": "Preencha e guarde antes de exportar blocos ou pacote em camadas.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Enquadramento legível (código, entidade, local) em todos os JSON GET-LLM do projecto.",
+      "workflow_context": "Ecrã Exportar — cartão Contexto LLM do projecto.",
+      "when_to_use": "Primeira configuração do projecto ou mudança de empreendimento.",
+      "what_happens_next": "Valores entram em project nos exports GET-LLM quando preenchidos.",
+      "related_concepts": ["exchange_package", "project"],
+      "related_screen": "export",
+      "common_confusions": ["Não substitui objectivo/âmbito dos blocos."]
     }
   },
   "concepts": {
@@ -2119,16 +2191,6 @@
       "summary": "JSON completo + Markdown derivado por bloco para a LLM externa.",
       "role_in_get": "Sai da Preparação do bloco; contrato GET-LLM (get_llm_export.schema.json), com secção preparation para pontos e premissas.",
       "not_this": "Não é export mestre/fascículo roundtrip nem ficheiro Word."
-    },
-    "export.llm_context": {
-      "label": "Contexto LLM do projecto",
-      "short_help": "Metadados opcionais (entidade, local, tipo de documento) no JSON GET-LLM.",
-      "definition": "Complementa project.name no pacote por bloco. Não altera roundtrip mestre/fascículo.",
-      "guiding_question": "Que identificação do empreendimento a LLM deve ver no cabeçalho?",
-      "workflow_context": "Ecrã Exportar, antes de exportar blocos na Preparação.",
-      "what_happens_next": "Os campos entram em project no JSON GET-LLM quando preenchidos.",
-      "related_concepts": ["exchange_package", "project"],
-      "related_screen": "export"
     },
     "project": {
       "label": "Projeto",

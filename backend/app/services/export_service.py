@@ -11,7 +11,14 @@ from sqlalchemy import select
 from app.config import AppSettings
 from app.models.baseline import Baseline, ExportRecord
 from app.models.workspace import WorkspaceSettings
-from app.schemas.export import ExportRecordResponse, FascicleExportRequest, MasterExportRequest
+from app.schemas.export import (
+    ExportRecordResponse,
+    FascicleExportRequest,
+    LlmGenerationExportRequest,
+    LlmGenerationExportResponse,
+    MasterExportRequest,
+)
+from app.services.llm_export.orchestrate import export_llm_generation_package, local_user
 from app.services.baseline_service import get_latest_baseline
 from app.services.export.context import ExportBuildContext
 from app.services.export.fascicle_builder import build_fascicle_package
@@ -276,3 +283,33 @@ def export_fascicle(
             record.created_at = _utcnow()
         session.flush()
         return _record_response(record, zip_path=zip_path)
+
+
+def export_llm_generation(
+    app_settings: AppSettings,
+    project_id: str,
+    body: LlmGenerationExportRequest,
+) -> LlmGenerationExportResponse:
+    with workspace_session(app_settings) as (session, paths):
+        latest = get_latest_baseline(app_settings, project_id)
+        baseline_id = latest.id if latest is not None else None
+        try:
+            result = export_llm_generation_package(
+                session,
+                paths,
+                project_id,
+                profile=body.profile,
+                include_draft=body.include_draft,
+                fascicle_node_id=body.fascicle_node_id,
+                created_by=local_user(session),
+                baseline_id=baseline_id,
+            )
+        except ValueError as exc:
+            raise ExportError(str(exc)) from exc
+        return LlmGenerationExportResponse(
+            export_id=result.export_id,
+            file_path=result.master_path,
+            zip_path=result.zip_path,
+            sha256=result.sha256,
+            manifest=result.manifest,
+        )

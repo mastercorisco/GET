@@ -596,7 +596,8 @@
             <button type="button" id="expBaselinePublish" class="secondary">Publicar baseline</button>
           </div>
           <div class="card-surface">
-            <h3>Exportação JSON</h3>
+            <h3>Roundtrip (reimportação)</h3>
+            <p class="choice-hint" data-help-key="export.roundtrip">Pacotes para discussão e devolução estruturada à app. Requer baseline publicada.</p>
             <label for="expProfile" data-help-key="export.profile">Perfil</label>
             <select id="expProfile">
               <option value="discussion">discussion</option>
@@ -609,10 +610,28 @@
                 <span class="choice-hint">Gera export_package.zip com JSON(s), Markdown e validation.json.</span>
               </span>
             </label>
-            <button type="button" id="expMaster">Exportar mestre</button>
+            <button type="button" id="expMaster">Exportar mestre roundtrip</button>
             <label for="expFascicle" data-help-key="export.fascicle">Fascículo (raiz)</label>
             <select id="expFascicle"><option value="">—</option></select>
-            <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo</button>
+            <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo roundtrip</button>
+          </div>
+          <div class="card-surface">
+            <h3>Geração LLM (GET-LLM)</h3>
+            <p class="choice-hint" data-help-key="export.llm_generation">
+              Mestre + fascículo-índice + blocos em JSON/MD e ZIP. Estado live; não reimportável.
+            </p>
+            <label class="choice-inline" for="expLlmIncludeDraft">
+              <input type="checkbox" id="expLlmIncludeDraft" />
+              <span>
+                <span class="choice-text">Incluir rascunhos nos blocos</span>
+                <span class="choice-hint">Pontos que ainda não estão ready/approved.</span>
+              </span>
+            </label>
+            <label for="expLlmFascicle" data-help-key="export.fascicle">Âmbito (opcional)</label>
+            <select id="expLlmFascicle">
+              <option value="">Projecto inteiro</option>
+            </select>
+            <button type="button" id="expLlmGeneration">Exportar pacote LLM (GET-LLM)</button>
           </div>
           <div class="card-surface">
             <h3>Contexto LLM do projecto</h3>

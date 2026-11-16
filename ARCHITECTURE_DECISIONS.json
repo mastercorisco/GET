@@ -303,6 +303,12 @@
       "topic": "llm_block_export",
       "decision": "Exportação por bloco para LLM usa contrato GET-LLM (JSON completo, códigos live, sem baseline) com Markdown derivado não reimportável; contexto opcional do projecto em project.llm_context_json; roundtrip mestre/fascículo inalterado.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-051",
+      "topic": "llm_generation_package",
+      "decision": "Pacote geração GET-LLM em três camadas (project_master, fascicle índice+manifesto, blocos em ficheiros separados no ZIP) ortogonal ao roundtrip reimportável; Markdown derivado em cada nível.",
+      "status": "accepted"
     }
   ]
 }

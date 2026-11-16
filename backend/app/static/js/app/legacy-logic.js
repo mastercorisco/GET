@@ -629,6 +629,7 @@ const rootPath = document.getElementById("rootPath");
       async function loadExportSection(projectId) {
         const meta = document.getElementById("expBaselineMeta");
         const fascicleSelect = document.getElementById("expFascicle");
+        const llmFascicleSelect = document.getElementById("expLlmFascicle");
         const list = document.getElementById("expList");
         list.replaceChildren();
         fascicleSelect.replaceChildren();
@@ -636,6 +637,18 @@ const rootPath = document.getElementById("rootPath");
         empty.value = "";
         empty.textContent = "—";
         fascicleSelect.appendChild(empty);
+        if (llmFascicleSelect) {
+          const keep = llmFascicleSelect.querySelector('option[value=""]');
+          llmFascicleSelect.replaceChildren();
+          if (keep) {
+            llmFascicleSelect.appendChild(keep);
+          } else {
+            const allOpt = document.createElement("option");
+            allOpt.value = "";
+            allOpt.textContent = "Projecto inteiro";
+            llmFascicleSelect.appendChild(allOpt);
+          }
+        }
 
         const baseline = await knowledgeRequest(
           "/api/projects/" + projectId + "/baselines/latest",
@@ -656,10 +669,17 @@ const rootPath = document.getElementById("rootPath");
         const nodeRows = Array.isArray(nodesPayload) ? nodesPayload : (nodesPayload.nodes || []);
         nodeRows.forEach(function (row) {
           if (row.node_type === "fascicle" && !row.parent_id) {
+            const label = (row.display_code ? row.display_code + " — " : "") + row.title;
             const opt = document.createElement("option");
             opt.value = row.id;
-            opt.textContent = (row.display_code ? row.display_code + " — " : "") + row.title;
+            opt.textContent = label;
             fascicleSelect.appendChild(opt);
+            if (llmFascicleSelect) {
+              const opt2 = document.createElement("option");
+              opt2.value = row.id;
+              opt2.textContent = label;
+              llmFascicleSelect.appendChild(opt2);
+            }
           }
         });
 
@@ -1499,6 +1519,39 @@ const rootPath = document.getElementById("rootPath");
         )
           .then(function (row) {
             setExportStatus("Fascículo gravado: " + row.file_path);
+            return loadExportSection(projectId);
+          })
+          .catch(function (err) { setExportStatus(err.message); });
+      });
+      document.getElementById("expLlmGeneration").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        if (!projectId) {
+          setProjectError("Seleccione um projecto.");
+          return;
+        }
+        const fascicleEl = document.getElementById("expLlmFascicle");
+        const fascicleId = fascicleEl && fascicleEl.value ? fascicleEl.value : null;
+        setExportStatus("");
+        knowledgeRequest(
+          "/api/projects/" + projectId + "/exports/llm-generation",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              profile: document.getElementById("expProfile").value,
+              include_draft: document.getElementById("expLlmIncludeDraft").checked,
+              fascicle_node_id: fascicleId,
+            }),
+          },
+          "Falha ao exportar pacote GET-LLM."
+        )
+          .then(function (row) {
+            const blocks = (row.manifest && row.manifest.files)
+              ? row.manifest.files.filter(function (f) { return f.kind === "block"; }).length
+              : "?";
+            setExportStatus(
+              "Pacote GET-LLM: " + row.zip_path + " · mestre " + row.file_path + " · " + blocks + " bloco(s)."
+            );
             return loadExportSection(projectId);
           })
           .catch(function (err) { setExportStatus(err.message); });

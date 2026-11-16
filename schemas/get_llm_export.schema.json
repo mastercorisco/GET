@@ -1,58 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://eda.local/get/schemas/get_llm_export.schema.json",
-  "title": "GET LLM Block Export",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "get_export",
-    "export_id",
-    "project",
-    "generation_request",
-    "fascicle",
-    "block",
-    "knowledge_units",
-    "standards",
-    "open_points",
-    "generation_rules",
-    "traceability",
-    "preparation",
-    "validation"
+  "title": "GET LLM Export",
+  "oneOf": [
+    { "$ref": "#/$defs/blockExport" },
+    { "$ref": "#/$defs/fascicleExport" },
+    { "$ref": "#/$defs/projectMasterExport" }
   ],
-  "properties": {
-    "get_export": {
+  "$defs": {
+    "getExportHeader": {
       "type": "object",
       "additionalProperties": false,
       "required": ["schema", "schema_version", "export_type", "generated_at", "language"],
       "properties": {
         "schema": { "const": "GET-LLM" },
         "schema_version": { "const": "1.0" },
-        "export_type": { "const": "block" },
-        "generated_at": { "type": "string", "format": "date-time" },
+        "export_type": { "type": "string", "enum": ["block", "fascicle", "project_master"] },
+        "generated_at": { "type": "string" },
         "language": { "type": "string", "minLength": 2 }
       }
     },
-    "export_id": { "type": "string", "minLength": 1 },
-    "project": { "type": "object" },
-    "generation_request": { "type": "object" },
-    "fascicle": { "type": "object" },
-    "block": { "type": "object" },
-    "knowledge_units": {
-      "type": "array",
-      "items": { "type": "object" }
-    },
-    "standards": {
-      "type": "array",
-      "items": { "type": "object" }
-    },
-    "open_points": {
-      "type": "array",
-      "items": { "type": "object" }
-    },
-    "generation_rules": { "type": "object" },
-    "traceability": { "type": "object" },
-    "preparation": { "type": "object" },
-    "validation": {
+    "validationBlock": {
       "type": "object",
       "additionalProperties": false,
       "required": ["status", "warnings", "errors"],
@@ -69,10 +37,126 @@
             }
           }
         },
-        "errors": {
-          "type": "array",
-          "items": { "type": "object" }
-        }
+        "errors": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "blockExport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "get_export",
+        "export_id",
+        "project",
+        "generation_request",
+        "fascicle",
+        "block",
+        "knowledge_units",
+        "standards",
+        "open_points",
+        "generation_rules",
+        "traceability",
+        "preparation",
+        "validation"
+      ],
+      "properties": {
+        "get_export": {
+          "allOf": [
+            { "$ref": "#/$defs/getExportHeader" },
+            { "properties": { "export_type": { "const": "block" } } }
+          ]
+        },
+        "export_id": { "type": "string" },
+        "project": { "type": "object" },
+        "generation_request": { "type": "object" },
+        "fascicle": { "type": "object" },
+        "block": { "type": "object" },
+        "knowledge_units": { "type": "array", "items": { "type": "object" } },
+        "standards": { "type": "array", "items": { "type": "object" } },
+        "open_points": { "type": "array", "items": { "type": "object" } },
+        "generation_rules": { "type": "object" },
+        "traceability": { "type": "object" },
+        "preparation": { "type": "object" },
+        "validation": { "$ref": "#/$defs/validationBlock" }
+      }
+    },
+    "fascicleExport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "get_export",
+        "export_id",
+        "project",
+        "generation_request",
+        "fascicle",
+        "document_structure",
+        "block_summaries",
+        "block_manifest",
+        "knowledge_units",
+        "standards",
+        "open_points",
+        "generation_rules",
+        "traceability",
+        "validation"
+      ],
+      "properties": {
+        "get_export": {
+          "allOf": [
+            { "$ref": "#/$defs/getExportHeader" },
+            { "properties": { "export_type": { "const": "fascicle" } } }
+          ]
+        },
+        "export_id": { "type": "string" },
+        "project": { "type": "object" },
+        "generation_request": { "type": "object" },
+        "fascicle": { "type": "object" },
+        "document_structure": { "type": "array", "items": { "type": "object" } },
+        "block_summaries": { "type": "array", "items": { "type": "object" } },
+        "block_manifest": { "type": "array", "items": { "type": "object" } },
+        "knowledge_units": { "type": "array", "items": { "type": "object" } },
+        "standards": { "type": "array", "items": { "type": "object" } },
+        "open_points": { "type": "array", "items": { "type": "object" } },
+        "generation_rules": { "type": "object" },
+        "traceability": { "type": "object" },
+        "validation": { "$ref": "#/$defs/validationBlock" }
+      }
+    },
+    "projectMasterExport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "get_export",
+        "export_id",
+        "project",
+        "generation_request",
+        "common_context",
+        "document_structure",
+        "knowledge_index",
+        "global_open_questions",
+        "system_catalog_summary",
+        "fascicle_manifest",
+        "generation_rules",
+        "traceability",
+        "validation"
+      ],
+      "properties": {
+        "get_export": {
+          "allOf": [
+            { "$ref": "#/$defs/getExportHeader" },
+            { "properties": { "export_type": { "const": "project_master" } } }
+          ]
+        },
+        "export_id": { "type": "string" },
+        "project": { "type": "object" },
+        "generation_request": { "type": "object" },
+        "common_context": { "type": "object" },
+        "document_structure": { "type": "array", "items": { "type": "object" } },
+        "knowledge_index": { "type": "array", "items": { "type": "object" } },
+        "global_open_questions": { "type": "array", "items": { "type": "object" } },
+        "system_catalog_summary": { "type": "array", "items": { "type": "object" } },
+        "fascicle_manifest": { "type": "array", "items": { "type": "object" } },
+        "generation_rules": { "type": "object" },
+        "traceability": { "type": "object" },
+        "validation": { "$ref": "#/$defs/validationBlock" }
       }
     }
   }
