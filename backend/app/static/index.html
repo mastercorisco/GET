@@ -386,6 +386,24 @@
                     </div>
                   </div>
                 </details>
+                <details class="compact-section compact-section--content" id="beExportPanel" open>
+                  <summary data-help-key="exchange_package">Exportação para LLM (GET-LLM)</summary>
+                  <div class="compact-section__body">
+                    <p class="choice-hint">
+                      Gera JSON completo e Markdown derivado na pasta de exportações do workspace.
+                    </p>
+                    <label class="choice-inline" data-help-key="block.include_draft">
+                      <input type="checkbox" id="beIncludeDraft" />
+                      <span>Incluir rascunhos na exportação</span>
+                    </label>
+                    <div class="be-points-toolbar">
+                      <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
+                      <button type="button" id="beExportWrite">Exportar pacote</button>
+                    </div>
+                    <p id="beStatus" class="lead"></p>
+                    <pre id="bePreview" class="tree-ascii be-preview-json"></pre>
+                  </div>
+                </details>
               </div>
               <aside
                 id="blockPrepAside"
@@ -429,14 +447,10 @@
                 <div class="prep-tab-panel" data-prep-panel="export" hidden>
                   <p class="field-help-section-title">Semântica do pacote</p>
                   <div id="prepExchangeSemantics" class="prep-exchange"></div>
-                  <label class="choice-inline" data-help-key="block.include_draft">
-                    <input type="checkbox" id="beIncludeDraft" />
-                    <span>Incluir rascunhos na exportação</span>
-                  </label>
-                  <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
-                  <button type="button" id="beExportWrite">Exportar pacote</button>
-                  <p id="beStatus" class="lead"></p>
-                  <pre id="bePreview" class="tree-ascii be-preview-json"></pre>
+                  <p class="lead">
+                    A exportação (pré-visualizar JSON, Exportar pacote) está no painel principal, secção
+                    «Exportação para LLM».
+                  </p>
                 </div>
               </aside>
             </div>
