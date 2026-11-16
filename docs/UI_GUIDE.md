@@ -26,7 +26,7 @@ Assets servidos em `GET /static/...` via FastAPI `StaticFiles`.
 2. **Importação Excel** — modelo v1: validar, dry-run e consolidar (novo projecto ou activo).
 3. **Biblioteca** — conhecimento transversal, referências, terminologia.
 4. **Projecto** — criação, conhecimento do projecto, fichas, referências, overrides.
-5. **Estrutura documental** — árvore ASCII, associações, novo nó.
+5. **Estrutura documental** — árvore ASCII, exportação MD/PDF/XMind, associações.
 6. **Árvore técnica** — instâncias hierárquicas.
 7. **Exportar / Reimportar** — ciclo LLM.
 8. **Backups** — listagem e backup crítico.
@@ -45,6 +45,7 @@ Botões junto a campos críticos; textos em `TIPS` em `tip.js`. Para novo campo:
 - [ ] Exportar: publicar baseline + export mestre.
 - [ ] Reimportar: upload JSON + merge (se fixture disponível).
 - [ ] Excel: validar → dry-run → aplicar com `I_UNDERSTAND` (ou só validar se for teste).
+- [ ] Estrutura: exportar Markdown com pontos resumo (projecto activo).
 - [ ] Backups: criar backup crítico e listar.
 
 ## Evolução (React)

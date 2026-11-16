@@ -482,6 +482,47 @@
                 <button type="button" id="docAssocCreate" class="secondary">Associar</button>
               </aside>
             </div>
+            <details class="compact-section compact-section--content" open>
+              <summary>Exportar estrutura</summary>
+              <div class="compact-section__body">
+                <p class="choice-hint" data-help-key="structure_export.overview">
+                  Exportação legível (não reimportável). Códigos documentais do estado actual do projecto.
+                </p>
+                <p id="docExportRootHint" class="choice-hint"></p>
+                <label for="docExportFormat" data-help-key="structure_export.format">Formato</label>
+                <select id="docExportFormat">
+                  <option value="markdown">Markdown (.md)</option>
+                  <option value="pdf">PDF</option>
+                  <option value="xmind">XMind (.xmind)</option>
+                </select>
+                <label class="choice-inline">
+                  <input type="checkbox" id="docExportBlockModel" data-help-key="structure_export.block_model" />
+                  <span>Incluir modelo estrutural dos blocos (objectivo, âmbito, resultado)</span>
+                </label>
+                <fieldset class="wb-target-fieldset">
+                  <legend data-help-key="structure_export.point_detail">Pontos de desenvolvimento</legend>
+                  <label class="choice-inline wb-target-option">
+                    <input type="radio" name="docExportPoints" value="none" checked />
+                    <span>Nenhum</span>
+                  </label>
+                  <label class="choice-inline wb-target-option">
+                    <input type="radio" name="docExportPoints" value="summary" />
+                    <span>Resumo</span>
+                  </label>
+                  <label class="choice-inline wb-target-option">
+                    <input type="radio" name="docExportPoints" value="full" />
+                    <span>Completo</span>
+                  </label>
+                </fieldset>
+                <label class="choice-inline">
+                  <input type="checkbox" id="docExportPremises" data-help-key="structure_export.premises" />
+                  <span>Incluir premissas resolvidas (só com pontos completos)</span>
+                </label>
+                <button type="button" id="docExportBtn">Transferir exportação</button>
+                <p id="docExportStatus" class="route-status" hidden></p>
+              </div>
+            </details>
+
             <details class="compact-section compact-section--content">
               <summary>Novo nó</summary>
               <div class="compact-section__body">

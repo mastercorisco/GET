@@ -13,6 +13,7 @@ import { applyFriendlySelectLabels } from "./labels.js";
 import { hydrateAppearanceFromStorage, initAppearance } from "./components/appearance.js";
 import { initBackupsView } from "./views/backups.js";
 import { initWorkbookImport } from "./views/workbook-import.js";
+import { initStructureExportView } from "./views/structure-export.js";
 import { initBlockEditor, openBlockEditor } from "./views/block-editor.js";
 import { initSettingsView, setSettingsWorkspaceOpen } from "./views/settings.js";
 import { initRouteTabs } from "./components/route-tabs.js";
@@ -97,6 +98,7 @@ if (expBaselineMeta) {
 
 initBackupsView();
 initWorkbookImport(router);
+initStructureExportView();
 initBlockEditor(router);
 
 function wireProjectWatcher() {

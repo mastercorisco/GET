@@ -498,6 +498,100 @@
       "related_screen": "workbook",
       "common_confusions": []
     },
+    "structure_export.overview": {
+      "label": "Exportar estrutura",
+      "short_help": "MD, PDF ou XMind da árvore documental.",
+      "definition": "Artefacto legível; não reimportável; códigos live.",
+      "guiding_question": "Precisa de uma lista para revisão offline?",
+      "instructions": "Seleccione um fascículo na árvore para exportar só essa subárvore.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Gera ficheiro em exports/document-structure/ e permite transferir pela UI.",
+      "workflow_context": "Estrutura documental, secção Exportar estrutura.",
+      "when_to_use": "Após definir fascículos/blocos; antes de reuniões de revisão.",
+      "what_happens_next": "Abrir no leitor (PDF, XMind) ou partilhar o Markdown.",
+      "related_concepts": [
+        "project"
+      ],
+      "related_screen": "project-structure",
+      "common_confusions": [
+        "Não substitui o export JSON para LLM (ecrã Exportar)."
+      ]
+    },
+    "structure_export.format": {
+      "label": "Formato de exportação",
+      "short_help": "Markdown, PDF ou XMind.",
+      "definition": "Cada formato usa o mesmo snapshot interno.",
+      "guiding_question": "O destinatário precisa de editar o mapa mental?",
+      "instructions": "XMind para brainstorming; PDF para impressão; MD para diff em git.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Escolhe o renderer no backend structure_export.",
+      "workflow_context": "Exportar estrutura.",
+      "when_to_use": "Ao transferir o ficheiro.",
+      "what_happens_next": "Download imediato com Content-Disposition.",
+      "related_concepts": [],
+      "related_screen": "project-structure",
+      "common_confusions": []
+    },
+    "structure_export.block_model": {
+      "label": "Modelo estrutural do bloco",
+      "short_help": "Objectivo, âmbito e resultado pretendido.",
+      "definition": "Campos de preparação do bloco, não o texto da LLM.",
+      "guiding_question": "O leitor precisa do enquadramento do bloco?",
+      "instructions": "Active quando exportar para equipa de engenharia.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Inclui block_model no snapshot por bloco.",
+      "workflow_context": "Exportar estrutura com detalhe.",
+      "when_to_use": "Revisão de preparação antes do pacote exchange.",
+      "what_happens_next": "Aparece junto ao código do bloco no ficheiro.",
+      "related_concepts": [],
+      "related_screen": "project-structure",
+      "common_confusions": []
+    },
+    "structure_export.point_detail": {
+      "label": "Detalhe dos pontos",
+      "short_help": "Nenhum, resumo ou completo.",
+      "definition": "Pontos de desenvolvimento por bloco.",
+      "guiding_question": "Quanta informação de preparação incluir?",
+      "instructions": "Resumo: título e contagens; completo: ideia central e listas.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Controla point_detail no POST de exportação.",
+      "workflow_context": "Exportar estrutura.",
+      "when_to_use": "Quando a árvore sozinha não chega.",
+      "what_happens_next": "Pontos listados sob cada bloco.",
+      "related_concepts": [],
+      "related_screen": "project-structure",
+      "common_confusions": []
+    },
+    "structure_export.premises": {
+      "label": "Premissas nos pontos",
+      "short_help": "Só com pontos completos.",
+      "definition": "Premissas resolvidas projecto→fascículo→bloco→ponto.",
+      "guiding_question": "Incluir contexto de premissas no export?",
+      "instructions": "Active apenas se precisa de rastreio de premissas no PDF/MD.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "include_point_premises no pedido API.",
+      "workflow_context": "Exportação estrutural detalhada.",
+      "when_to_use": "Com point_detail=full.",
+      "what_happens_next": "Lista de statements por ponto.",
+      "related_concepts": [],
+      "related_screen": "project-structure",
+      "common_confusions": []
+    },
     "workbook.validate_file": {
       "label": "Validar Excel",
       "short_help": "Confirma cabeçalhos do modelo v1.",
@@ -2212,16 +2306,18 @@
     },
     "project-structure": {
       "title": "Estrutura documental",
-      "objective": "Árvore fascículo/bloco.",
+      "objective": "Árvore fascículo/bloco e exportação legível.",
       "steps": [
         "Crie fascículo e blocos",
-        "Seleccione um bloco",
-        "Abre Preparação do bloco"
+        "Opcional: seleccione fascículo para subárvore",
+        "Exportar estrutura (MD/PDF/XMind)",
+        "Seleccione um bloco para Preparação"
       ],
       "next": "block-editor",
       "audience_note": "A árvore não é o texto do caderno: é o índice de fascículos, blocos e secções.",
       "purpose_steps": [
         "Criar fascículos e blocos — para espelhar a estrutura do documento final.",
+        "Exportar estrutura — snapshot live para revisão humana (não reimportável).",
         "Seleccionar um bloco — para abrir a Preparação do bloco (pontos para a LLM).",
         "Associar conhecimento a nós — para exportar ligações, não o texto integral solto."
       ]

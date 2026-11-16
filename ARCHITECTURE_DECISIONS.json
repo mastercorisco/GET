@@ -291,6 +291,12 @@
       "topic": "ui_preferences",
       "decision": "Preferências de aparência (tema, densidade, tipografia) guardadas por máquina em ~/.get/ui-preferences.json; fora do SQLite do workspace e fora de exportações JSON.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-049",
+      "topic": "structure_readable_export",
+      "decision": "Exportação estrutural MD/PDF/XMind é derivada, não reimportável, com códigos documentais live; separada do export JSON LLM e do módulo workbook.",
+      "status": "accepted"
     }
   ]
 }

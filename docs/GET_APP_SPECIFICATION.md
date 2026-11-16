@@ -333,6 +333,10 @@ Consolidado, mas seletivo: contexto global completo, estrutura, decisões transv
 
 Inclui contexto suficiente para ser compreendido isoladamente, distinguindo contexto protegido e conhecimento editável.
 
+### Exportação estrutural legível
+
+Independente do ciclo LLM (JSON/ZIP): a partir do ecrã **Estrutura documental**, o utilizador pode gerar **Markdown, PDF ou XMind** com a árvore documental do projecto (códigos **live** do SQLite) ou de uma **subárvore** (fascículo seleccionado). Opções: modelo estrutural do bloco; pontos de desenvolvimento (nenhum, resumo, completo); premissas resolvidas nos pontos completos. Artefactos em `{workspace}/exports/document-structure/`; **não reimportáveis**.
+
 ## 18. Política de edição no pacote
 
 Modos:

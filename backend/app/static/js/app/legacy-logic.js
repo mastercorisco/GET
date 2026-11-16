@@ -121,14 +121,26 @@ const rootPath = document.getElementById("rootPath");
         const prepBtn = document.getElementById("docOpenBlockPrep");
         if (!node) {
           selectedDocumentBlockId = null;
-          if (meta) meta.textContent = "Nenhum nó seleccionado.";
+          if (meta) {
+            meta.textContent = "Nenhum nó seleccionado.";
+            delete meta.dataset.nodeId;
+            delete meta.dataset.displayCode;
+          }
+          document.dispatchEvent(
+            new CustomEvent("get:document-node-selected", { detail: { node: null } })
+          );
           if (prepWrap) prepWrap.hidden = true;
           if (prepBtn) prepBtn.disabled = true;
           return;
         }
         if (meta) {
           meta.textContent = node.display_code + " — " + node.title;
+          meta.dataset.nodeId = node.id;
+          meta.dataset.displayCode = node.display_code || "";
         }
+        document.dispatchEvent(
+          new CustomEvent("get:document-node-selected", { detail: { node: node } })
+        );
         const isBlock = node.node_type === "block";
         selectedDocumentBlockId = isBlock ? node.id : null;
         if (prepWrap) prepWrap.hidden = !isBlock;
