@@ -101,6 +101,30 @@ export function refreshBlockPrepPanel(blockId, validation) {
     });
   }
 
+  const guideEl = document.getElementById("prepExportKindGuide");
+  const guide = workflows.export_kind_guide || [];
+  if (guideEl && guide.length) {
+    guideEl.replaceChildren();
+    const gt = document.createElement("p");
+    gt.className = "field-help-section-title";
+    gt.textContent = "Qual exportação usar?";
+    guideEl.appendChild(gt);
+    if (method.export_decision_summary) {
+      const sum = document.createElement("p");
+      sum.className = "choice-hint";
+      sum.textContent = method.export_decision_summary;
+      guideEl.appendChild(sum);
+    }
+    const ul = document.createElement("ul");
+    ul.className = "prep-export-guide";
+    guide.forEach(function (row) {
+      const li = document.createElement("li");
+      li.textContent = row.need + " → " + row.use;
+      ul.appendChild(li);
+    });
+    guideEl.appendChild(ul);
+  }
+
   const exchEl = document.getElementById("prepExchangeSemantics");
   const sem = method.exchange_semantics || {};
   if (exchEl && Object.keys(sem).length) {

@@ -25,7 +25,7 @@ def test_help_catalog_field_schema() -> None:
     catalog = _load_catalog()
     fields = catalog.get("fields") or {}
     assert fields, "fields vazio"
-    assert catalog.get("catalog_version") == "1.3.1"
+    assert catalog.get("catalog_version") == "1.3.2"
     for key, entry in fields.items():
         assert isinstance(entry, dict), key
         for required in ("label", "short_help", "definition"):
@@ -106,7 +106,7 @@ def test_api_catalog_help_includes_screens() -> None:
     res = client.get("/api/catalogs/help")
     assert res.status_code == 200
     data = res.json()
-    assert data.get("catalog_version") == "1.3.1"
+    assert data.get("catalog_version") == "1.3.2"
     assert data.get("method", {}).get("principle")
     screens = data.get("screens") or {}
     assert "block-editor" in screens

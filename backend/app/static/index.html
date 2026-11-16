@@ -398,11 +398,11 @@
                   </div>
                 </details>
                 <details class="compact-section compact-section--content" id="beExportPanel" open>
-                  <summary>Pacote e LLM (bloco)</summary>
+                  <summary data-help-key="block.export_panel">Pacote e LLM (bloco)</summary>
                   <div class="compact-section__body">
                     <div class="card-surface be-subsection" style="margin-bottom: 1rem">
-                      <h4 class="section-label">Pacote para discussão (ida e volta)</h4>
-                      <p class="choice-hint">
+                      <h4 class="section-label" data-help-key="block.get_package">Pacote para discussão (ida e volta)</h4>
+                      <p class="choice-hint" data-help-key="block.get_package">
                         Um ficheiro <strong>GET-PACKAGE</strong> (.json): exporte, trabalhe na LLM e importe para
                         rever alterações na app. Requer baseline publicada.
                       </p>
@@ -472,7 +472,8 @@
                   <div id="prepValidation"></div>
                 </div>
                 <div class="prep-tab-panel" data-prep-panel="export" hidden>
-                  <p class="field-help-section-title">Semântica do pacote</p>
+                  <div id="prepExportKindGuide" class="prep-export-guide-wrap"></div>
+                  <p class="field-help-section-title">Semântica no GET-LLM</p>
                   <div id="prepExchangeSemantics" class="prep-exchange"></div>
                   <p class="lead">
                     No painel principal: <strong>Exportar pacote</strong> (GET-PACKAGE, reimportável) e, à parte,
@@ -615,7 +616,10 @@
       <section class="route-panel card " data-route="export">
         <div class="screen-guide-panel" data-screen-guide="export" hidden></div>
         <h2>Exportar para LLM</h2>
-        <p class="lead">Publique a baseline e gere JSON para discussão ou redação.</p>
+        <p class="lead choice-hint" data-help-key="export.get_package">
+          Quatro saídas distintas: <strong>GET-PACKAGE</strong> (reimportável), roundtrip legado, <strong>GET-LLM</strong>
+          (só leitura) e, na Estrutura documental, MD/PDF/XMind. Publique baseline antes de GET-PACKAGE.
+        </p>
         <div class="card-grid">
           <div class="card-surface">
             <h3>Baseline</h3>
@@ -624,8 +628,8 @@
             <button type="button" id="expBaselinePublish" class="secondary">Publicar baseline</button>
           </div>
           <div class="card-surface">
-            <h3>Pacote para discussão (fascículo)</h3>
-            <p class="choice-hint">
+            <h3 data-help-key="export.get_package">Pacote para discussão (fascículo)</h3>
+            <p class="choice-hint" data-help-key="export.get_package">
               Ficheiro único <strong>GET-PACKAGE</strong> (.json) para a LLM; reimportar em Reimportar. Requer baseline
               publicada.
             </p>
@@ -700,12 +704,12 @@
         <div class="screen-guide-panel" data-screen-guide="import" hidden></div>
         <h2>Reimportar e decidir</h2>
         <p class="lead">Incorpore o pacote devolvido pela LLM e decida proposta a proposta.</p>
-        <h3>Incorporar pacote</h3>
-        <p id="impMeta">Ficheiro GET-PACKAGE (.json) devolvido pela LLM.</p>
-        <label for="impPkgFile">Pacote JSON</label>
+        <h3 data-help-key="import.get_package">Incorporar pacote</h3>
+        <p id="impMeta" class="choice-hint" data-help-key="import.get_package">Ficheiro GET-PACKAGE (.json) devolvido pela LLM.</p>
+        <label for="impPkgFile" data-help-key="import.get_package">Pacote JSON</label>
         <input type="file" id="impPkgFile" accept=".json,application/json" />
-        <button type="button" id="impPkgUpload" class="secondary">Importar pacote</button>
-        <button type="button" id="impPkgMerge">Rever alterações</button>
+        <button type="button" id="impPkgUpload" class="secondary" data-help-key="import.get_package">Importar pacote</button>
+        <button type="button" id="impPkgMerge" data-help-key="import.get_package_review">Rever alterações</button>
         <h3>Reimportação legada</h3>
         <label for="impFile" data-help-key="import.file">Ficheiro fascicle_roundtrip</label>
         <input type="file" id="impFile" accept=".json,application/json" />
