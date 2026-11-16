@@ -309,6 +309,12 @@
       "topic": "llm_generation_package",
       "decision": "Pacote geração GET-LLM em três camadas (project_master, fascicle índice+manifesto, blocos em ficheiros separados no ZIP) ortogonal ao roundtrip reimportável; Markdown derivado em cada nível.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-052",
+      "topic": "workbook_export",
+      "decision": "Exportação Excel workbook-import-v1 a partir do SQLite (projecto e biblioteca) gera artefacto derivado com o mesmo mapa de importação; reentrada via migrate mantém apply append-only com avisos no dry-run quando códigos já existem.",
+      "status": "accepted"
     }
   ]
 }

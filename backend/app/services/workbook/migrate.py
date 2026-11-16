@@ -5,6 +5,7 @@ from pathlib import Path
 from app.config import AppSettings
 from app.services.workbook.apply import WorkbookApplyError, apply_workbook_bundle
 from app.services.workbook.constants import CONFIRM_PHRASE
+from app.services.workbook.export_diff import append_only_collision_warnings
 from app.services.workbook.extract import extract_workbook
 from app.services.workbook.stage import write_migration_report
 from app.services.workbook.types import MigrationRunResult
@@ -23,6 +24,7 @@ def run_workbook_migration(
     dry_run: bool = True,
     confirm: str | None = None,
     run_id: str | None = None,
+    compare_project_id: str | None = None,
 ) -> MigrationRunResult:
     workbook_path = workbook_path.resolve()
     if not workbook_path.is_file():
@@ -32,6 +34,11 @@ def run_workbook_migration(
     if bundle is None:
         blocking = sum(1 for i in issues if i.severity == "error")
         raise WorkbookMigrationError(f"Extração falhou com {blocking} erro(s) bloqueante(s).")
+
+    if compare_project_id:
+        issues.extend(
+            append_only_collision_warnings(app_settings, compare_project_id, bundle)
+        )
 
     try:
         with workspace_session(app_settings) as (_session, paths):

@@ -77,9 +77,20 @@
 
       <section class="route-panel card " data-route="workbook">
         <div class="screen-guide-panel" data-screen-guide="workbook" hidden></div>
-        <h2>Importação Excel GET v1</h2>
-        <p class="lead">Modelo controlado: transferir, validar, pré-importação (dry-run) e consolidação na base de dados.</p>
+        <h2>Workbook Excel GET v1</h2>
+        <p class="lead">Exportar da base, editar em massa, validar estrutura, dry-run e consolidar — modelo controlado workbook-import-v1.</p>
         <p id="wbStatus" class="route-status" hidden></p>
+
+        <details class="compact-section compact-section--content" open>
+          <summary>0. Exportar da base</summary>
+          <div class="compact-section__body">
+            <p class="choice-hint" data-help-key="workbook.export_cycle">
+              Gera um .xlsx com dados actuais; depois edite offline e volte aos passos 2–4.
+            </p>
+            <button type="button" id="wbExportLibrary" class="secondary" data-help-key="workbook.export_library">Exportar biblioteca</button>
+            <button type="button" id="wbExportProject" class="secondary" data-help-key="workbook.export_project">Exportar projecto activo</button>
+          </div>
+        </details>
 
         <details class="compact-section compact-section--content" open>
           <summary>1. Modelo</summary>

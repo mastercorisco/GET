@@ -20,12 +20,22 @@ Versão do mapeamento: `workbook-import-v1` (ver `schemas/workbook-import-v1.sch
 | `05_A01_Alocacao` | `technical_instance` (`kind=function`, `export_code=function_id`) |
 | `06_Mapa_Normativo` | `reference` (`library`) |
 
+## Exportação (da base)
+
+| Âmbito | API | Destino |
+|--------|-----|---------|
+| Biblioteca | `GET /api/workbook/export/library` | Folhas `04_Artefactos_GET`, `06_Mapa_Normativo` (+ cabeçalhos nas restantes) |
+| Projecto | `GET /api/workbook/export/project/{id}` ou `?project_id=` | Todas as folhas v1 mapeadas ao SQLite |
+
+Cópia em `{workspace}/exports/workbook/`. O ficheiro gerado obedece ao mesmo mapa `workbook-import-v1` e pode seguir o ciclo validar → dry-run → consolidar.
+
 ## Fluxo operacional
 
 Pela **UI** (ecrã «Importação Excel») ou **API**:
 
 | Passo | UI / API | Efeito |
 |-------|----------|--------|
+| 0 | Exportar biblioteca / projecto | Download `GET /api/workbook/export/...` |
 | 1 | Transferir modelo | Download `GET /api/workbook/templates/{id}` |
 | 2 | `POST /api/workbook/validate` | Validação estrutural (sem BD) |
 | 3 | `POST /api/workbook/migrate` (multipart, `dry_run=true`) | Upload para `{workspace}/imports/workbook/{run_id}/source.xlsx` + relatório |

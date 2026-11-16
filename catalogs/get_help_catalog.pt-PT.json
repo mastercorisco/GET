@@ -404,6 +404,60 @@
       ],
       "related_screen": "settings"
     },
+    "workbook.export_cycle": {
+      "label": "Ciclo exportar / importar",
+      "short_help": "Exportar da base, editar offline, validar e consolidar.",
+      "definition": "Workbook v1 gerado pela app ou modelo vazio; reentrada append-only.",
+      "guiding_question": "Quer alterar muitas linhas de uma vez?",
+      "instructions": "Exporte, edite no Excel, valide estrutura, dry-run e só depois consolide.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Suporte a alterações em massa no mapa workbook-import-v1.",
+      "workflow_context": "Importação Excel, passo 0.",
+      "when_to_use": "Antes de migração inicial ou enriquecimento grande.",
+      "what_happens_next": "Ficheiro em exports/workbook e reutilização dos passos 2–4.",
+      "related_concepts": ["project", "workspace"],
+      "related_screen": "workbook",
+      "common_confusions": ["Editar códigos existentes não actualiza a BD no MVP (avisos no dry-run)."]
+    },
+    "workbook.export_library": {
+      "label": "Exportar biblioteca",
+      "short_help": "Excel com referências e artefactos globais.",
+      "definition": "GET /api/workbook/export/library",
+      "guiding_question": "Precisa de editar referências em massa?",
+      "instructions": "Use o ficheiro gerado como base; não altere cabeçalhos da linha 4.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Artefacto derivado da biblioteca EDA no formato workbook v1.",
+      "workflow_context": "Importação Excel, passo 0.",
+      "when_to_use": "Manutenção de mapa normativo e artefactos reutilizáveis.",
+      "what_happens_next": "Validar e dry-run; apply pode criar projecto ou enriquecer biblioteca.",
+      "related_concepts": ["workspace"],
+      "related_screen": "workbook",
+      "common_confusions": []
+    },
+    "workbook.export_project": {
+      "label": "Exportar projecto activo",
+      "short_help": "Excel com fascículos, blocos, filosofia, A01 e mapa.",
+      "definition": "GET /api/workbook/export/project?project_id=",
+      "guiding_question": "Qual projecto está activo?",
+      "instructions": "Seleccione o projecto no ecrã Projectos antes de exportar.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Snapshot derivado do SQLite com códigos documentais live.",
+      "workflow_context": "Importação Excel, passo 0.",
+      "when_to_use": "Revisão estrutural ampla fora da UI.",
+      "what_happens_next": "Consolidar em projecto existente acrescenta apenas linhas novas.",
+      "related_concepts": ["project", "fascicle"],
+      "related_screen": "workbook",
+      "common_confusions": []
+    },
     "workbook.template_library": {
       "label": "Modelo biblioteca",
       "short_help": "Folhas para conhecimento transversal e referências.",
@@ -2446,10 +2500,11 @@
       ]
     },
     "workbook": {
-      "title": "Importação Excel GET v1",
-      "objective": "Transferir modelo, validar, dry-run e consolidar no SQLite.",
+      "title": "Workbook Excel GET v1",
+      "objective": "Exportar da base ou modelo vazio; validar, dry-run e consolidar no SQLite.",
       "steps": [
-        "Transfira o modelo",
+        "Exporte biblioteca ou projecto (opcional)",
+        "Transfira o modelo vazio (se necessário)",
         "Valide a estrutura",
         "Execute dry-run",
         "Consolide com I_UNDERSTAND"
@@ -2457,6 +2512,7 @@
       "next": "project",
       "audience_note": "Apenas o template controlado v1; não é importador Excel universal. Enriquecimento de projecto existente é append-only.",
       "purpose_steps": [
+        "Exportação — descarregue o estado actual da biblioteca ou projecto activo (passo 0).",
         "Modelo — descarregue `project_import_v1` ou `library_import_v1` e preencha as folhas.",
         "Validação — confirma cabeçalhos e tipos sem tocar na base.",
         "Dry-run — gera relatório em migration_reports e preserva o upload em imports/workbook.",

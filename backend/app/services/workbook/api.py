@@ -46,6 +46,7 @@ def migrate_workbook_upload(
     filename: str,
     *,
     dry_run: bool = True,
+    compare_project_id: str | None = None,
 ) -> WorkbookMigrateResponse:
     _ = filename
     try:
@@ -59,6 +60,7 @@ def migrate_workbook_upload(
             path,
             dry_run=dry_run,
             run_id=run_id,
+            compare_project_id=compare_project_id,
         )
     except WorkbookMigrationError as exc:
         raise WorkbookApiError(str(exc)) from exc

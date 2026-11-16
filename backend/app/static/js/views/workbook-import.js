@@ -17,6 +17,8 @@ export function initWorkbookImport(router) {
   const targetNew = document.getElementById("wbTargetNew");
   const targetExisting = document.getElementById("wbTargetExisting");
   const openProjectBtn = document.getElementById("wbOpenProjectBtn");
+  const exportLibraryBtn = document.getElementById("wbExportLibrary");
+  const exportProjectBtn = document.getElementById("wbExportProject");
   const statusEl = document.getElementById("wbStatus");
 
   if (!tplLib || !migrateBtn) return;
@@ -54,6 +56,25 @@ export function initWorkbookImport(router) {
     });
     if (issues.length > 40) lines.push("…");
     container.textContent = lines.join("\n");
+  }
+
+  if (exportLibraryBtn) {
+    exportLibraryBtn.addEventListener("click", function () {
+      window.location.href = "/api/workbook/export/library";
+    });
+  }
+  if (exportProjectBtn) {
+    exportProjectBtn.addEventListener("click", function () {
+      const pActive = document.getElementById("pActive");
+      const projectId = pActive && pActive.value;
+      if (!projectId) {
+        setStatus("Seleccione o projecto activo no ecrã Projectos.", true);
+        return;
+      }
+      setStatus("");
+      window.location.href =
+        "/api/workbook/export/project?project_id=" + encodeURIComponent(projectId);
+    });
   }
 
   tplLib.addEventListener("click", function () {
@@ -102,6 +123,13 @@ export function initWorkbookImport(router) {
     const form = new FormData();
     form.append("file", migrateFile.files[0]);
     form.append("dry_run", "true");
+    if (targetExisting && targetExisting.checked) {
+      const pActive = document.getElementById("pActive");
+      const projectId = pActive && pActive.value;
+      if (projectId) {
+        form.append("project_id", projectId);
+      }
+    }
     fetch("/api/workbook/migrate", { method: "POST", body: form })
       .then(function (res) {
         return res.json().then(function (body) {

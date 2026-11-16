@@ -12,6 +12,7 @@ from app.config import set_active_workspace_root
 from app.deps import get_settings
 from app.main import app
 from app.services.workbook.constants import DATA_SHEETS, HEADER_ROW, SHEET_A01, SHEET_BLOCOS, SHEET_FASCICULOS
+from app.services.workbook.mapping import mapping_document
 from app.services.workbook.mapping import SHEET_SPECS
 from app.services.workbook.migrate import run_workbook_migration
 from app.services.workbook.template_builder import build_workbook_template
@@ -248,3 +249,144 @@ def test_workbook_migrate_api_existing_project(client: TestClient, tmp_path: Pat
 
     nodes_after = client.get(f"/api/projects/{project_id}/document-nodes").json()["nodes"]
     assert sum(1 for n in nodes_after if n["node_type"] == "fascicle") == fascicle_count
+
+
+def test_workbook_export_project_validates(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    data = _minimal_workbook_bytes()
+    dry = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true"},
+        files={"file": ("test.xlsx", data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    applied = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": dry.json()["run_id"],
+            "confirm": "I_UNDERSTAND",
+            "target": "new_project",
+        },
+    )
+    project_id = applied.json()["project_id"]
+
+    export = client.get(f"/api/workbook/export/project/{project_id}")
+    assert export.status_code == 200
+    xlsx = export.content
+    validation = validate_workbook_bytes(xlsx)
+    assert validation["valid"] is True
+
+    from openpyxl import load_workbook
+
+    loaded = load_workbook(BytesIO(xlsx))
+    assert SHEET_FASCICULOS in loaded.sheetnames
+    assert SHEET_BLOCOS in loaded.sheetnames
+    for spec in mapping_document()["sheets"]:
+        if spec["name"] in DATA_SHEETS:
+            assert spec["name"] in loaded.sheetnames
+
+
+def test_workbook_export_roundtrip_add_fascicle(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    data = _minimal_workbook_bytes()
+    dry = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true"},
+        files={"file": ("seed.xlsx", data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    project_id = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": dry.json()["run_id"],
+            "confirm": "I_UNDERSTAND",
+            "target": "new_project",
+        },
+    ).json()["project_id"]
+
+    from openpyxl import load_workbook
+
+    xlsx = client.get(f"/api/workbook/export/project/{project_id}").content
+    wb = load_workbook(BytesIO(xlsx))
+    sheet = wb[SHEET_FASCICULOS]
+    row = 5
+    while sheet.cell(row=row, column=1).value:
+        row += 1
+    sheet.cell(row=row, column=1, value="F99")
+    sheet.cell(row=row, column=2, value="Fascículo exportado")
+    sheet.cell(row=row, column=3, value="Projeto")
+    buffer = BytesIO()
+    wb.save(buffer)
+    edited = buffer.getvalue()
+
+    dry2 = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true", "project_id": project_id},
+        files={"file": ("edited.xlsx", edited, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    assert dry2.status_code == 200
+    assert dry2.json()["status"] == "ready"
+    run_id = dry2.json()["run_id"]
+
+    result = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": run_id,
+            "confirm": "I_UNDERSTAND",
+            "target": "existing_project",
+            "project_id": project_id,
+        },
+    )
+    assert result.status_code == 200
+    assert result.json()["summary"]["fascicles_added"] == 1
+
+
+def test_workbook_export_append_only_warning_on_edit(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    data = _minimal_workbook_bytes()
+    dry = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true"},
+        files={"file": ("seed.xlsx", data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    project_id = client.post(
+        "/api/workbook/migrate/apply",
+        json={
+            "run_id": dry.json()["run_id"],
+            "confirm": "I_UNDERSTAND",
+            "target": "new_project",
+        },
+    ).json()["project_id"]
+
+    from openpyxl import load_workbook
+
+    xlsx = client.get(f"/api/workbook/export/project/{project_id}").content
+    wb = load_workbook(BytesIO(xlsx))
+    sheet = wb[SHEET_FASCICULOS]
+    sheet.cell(row=5, column=2, value="Título alterado no Excel")
+    buffer = BytesIO()
+    wb.save(buffer)
+
+    dry2 = client.post(
+        "/api/workbook/migrate",
+        data={"dry_run": "true", "project_id": project_id},
+        files={
+            "file": (
+                "edited.xlsx",
+                buffer.getvalue(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+        },
+    )
+    issues = dry2.json().get("issues") or []
+    msgs = " ".join(i.get("message", "") for i in issues)
+    assert "append-only" in msgs.lower() or "não actualiza" in msgs.lower()
+
+
+def test_workbook_export_library(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    client.post(
+        "/api/references",
+        json={"scope_type": "library", "title": "Norma teste E08", "citation": "uso geral"},
+    )
+    export = client.get("/api/workbook/export/library")
+    assert export.status_code == 200
+    assert validate_workbook_bytes(export.content)["valid"] is True

@@ -434,7 +434,7 @@ Pacotes preservados:
 - Script específico para o workbook GET existente.
 - Relatório de migração.
 - Validação manual antes de consolidação.
-- Importações futuras apenas por templates XLSX gerados pela aplicação.
+- Importações futuras apenas por templates XLSX gerados pela aplicação (inclui exportação workbook v1 a partir do SQLite — biblioteca ou projecto — no ecrã Início / Importação Excel).
 
 ## 26. Fora do MVP
 
