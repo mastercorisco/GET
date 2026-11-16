@@ -2170,7 +2170,9 @@
       "what_happens_next": "Grava JSON e MD na pasta exports; não é reimportável.",
       "related_concepts": ["exchange_package", "development_point"],
       "related_screen": "block-editor",
-      "common_confusions": ["Não é o pacote em camadas do ecrã Exportar."]
+      "common_confusions": [
+        "Não é GET-PACKAGE (ida e volta) nem o pacote em camadas do ecrã Exportar."
+      ]
     },
     "export.llm_context": {
       "label": "Contexto LLM do projecto",
@@ -2244,7 +2246,7 @@
       "label": "Exportação GET-LLM (bloco)",
       "summary": "JSON completo + Markdown derivado por bloco para a LLM externa.",
       "role_in_get": "Sai da Preparação do bloco; contrato GET-LLM (get_llm_export.schema.json), com secção preparation para pontos e premissas.",
-      "not_this": "Não é export mestre/fascículo roundtrip nem ficheiro Word."
+      "not_this": "Não é GET-PACKAGE (reimportável), export mestre/fascículo roundtrip nem ficheiro Word."
     },
     "project": {
       "label": "Projeto",

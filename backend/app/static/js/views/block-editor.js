@@ -300,13 +300,17 @@ export function initBlockEditor(router) {
       })
       .then(function (payload) {
         const st = document.getElementById("beStatus");
-        if (st) {
-          st.textContent =
-            "Pacote importado (" +
-            payload.import_id.slice(0, 8) +
-            "…). Abra Reimportar para rever alterações.";
-        }
+        if (st) st.textContent = "Pacote importado. A abrir Reimportar…";
         input.value = "";
+        document.dispatchEvent(
+          new CustomEvent("get:package-imported", {
+            detail: {
+              import_id: payload.import_id,
+              project_id: projectId,
+              auto_review: true,
+            },
+          })
+        );
       })
       .catch(function (err) {
         const st = document.getElementById("beStatus");

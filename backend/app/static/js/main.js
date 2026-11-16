@@ -37,6 +37,7 @@ let _blockPrepHintShown = false;
 initLegacyApp({
   mountDocumentTree: mountDocumentTree,
   mountTechnicalTree: mountTechnicalTree,
+  router: router,
   onBlockSelect: function (blockId) {
     openBlockEditor(blockId, router);
     if (!_blockPrepHintShown) {
@@ -44,7 +45,7 @@ initLegacyApp({
       const st = document.getElementById("beStatus");
       if (st) {
         st.textContent =
-          "Dica: use Preparação do bloco para definir pontos antes de exportar o pacote exchange.";
+          "Dica: defina pontos, depois use «Exportar pacote» (GET-PACKAGE) para discutir na LLM e voltar a importar.";
       }
     }
   },

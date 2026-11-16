@@ -398,21 +398,34 @@
                   </div>
                 </details>
                 <details class="compact-section compact-section--content" id="beExportPanel" open>
-                  <summary data-help-key="exchange_package">Exportação para LLM (GET-LLM)</summary>
+                  <summary>Pacote e LLM (bloco)</summary>
                   <div class="compact-section__body">
-                    <p class="choice-hint">
-                      Gera JSON completo e Markdown derivado na pasta de exportações do workspace.
-                    </p>
-                    <label class="choice-inline" data-help-key="block.include_draft">
-                      <input type="checkbox" id="beIncludeDraft" />
-                      <span>Incluir rascunhos na exportação</span>
-                    </label>
-                    <div class="be-points-toolbar">
-                      <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
-                      <button type="button" id="beExportWrite" class="secondary">Exportar GET-LLM</button>
-                      <button type="button" id="bePkgExport">Exportar pacote</button>
-                      <input type="file" id="bePkgImport" accept=".json,application/json" hidden />
-                      <button type="button" id="bePkgImportBtn" class="secondary">Importar pacote</button>
+                    <div class="card-surface be-subsection" style="margin-bottom: 1rem">
+                      <h4 class="section-label">Pacote para discussão (ida e volta)</h4>
+                      <p class="choice-hint">
+                        Um ficheiro <strong>GET-PACKAGE</strong> (.json): exporte, trabalhe na LLM e importe para
+                        rever alterações na app. Requer baseline publicada.
+                      </p>
+                      <div class="be-points-toolbar">
+                        <button type="button" id="bePkgExport">Exportar pacote</button>
+                        <input type="file" id="bePkgImport" accept=".json,application/json" hidden />
+                        <button type="button" id="bePkgImportBtn" class="secondary">Importar pacote</button>
+                      </div>
+                    </div>
+                    <div class="card-surface be-subsection">
+                      <h4 class="section-label" data-help-key="exchange_package">GET-LLM (só leitura)</h4>
+                      <p class="choice-hint">
+                        JSON completo e Markdown na pasta <code>exports</code> — para redação na LLM.
+                        <strong>Não reimportável.</strong>
+                      </p>
+                      <label class="choice-inline" data-help-key="block.include_draft">
+                        <input type="checkbox" id="beIncludeDraft" />
+                        <span>Incluir rascunhos na exportação</span>
+                      </label>
+                      <div class="be-points-toolbar">
+                        <button type="button" id="beExportPreview" class="secondary">Pré-visualizar JSON</button>
+                        <button type="button" id="beExportWrite" class="secondary">Exportar GET-LLM</button>
+                      </div>
                     </div>
                     <p id="beStatus" class="lead"></p>
                     <pre id="bePreview" class="tree-ascii be-preview-json"></pre>
@@ -462,8 +475,8 @@
                   <p class="field-help-section-title">Semântica do pacote</p>
                   <div id="prepExchangeSemantics" class="prep-exchange"></div>
                   <p class="lead">
-                    A exportação (pré-visualizar JSON, Exportar pacote) está no painel principal, secção
-                    «Exportação para LLM».
+                    No painel principal: <strong>Exportar pacote</strong> (GET-PACKAGE, reimportável) e, à parte,
+                    <strong>GET-LLM</strong> (só leitura).
                   </p>
                 </div>
               </aside>
@@ -514,7 +527,8 @@
               <summary>Exportar estrutura</summary>
               <div class="compact-section__body">
                 <p class="choice-hint" data-help-key="structure_export.overview">
-                  Exportação legível (não reimportável). Códigos documentais do estado actual do projecto.
+                  Exportação legível (não reimportável). Códigos documentais do estado actual do projecto. Para devolver
+                  alterações à base, use <strong>GET-PACKAGE</strong> na Preparação do bloco ou em Exportar.
                 </p>
                 <p id="docExportRootHint" class="choice-hint"></p>
                 <label for="docExportFormat" data-help-key="structure_export.format">Formato</label>
@@ -610,8 +624,20 @@
             <button type="button" id="expBaselinePublish" class="secondary">Publicar baseline</button>
           </div>
           <div class="card-surface">
-            <h3>Roundtrip (reimportação)</h3>
-            <p class="choice-hint" data-help-key="export.roundtrip">Pacotes para discussão e devolução estruturada à app. Requer baseline publicada.</p>
+            <h3>Pacote para discussão (fascículo)</h3>
+            <p class="choice-hint">
+              Ficheiro único <strong>GET-PACKAGE</strong> (.json) para a LLM; reimportar em Reimportar. Requer baseline
+              publicada.
+            </p>
+            <label for="expFasciclePkg" data-help-key="export.fascicle">Fascículo (raiz)</label>
+            <select id="expFasciclePkg"><option value="">—</option></select>
+            <button type="button" id="expPackageBtn">Exportar pacote</button>
+          </div>
+          <div class="card-surface">
+            <h3>Roundtrip legado (reimportação)</h3>
+            <p class="choice-hint" data-help-key="export.roundtrip">
+              Formato fascicle_roundtrip / mestre (avançado). Preferir GET-PACKAGE acima.
+            </p>
             <label for="expProfile" data-help-key="export.profile">Perfil</label>
             <select id="expProfile">
               <option value="discussion">discussion</option>
@@ -628,8 +654,6 @@
             <label for="expFascicle" data-help-key="export.fascicle">Fascículo (raiz)</label>
             <select id="expFascicle"><option value="">—</option></select>
             <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo roundtrip</button>
-            <button type="button" id="expPackageBtn">Exportar pacote</button>
-            <p class="choice-hint">Um ficheiro JSON para discutir na LLM e reimportar depois.</p>
           </div>
           <div class="card-surface">
             <h3>Geração LLM (GET-LLM)</h3>

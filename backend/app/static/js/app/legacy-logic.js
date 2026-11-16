@@ -3,6 +3,7 @@ export function initLegacyApp(deps = {}) {
   const mountTechnicalTree = deps.mountTechnicalTree;
   const onWorkspaceChange = deps.onWorkspaceChange;
   const onBlockSelect = deps.onBlockSelect;
+  const appRouter = deps.router;
 const rootPath = document.getElementById("rootPath");
       const userName = document.getElementById("userName");
       const createBtn = document.getElementById("createBtn");
@@ -566,7 +567,6 @@ const rootPath = document.getElementById("rootPath");
         document.getElementById("impProposals").replaceChildren();
         document.getElementById("impConsolidate").hidden = true;
         activeMergeSessionId = null;
-        lastUploadedImportIsPackage = false;
       }
 
       function renderProposals(projectId, merge) {
@@ -646,6 +646,7 @@ const rootPath = document.getElementById("rootPath");
       async function loadExportSection(projectId) {
         const meta = document.getElementById("expBaselineMeta");
         const fascicleSelect = document.getElementById("expFascicle");
+        const pkgFascicleSelect = document.getElementById("expFasciclePkg");
         const llmFascicleSelect = document.getElementById("expLlmFascicle");
         const list = document.getElementById("expList");
         list.replaceChildren();
@@ -654,6 +655,10 @@ const rootPath = document.getElementById("rootPath");
         empty.value = "";
         empty.textContent = "—";
         fascicleSelect.appendChild(empty);
+        if (pkgFascicleSelect) {
+          pkgFascicleSelect.replaceChildren();
+          pkgFascicleSelect.appendChild(empty.cloneNode(true));
+        }
         if (llmFascicleSelect) {
           const keep = llmFascicleSelect.querySelector('option[value=""]');
           llmFascicleSelect.replaceChildren();
@@ -691,6 +696,12 @@ const rootPath = document.getElementById("rootPath");
             opt.value = row.id;
             opt.textContent = label;
             fascicleSelect.appendChild(opt);
+            if (pkgFascicleSelect) {
+              const optPkg = document.createElement("option");
+              optPkg.value = row.id;
+              optPkg.textContent = label;
+              pkgFascicleSelect.appendChild(optPkg);
+            }
             if (llmFascicleSelect) {
               const opt2 = document.createElement("option");
               opt2.value = row.id;
@@ -1137,6 +1148,7 @@ const rootPath = document.getElementById("rootPath");
       });
       document.getElementById("pActive").addEventListener("change", function () {
         lastUploadedImportId = null;
+        lastUploadedImportIsPackage = false;
         loadProjectDetail(this.value).catch(function (err) { setProjectError(err.message); });
       });
       document.getElementById("iCreate").addEventListener("click", function () {
@@ -1489,9 +1501,10 @@ const rootPath = document.getElementById("rootPath");
             });
           })
           .then(function (payload) {
-            lastUploadedImportId = payload.import_id;
-            lastUploadedImportIsPackage = true;
-            return loadImportSection(projectId);
+            return loadImportSection(projectId).then(function () {
+              lastUploadedImportId = payload.import_id;
+              lastUploadedImportIsPackage = true;
+            });
           })
           .then(function () { setImportStatus("Pacote aceite. Use Rever alterações."); })
           .catch(function (err) { setImportStatus(err.message); });
@@ -1559,9 +1572,35 @@ const rootPath = document.getElementById("rootPath");
           })
           .catch(function (err) { setImportStatus(err.message); });
       });
+      document.addEventListener("get:package-imported", function (ev) {
+        const detail = ev.detail || {};
+        const importId = detail.import_id;
+        if (!importId) return;
+        lastUploadedImportId = importId;
+        lastUploadedImportIsPackage = true;
+        const projectId = detail.project_id || document.getElementById("pActive").value;
+        if (!projectId) return;
+        loadImportSection(projectId)
+          .then(function () {
+            if (appRouter) appRouter.navigate("import");
+            setImportStatus("Pacote importado.");
+            if (detail.auto_review) {
+              setImportStatus("A analisar alterações do pacote…");
+              const mergeBtn = document.getElementById("impPkgMerge");
+              if (mergeBtn) mergeBtn.click();
+            } else {
+              setImportStatus("Pacote importado. Prima «Rever alterações».");
+            }
+          })
+          .catch(function (err) {
+            setImportStatus(err.message);
+          });
+      });
+
       document.getElementById("expPackageBtn").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;
-        const fascicleId = document.getElementById("expFascicle").value;
+        const pkgSel = document.getElementById("expFasciclePkg");
+        const fascicleId = (pkgSel && pkgSel.value) || document.getElementById("expFascicle").value;
         if (!projectId || !fascicleId) {
           setExportStatus("Seleccione projecto e fascículo.");
           return;
