@@ -95,6 +95,28 @@ def test_structure_export_subtree_excludes_other_fascicle(client: TestClient, tm
     assert "Fasc B" not in res.text
 
 
+def test_pdf_point_markup_no_html_escape_or_status() -> None:
+    from app.schemas.structure_export import PointSummarySnapshot
+    from app.services.structure_export.render_pdf import _point_markup, _xml_escape
+
+    p = PointSummarySnapshot(
+        id="x",
+        order=1,
+        title="Central Termoelétrica",
+        status="ready",
+        llm_freedom="strict",
+        premise_count=0,
+        must_include_count=0,
+        open_questions_count=0,
+        acceptance_criteria_count=0,
+    )
+    markup = _point_markup(p)
+    assert markup == "<b>1. Central Termoelétrica</b>"
+    assert "ready" not in markup
+    assert "&lt;b&gt;" not in markup
+    assert _xml_escape("a<b>c") == "a&lt;b&gt;c"
+
+
 def test_structure_export_pdf_and_xmind(client: TestClient, tmp_path: Path) -> None:
     _workspace(client, tmp_path)
     pid, _, _ = _project_with_tree(client)
