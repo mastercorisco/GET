@@ -23,7 +23,7 @@ Assets servidos em `GET /static/...` via FastAPI `StaticFiles`.
 ## Navegação
 
 1. **Preparar workspace** — criar/abrir pasta de dados.
-2. **Importação Excel** — modelo v1: validar, dry-run e consolidar (novo projecto ou activo).
+2. **Importação Excel (workbook v1)** — exportar biblioteca ou projecto activo, editar offline, validar estrutura, dry-run e consolidar (`I_UNDERSTAND`; novo projecto ou enriquecimento append-only do activo).
 3. **Biblioteca** — conhecimento transversal, referências, terminologia.
 4. **Projecto** — criação, conhecimento do projecto, fichas, referências, overrides.
 5. **Estrutura documental** — árvore ASCII, exportação MD/PDF/XMind, associações.
