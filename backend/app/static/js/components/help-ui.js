@@ -428,8 +428,12 @@ export function attachFieldHelp(container, fieldKey, options) {
   const inputEl = options.inputEl;
   const onUseExample = options.onUseExample;
 
-  let label = container.querySelector("label");
-  if (!label && container.tagName === "LABEL") label = container;
+  let label = null;
+  if (container.tagName === "LABEL") {
+    label = container;
+  } else {
+    label = container.querySelector("label");
+  }
 
   if (_helpLevel === "detailed") {
     const existing = container.querySelector(".field-microhelp");
@@ -474,7 +478,7 @@ export function wireDeclarativeHelp(root) {
     if (wrap) {
       attachFieldHelp(wrap, key, { inputEl: input, onUseExample: onUse });
     } else {
-      attachFieldHelp(label.parentElement || label, key, {
+      attachFieldHelp(label, key, {
         inputEl: input,
         onUseExample: onUse,
       });

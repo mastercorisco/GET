@@ -114,13 +114,22 @@
         <details class="compact-section compact-section--content" open>
           <summary>4. Consolidar</summary>
           <div class="compact-section__body">
-            <fieldset>
+            <fieldset class="wb-target-fieldset">
               <legend data-help-key="workbook.apply_target">Destino</legend>
-              <label><input type="radio" name="wbTarget" id="wbTargetNew" value="new_project" checked /> Novo projecto</label>
-              <label><input type="radio" name="wbTarget" id="wbTargetExisting" value="existing_project" /> Projecto activo (ecrã Projectos)</label>
+              <label class="choice-inline wb-target-option">
+                <input type="radio" name="wbTarget" id="wbTargetNew" value="new_project" checked />
+                <span>Novo projecto</span>
+              </label>
+              <label class="choice-inline wb-target-option">
+                <input type="radio" name="wbTarget" id="wbTargetExisting" value="existing_project" />
+                <span>Projecto activo (ecrã Projectos)</span>
+              </label>
             </fieldset>
-            <label for="wbApplyConfirm" data-help-key="workbook.apply_confirm">Confirmação</label>
-            <input type="text" id="wbApplyConfirm" autocomplete="off" placeholder="I_UNDERSTAND" />
+            <label for="wbApplyConfirm" data-help-key="workbook.apply_confirm">Confirmação da consolidação</label>
+            <p class="choice-hint" id="wbApplyConfirmHint">
+              Depois de rever o relatório do dry-run, escreva exactamente <code>I_UNDERSTAND</code> no campo abaixo (mesma regra que o CLI).
+            </p>
+            <input type="text" id="wbApplyConfirm" class="wb-confirm-input" autocomplete="off" spellcheck="false" placeholder="I_UNDERSTAND" aria-describedby="wbApplyConfirmHint" />
             <button type="button" id="wbApplyBtn">Aplicar importação</button>
             <button type="button" id="wbOpenProjectBtn" class="secondary" hidden>Abrir projecto</button>
             <pre id="wbApplyOut" class="code-block" hidden></pre>
