@@ -505,6 +505,7 @@ const rootPath = document.getElementById("rootPath");
       }
 
       let activeMergeSessionId = null;
+      let activeMergeIsPackage = false;
       let lastUploadedImportId = null;
       let lastUploadedImportIsPackage = false;
       let lastFasciclePackageExport = null;
@@ -595,9 +596,16 @@ const rootPath = document.getElementById("rootPath");
         activeMergeSessionId = null;
       }
 
-      function renderProposals(projectId, merge) {
+      function renderProposals(projectId, merge, options) {
+        const opts = options || {};
         activeMergeSessionId = merge.id;
-        const mergeRoot = lastUploadedImportIsPackage
+        activeMergeIsPackage =
+          opts.isPackage !== undefined ? !!opts.isPackage : !!lastUploadedImportIsPackage;
+        if (!projectId) {
+          setImportStatus("Seleccione um projecto activo antes de decidir propostas.");
+          return;
+        }
+        const mergeRoot = activeMergeIsPackage
           ? "/api/projects/" + projectId + "/packages/merge/"
           : "/api/projects/" + projectId + "/imports/merge/";
         const target = document.getElementById("impProposals");
@@ -609,6 +617,7 @@ const rootPath = document.getElementById("rootPath");
         }
         merge.proposals.forEach(function (prop) {
           const box = document.createElement("div");
+          box.className = "card-surface";
           box.style.marginBottom = "1rem";
           const title = document.createElement("p");
           title.textContent =
@@ -616,24 +625,38 @@ const rootPath = document.getElementById("rootPath");
             (prop.conflict ? " · conflito" : "") +
             (prop.protected_touch ? " · protegido" : "");
           box.appendChild(title);
+          const decLabel = document.createElement("label");
+          decLabel.textContent = "Decisão";
           const dec = document.createElement("select");
           dec.innerHTML = "<option value=''>—</option><option value='accepted'>aceitar</option><option value='rejected'>rejeitar</option>";
           if (prop.decision) dec.value = prop.decision;
+          const destLabel = document.createElement("label");
+          destLabel.textContent = "Destino";
           const dest = document.createElement("select");
           dest.innerHTML = "<option value='project'>project</option><option value='library'>library</option><option value='pending'>pending</option><option value='rejected'>rejected</option>";
-          if (prop.destination) dest.value = prop.destination;
+          dest.value = prop.destination || "project";
+          const confirmLabel = document.createElement("label");
+          confirmLabel.className = "choice-inline";
           const confirm = document.createElement("input");
           confirm.type = "checkbox";
           confirm.checked = !!prop.confirmed_protected;
+          confirmLabel.appendChild(confirm);
+          confirmLabel.appendChild(document.createTextNode(" Confirmo toque em campos protegidos"));
+          if (prop.protected_touch) box.appendChild(confirmLabel);
           const save = document.createElement("button");
           save.type = "button";
-          save.textContent = "Guardar decisão";
+          save.textContent = prop.decision ? "Actualizar decisão" : "Guardar decisão";
           save.className = "secondary";
           save.addEventListener("click", function () {
             if (!dec.value) {
-              setImportStatus("Seleccione aceitar ou rejeitar.");
+              setImportStatus("Seleccione «aceitar» ou «rejeitar» antes de guardar.");
               return;
             }
+            if (prop.protected_touch && dec.value === "accepted" && !confirm.checked) {
+              setImportStatus("Proposta protegida: marque a confirmação ou rejeite.");
+              return;
+            }
+            save.disabled = true;
             knowledgeRequest(
               mergeRoot + merge.id + "/proposals/" + prop.id,
               {
@@ -641,21 +664,40 @@ const rootPath = document.getElementById("rootPath");
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   decision: dec.value,
-                  destination: dest.value,
+                  destination: dest.value || "project",
                   confirmed_protected: confirm.checked,
                 }),
               },
               "Falha ao guardar decisão."
-            ).then(function () { setImportStatus("Decisão guardada."); })
-              .catch(function (err) { setImportStatus(err.message); });
+            )
+              .then(function (updated) {
+                if (updated && updated.decision) dec.value = updated.decision;
+                save.textContent = "Decisão guardada";
+                setImportStatus(
+                  "Decisão guardada. «Consolidar decisões» aplica alterações aos pontos do bloco."
+                );
+              })
+              .catch(function (err) {
+                setImportStatus(err.message);
+              })
+              .finally(function () {
+                save.disabled = false;
+              });
           });
+          box.appendChild(decLabel);
           box.appendChild(dec);
+          box.appendChild(destLabel);
           box.appendChild(dest);
-          box.appendChild(confirm);
           box.appendChild(save);
           target.appendChild(box);
         });
-        document.getElementById("impConsolidate").hidden = false;
+        const consolidateBtn = document.getElementById("impConsolidate");
+        if (consolidateBtn) {
+          consolidateBtn.hidden = !merge.proposals.length;
+          consolidateBtn.textContent = activeMergeIsPackage
+            ? "Consolidar decisões (aplica pontos do bloco)"
+            : "Consolidar decisões";
+        }
       }
 
       function setExportStatus(message) {
@@ -808,7 +850,16 @@ const rootPath = document.getElementById("rootPath");
         if (!res.ok) {
           const payload = await res.json().catch(function () { return {}; });
           let msg = apiErrorMessage(payload, fallback);
-          if (res.status === 404 && (url.indexOf("/document-nodes") !== -1 || url.indexOf("/references") !== -1 || url.indexOf("/terminology") !== -1 || url.indexOf("/baselines") !== -1 || url.indexOf("/exports") !== -1 || url.indexOf("/imports") !== -1)) {
+          if (
+            res.status === 404 &&
+            (url.indexOf("/document-nodes") !== -1 ||
+              url.indexOf("/references") !== -1 ||
+              url.indexOf("/terminology") !== -1 ||
+              url.indexOf("/baselines") !== -1 ||
+              url.indexOf("/exports") !== -1 ||
+              url.indexOf("/imports") !== -1 ||
+              url.indexOf("/packages/merge") !== -1)
+          ) {
             msg =
               "Servidor desatualizado (rotas E04–E07 em falta). Feche todas as janelas \"GET\" do uvicorn e execute de novo Arranque GET.bat.";
           }
@@ -1541,24 +1592,75 @@ const rootPath = document.getElementById("rootPath");
           .then(function () { setImportStatus("Pacote aceite. Use Rever alterações."); })
           .catch(function (err) { setImportStatus(err.message); });
       });
-      document.getElementById("impPkgMerge").addEventListener("click", function () {
-        const projectId = document.getElementById("pActive").value;
-        const importId = lastUploadedImportId;
+      function acceptSafePackageProposals(projectId, merge) {
+        const mergeRoot = "/api/projects/" + projectId + "/packages/merge/";
+        const safe = (merge.proposals || []).filter(function (p) {
+          return !p.conflict && !p.protected_touch;
+        });
+        return safe.reduce(function (chain, prop) {
+          return chain.then(function () {
+            return knowledgeRequest(
+              mergeRoot + merge.id + "/proposals/" + prop.id,
+              {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  decision: "accepted",
+                  destination: "project",
+                  confirmed_protected: false,
+                }),
+              },
+              "Falha ao aceitar proposta."
+            );
+          });
+        }, Promise.resolve());
+      }
+
+      function runPackageMergeFlow(projectId, options) {
+        const opts = options || {};
+        const importId = opts.importId || lastUploadedImportId;
         if (!projectId || !importId || !lastUploadedImportIsPackage) {
-          setImportStatus("Importe um pacote GET-PACKAGE primeiro.");
-          return;
+          return Promise.reject(new Error("Importe um pacote GET-PACKAGE primeiro."));
         }
         setImportStatus("");
-        knowledgeRequest(
+        return knowledgeRequest(
           "/api/projects/" + projectId + "/packages/imports/" + importId + "/merge",
           { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" },
           "Falha ao analisar pacote."
-        )
-          .then(function (merge) {
-            renderProposals(projectId, merge);
-            setImportStatus("Alterações: " + merge.proposals.length + " proposta(s).");
-          })
-          .catch(function (err) { setImportStatus(err.message); });
+        ).then(function (merge) {
+          renderProposals(projectId, merge, { isPackage: true });
+          const n = merge.proposals ? merge.proposals.length : 0;
+          if (!n) {
+            setImportStatus("Sem propostas — o JSON devolvido coincide com a base da exportação.");
+            return merge;
+          }
+          setImportStatus("Alterações: " + n + " proposta(s).");
+          if (opts.autoApplyBlock && (opts.scopeKind || "") === "block") {
+            setImportStatus("A aceitar propostas sem conflito…");
+            return acceptSafePackageProposals(projectId, merge).then(function () {
+              return knowledgeRequest(
+                "/api/projects/" + projectId + "/packages/merge/" + merge.id + "/consolidate",
+                { method: "POST" },
+                "Falha ao consolidar."
+              ).then(function (row) {
+                setImportStatus("Bloco actualizado. Backup: " + row.backup_id);
+                document.dispatchEvent(new CustomEvent("get:package-consolidated", { detail: { scope_kind: "block" } }));
+                return merge;
+              });
+            });
+          }
+          setImportStatus(
+            "Revise cada proposta (aceitar/rejeitar), guarde, depois «Consolidar» para aplicar ao bloco."
+          );
+          return merge;
+        });
+      }
+
+      document.getElementById("impPkgMerge").addEventListener("click", function () {
+        const projectId = document.getElementById("pActive").value;
+        runPackageMergeFlow(projectId, {}).catch(function (err) {
+          setImportStatus(err.message);
+        });
       });
       document.getElementById("impMerge").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;
@@ -1583,7 +1685,7 @@ const rootPath = document.getElementById("rootPath");
           "Falha no merge."
         )
           .then(function (merge) {
-            renderProposals(projectId, merge);
+            renderProposals(projectId, merge, { isPackage: false });
             setImportStatus("Merge concluído: " + merge.proposals.length + " proposta(s).");
           })
           .catch(function (err) { setImportStatus(err.message); });
@@ -1594,7 +1696,7 @@ const rootPath = document.getElementById("rootPath");
           setImportStatus("Execute merge antes de consolidar.");
           return;
         }
-        const consolidateUrl = lastUploadedImportIsPackage
+        const consolidateUrl = activeMergeIsPackage
           ? "/api/projects/" + projectId + "/packages/merge/" + activeMergeSessionId + "/consolidate"
           : "/api/projects/" + projectId + "/imports/merge/" + activeMergeSessionId + "/consolidate";
         knowledgeRequest(consolidateUrl, { method: "POST" }, "Falha ao consolidar.")
@@ -1618,8 +1720,13 @@ const rootPath = document.getElementById("rootPath");
             setImportStatus("Pacote importado.");
             if (detail.auto_review) {
               setImportStatus("A analisar alterações do pacote…");
-              const mergeBtn = document.getElementById("impPkgMerge");
-              if (mergeBtn) mergeBtn.click();
+              runPackageMergeFlow(projectId, {
+                importId: importId,
+                scopeKind: detail.scope_kind || "block",
+                autoApplyBlock: true,
+              }).catch(function (err) {
+                setImportStatus(err.message);
+              });
             } else {
               setImportStatus("Pacote importado. Prima «Rever alterações».");
             }

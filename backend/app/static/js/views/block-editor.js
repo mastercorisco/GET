@@ -241,6 +241,11 @@ export function initBlockEditor(router) {
   const root = document.getElementById("block-editor-root");
   if (!root) return;
 
+  document.addEventListener("get:package-consolidated", function (ev) {
+    if ((ev.detail && ev.detail.scope_kind) !== "block") return;
+    if (activeBlockId) refreshBlockEditor();
+  });
+
   initBlockPrepHelpDrawer();
   initBlockPrepPanel(router);
   applyPackageBriefTemplate("bePkgBriefNotes", "initBlockEditor");
@@ -373,6 +378,7 @@ export function initBlockEditor(router) {
             detail: {
               import_id: payload.import_id,
               project_id: projectId,
+              scope_kind: payload.scope_kind || "block",
               auto_review: true,
             },
           })

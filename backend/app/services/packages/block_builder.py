@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 from typing import Any
 
@@ -89,3 +90,12 @@ def build_block_payload(session: Session, block_id: str) -> dict[str, Any]:
         "development_points": point_payloads,
         "premises": premise_payloads,
     }
+
+
+def normalize_block_merge_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Alinha listas de pontos para comparação three-way no merge."""
+    out = copy.deepcopy(payload)
+    for pt in out.get("development_points") or []:
+        if isinstance(pt, dict):
+            pt["lists"] = normalize_point_lists(pt.get("lists"))
+    return out

@@ -242,6 +242,18 @@ def test_fascicle_package_roundtrip(client: TestClient, tmp_path: Path) -> None:
     assert export_id.startswith("PKG-FASC")
 
 
+def test_block_export_writes_merge_base(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    assert export.status_code == 200
+    data = export.json()
+    merge_base = Path(data["file_path"]).parent / "merge_base.json"
+    assert merge_base.is_file()
+
+
 def test_block_package_roundtrip(client: TestClient, tmp_path: Path) -> None:
     pid, block_id, point_id = _setup_block(client, tmp_path)
     export = client.post(

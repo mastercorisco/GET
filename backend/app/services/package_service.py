@@ -27,7 +27,7 @@ from app.services.imports.consolidate import ConsolidateError, _consolidate_in_s
 from app.services.imports.ingest import IngestError, new_import_id, parse_upload_bytes, write_import_file
 from app.services.imports.materialize import materialize_current_package
 from app.services.imports.merge import build_merge_proposals, new_proposal_id
-from app.services.packages.block_builder import build_block_payload
+from app.services.packages.block_builder import build_block_payload, normalize_block_merge_payload
 from app.services.packages.block_consolidate import apply_block_proposals
 from app.services.packages.block_merge import build_block_merge_proposals
 from app.services.packages.envelope import package_brief_text, unwrap_block_payload, unwrap_fascicle_payload, wrap_package
@@ -35,8 +35,19 @@ from app.services.packages.validate_strict import PackageValidationError, valida
 from app.services.workspace_service import workspace_session
 
 
+MERGE_BASE_FILENAME = "merge_base.json"
+
+
 class PackageError(Exception):
     pass
+
+
+def _load_package_merge_base(export_record: ExportRecord) -> dict:
+    export_path = Path(export_record.file_path)
+    merge_base = export_path.parent / MERGE_BASE_FILENAME
+    if merge_base.is_file():
+        return json.loads(merge_base.read_text(encoding="utf-8"))
+    return load_base_package(export_record)
 
 
 def _utcnow() -> datetime:
@@ -126,6 +137,8 @@ def export_package(
         text = dumps_deterministic(pkg)
         json_path = out_dir / filename
         json_path.write_text(text, encoding="utf-8")
+        merge_base_path = out_dir / MERGE_BASE_FILENAME
+        merge_base_path.write_text(text, encoding="utf-8")
         sha = sha256_hex(text)
 
         record = session.scalar(select(ExportRecord).where(ExportRecord.export_id == export_id))
@@ -190,6 +203,13 @@ def import_package(
                 export_record = resolve_export_record(session, project_id, export_id)
             except BaseLoadError:
                 export_record = None
+        if export_record is not None:
+            base_src = Path(export_record.file_path).parent / MERGE_BASE_FILENAME
+            if not base_src.is_file():
+                base_src = Path(export_record.file_path)
+            if base_src.is_file():
+                snap = dest.parent / MERGE_BASE_FILENAME
+                snap.write_text(base_src.read_text(encoding="utf-8"), encoding="utf-8")
 
         record = ImportRecord(
             id=import_id,
@@ -264,10 +284,14 @@ def run_package_merge(app_settings: AppSettings, project_id: str, import_id: str
             block = session.get(DocumentNode, block_id)
             if block is None or block.project_id != project_id:
                 raise PackageError("Bloco inválido.")
-            base_raw = json.loads(Path(export_record.file_path).read_text(encoding="utf-8"))
-            base_block = unwrap_block_payload(base_raw)
-            current_block = build_block_payload(session, block.id)
-            returned_block = unwrap_block_payload(pkg)
+            snap = Path(import_row.raw_path).parent / MERGE_BASE_FILENAME
+            if snap.is_file():
+                base_raw = json.loads(snap.read_text(encoding="utf-8"))
+            else:
+                base_raw = _load_package_merge_base(export_record)
+            base_block = normalize_block_merge_payload(unwrap_block_payload(base_raw))
+            current_block = normalize_block_merge_payload(build_block_payload(session, block.id))
+            returned_block = normalize_block_merge_payload(unwrap_block_payload(pkg))
             proposals, summary = build_block_merge_proposals(base_block, current_block, returned_block)
             merge_node_id = block.id
         else:
