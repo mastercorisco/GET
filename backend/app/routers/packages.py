@@ -2,7 +2,13 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.deps import get_settings
 from app.schemas.imports import ConsolidateResponse, MergeSessionResponse, ProposalDecisionRequest, ProposalResponse
-from app.schemas.packages import PackageExportRequest, PackageExportResponse, PackageImportResponse
+from app.schemas.packages import (
+    PackageBriefContributionTemplateResponse,
+    PackageExportRequest,
+    PackageExportResponse,
+    PackageImportResponse,
+)
+from app.services.packages.package_guidance import USER_CONTRIBUTION_TEMPLATE
 from app.services.import_service import ImportError, decide_proposal
 from app.services.imports.consolidate import ConsolidateError
 from app.services.package_service import (
@@ -16,6 +22,11 @@ from app.services.package_service import (
 from app.services.workspace_service import WorkspaceError
 
 router = APIRouter(tags=["packages"])
+
+
+@router.get("/packages/brief-contribution-template", response_model=PackageBriefContributionTemplateResponse)
+def packages_brief_contribution_template() -> PackageBriefContributionTemplateResponse:
+    return PackageBriefContributionTemplateResponse(template=USER_CONTRIBUTION_TEMPLATE.strip())
 
 
 def _run(action):

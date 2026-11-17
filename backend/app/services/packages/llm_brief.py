@@ -3,8 +3,11 @@ from __future__ import annotations
 from typing import Any
 
 from app.services.packages.package_guidance import (
+    BRIEF_OUTPUT_CONTRACT,
+    BRIEF_QUALITY_CRITERIA,
     BRIEF_READ_ORDER,
     BRIEF_SELF_CHECK,
+    BRIEF_SHAPE_EXAMPLES,
     BRIEF_WORKFLOW,
     CANONICAL_BRIEF_OBJECTIVES,
     PACKAGE_ANTI_PATTERNS,
@@ -23,7 +26,7 @@ def build_llm_brief(
 ) -> dict[str, Any]:
     notes = (user_notes or "").strip()
     brief = {
-        "version": "1",
+        "version": "2",
         "scope_kind": scope_kind,
         "export_id": export_id,
         "display_code": display_code or "",
@@ -43,38 +46,39 @@ def format_brief_for_clipboard(brief: dict[str, Any]) -> str:
     code = brief.get("display_code") or ""
     notes = (brief.get("user_notes") or "").strip()
 
-    lines.append("Papel: editor técnico GET-PACKAGE — devolver só JSON válido, pronto a reimportar na app GET.")
+    lines.append(
+        "Actua como editor técnico GET. Input: JSON GET-PACKAGE anexo. "
+        "Output OBRIGATÓRIO: apenas o JSON GET-PACKAGE completo actualizado (sem comentários fora do ficheiro)."
+    )
     lines.append("")
     lines.append("---")
-    lines.append("## Contexto do utilizador (autoridade humana)")
+    lines.append("## Contexto do utilizador (manda sobre o payload)")
     if notes:
         lines.append(notes)
     else:
-        lines.append("Substitua o bloco abaixo pelo seu contexto antes de executar:")
+        lines.append("(Preencha na app ou abaixo antes de executar; o que estiver aqui tem prioridade sobre suposições.)")
         lines.append("")
         lines.append(USER_CONTRIBUTION_TEMPLATE.strip())
         lines.append("")
-        lines.append("Indicadores úteis:")
+        lines.append("Campos úteis:")
         for hint in USER_CONTRIBUTION_HINTS:
             lines.append(f"- {hint}")
     lines.append("---")
     lines.append("")
-    lines.append("## Pacote anexo")
-    scope_line = (
-        f"Ficheiro GET-PACKAGE: export_id={export_id}, scope={scope}"
-        + (f", código documental {code}" if code else "")
-        + "."
+    lines.append("## Identificação do pacote")
+    lines.append(
+        f"export_id={export_id} | scope={scope}"
+        + (f" | código={code}" if code else "")
     )
-    lines.append(scope_line)
     focus = SCOPE_TASK_FOCUS.get(scope)
     if focus:
         lines.append(focus)
-    lines.append(
-        "Tarefa: editar o payload conforme abaixo e devolver o JSON GET-PACKAGE 1.0.0 COMPLETO "
-        f"(mesmo export_id={export_id}). Saída = ficheiro JSON único; sem narrativa fora do JSON."
-    )
     lines.append("")
-    lines.append("## Ordem de leitura no JSON")
+    lines.append("## Contrato de saída")
+    for item in BRIEF_OUTPUT_CONTRACT:
+        lines.append(f"- {item}")
+    lines.append("")
+    lines.append("## Ordem de leitura no JSON anexo")
     for i, step in enumerate(BRIEF_READ_ORDER, start=1):
         lines.append(f"{i}. {step}")
     lines.append("")
@@ -82,20 +86,27 @@ def format_brief_for_clipboard(brief: dict[str, Any]) -> str:
     for obj in brief.get("objectives") or CANONICAL_BRIEF_OBJECTIVES:
         lines.append(f"- {obj}")
     lines.append("")
+    lines.append("## Critérios de qualidade do conteúdo")
+    for q in BRIEF_QUALITY_CRITERIA:
+        lines.append(f"- {q}")
+    lines.append("")
     lines.append("## Procedimento")
     for i, step in enumerate(BRIEF_WORKFLOW, start=1):
         lines.append(f"{i}. {step}")
     lines.append("")
-    lines.append("## Anti-padrões (causam rejeição no importador)")
+    lines.append("## Forma correcta (exemplos — imitar estrutura, não copiar texto)")
+    for ex in BRIEF_SHAPE_EXAMPLES.get(scope, []):
+        lines.append(f"- {ex}")
+    lines.append("")
+    lines.append("## Anti-padrões (importador rejeita)")
     for ap in brief.get("anti_patterns") or PACKAGE_ANTI_PATTERNS:
         lines.append(f"- {ap}")
     lines.append("")
-    lines.append("## Autoverificação antes de entregar")
+    lines.append("## Autoverificação")
     for item in BRIEF_SELF_CHECK:
         lines.append(f"- [ ] {item}")
     lines.append("")
-    lines.append("## Campos do envelope")
-    lines.append("- rules + rules_hash: copiar sem alteração")
-    lines.append("- llm_shapes: guia de tipos (não precisa de voltar na devolução, mas pode)")
-    lines.append("- llm_brief: opcional na devolução")
+    lines.append("## Envelope")
+    lines.append("- rules + rules_hash: não tocar")
+    lines.append("- llm_shapes / llm_brief: opcionais na devolução")
     return "\n".join(lines)

@@ -25,6 +25,10 @@ class PackageExportResponse(BaseModel):
     brief: str = ""
 
 
+class PackageBriefContributionTemplateResponse(BaseModel):
+    template: str
+
+
 class PackageImportResponse(BaseModel):
     import_id: str
     scope_kind: str

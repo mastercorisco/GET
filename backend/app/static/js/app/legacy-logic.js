@@ -1,3 +1,5 @@
+import { applyPackageBriefTemplate } from "../components/package-brief-notes.js";
+
 export function initLegacyApp(deps = {}) {
   const mountDocumentTree = deps.mountDocumentTree;
   const mountTechnicalTree = deps.mountTechnicalTree;
@@ -668,6 +670,12 @@ const rootPath = document.getElementById("rootPath");
       }
 
       async function loadExportSection(projectId) {
+        const expBriefLabel = document.querySelector('label[data-help-key="export.get_package_brief"]');
+        if (expBriefLabel) {
+          expBriefLabel.querySelector(".field-help-btn")?.remove();
+          delete expBriefLabel.dataset.helpWired;
+        }
+        applyPackageBriefTemplate("expPkgBriefNotes", "loadExportSection");
         const meta = document.getElementById("expBaselineMeta");
         const fascicleSelect = document.getElementById("expFascicle");
         const pkgFascicleSelect = document.getElementById("expFasciclePkg");

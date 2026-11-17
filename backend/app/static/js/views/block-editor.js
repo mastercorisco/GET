@@ -1,6 +1,7 @@
 import { createDevelopmentPointCard } from "../components/development-point-card.js";
 import { wireLocalHelpDrawer } from "../components/help-drawer.js";
 import { ensureHelpDrawerTitleIcon, setHelpTriggerLabel } from "../components/help-icon.js";
+import { applyPackageBriefTemplate } from "../components/package-brief-notes.js";
 import { wireDeclarativeHelp } from "../components/help-ui.js";
 import {
   initBlockPrepPanel,
@@ -242,6 +243,7 @@ export function initBlockEditor(router) {
 
   initBlockPrepHelpDrawer();
   initBlockPrepPanel(router);
+  applyPackageBriefTemplate("bePkgBriefNotes", "initBlockEditor");
 
   document.getElementById("beRefresh")?.addEventListener("click", refreshBlockEditor);
   document.getElementById("beNewPoint")?.addEventListener("click", function () {
@@ -582,7 +584,14 @@ function refreshBlockEditor() {
   if (root) root.hidden = false;
   if (empty) empty.hidden = true;
 
-  wireDeclarativeHelp(document.getElementById("block-editor-root"));
+  const beRoot = document.getElementById("block-editor-root");
+  const pkgBriefLabel = beRoot && beRoot.querySelector('label[data-help-key="block.package_brief"]');
+  if (pkgBriefLabel) {
+    pkgBriefLabel.querySelector(".field-help-btn")?.remove();
+    delete pkgBriefLabel.dataset.helpWired;
+  }
+  wireDeclarativeHelp(beRoot);
+  applyPackageBriefTemplate("bePkgBriefNotes", "refreshBlockEditor");
 
   api("/api/blocks/" + activeBlockId, {}, "Falha ao carregar bloco.").then(function (data) {
     const hdr = document.getElementById("beHeader");

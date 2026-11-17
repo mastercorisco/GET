@@ -42,6 +42,13 @@ def _setup_block(client: TestClient, tmp_path: Path) -> tuple[str, str, str]:
     return pid, block["id"], point.json()["id"]
 
 
+def test_brief_contribution_template_endpoint(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    res = client.get("/api/packages/brief-contribution-template")
+    assert res.status_code == 200
+    assert "Resultado esperado desta sessão" in res.json()["template"]
+
+
 def test_block_export_includes_llm_brief_and_response_brief(client: TestClient, tmp_path: Path) -> None:
     pid, block_id, _ = _setup_block(client, tmp_path)
     export = client.post(
@@ -66,7 +73,7 @@ def test_block_export_brief_hints_when_notes_empty(client: TestClient, tmp_path:
     )
     assert export.status_code == 200
     assert "Contexto do utilizador" in export.json()["brief"]
-    assert "Objectivo desta sessão" in export.json()["brief"]
+    assert "Resultado esperado desta sessão" in export.json()["brief"]
 
 
 def test_block_export_llm_shapes_anti_patterns(client: TestClient, tmp_path: Path) -> None:

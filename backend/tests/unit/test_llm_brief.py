@@ -13,6 +13,8 @@ def test_format_brief_includes_anti_patterns_and_scope() -> None:
     )
     text = format_brief_for_clipboard(brief)
     assert "Anti-padrões" in text
+    assert "Contrato de saída" in text
+    assert "BOM must_include" in text
     assert PACKAGE_ANTI_PATTERNS[0] in text
     assert "PKG-BLK-TEST" in text
     assert "scope=block" in text

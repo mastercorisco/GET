@@ -14,6 +14,7 @@ import { hydrateAppearanceFromStorage, initAppearance } from "./components/appea
 import { initBackupsView } from "./views/backups.js";
 import { initWorkbookImport } from "./views/workbook-import.js";
 import { initStructureExportView } from "./views/structure-export.js";
+import { applyPackageBriefTemplate } from "./components/package-brief-notes.js";
 import { initBlockEditor, openBlockEditor } from "./views/block-editor.js";
 import { initSettingsView, setSettingsWorkspaceOpen } from "./views/settings.js";
 import { initRouteTabs } from "./components/route-tabs.js";
@@ -25,6 +26,23 @@ const router = initRouter({
     renderScreenGuide(routeId);
     wireDeclarativeHelp(document);
     initRouteTabs(document.querySelector(".route-panel.is-active"));
+    if (routeId === "block-editor") {
+      const pkgBriefLabel = document.querySelector('label[data-help-key="block.package_brief"]');
+      if (pkgBriefLabel) {
+        pkgBriefLabel.querySelector(".field-help-btn")?.remove();
+        delete pkgBriefLabel.dataset.helpWired;
+      }
+      wireDeclarativeHelp(document.getElementById("block-editor-root"));
+      applyPackageBriefTemplate("bePkgBriefNotes", "route-block-editor");
+    }
+    if (routeId === "export") {
+      const expBriefLabel = document.querySelector('label[data-help-key="export.get_package_brief"]');
+      if (expBriefLabel) {
+        expBriefLabel.querySelector(".field-help-btn")?.remove();
+        delete expBriefLabel.dataset.helpWired;
+      }
+      applyPackageBriefTemplate("expPkgBriefNotes", "route-export");
+    }
     if (routeId === "backups") {
       document.dispatchEvent(new CustomEvent("get:workspace-open"));
     }

@@ -398,12 +398,41 @@ export function openHelpModal(fieldKey, options) {
     addSection("Dicas", entry.tips.join(" "));
   }
 
-  if (entry.allow_use_example && onUseExample && goods.length) {
+  const templateMode = entry.use_example_template === "package_brief";
+  if (entry.allow_use_example && onUseExample && (goods.length || templateMode)) {
     const useBtn = document.createElement("button");
     useBtn.type = "button";
     useBtn.className = "secondary";
-    useBtn.textContent = "Usar este exemplo como base";
+    useBtn.textContent = templateMode
+      ? "Usar modelo GET completo"
+      : "Usar este exemplo como base";
     useBtn.addEventListener("click", function () {
+      if (templateMode) {
+        if (!window.confirm("Substituir o texto pelo modelo GET completo? Pode editar antes de exportar.")) {
+          return;
+        }
+        fetch("/api/packages/brief-contribution-template")
+          .then(function (res) {
+            return res.json().then(function (body) {
+              if (!res.ok) throw new Error(body.detail || res.status);
+              return body;
+            });
+          })
+          .then(function (data) {
+            const tpl = (data && data.template) || "";
+            if (tpl) onUseExample(tpl);
+            closeModal();
+            if (inputEl) inputEl.focus();
+          })
+          .catch(function () {
+            if (goods.length) {
+              const sample = goods[0];
+              onUseExample(typeof sample === "string" ? sample : sample.text);
+              closeModal();
+            }
+          });
+        return;
+      }
       const sample = goods[0];
       const text = typeof sample === "string" ? sample : sample.text;
       if (window.confirm("Adapte o exemplo ao seu contexto. Não copie sem rever.")) {

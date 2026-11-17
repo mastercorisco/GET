@@ -2310,6 +2310,7 @@
         "Pode exportar de novo após editar o contributo para actualizar brief e JSON."
       ],
       "allow_use_example": true,
+      "use_example_template": "package_brief",
       "purpose_in_app": "Complementar o ficheiro JSON com comportamento editorial sem alterar rules_hash.",
       "workflow_context": "Preparação do bloco — cartão GET-PACKAGE.",
       "when_to_use": "Sempre que usar Copilot ou chat com o pacote JSON anexo.",
@@ -2365,6 +2366,7 @@
         "Use o selector deste cartão (fascículo raiz), não o do roundtrip legado."
       ],
       "allow_use_example": true,
+      "use_example_template": "package_brief",
       "purpose_in_app": "Alinhar a sessão externa com o método GET e anti-padrões do importador.",
       "workflow_context": "Ecrã Exportar — Pacote para discussão (fascículo).",
       "when_to_use": "Junto com export GET-PACKAGE de fascículo.",
