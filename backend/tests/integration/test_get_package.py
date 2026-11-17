@@ -318,6 +318,32 @@ def test_block_merge_point_update_when_status_differs(client: TestClient, tmp_pa
     assert found["status"] == "draft"
 
 
+def test_block_merge_skips_unchanged_points_vs_current(client: TestClient, tmp_path: Path) -> None:
+    """Proposta com proposed == estado actual do ponto não gera decisão."""
+    pid, block_id, point_id = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    client.patch(f"/api/development-points/{point_id}", json={"core_idea": "Já na BD"})
+    for row in pkg["payload"]["development_points"]:
+        if row["id"] == point_id:
+            row["core_idea"] = "Já na BD"
+    uploaded = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("cur.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    merged = client.post(
+        f"/api/projects/{pid}/packages/imports/{uploaded.json()['import_id']}/merge"
+    ).json()
+    assert not [
+        p
+        for p in merged["proposals"]
+        if p["proposal_kind"] == "point_update" and p["target_item_id"] == point_id
+    ]
+
+
 def test_block_omission_keeps_point(client: TestClient, tmp_path: Path) -> None:
     pid, block_id, point_id = _setup_block(client, tmp_path)
     export = client.post(

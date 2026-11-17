@@ -16,12 +16,26 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def apply_block_proposals(session: Session, merge_session_id: str) -> None:
+def apply_block_proposals(session: Session, merge_session_id: str) -> dict[str, int]:
     pairs = session.execute(
         select(ChangeProposal, ChangeDecision)
         .join(ChangeDecision, ChangeDecision.proposal_id == ChangeProposal.id)
         .where(ChangeProposal.merge_session_id == merge_session_id)
     ).all()
+
+    stats: dict[str, int] = {
+        "proposals_total": len(pairs),
+        "accepted": 0,
+        "block_fields_applied": 0,
+        "point_updates_applied": 0,
+        "point_creates_applied": 0,
+        "premise_updates_applied": 0,
+        "premise_creates_applied": 0,
+        "point_updates_missing": 0,
+        "point_wrong_block": 0,
+        "fields_written": 0,
+        "total_writes": 0,
+    }
 
     for proposal, decision in pairs:
         if decision.decision != "accepted":
@@ -37,6 +51,7 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
     for proposal, decision in pairs:
         if decision.decision != "accepted":
             continue
+        stats["accepted"] += 1
         changes = json.loads(proposal.field_changes_json)
         kind = proposal.proposal_kind
 
@@ -44,6 +59,7 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
             block = session.get(DocumentNode, block_id)
             if block is None:
                 continue
+            block_wrote = False
             for field, delta in changes.items():
                 proposed = delta.get("proposed")
                 if proposed is None:
@@ -56,10 +72,22 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
                     block.title = str(proposed)
                 elif field == "target_output":
                     block.target_output_json = json.dumps(proposed, ensure_ascii=False)
+                else:
+                    continue
+                block_wrote = True
+                stats["fields_written"] += 1
+            if block_wrote:
+                stats["block_fields_applied"] += 1
+                stats["total_writes"] += 1
         elif kind == "point_update":
             point = session.get(DevelopmentPoint, proposal.target_item_id)
             if point is None:
+                stats["point_updates_missing"] += 1
                 continue
+            if point.block_id != block_id:
+                stats["point_wrong_block"] += 1
+                continue
+            fields_applied = 0
             for field, delta in changes.items():
                 if field.startswith("_"):
                     continue
@@ -74,7 +102,14 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
                     point.intended_outcome = str(proposed)
                 elif field == "lists":
                     point.lists_json = json.dumps(proposed, ensure_ascii=False)
-            point.updated_at = _utcnow()
+                else:
+                    continue
+                fields_applied += 1
+            if fields_applied:
+                point.updated_at = _utcnow()
+                stats["point_updates_applied"] += 1
+                stats["fields_written"] += fields_applied
+                stats["total_writes"] += 1
         elif kind == "point_create":
             proposed = changes.get("full_point", {}).get("proposed", {})
             max_order = session.scalar(
@@ -82,6 +117,8 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
             )
             sort_order = proposed.get("sort_order") or ((max_order or 0) + 1)
             lists_json = json.dumps(proposed.get("lists") or json.loads(DEFAULT_LISTS_JSON), ensure_ascii=False)
+            stats["point_creates_applied"] += 1
+            stats["total_writes"] += 1
             session.add(
                 DevelopmentPoint(
                     id=str(uuid.uuid4()),
@@ -101,16 +138,25 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
             premise = session.get(Premise, proposal.target_item_id)
             if premise is None:
                 continue
+            prem_wrote = False
             for field, delta in changes.items():
                 proposed = delta.get("proposed")
                 if proposed is None:
                     continue
                 if field == "statement":
                     premise.statement = str(proposed)
+                    prem_wrote = True
                 elif field == "notes":
                     premise.notes = str(proposed) if proposed is not None else None
+                    prem_wrote = True
+            if prem_wrote:
+                stats["premise_updates_applied"] += 1
+                stats["total_writes"] += 1
+                stats["fields_written"] += 1
         elif kind == "premise_create":
             proposed = changes.get("full_premise", {}).get("proposed", {})
+            stats["premise_creates_applied"] += 1
+            stats["total_writes"] += 1
             session.add(
                 Premise(
                     id=str(uuid.uuid4()),
@@ -124,3 +170,5 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
                     notes=proposed.get("notes"),
                 )
             )
+
+    return stats

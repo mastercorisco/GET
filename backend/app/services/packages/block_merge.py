@@ -34,14 +34,18 @@ def build_block_merge_proposals(
     returned: dict[str, Any],
 ) -> tuple[list[dict], dict]:
     proposals: list[dict] = []
-    summary: dict = {"no_op_omissions": []}
+    summary: dict = {
+        "no_op_omissions": [],
+        "skipped_already_in_db": [],
+        "unchanged_vs_export_base": [],
+    }
 
     b_block = base.get("block") or {}
     c_block = current.get("block") or {}
     d_block = returned.get("block") or {}
     for field in BLOCK_EDITABLE:
         delta = _field_delta(b_block.get(field), c_block.get(field), d_block.get(field))
-        if delta:
+        if delta and not _json_eq(delta.get("proposed"), c_block.get(field)):
             proposals.append(
                 {
                     "proposal_kind": "block_field",
@@ -77,11 +81,18 @@ def build_block_merge_proposals(
         b_row = b_points.get(pid, c_points.get(pid, {}))
         c_row = c_points.get(pid, b_row)
         changes: dict = {}
+        had_delta_vs_base = False
         for field in POINT_EDITABLE:
             delta = _field_delta(b_row.get(field), c_row.get(field), d_row.get(field))
             if delta:
+                had_delta_vs_base = True
+            if delta and not _json_eq(delta.get("proposed"), c_row.get(field)):
                 changes[field] = delta
         if not changes:
+            if had_delta_vs_base:
+                summary["skipped_already_in_db"].append(pid)
+            else:
+                summary["unchanged_vs_export_base"].append(pid)
             continue
         # Metadados do ponto (status, sort_order, …) não são aplicados na consolidação — só campos editáveis.
         proposals.append(
@@ -124,7 +135,7 @@ def build_block_merge_proposals(
         changes = {}
         for field in PREMISE_EDITABLE:
             delta = _field_delta(b_row.get(field), c_row.get(field), d_row.get(field))
-            if delta:
+            if delta and not _json_eq(delta.get("proposed"), c_row.get(field)):
                 changes[field] = delta
         if not changes:
             continue

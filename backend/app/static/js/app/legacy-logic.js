@@ -1644,7 +1644,28 @@ const rootPath = document.getElementById("rootPath");
           renderProposals(projectId, merge, { isPackage: true });
           const n = merge.proposals ? merge.proposals.length : 0;
           if (!n) {
-            setImportStatus("Sem propostas — o JSON devolvido coincide com a base da exportação.");
+            const sum = merge.summary || {};
+            const inDb = (sum.skipped_already_in_db || []).length;
+            const sameBase = (sum.unchanged_vs_export_base || []).length;
+            if (inDb) {
+              setImportStatus(
+                "Nada a aplicar: " +
+                  inDb +
+                  " ponto(s) já têm na base o mesmo conteúdo editável que o JSON " +
+                  "(ex.: core_idea «teste» já gravado numa importação anterior). " +
+                  "Para novo ciclo, exporte de novo o bloco antes de enviar à LLM."
+              );
+            } else if (sameBase) {
+              setImportStatus(
+                "Sem propostas — o JSON é igual à base da exportação (export_id " +
+                  (merge.base_export_id || "—") +
+                  "). Altere title, core_idea, intended_outcome ou listas e mantenha os UUID."
+              );
+            } else {
+              setImportStatus(
+                "Sem propostas — omissões ou campos não comparáveis (status/ordem não entram no merge)."
+              );
+            }
             return merge;
           }
           setImportStatus("Alterações: " + n + " proposta(s).");
@@ -1662,11 +1683,21 @@ const rootPath = document.getElementById("rootPath");
                 { method: "POST" },
                 "Falha ao consolidar."
               ).then(function (row) {
-                setImportStatus(
-                  "Bloco actualizado (" + acceptedCount + " proposta(s)). Backup: " + row.backup_id
-                );
-                document.dispatchEvent(new CustomEvent("get:package-consolidated", { detail: { scope_kind: "block" } }));
-                return merge;
+                var ptN = (merge.proposals || []).filter(function (p) {
+                  return p.proposal_kind === "point_update" || p.proposal_kind === "point_create";
+                }).length;
+                var msg =
+                  ptN > 0
+                    ? "Pontos actualizados (" + ptN + " proposta(s) de ponto). Backup: " + row.backup_id
+                    : "Consolidado sem propostas de ponto — só metadados do bloco/premissas. Backup: " +
+                      row.backup_id;
+                return loadImportSection(projectId).then(function () {
+                  setImportStatus(msg);
+                  document.dispatchEvent(
+                    new CustomEvent("get:package-consolidated", { detail: { scope_kind: "block" } })
+                  );
+                  return merge;
+                });
               });
             });
           }
@@ -1723,9 +1754,14 @@ const rootPath = document.getElementById("rootPath");
         knowledgeRequest(consolidateUrl, { method: "POST" }, "Falha ao consolidar.")
           .then(function (row) {
             setImportStatus("Consolidado. Backup: " + row.backup_id);
+            if (activeMergeIsPackage) {
+              document.dispatchEvent(new CustomEvent("get:package-consolidated", { detail: { scope_kind: "block" } }));
+            }
             return loadImportSection(projectId);
           })
-          .catch(function (err) { setImportStatus(err.message); });
+          .catch(function (err) {
+            setImportStatus(err.message);
+          });
       });
       document.addEventListener("get:package-imported", function (ev) {
         const detail = ev.detail || {};
