@@ -94,6 +94,7 @@ USER_CONTRIBUTION_HINTS: list[str] = [
     "Resultado esperado: o que deve estar melhor no JSON após a sessão.",
     "Âmbito positivo (pode) e negativo (não) — seja concreto (títulos de pontos, IDs, decisões).",
     "Factos assumidos como verdade nesta sessão (glossário, interfaces, decisões D-xx).",
+    "Conversa: o que a LLM perguntar e tu responderes regista como decidido (contributo e JSON); não reabrir como lacuna.",
     "Profundidade: esboço / quase-final; limites de volume por campo.",
 ]
 
@@ -109,6 +110,7 @@ Não criar: [ex. novos pontos; novos KI fora de editable_knowledge]
 ## Factos e decisões que a LLM deve tratar como fechados
 - [Decisão D-xx ou frase explícita]
 - [Terminologia obrigatória: adjudicatário, ESF, …]
+- O que ficar acordado na conversa (respostas a perguntas da LLM) trata como decidido — reflectir no JSON (ex. `open_question.answer` ou decisão explícita), não como nova lacuna.
 
 ## Prioridades (ordem)
 1. [ex. open_questions honestas antes de inventar requisitos]

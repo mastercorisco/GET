@@ -18,6 +18,7 @@ def test_format_brief_includes_anti_patterns_and_scope() -> None:
     assert PACKAGE_ANTI_PATTERNS[0] in text
     assert "PKG-BLK-TEST" in text
     assert "scope=block" in text
+    assert "acordado na conversa" in text
 
 
 def test_user_notes_in_brief() -> None:
