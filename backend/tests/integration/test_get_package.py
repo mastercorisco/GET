@@ -42,6 +42,62 @@ def _setup_block(client: TestClient, tmp_path: Path) -> tuple[str, str, str]:
     return pid, block["id"], point.json()["id"]
 
 
+def test_block_export_includes_llm_brief_and_response_brief(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id, "llm_notes": "só pontos ready"},
+    )
+    assert export.status_code == 200
+    data = export.json()
+    assert data["export_id"] in data["brief"]
+    assert "só pontos ready" in data["brief"]
+    pkg = json.loads(data["body"])
+    brief = pkg.get("llm_brief") or {}
+    assert brief.get("user_notes") == "só pontos ready"
+    assert brief.get("export_id") == data["export_id"]
+
+
+def test_block_export_brief_hints_when_notes_empty(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    assert export.status_code == 200
+    assert "O seu contributo" in export.json()["brief"]
+
+
+def test_block_export_llm_shapes_anti_patterns(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    aps = pkg["llm_shapes"].get("anti_patterns") or []
+    assert aps
+    assert any("must_include" in line for line in aps)
+
+
+def test_package_import_without_llm_brief_still_valid(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, point_id = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    pkg.pop("llm_brief", None)
+    for row in pkg["payload"]["development_points"]:
+        if row["id"] == point_id:
+            row["core_idea"] = "Sem llm_brief"
+    uploaded = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("nobrief.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert uploaded.status_code == 200
+
+
 def test_block_export_includes_llm_shapes_and_full_lists(client: TestClient, tmp_path: Path) -> None:
     pid, block_id, _ = _setup_block(client, tmp_path)
     export = client.post(

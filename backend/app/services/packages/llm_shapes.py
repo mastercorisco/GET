@@ -5,6 +5,7 @@ from typing import Any
 
 from app.domain.block.models import DEFAULT_LISTS_JSON
 from app.services.packages.block_merge import BLOCK_EDITABLE, POINT_EDITABLE, PREMISE_EDITABLE
+from app.services.packages.package_guidance import COLLECTION_PRIORITY, PACKAGE_ANTI_PATTERNS
 
 _STRICT_INSTRUCTION = (
     "Cumprir estritamente os tipos definidos em llm_shapes. Não inferir estruturas não especificadas."
@@ -259,6 +260,15 @@ def build_llm_shapes(scope_kind: str, payload: dict[str, Any]) -> dict[str, Any]
             path = f"payload.editable_knowledge.{bucket}"
             rows = editable.get(bucket) or []
             sample = copy.deepcopy(rows[0]) if rows else None
+            if sample is None:
+                protected = (payload.get("protected_context") or {}).get("knowledge_items") or []
+                if protected:
+                    sample = copy.deepcopy(protected[0])
+                    entry_note = "Forma de referência (protected_context); novos itens em editable_knowledge."
+                else:
+                    entry_note = None
+            else:
+                entry_note = None
             entry = {
                 "path": path,
                 "element_kind": "object",
@@ -278,8 +288,11 @@ def build_llm_shapes(scope_kind: str, payload: dict[str, Any]) -> dict[str, Any]
                 "knowledge_type_enum": KNOWLEDGE_TYPE_ENUM,
                 "forbidden_fields": sorted(KI_FORBIDDEN_SHORTHAND),
             }
-            if sample is not None:
+            if sample is not None and rows:
                 entry["sample_from_export"] = sample
+            elif sample is not None and not rows and entry_note:
+                entry["sample_from_export"] = sample
+                entry["note"] = entry_note
             else:
                 tpl = copy.deepcopy(NEW_KNOWLEDGE_ITEM_TEMPLATE)
                 if bucket == "open_questions":
@@ -304,6 +317,8 @@ def build_llm_shapes(scope_kind: str, payload: dict[str, Any]) -> dict[str, Any]
         "version": "1",
         "scope_kind": scope_kind,
         "instructions": [_STRICT_INSTRUCTION],
+        "collection_priority": COLLECTION_PRIORITY,
+        "anti_patterns": list(PACKAGE_ANTI_PATTERNS),
         "collections": collections,
     }
 

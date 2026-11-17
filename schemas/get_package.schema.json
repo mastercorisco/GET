@@ -105,9 +105,36 @@
             "type": "string"
           }
         },
+        "collection_priority": {
+          "type": "string"
+        },
+        "anti_patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "collections": {
           "type": "object",
           "additionalProperties": true
+        }
+      }
+    },
+    "llm_brief": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "scope_kind": {
+          "type": "string"
+        },
+        "export_id": {
+          "type": "string"
+        },
+        "suggested_prompt": {
+          "type": "string"
         }
       }
     }

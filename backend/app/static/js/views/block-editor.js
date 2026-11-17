@@ -11,6 +11,30 @@ import {
 let activeBlockId = null;
 let headerWired = false;
 let _templates = [];
+let lastBlockPackageExport = null;
+
+function copyTextToClipboard(text, statusEl, okMsg) {
+  if (!text) return Promise.reject(new Error("Sem brief para copiar."));
+  const done = function () {
+    if (statusEl) statusEl.textContent = okMsg || "Brief copiado.";
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).then(done);
+  }
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    if (!document.execCommand("copy")) throw new Error("Cópia não suportada neste browser.");
+    done();
+    return Promise.resolve();
+  } finally {
+    document.body.removeChild(ta);
+  }
+}
 
 const TARGET_OUTPUT_PRESETS = [
   {
@@ -260,23 +284,63 @@ export function initBlockEditor(router) {
     URL.revokeObjectURL(url);
   }
 
-  document.getElementById("bePkgExport")?.addEventListener("click", function () {
-    if (!activeBlockId) return;
+  function runBlockPackageExport() {
+    if (!activeBlockId) return Promise.reject(new Error("Sem bloco activo."));
     const projectId = document.getElementById("pActive")?.value;
-    if (!projectId) return;
-    api(
+    if (!projectId) return Promise.reject(new Error("Sem projecto."));
+    const notesEl = document.getElementById("bePkgBriefNotes");
+    const llmNotes = notesEl && notesEl.value ? notesEl.value.trim() : null;
+    return api(
       "/api/projects/" + projectId + "/packages/export",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope_kind: "block", node_id: activeBlockId, profile: "discussion" }),
+        body: JSON.stringify({
+          scope_kind: "block",
+          node_id: activeBlockId,
+          profile: "discussion",
+          llm_notes: llmNotes || null,
+        }),
       },
       "Falha ao exportar pacote."
     ).then(function (row) {
+      lastBlockPackageExport = {
+        brief: row.brief || "",
+        body: row.body,
+        export_id: row.export_id,
+      };
+      const copyBtn = document.getElementById("bePkgCopyBrief");
+      if (copyBtn) copyBtn.disabled = !lastBlockPackageExport.brief;
       downloadPackage(row.filename, row.body);
       const st = document.getElementById("beStatus");
       if (st) st.textContent = "Pacote exportado: " + row.file_path;
+      return lastBlockPackageExport;
     });
+  }
+
+  document.getElementById("bePkgExport")?.addEventListener("click", function () {
+    runBlockPackageExport().catch(function (err) {
+      const st = document.getElementById("beStatus");
+      if (st) st.textContent = err.message;
+    });
+  });
+
+  document.getElementById("bePkgCopyBrief")?.addEventListener("click", function () {
+    const st = document.getElementById("beStatus");
+    const doCopy = function (exp) {
+      copyTextToClipboard(exp.brief, st, "Brief copiado — cole na LLM junto com o JSON.").catch(function (err) {
+        if (st) st.textContent = err.message;
+      });
+    };
+    if (lastBlockPackageExport && lastBlockPackageExport.brief) {
+      doCopy(lastBlockPackageExport);
+      return;
+    }
+    runBlockPackageExport()
+      .then(doCopy)
+      .catch(function (err) {
+        if (st) st.textContent = err.message;
+      });
   });
 
   document.getElementById("bePkgImportBtn")?.addEventListener("click", function () {

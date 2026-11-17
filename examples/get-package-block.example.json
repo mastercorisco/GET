@@ -59,6 +59,18 @@
     "instructions": [
       "Cumprir estritamente os tipos definidos em llm_shapes. Não inferir estruturas não especificadas."
     ],
+    "collection_priority": "Preferir sample_from_export a item_template quando existir no llm_shapes.",
+    "anti_patterns": [
+      "Não usar node_id ou question como substituto de knowledge-item válido.",
+      "Não colocar strings soltas em listas que exigem objetos (ex. must_include)."
+    ],
     "collections": {}
+  },
+  "llm_brief": {
+    "version": "1",
+    "scope_kind": "block",
+    "export_id": "PKG-BLK-EXAMPLE",
+    "user_notes": "",
+    "suggested_prompt": "=== GET-PACKAGE — instruções para a LLM externa ===\n..."
   }
 }

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from app.services.packages.constants import GET_PACKAGE_SCHEMA, SUPPORTED_GET_PACKAGE_VERSION
+from app.services.packages.llm_brief import build_llm_brief, format_brief_for_clipboard
 from app.services.packages.llm_shapes import build_llm_shapes
 from app.services.packages.rules import CANONICAL_RULES, rules_hash
 
@@ -19,12 +20,21 @@ def wrap_package(
     block_id: str | None,
     export_id: str,
     payload: dict[str, Any],
+    display_code: str | None = None,
+    llm_notes: str | None = None,
 ) -> dict[str, Any]:
     scope: dict[str, str] = {"kind": scope_kind, "project_id": project_id}
     if scope_kind == "fascicle" and fascicle_id:
         scope["fascicle_id"] = fascicle_id
     if scope_kind == "block" and block_id:
         scope["block_id"] = block_id
+    llm_shapes = build_llm_shapes(scope_kind, payload)
+    llm_brief = build_llm_brief(
+        scope_kind=scope_kind,
+        export_id=export_id,
+        display_code=display_code,
+        user_notes=llm_notes,
+    )
     return {
         "schema": GET_PACKAGE_SCHEMA,
         "schema_version": SUPPORTED_GET_PACKAGE_VERSION,
@@ -33,8 +43,16 @@ def wrap_package(
         "rules_hash": rules_hash(),
         "export_id": export_id,
         "payload": payload,
-        "llm_shapes": build_llm_shapes(scope_kind, payload),
+        "llm_shapes": llm_shapes,
+        "llm_brief": llm_brief,
     }
+
+
+def package_brief_text(pkg: dict[str, Any]) -> str:
+    brief = pkg.get("llm_brief")
+    if isinstance(brief, dict) and brief.get("suggested_prompt"):
+        return str(brief["suggested_prompt"])
+    return format_brief_for_clipboard(brief) if isinstance(brief, dict) else ""
 
 
 def unwrap_fascicle_payload(pkg: dict) -> dict:

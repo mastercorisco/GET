@@ -327,6 +327,12 @@
       "topic": "get_package_llm_shapes",
       "decision": "Envelopes GET-PACKAGE exportados incluem llm_shapes opcional (fora do payload): guia de coleções, item_template e instrução de tipos estritos; importação aceita pacotes sem llm_shapes; listas de pontos validam objectos tipados; rules_hash inalterado.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-056",
+      "topic": "get_package_llm_brief",
+      "decision": "Envelopes GET-PACKAGE exportados incluem llm_brief opcional (fora do payload): objectivos, anti-padrões, notas do utilizador e suggested_prompt para clipboard; a API de export devolve brief em texto; importação e merge ignoram llm_brief; rules_hash inalterado.",
+      "status": "accepted"
     }
   ]
 }

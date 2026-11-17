@@ -12,6 +12,7 @@ class PackageExportRequest(BaseModel):
     scope_kind: ScopeKind
     node_id: str = Field(min_length=1)
     profile: ExportProfile | None = "discussion"
+    llm_notes: str | None = Field(default=None, max_length=4000)
 
 
 class PackageExportResponse(BaseModel):
@@ -21,6 +22,7 @@ class PackageExportResponse(BaseModel):
     sha256: str
     filename: str
     body: str
+    brief: str = ""
 
 
 class PackageImportResponse(BaseModel):

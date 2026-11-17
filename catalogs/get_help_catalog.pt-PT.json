@@ -2292,6 +2292,38 @@
         "Não usar «Exportar GET-LLM» para este fluxo."
       ]
     },
+    "block.package_brief": {
+      "label": "Brief GET-PACKAGE (bloco)",
+      "short_help": "Notas opcionais que entram no texto «Copiar brief» para a LLM externa.",
+      "definition": "Campo llm_notes no export; envelope llm_brief no JSON; não é persistido na base SQLite.",
+      "guiding_question": "Que contexto humano a LLM precisa além do JSON exportado?",
+      "instructions": "1) Exportar pacote (JSON). 2) Anexar o JSON no Copilot ou outra LLM. 3) Preencher contributo se necessário. 4) Copiar brief e colar como instrução da sessão. 5) Devolver JSON completo e reimportar.",
+      "good_examples": [
+        "Só rever pontos ready; não alterar premissas aprovadas.",
+        "Usar terminologia do glossário X; decisão D-12 é fechada."
+      ],
+      "bad_examples": [
+        "Pedir à app para gravar estas notas na base — não são persistidas."
+      ],
+      "tips": [
+        "O botão Copiar brief fica activo após um export bem-sucedido nesta sessão.",
+        "Pode exportar de novo após editar o contributo para actualizar brief e JSON."
+      ],
+      "allow_use_example": true,
+      "purpose_in_app": "Complementar o ficheiro JSON com comportamento editorial sem alterar rules_hash.",
+      "workflow_context": "Preparação do bloco — cartão GET-PACKAGE.",
+      "when_to_use": "Sempre que usar Copilot ou chat com o pacote JSON anexo.",
+      "what_happens_next": "Colar o brief na LLM; devolver o JSON e importar na app.",
+      "related_concepts": [
+        "get_package",
+        "llm_shapes",
+        "llm_brief"
+      ],
+      "related_screen": "block-editor",
+      "common_confusions": [
+        "O brief não substitui o JSON — anexe sempre o ficheiro exportado."
+      ]
+    },
     "export.get_package": {
       "label": "GET-PACKAGE (fascículo)",
       "short_help": "Um JSON por fascículo (raiz) para discussão e reimportação.",
@@ -2318,6 +2350,32 @@
         "Não confundir com «Geração LLM (GET-LLM)» no cartão abaixo.",
         "Não confundir com «Exportar fascículo roundtrip» (formato legado)."
       ]
+    },
+    "export.get_package_brief": {
+      "label": "Brief GET-PACKAGE (fascículo)",
+      "short_help": "Contributo opcional e texto Copiar brief no export de fascículo.",
+      "definition": "Mesmo llm_brief do envelope; resposta da API inclui campo brief para clipboard.",
+      "guiding_question": "Que limites e decisões deve a LLM respeitar neste fascículo?",
+      "instructions": "Exportar pacote, anexar JSON na LLM, Copiar brief, colar instruções, devolver JSON completo.",
+      "good_examples": [
+        "Não propor novos knowledge items fora de F04; rever só open_questions."
+      ],
+      "bad_examples": [],
+      "tips": [
+        "Use o selector deste cartão (fascículo raiz), não o do roundtrip legado."
+      ],
+      "allow_use_example": true,
+      "purpose_in_app": "Alinhar a sessão externa com o método GET e anti-padrões do importador.",
+      "workflow_context": "Ecrã Exportar — Pacote para discussão (fascículo).",
+      "when_to_use": "Junto com export GET-PACKAGE de fascículo.",
+      "what_happens_next": "Reimportar em Incorporar pacote.",
+      "related_concepts": [
+        "get_package",
+        "llm_brief",
+        "baseline"
+      ],
+      "related_screen": "export",
+      "common_confusions": []
     },
     "import.get_package": {
       "label": "Incorporar GET-PACKAGE",
@@ -2491,6 +2549,18 @@
       "summary": "Um JSON ida e volta para discutir na LLM e reimportar alterações.",
       "role_in_get": "Contrato get_package.schema.json: um ficheiro por bloco ou fascículo, com rules_hash. Exporta preparação e/ou conhecimento; a devolução entra em Reimportar para merge e aprovação.",
       "not_this": "Não é GET-LLM (só leitura), exportação estrutural MD/PDF/XMind, nem fascicle_roundtrip legado."
+    },
+    "llm_shapes": {
+      "label": "llm_shapes",
+      "summary": "Mapa no envelope GET-PACKAGE com tipos de coleção, exemplos e anti-padrões.",
+      "role_in_get": "Guia a LLM externa na forma correcta dos arrays e knowledge items; ignorado no merge.",
+      "not_this": "Não faz parte do payload mergeável; não substitui rules."
+    },
+    "llm_brief": {
+      "label": "llm_brief",
+      "summary": "Instruções e contributo do utilizador no envelope e texto Copiar brief.",
+      "role_in_get": "Complementa o JSON exportado na sessão Copilot/chat; campo brief na resposta de export.",
+      "not_this": "Não é persistido em SQLite; a LLM pode omitir llm_brief na devolução."
     }
   },
   "workflows": {

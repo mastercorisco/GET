@@ -30,7 +30,7 @@ from app.services.imports.merge import build_merge_proposals, new_proposal_id
 from app.services.packages.block_builder import build_block_payload
 from app.services.packages.block_consolidate import apply_block_proposals
 from app.services.packages.block_merge import build_block_merge_proposals
-from app.services.packages.envelope import unwrap_block_payload, unwrap_fascicle_payload, wrap_package
+from app.services.packages.envelope import package_brief_text, unwrap_block_payload, unwrap_fascicle_payload, wrap_package
 from app.services.packages.validate_strict import PackageValidationError, validate_get_package
 from app.services.workspace_service import workspace_session
 
@@ -88,6 +88,8 @@ def export_package(
                 block_id=None,
                 export_id=export_id,
                 payload=inner,
+                display_code=code,
+                llm_notes=body.llm_notes,
             )
             out_dir = paths.exports_dir / export_id
             out_dir.mkdir(parents=True, exist_ok=True)
@@ -112,6 +114,8 @@ def export_package(
                 block_id=block.id,
                 export_id=export_id,
                 payload=inner,
+                display_code=code,
+                llm_notes=body.llm_notes,
             )
             out_dir = paths.exports_dir / export_id
             out_dir.mkdir(parents=True, exist_ok=True)
@@ -154,6 +158,7 @@ def export_package(
             sha256=sha,
             filename=filename,
             body=text,
+            brief=package_brief_text(pkg),
         )
 
 

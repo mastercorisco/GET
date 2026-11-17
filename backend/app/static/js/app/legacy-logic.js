@@ -505,6 +505,7 @@ const rootPath = document.getElementById("rootPath");
       let activeMergeSessionId = null;
       let lastUploadedImportId = null;
       let lastUploadedImportIsPackage = false;
+      let lastFasciclePackageExport = null;
 
       function downloadTextFile(filename, text) {
         const blob = new Blob([text], { type: "application/json;charset=utf-8" });
@@ -516,6 +517,29 @@ const rootPath = document.getElementById("rootPath");
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
+      }
+
+      function copyPackageBrief(text) {
+        if (!text) return Promise.reject(new Error("Sem brief para copiar."));
+        const done = function () {
+          setExportStatus("Brief copiado — cole na LLM junto com o JSON.");
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(text).then(done);
+        }
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          if (!document.execCommand("copy")) throw new Error("Cópia não suportada neste browser.");
+          done();
+          return Promise.resolve();
+        } finally {
+          document.body.removeChild(ta);
+        }
       }
 
       function setImportStatus(message) {
@@ -1597,16 +1621,16 @@ const rootPath = document.getElementById("rootPath");
           });
       });
 
-      document.getElementById("expPackageBtn").addEventListener("click", function () {
+      function runFasciclePackageExport() {
         const projectId = document.getElementById("pActive").value;
         const pkgSel = document.getElementById("expFasciclePkg");
         const fascicleId = (pkgSel && pkgSel.value) || document.getElementById("expFascicle").value;
         if (!projectId || !fascicleId) {
-          setExportStatus("Seleccione projecto e fascículo.");
-          return;
+          return Promise.reject(new Error("Seleccione projecto e fascículo."));
         }
-        setExportStatus("");
-        knowledgeRequest(
+        const notesEl = document.getElementById("expPkgBriefNotes");
+        const rawNotes = notesEl && notesEl.value ? notesEl.value.trim() : "";
+        return knowledgeRequest(
           "/api/projects/" + projectId + "/packages/export",
           {
             method: "POST",
@@ -1615,16 +1639,47 @@ const rootPath = document.getElementById("rootPath");
               scope_kind: "fascicle",
               node_id: fascicleId,
               profile: document.getElementById("expProfile").value,
+              llm_notes: rawNotes || null,
             }),
           },
           "Falha ao exportar pacote."
-        )
-          .then(function (row) {
-            downloadTextFile(row.filename || "GET-pacote.json", row.body || "");
-            setExportStatus("Pacote gravado: " + row.file_path);
-            return loadExportSection(projectId);
+        ).then(function (row) {
+          lastFasciclePackageExport = {
+            brief: row.brief || "",
+            body: row.body,
+            export_id: row.export_id,
+          };
+          const copyBtn = document.getElementById("expPkgCopyBrief");
+          if (copyBtn) copyBtn.disabled = !lastFasciclePackageExport.brief;
+          downloadTextFile(row.filename || "GET-pacote.json", row.body || "");
+          setExportStatus("Pacote gravado: " + row.file_path);
+          return loadExportSection(projectId).then(function () {
+            return lastFasciclePackageExport;
+          });
+        });
+      }
+
+      document.getElementById("expPackageBtn").addEventListener("click", function () {
+        setExportStatus("");
+        runFasciclePackageExport().catch(function (err) {
+          setExportStatus(err.message);
+        });
+      });
+
+      document.getElementById("expPkgCopyBrief").addEventListener("click", function () {
+        if (lastFasciclePackageExport && lastFasciclePackageExport.brief) {
+          copyPackageBrief(lastFasciclePackageExport.brief).catch(function (err) {
+            setExportStatus(err.message);
+          });
+          return;
+        }
+        runFasciclePackageExport()
+          .then(function (exp) {
+            return copyPackageBrief(exp.brief);
           })
-          .catch(function (err) { setExportStatus(err.message); });
+          .catch(function (err) {
+            setExportStatus(err.message);
+          });
       });
       document.getElementById("expFascicleBtn").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;
