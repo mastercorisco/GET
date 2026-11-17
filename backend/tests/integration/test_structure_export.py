@@ -82,6 +82,8 @@ def test_structure_export_markdown_full_project(client: TestClient, tmp_path: Pa
     assert "Obj teste" in text
     assert "Ponto 1" in text
     assert "Não reimportável" in text
+    assert "Capítulo" in text
+    assert "modelo_do_ponto=" in text
 
 
 def test_structure_export_subtree_excludes_other_fascicle(client: TestClient, tmp_path: Path) -> None:

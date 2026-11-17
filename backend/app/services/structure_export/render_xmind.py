@@ -5,6 +5,7 @@ import json
 import uuid
 import zipfile
 
+from app.domain.document_lexicon import title_with_production_label
 from app.schemas.structure_export import DocumentStructureSnapshotV1, PointFullSnapshot, StructureTreeNodeSnapshot
 
 
@@ -19,9 +20,7 @@ def _point_title(p) -> str:
 
 
 def _node_to_topic(node: StructureTreeNodeSnapshot) -> dict:
-    title = node.title
-    if node.display_code:
-        title = f"{node.display_code} — {title}"
+    title = title_with_production_label(node.node_type, node.display_code or "", node.title)
     attached: list[dict] = []
     if node.block_model and node.block_model.objective.strip():
         attached.append(

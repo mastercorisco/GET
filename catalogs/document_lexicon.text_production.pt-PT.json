@@ -1,0 +1,10 @@
+{
+  "profile": "text_production_pt",
+  "labels": {
+    "fascicle": "Capítulo",
+    "block": "Ponto",
+    "development_point": "Ponto de desenvolvimento"
+  },
+  "technical_keys_note": "As chaves JSON fascicle, block e development_points são identificadores GET; ao redigir texto use os rótulos deste glossário.",
+  "llm_glossary": "Nas exportações GET-LLM, os objectos fascicle e block representam, na produção de texto, capítulo e ponto, respectivamente; development_points são pontos de desenvolvimento."
+}

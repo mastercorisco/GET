@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.domain.document_lexicon import label_pt, load_text_production_lexicon
+
 
 def _header_banner(ge: dict[str, Any]) -> list[str]:
     return [
@@ -10,6 +12,14 @@ def _header_banner(ge: dict[str, Any]) -> list[str]:
         f"_GET-LLM {ge.get('export_type', '')} · {ge.get('schema_version', '')} · {ge.get('generated_at', '')}_",
         "",
     ]
+
+
+def _glossary_section() -> list[str]:
+    lex = load_text_production_lexicon()
+    glossary = (lex.get("llm_glossary") or "").strip()
+    if not glossary:
+        return []
+    return ["## Glossário (produção de texto)", glossary, ""]
 
 
 def _project_section(project: dict[str, Any]) -> list[str]:
@@ -24,13 +34,20 @@ def _project_section(project: dict[str, Any]) -> list[str]:
 
 def render_llm_master_md(payload: dict[str, Any]) -> str:
     ge = payload.get("get_export") or {}
-    lines = ["# Pacote GET-LLM — Mestre", ""] + _header_banner(ge) + _project_section(payload.get("project") or {})
+    ch = label_pt("fascicle") or "Capítulo"
+    pt = label_pt("block") or "Ponto"
+    lines = (
+        ["# Pacote GET-LLM — Mestre", ""]
+        + _header_banner(ge)
+        + _glossary_section()
+        + _project_section(payload.get("project") or {})
+    )
 
-    lines.append("## Fascículos")
+    lines.append(f"## {ch}s")
     for row in payload.get("fascicle_manifest") or []:
         lines.append(
             f"- **{row.get('display_code', '')}** {row.get('title', '')} "
-            f"({row.get('block_count', 0)} blocos) → `{row.get('filename', '')}`"
+            f"({row.get('block_count', 0)} {pt.lower()}s) → `{row.get('filename', '')}`"
         )
     lines.append("")
 
@@ -56,23 +73,26 @@ def render_llm_master_md(payload: dict[str, Any]) -> str:
 def render_llm_fascicle_md(payload: dict[str, Any]) -> str:
     ge = payload.get("get_export") or {}
     fascicle = payload.get("fascicle") or {}
+    ch = label_pt("fascicle") or "Capítulo"
+    pt = label_pt("block") or "Ponto"
+    dev_label = label_pt("development_point") or "Ponto de desenvolvimento"
     lines = [
-        f"# Fascículo {fascicle.get('display_code', '')} — {fascicle.get('title', '')}",
+        f"# {ch} {fascicle.get('display_code', '')} — {fascicle.get('title', '')}",
         "",
-    ] + _header_banner(ge) + _project_section(payload.get("project") or {})
+    ] + _header_banner(ge) + _glossary_section() + _project_section(payload.get("project") or {})
 
-    lines.append("## Blocos")
+    lines.append(f"## {pt}s")
     for row in payload.get("block_summaries") or []:
-        mark = "incluído" if row.get("included_in_package") else "sem pontos exportáveis"
+        mark = "incluído" if row.get("included_in_package") else "sem pontos de desenvolvimento exportáveis"
         lines.append(
             f"- **{row.get('display_code', '')}** {row.get('title', '')} "
-            f"({row.get('exportable_point_count', 0)} pontos; {mark})"
+            f"({row.get('exportable_point_count', 0)} {dev_label.lower()}; {mark})"
         )
     lines.append("")
 
     manifest = payload.get("block_manifest") or []
     if manifest:
-        lines.append("## Ficheiros de bloco no pacote")
+        lines.append(f"## Ficheiros de {pt.lower()} no pacote")
         for row in manifest:
             lines.append(f"- `{row.get('filename', '')}` — {row.get('display_code', '')}")
         lines.append("")
@@ -86,21 +106,24 @@ def render_llm_block_md(payload: dict[str, Any]) -> str:
     block = payload.get("block") or {}
     project = payload.get("project") or {}
     fascicle = payload.get("fascicle") or {}
+    ch = label_pt("fascicle") or "Capítulo"
+    pt = label_pt("block") or "Ponto"
 
     display = block.get("display_code") or block.get("id", "")
     title = block.get("title") or ""
-    lines.append(f"# {display} — {title}")
+    lines.append(f"# {pt} {display} — {title}")
     lines.append("")
     lines.extend(_header_banner(ge))
+    lines.extend(_glossary_section())
     lines.extend(_project_section(project))
 
-    lines.append("## Fascículo")
+    lines.append(f"## {ch}")
     lines.append(f"- **{fascicle.get('display_code', '')}** — {fascicle.get('title', '')}")
     if fascicle.get("purpose"):
         lines.append(f"- **Âmbito:** {fascicle.get('purpose')}")
     lines.append("")
 
-    lines.append("## Bloco")
+    lines.append(f"## {pt}")
     if block.get("purpose"):
         lines.append(f"**Objectivo:** {block['purpose']}")
         lines.append("")

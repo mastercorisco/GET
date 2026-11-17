@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.models.knowledge import KnowledgeItem
 from app.models.technical import TechnicalInstance
 from app.services.export.knowledge_mapper import export_knowledge_item
+from app.domain.document_lexicon import annotate_node_role, merge_generation_rules_with_lexicon
 from app.services.llm_export.catalogs import load_llm_generation_catalog
 from app.services.llm_export.live_context import LlmLiveContext
 from app.services.llm_export.project_payload import build_project_payload
@@ -35,11 +36,15 @@ def build_master_llm(
     document_structure = []
     for fascicle in ctx.fascicle_roots():
         document_structure.append(
-            {
-                "id": fascicle.id,
-                "display_code": ctx.display_code(fascicle.id),
-                "title": fascicle.title,
-            }
+            annotate_node_role(
+                {
+                    "id": fascicle.id,
+                    "display_code": ctx.display_code(fascicle.id),
+                    "title": fascicle.title,
+                    "node_type": "fascicle",
+                },
+                "fascicle",
+            )
         )
 
     knowledge_index = []
@@ -103,14 +108,20 @@ def build_master_llm(
             "export_profile": profile,
         },
         "common_context": {
-            "note": "Enquadramento global; detalhe por fascículo e bloco nos ficheiros referenciados no manifesto.",
+            "note": (
+                "Enquadramento global; detalhe por capítulo e ponto "
+                "(chaves JSON fascicle/block) nos ficheiros referenciados no manifesto."
+            ),
         },
         "document_structure": document_structure,
         "knowledge_index": knowledge_index,
         "global_open_questions": global_open_questions,
         "system_catalog_summary": system_catalog,
-        "fascicle_manifest": fascicle_manifest or [],
-        "generation_rules": catalog.get("generation_rules", {}),
+        "fascicle_manifest": [
+            annotate_node_role(entry, "fascicle") if "text_production_label_pt" not in entry else entry
+            for entry in (fascicle_manifest or [])
+        ],
+        "generation_rules": merge_generation_rules_with_lexicon(catalog),
         "traceability": catalog.get("traceability", {}),
         "validation": {
             "status": "valid_with_warnings" if warnings else "valid",

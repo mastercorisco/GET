@@ -333,6 +333,12 @@
       "topic": "get_package_llm_brief",
       "decision": "Envelopes GET-PACKAGE exportados incluem llm_brief opcional (fora do payload): objectivos, anti-padrões, notas do utilizador e suggested_prompt para clipboard; a API de export devolve brief em texto; importação e merge ignoram llm_brief; rules_hash inalterado.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-057",
+      "topic": "export_text_production_lexicon",
+      "decision": "Léxico de produção de texto (capítulo/ponto) em catálogo catalogs/document_lexicon.text_production.pt-PT.json; aplicado aditivamente em exportações GET-LLM (generation_rules.document_lexicon, text_production_label_pt, Markdown) e estrutura documental legível; chaves técnicas fascicle/block/node_type e UI inalteradas.",
+      "status": "accepted"
     }
   ]
 }

@@ -35,11 +35,13 @@
     "id": "33333333-3333-4333-8333-333333333333",
     "display_code": "F04",
     "title": "Automação de Campo",
-    "purpose": "Requisitos de automação próximos do processo."
+    "purpose": "Requisitos de automação próximos do processo.",
+    "text_production_label_pt": "Capítulo"
   },
   "block": {
     "id": "44444444-4444-4444-8444-444444444444",
     "display_code": "F04_B03",
+    "text_production_label_pt": "Ponto",
     "code": "B03",
     "title": "Filosofia de Controlo Distribuído",
     "purpose": "Definir os princípios de distribuição do controlo.",
@@ -80,6 +82,15 @@
     }
   ],
   "generation_rules": {
+    "document_lexicon": {
+      "profile": "text_production_pt",
+      "labels": {
+        "fascicle": "Capítulo",
+        "block": "Ponto",
+        "development_point": "Ponto de desenvolvimento"
+      },
+      "llm_glossary": "Nas exportações GET-LLM, fascicle e block são capítulo e ponto na produção de texto."
+    },
     "must": ["Preservar a intenção técnica dos requisitos."],
     "must_not": ["Inventar requisitos não suportados."],
     "handling_missing_information": "Identificar lacunas explicitamente.",

@@ -152,9 +152,20 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
         assert block_paths
         block_from_manifest = json.loads(zf.read(block_paths[0]))
         assert block_from_manifest["block"]["id"] == block_id
+        assert block_data["generation_rules"]["document_lexicon"]["labels"]["fascicle"] == "Capítulo"
+        assert block_data["block"]["text_production_label_pt"] == "Ponto"
+        assert block_data["fascicle"]["text_production_label_pt"] == "Capítulo"
         _validate_llm_export(master_data)
         _validate_llm_export(fascicle_data)
         _validate_llm_export(block_data)
+
+        md_name = block_paths[0].replace("_llm.json", "_llm.md")
+        assert md_name in names
+        block_md = zf.read(md_name).decode("utf-8")
+        assert "## Glossário" in block_md
+        assert "## Capítulo" in block_md
+        assert "## Fascículo" not in block_md
+        assert "## Pontos de desenvolvimento" in block_md
 
 
 def test_e06_roundtrip_still_requires_baseline(client: TestClient, tmp_path: Path) -> None:

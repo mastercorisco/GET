@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.models.document import DocumentNode
 from app.services.llm_export.block_eligibility import count_exportable_points
+from app.domain.document_lexicon import annotate_node_role, merge_generation_rules_with_lexicon
 from app.services.llm_export.catalogs import load_llm_generation_catalog
 from app.services.llm_export.knowledge_view import build_knowledge_units
 from app.services.llm_export.live_context import LlmLiveContext
@@ -42,23 +43,29 @@ def build_fascicle_llm_index(
         code = ctx.display_code(node.id)
         point_count = count_exportable_points(session, node.id, include_draft=include_draft)
         block_summaries.append(
-            {
-                "id": node.id,
-                "display_code": code,
-                "title": node.title,
-                "purpose": node.objective or "",
-                "exportable_point_count": point_count,
-                "included_in_package": point_count > 0,
-            }
+            annotate_node_role(
+                {
+                    "id": node.id,
+                    "display_code": code,
+                    "title": node.title,
+                    "purpose": node.objective or "",
+                    "exportable_point_count": point_count,
+                    "included_in_package": point_count > 0,
+                },
+                "block",
+            )
         )
     for node in ctx.subtree_nodes(fascicle.id):
         structure.append(
-            {
-                "id": node.id,
-                "node_type": node.node_type,
-                "display_code": ctx.display_code(node.id),
-                "title": node.title,
-            }
+            annotate_node_role(
+                {
+                    "id": node.id,
+                    "node_type": node.node_type,
+                    "display_code": ctx.display_code(node.id),
+                    "title": node.title,
+                },
+                node.node_type,
+            )
         )
 
     knowledge_units = build_knowledge_units(
@@ -93,19 +100,25 @@ def build_fascicle_llm_index(
             "preserve_source_structure": True,
             "export_profile": profile,
         },
-        "fascicle": {
-            "id": fascicle.id,
-            "display_code": fascicle_code,
-            "title": fascicle.title,
-            "purpose": llm_ctx.fascicle_overrides.get(fascicle.id, ""),
-        },
+        "fascicle": annotate_node_role(
+            {
+                "id": fascicle.id,
+                "display_code": fascicle_code,
+                "title": fascicle.title,
+                "purpose": llm_ctx.fascicle_overrides.get(fascicle.id, ""),
+            },
+            "fascicle",
+        ),
         "document_structure": structure,
         "block_summaries": block_summaries,
-        "block_manifest": block_manifest or [],
+        "block_manifest": [
+            annotate_node_role(entry, "block") if "text_production_label_pt" not in entry else entry
+            for entry in (block_manifest or [])
+        ],
         "knowledge_units": knowledge_units,
         "standards": [],
         "open_points": [],
-        "generation_rules": catalog.get("generation_rules", {}),
+        "generation_rules": merge_generation_rules_with_lexicon(catalog),
         "traceability": catalog.get("traceability", {}),
         "validation": {
             "status": "valid_with_warnings" if warnings else "valid",

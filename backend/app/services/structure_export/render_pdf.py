@@ -9,6 +9,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
+from app.domain.document_lexicon import title_with_production_label
 from app.schemas.structure_export import DocumentStructureSnapshotV1, PointFullSnapshot, StructureTreeNodeSnapshot
 
 
@@ -58,8 +59,8 @@ def _walk_node(
 
     style_key = _heading_style_key(node)
     style = styles.get(style_key, styles["body"])
-    code = f"{node.display_code} — " if node.display_code else ""
-    story.append(_rich_para(f"<b>{_xml_escape(code)}{_xml_escape(node.title)}</b>", style))
+    visible = title_with_production_label(node.node_type, node.display_code or "", node.title)
+    story.append(_rich_para(f"<b>{_xml_escape(visible)}</b>", style))
     story.append(Spacer(1, 0.12 * cm))
 
     if node.block_model:

@@ -13,6 +13,7 @@ from app.models.project import Project
 from app.models.reference import Reference, StandardProfile
 from app.schemas.project import ProjectLlmContext
 from app.services.document_service import compute_display_codes
+from app.domain.document_lexicon import annotate_node_role, merge_generation_rules_with_lexicon
 from app.services.llm_export.catalogs import load_llm_generation_catalog
 from app.services.llm_export.knowledge_view import build_knowledge_units
 from app.services.llm_export.preparation import build_block_preparation
@@ -160,12 +161,15 @@ def build_llm_block_export(
     if llm_ctx.document_type:
         project_payload["document_type"] = llm_ctx.document_type
 
-    fascicle_payload = {
-        "id": fascicle_id or block.id,
-        "display_code": fascicle_code,
-        "title": fascicle.title if fascicle else "",
-        "purpose": (llm_ctx.fascicle_overrides.get(fascicle_id or "", "") if fascicle_id else ""),
-    }
+    fascicle_payload = annotate_node_role(
+        {
+            "id": fascicle_id or block.id,
+            "display_code": fascicle_code,
+            "title": fascicle.title if fascicle else "",
+            "purpose": (llm_ctx.fascicle_overrides.get(fascicle_id or "", "") if fascicle_id else ""),
+        },
+        "fascicle",
+    )
 
     preparation = {
         "applicable_premises": bundle.block_premises,
@@ -202,22 +206,25 @@ def build_llm_block_export(
             "export_profile": profile,
         },
         "fascicle": fascicle_payload,
-        "block": {
-            "id": block.id,
-            "display_code": bundle.display_code,
-            "code": _block_code_suffix(bundle.display_code),
-            "title": block.title,
-            "purpose": block.objective or "",
-            "scope": {
-                "narrative": block.scope or "",
-                "includes": bundle.scope_includes,
-                "excludes": bundle.scope_excludes,
+        "block": annotate_node_role(
+            {
+                "id": block.id,
+                "display_code": bundle.display_code,
+                "code": _block_code_suffix(bundle.display_code),
+                "title": block.title,
+                "purpose": block.objective or "",
+                "scope": {
+                    "narrative": block.scope or "",
+                    "includes": bundle.scope_includes,
+                    "excludes": bundle.scope_excludes,
+                },
             },
-        },
+            "block",
+        ),
         "knowledge_units": knowledge_units,
         "standards": _build_standards(session, bundle.reference_ids),
         "open_points": _open_points_from_bundle(bundle.open_questions, knowledge_units),
-        "generation_rules": catalog.get("generation_rules", {}),
+        "generation_rules": merge_generation_rules_with_lexicon(catalog),
         "traceability": catalog.get("traceability", {}),
         "preparation": preparation,
         "validation": {

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from typing import Iterable
 
+from app.domain.document_lexicon import label_pt, title_with_production_label
 from app.schemas.structure_export import (
     DocumentStructureSnapshotV1,
     PointFullSnapshot,
@@ -40,8 +41,10 @@ def _format_points_md(points: list[PointSummarySnapshot] | list[PointFullSnapsho
 
 
 def _walk_node(node: StructureTreeNodeSnapshot, lines: list[str]) -> None:
-    code_part = f"{node.display_code} — " if node.display_code else ""
-    lines.append(f"{_heading_level(node.depth)} {code_part}{node.title}")
+    heading_title = title_with_production_label(
+        node.node_type, node.display_code or "", node.title
+    )
+    lines.append(f"{_heading_level(node.depth)} {heading_title}")
     lines.append("")
     if node.node_type == "block" and node.block_model:
         bm = node.block_model
@@ -61,7 +64,8 @@ def _walk_node(node: StructureTreeNodeSnapshot, lines: list[str]) -> None:
         if node.points:
             lines.append("")
     elif node.points:
-        lines.append("### Pontos de desenvolvimento")
+        dev_label = label_pt("development_point") or "Ponto de desenvolvimento"
+        lines.append(f"### {dev_label}s")
         lines.extend(_format_points_md(node.points))
         lines.append("")
     for child in node.children:
@@ -77,7 +81,7 @@ def render_markdown(snapshot: DocumentStructureSnapshotV1) -> str:
         f"- Exportado: {snapshot.exported_at}",
         f"- Utilizador: {snapshot.exported_by}",
         f"- Raiz: {snapshot.root_display_code or 'projecto completo'} — {snapshot.root_title}",
-        f"- Opções: bloco={'sim' if snapshot.options.include_block_model else 'não'}, "
+        f"- Opções: modelo_do_ponto={'sim' if snapshot.options.include_block_model else 'não'}, "
         f"pontos={snapshot.options.point_detail}",
         "",
         "---",
