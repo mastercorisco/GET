@@ -359,8 +359,13 @@ def consolidate_package(app_settings: AppSettings, merge_session_id: str) -> str
         if merge is None:
             raise ConsolidateError("Sessão de merge não encontrada.")
         import_row = session.get(ImportRecord, merge.import_id)
-        if import_row and import_row.package_type == "get_package_block":
-            apply_block_proposals(session, merge_session_id)
+        if import_row and import_row.package_type.startswith("get_package_") and import_row.package_type.endswith(
+            "_block"
+        ):
+            try:
+                apply_block_proposals(session, merge_session_id)
+            except ValueError as exc:
+                raise ConsolidateError(str(exc)) from exc
             merge.status = "consolidated"
             import_row.status = "consolidated"
         else:

@@ -26,8 +26,8 @@ def apply_block_proposals(session: Session, merge_session_id: str) -> None:
     for proposal, decision in pairs:
         if decision.decision != "accepted":
             continue
-        if (proposal.protected_touch or proposal.conflict) and not decision.confirmed_protected:
-            raise ValueError(f"Proposta {proposal.id} requer confirmação.")
+        if proposal.protected_touch and not decision.confirmed_protected:
+            raise ValueError(f"Proposta {proposal.id} requer confirmação de campos protegidos.")
 
     merge = session.get(MergeSession, merge_session_id)
     if merge is None:

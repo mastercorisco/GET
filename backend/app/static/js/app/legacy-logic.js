@@ -1592,28 +1592,41 @@ const rootPath = document.getElementById("rootPath");
           .then(function () { setImportStatus("Pacote aceite. Use Rever alterações."); })
           .catch(function (err) { setImportStatus(err.message); });
       });
-      function acceptSafePackageProposals(projectId, merge) {
+      var _BLOCK_PACKAGE_PROPOSAL_KINDS = [
+        "point_update",
+        "point_create",
+        "block_field",
+        "premise_update",
+        "premise_create",
+      ];
+
+      function acceptBlockPackageProposals(projectId, merge) {
         const mergeRoot = "/api/projects/" + projectId + "/packages/merge/";
-        const safe = (merge.proposals || []).filter(function (p) {
-          return !p.conflict && !p.protected_touch;
+        const batch = (merge.proposals || []).filter(function (p) {
+          return _BLOCK_PACKAGE_PROPOSAL_KINDS.indexOf(p.proposal_kind) >= 0;
         });
-        return safe.reduce(function (chain, prop) {
-          return chain.then(function () {
-            return knowledgeRequest(
-              mergeRoot + merge.id + "/proposals/" + prop.id,
-              {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  decision: "accepted",
-                  destination: "project",
-                  confirmed_protected: false,
-                }),
-              },
-              "Falha ao aceitar proposta."
-            );
+        if (!batch.length) return Promise.resolve(0);
+        return batch
+          .reduce(function (chain, prop) {
+            return chain.then(function () {
+              return knowledgeRequest(
+                mergeRoot + merge.id + "/proposals/" + prop.id,
+                {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    decision: "accepted",
+                    destination: "project",
+                    confirmed_protected: !!prop.protected_touch,
+                  }),
+                },
+                "Falha ao aceitar proposta."
+              );
+            });
+          }, Promise.resolve())
+          .then(function () {
+            return batch.length;
           });
-        }, Promise.resolve());
       }
 
       function runPackageMergeFlow(projectId, options) {
@@ -1636,14 +1649,22 @@ const rootPath = document.getElementById("rootPath");
           }
           setImportStatus("Alterações: " + n + " proposta(s).");
           if (opts.autoApplyBlock && (opts.scopeKind || "") === "block") {
-            setImportStatus("A aceitar propostas sem conflito…");
-            return acceptSafePackageProposals(projectId, merge).then(function () {
+            setImportStatus("A aceitar propostas de conteúdo do bloco…");
+            return acceptBlockPackageProposals(projectId, merge).then(function (acceptedCount) {
+              if (!acceptedCount) {
+                setImportStatus(
+                  "Sem propostas de pontos/bloco — decida manualmente ou verifique o JSON devolvido."
+                );
+                return merge;
+              }
               return knowledgeRequest(
                 "/api/projects/" + projectId + "/packages/merge/" + merge.id + "/consolidate",
                 { method: "POST" },
                 "Falha ao consolidar."
               ).then(function (row) {
-                setImportStatus("Bloco actualizado. Backup: " + row.backup_id);
+                setImportStatus(
+                  "Bloco actualizado (" + acceptedCount + " proposta(s)). Backup: " + row.backup_id
+                );
                 document.dispatchEvent(new CustomEvent("get:package-consolidated", { detail: { scope_kind: "block" } }));
                 return merge;
               });

@@ -286,6 +286,38 @@ def test_block_package_roundtrip(client: TestClient, tmp_path: Path) -> None:
     assert found["core_idea"] == "Ideia melhorada"
 
 
+def test_block_merge_point_update_when_status_differs(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, point_id = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    for row in pkg["payload"]["development_points"]:
+        if row["id"] == point_id:
+            row["core_idea"] = "Com status errado na LLM"
+            row["status"] = "approved"
+    uploaded = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("st.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    import_id = uploaded.json()["import_id"]
+    merged = client.post(f"/api/projects/{pid}/packages/imports/{import_id}/merge").json()
+    prop = next(
+        p for p in merged["proposals"] if p["proposal_kind"] == "point_update" and p["target_item_id"] == point_id
+    )
+    assert prop["protected_touch"] is False
+    merge_id = merged["id"]
+    client.patch(
+        f"/api/projects/{pid}/packages/merge/{merge_id}/proposals/{prop['id']}",
+        json={"decision": "accepted", "destination": "project", "confirmed_protected": False},
+    )
+    assert client.post(f"/api/projects/{pid}/packages/merge/{merge_id}/consolidate").status_code == 200
+    found = client.get(f"/api/development-points/{point_id}").json()
+    assert found["core_idea"] == "Com status errado na LLM"
+    assert found["status"] == "draft"
+
+
 def test_block_omission_keeps_point(client: TestClient, tmp_path: Path) -> None:
     pid, block_id, point_id = _setup_block(client, tmp_path)
     export = client.post(

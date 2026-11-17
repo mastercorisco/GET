@@ -81,21 +81,20 @@ def build_block_merge_proposals(
             delta = _field_delta(b_row.get(field), c_row.get(field), d_row.get(field))
             if delta:
                 changes[field] = delta
-        protected = any(
-            d_row.get(f) != b_row.get(f)
-            for f in ("status", "llm_freedom", "template_id", "needs_review", "sort_order")
-            if f in d_row
-        )
-        if not changes and not protected:
+        if not changes:
             continue
+        # Metadados do ponto (status, sort_order, …) não são aplicados na consolidação — só campos editáveis.
         proposals.append(
             {
                 "proposal_kind": "point_update",
                 "target_item_id": pid,
                 "title": f"Ponto: {d_row.get('title', pid)}",
-                "field_changes": changes or {"_protected_only": {"proposed": "touch"}},
-                "conflict": not _json_eq(b_row, c_row) and bool(changes),
-                "protected_touch": protected,
+                "field_changes": changes,
+                "conflict": not _json_eq(
+                    {k: b_row.get(k) for k in POINT_EDITABLE},
+                    {k: c_row.get(k) for k in POINT_EDITABLE},
+                ),
+                "protected_touch": False,
             }
         )
 
