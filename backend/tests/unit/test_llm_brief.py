@@ -15,7 +15,7 @@ def test_format_brief_includes_anti_patterns_and_scope() -> None:
     assert "Anti-padrões" in text
     assert PACKAGE_ANTI_PATTERNS[0] in text
     assert "PKG-BLK-TEST" in text
-    assert "scope block" in text
+    assert "scope=block" in text
 
 
 def test_user_notes_in_brief() -> None:
@@ -28,4 +28,5 @@ def test_user_notes_in_brief() -> None:
     assert brief["user_notes"] == "só pontos ready"
     text = format_brief_for_clipboard(brief)
     assert "só pontos ready" in text
-    assert "O seu contributo" in text
+    assert "Contexto do utilizador" in text
+    assert "Autoverificação" in text

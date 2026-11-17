@@ -65,7 +65,8 @@ def test_block_export_brief_hints_when_notes_empty(client: TestClient, tmp_path:
         json={"scope_kind": "block", "node_id": block_id},
     )
     assert export.status_code == 200
-    assert "O seu contributo" in export.json()["brief"]
+    assert "Contexto do utilizador" in export.json()["brief"]
+    assert "Objectivo desta sessão" in export.json()["brief"]
 
 
 def test_block_export_llm_shapes_anti_patterns(client: TestClient, tmp_path: Path) -> None:

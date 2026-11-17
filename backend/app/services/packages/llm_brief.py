@@ -3,9 +3,14 @@ from __future__ import annotations
 from typing import Any
 
 from app.services.packages.package_guidance import (
+    BRIEF_READ_ORDER,
+    BRIEF_SELF_CHECK,
+    BRIEF_WORKFLOW,
     CANONICAL_BRIEF_OBJECTIVES,
     PACKAGE_ANTI_PATTERNS,
+    SCOPE_TASK_FOCUS,
     USER_CONTRIBUTION_HINTS,
+    USER_CONTRIBUTION_TEMPLATE,
 )
 
 
@@ -38,34 +43,59 @@ def format_brief_for_clipboard(brief: dict[str, Any]) -> str:
     code = brief.get("display_code") or ""
     notes = (brief.get("user_notes") or "").strip()
 
-    lines.append("=== GET-PACKAGE — instruções para a LLM externa ===")
+    lines.append("Papel: editor técnico GET-PACKAGE — devolver só JSON válido, pronto a reimportar na app GET.")
     lines.append("")
-    lines.append("## O seu contributo (preencha antes de enviar)")
+    lines.append("---")
+    lines.append("## Contexto do utilizador (autoridade humana)")
     if notes:
         lines.append(notes)
     else:
-        lines.append("(ainda vazio — acrescente abaixo ou na conversa antes de executar)")
+        lines.append("Substitua o bloco abaixo pelo seu contexto antes de executar:")
+        lines.append("")
+        lines.append(USER_CONTRIBUTION_TEMPLATE.strip())
+        lines.append("")
+        lines.append("Indicadores úteis:")
         for hint in USER_CONTRIBUTION_HINTS:
             lines.append(f"- {hint}")
+    lines.append("---")
     lines.append("")
-    lines.append("## Tarefa")
+    lines.append("## Pacote anexo")
+    scope_line = (
+        f"Ficheiro GET-PACKAGE: export_id={export_id}, scope={scope}"
+        + (f", código documental {code}" if code else "")
+        + "."
+    )
+    lines.append(scope_line)
+    focus = SCOPE_TASK_FOCUS.get(scope)
+    if focus:
+        lines.append(focus)
     lines.append(
-        f"Anexe o ficheiro JSON GET-PACKAGE exportado ({export_id}"
-        + (f", âmbito {code}" if code else "")
-        + f", scope {scope}). "
-        "Devolva o ficheiro JSON GET-PACKAGE **completo**, mesmo export_id e schema GET-PACKAGE 1.0.0."
+        "Tarefa: editar o payload conforme abaixo e devolver o JSON GET-PACKAGE 1.0.0 COMPLETO "
+        f"(mesmo export_id={export_id}). Saída = ficheiro JSON único; sem narrativa fora do JSON."
     )
     lines.append("")
-    lines.append("## Comportamento")
+    lines.append("## Ordem de leitura no JSON")
+    for i, step in enumerate(BRIEF_READ_ORDER, start=1):
+        lines.append(f"{i}. {step}")
+    lines.append("")
+    lines.append("## Regras de edição")
     for obj in brief.get("objectives") or CANONICAL_BRIEF_OBJECTIVES:
         lines.append(f"- {obj}")
     lines.append("")
-    lines.append("## Anti-padrões (rejeição no importador)")
+    lines.append("## Procedimento")
+    for i, step in enumerate(BRIEF_WORKFLOW, start=1):
+        lines.append(f"{i}. {step}")
+    lines.append("")
+    lines.append("## Anti-padrões (causam rejeição no importador)")
     for ap in brief.get("anti_patterns") or PACKAGE_ANTI_PATTERNS:
         lines.append(f"- {ap}")
     lines.append("")
-    lines.append("## Referências no JSON anexo")
-    lines.append("- rules + rules_hash: não alterar")
-    lines.append("- llm_shapes: tipos e exemplos por coleção")
-    lines.append("- llm_brief: esta mensagem (pode omitir na devolução)")
+    lines.append("## Autoverificação antes de entregar")
+    for item in BRIEF_SELF_CHECK:
+        lines.append(f"- [ ] {item}")
+    lines.append("")
+    lines.append("## Campos do envelope")
+    lines.append("- rules + rules_hash: copiar sem alteração")
+    lines.append("- llm_shapes: guia de tipos (não precisa de voltar na devolução, mas pode)")
+    lines.append("- llm_brief: opcional na devolução")
     return "\n".join(lines)

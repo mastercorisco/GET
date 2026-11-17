@@ -16,18 +16,66 @@ COLLECTION_PRIORITY = (
 )
 
 CANONICAL_BRIEF_OBJECTIVES: list[str] = [
-    "Enriquecer apenas campos editáveis do payload, com conteúdo técnico denso e fundamentado.",
-    "O que não souber: registar em open_questions (bloco) ou knowledge_type open_question (fascículo); não inventar.",
-    "Seguir llm_shapes.collections (tipos e item_template) e anti_patterns.",
-    "Texto conciso por item; evitar prosa longa fora dos campos previstos.",
-    "Preservar UUID existentes; novos objetos com new_001, new_002, …",
-    "Omissão no JSON devolvido não elimina conteúdo aprovado na base.",
-    "Devolver o ficheiro GET-PACKAGE completo com o mesmo export_id.",
+    "Ler primeiro `rules`, `llm_shapes.collections` e `llm_shapes.anti_patterns`; só depois editar o `payload`.",
+    "Alterar apenas conteúdo técnico em campos editáveis; nunca `rules`, `rules_hash`, `schema_version`, `scope`, IDs aprovados, estados nem proveniência.",
+    "Bloco: reforçar objectivo do bloco, `development_points` (ideia central, resultado, listas tipadas) e `premises` onde fizer sentido.",
+    "Fascículo: trabalhar só em `payload.editable_knowledge` (KI completos); tratar `protected_context` como leitura — não copiar atalhos para editable.",
+    "Incerteza ou falta de base documental: criar lacuna (`open_questions` no ponto, ou KI `knowledge_type` open_question); não inventar números, normas ou decisões.",
+    "Cumprir tipos de `llm_shapes`: objectos `{text}` ou `{prompt, answer}` nas listas; KI com todas as chaves obrigatórias do exemplo/template.",
+    "Estilo: denso e verificável; uma ideia por entrada; sem markdown, comentários ou texto fora do JSON.",
+    "Preservar UUID; novos com `new_001`, `new_002`, …; omissão de um nó existente NÃO é eliminação.",
+    "Entrega: um único ficheiro JSON GET-PACKAGE 1.0.0 completo, mesmo `export_id`; pode omitir `llm_brief` na devolução.",
 ]
 
-USER_CONTRIBUTION_HINTS: list[str] = [
-    "Âmbito: que blocos/fascículos ou pontos pode alterar.",
-    "Decisões já fechadas que não devem ser revertidas.",
-    "Terminologia obrigatória (ex.: contratação, adjudicatário).",
-    "Prioridades desta sessão e o que fica explicitamente fora.",
+BRIEF_READ_ORDER: list[str] = [
+    "`rules` (7 regras) — contrato inviolável.",
+    "`llm_shapes.anti_patterns` e `collection_priority` — evita rejeição no importador.",
+    "`llm_shapes.collections` — forma exacta de cada array/objecto editável.",
+    "`payload` — aplicar alterações; comparar com `sample_from_export` quando existir.",
 ]
+
+BRIEF_WORKFLOW: list[str] = [
+    "Mapear o que está incompleto ou vago no payload (pontos, listas, KI).",
+    "Enriquecer campo a campo, respeitando tipos; consolidar dúvidas em open_question em vez de preencher à sorte.",
+    "Validar mentalmente cada lista contra o `item_template` ou `sample_from_export` da respectiva path.",
+    "Rever anti-padrões; garantir envelope completo e `export_id` inalterado.",
+    "Responder só com o JSON final (ficheiro ou bloco de código JSON único, sem explicação fora do ficheiro).",
+]
+
+BRIEF_SELF_CHECK: list[str] = [
+    "`rules_hash` e `rules` iguais ao ficheiro recebido?",
+    "Alguma lista com strings soltas ou `lists: {}`?",
+    "Knowledge items sem estrutura completa (só title/content)?",
+    "Campos inventados (ex. node_id, question) em KI?",
+    "Mesmo `export_id` e todas as secções obrigatórias presentes?",
+]
+
+SCOPE_TASK_FOCUS: dict[str, str] = {
+    "block": (
+        "Foco: `payload.objective`, `development_points[]` e `premises[]`. "
+        "Em cada ponto, manter todas as chaves de `lists` com tipos correctos."
+    ),
+    "fascicle": (
+        "Foco: `payload.editable_knowledge` (knowledge_items, decisions, open_questions). "
+        "Não alterar itens em `protected_context` excepto se a regra do pacote o permitir explicitamente."
+    ),
+}
+
+USER_CONTRIBUTION_HINTS: list[str] = [
+    "Objectivo desta sessão (ex.: «aprofundar pontos ready sem novos requisitos»).",
+    "Âmbito: IDs/títulos dos pontos ou KI que PODE tocar; o que é intocável.",
+    "Decisões já fechadas (com referência D-xx ou título da decisão).",
+    "Terminologia obrigatória e o que evitar (siglas, sinónimos).",
+    "Profundidade desejada (esboço vs texto quase final) e limite de volume.",
+]
+
+USER_CONTRIBUTION_TEMPLATE = """\
+Objectivo desta sessão: [ex. enriquecer pontos ready / fechar open_questions do fascículo]
+
+Pode alterar: [pontos ou KI concretos, ou «todos os draft/ready»]
+Não alterar: [premissas aprovadas, decisões D-xx, protected_context, etc.]
+
+Decisões fechadas: [lista ou «nenhuma nova»]
+Terminologia: [glossário, nomes de sistemas, «adjudicatário» vs «contractual»]
+Tom e profundidade: [técnico conciso / ~N palavras por item / sem valores numéricos inventados]
+"""
