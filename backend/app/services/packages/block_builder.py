@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domain.block.models import DevelopmentPoint, Premise
+from app.services.packages.llm_shapes import normalize_point_lists
 from app.models.document import DocumentNode
 from app.services.document_service import compute_display_codes
 
@@ -39,8 +40,7 @@ def build_block_payload(session: Session, block_id: str) -> dict[str, Any]:
             lists = json.loads(p.lists_json or "{}")
         except json.JSONDecodeError:
             lists = {}
-        if not isinstance(lists, dict):
-            lists = {}
+        lists = normalize_point_lists(lists)
         point_payloads.append(
             {
                 "id": p.id,

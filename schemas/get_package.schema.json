@@ -87,6 +87,29 @@
     },
     "payload": {
       "type": "object"
+    },
+    "llm_shapes": {
+      "type": "object",
+      "required": ["version", "scope_kind", "instructions", "collections"],
+      "additionalProperties": true,
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "scope_kind": {
+          "enum": ["block", "fascicle"]
+        },
+        "instructions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "collections": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
     }
   },
   "allOf": [
@@ -136,6 +159,29 @@
     }
   ],
   "$defs": {
+    "listTextItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "listPromptAnswerItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prompt", "answer"],
+      "properties": {
+        "prompt": {
+          "type": "string"
+        },
+        "answer": {
+          "type": "string"
+        }
+      }
+    },
     "pointLists": {
       "type": "object",
       "additionalProperties": false,
@@ -155,31 +201,31 @@
         "questions_to_answer": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/listPromptAnswerItem"
           }
         },
         "must_include": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/listTextItem"
           }
         },
         "limits_and_exclusions": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/listTextItem"
           }
         },
         "examples": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/listTextItem"
           }
         },
         "open_questions": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/listPromptAnswerItem"
           }
         },
         "acceptance_criteria": {
@@ -191,13 +237,15 @@
         "knowledge_item_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "format": "uuid"
           }
         },
         "reference_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "format": "uuid"
           }
         }
       }

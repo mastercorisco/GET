@@ -321,6 +321,12 @@
       "topic": "get_package_unified_roundtrip",
       "decision": "Contrato único GET-PACKAGE (schema 1.0.0): um ficheiro JSON com scope block|fascicle, rules/rules_hash e payload; exportação e importação usam o mesmo validador; falha rejeita o ficheiro inteiro; GET-LLM permanece não reimportável; fascicle_roundtrip legado na rota /imports.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-055",
+      "topic": "get_package_llm_shapes",
+      "decision": "Envelopes GET-PACKAGE exportados incluem llm_shapes opcional (fora do payload): guia de coleções, item_template e instrução de tipos estritos; importação aceita pacotes sem llm_shapes; listas de pontos validam objectos tipados; rules_hash inalterado.",
+      "status": "accepted"
     }
   ]
 }

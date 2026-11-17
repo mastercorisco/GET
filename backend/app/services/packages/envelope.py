@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from app.services.packages.constants import GET_PACKAGE_SCHEMA, SUPPORTED_GET_PACKAGE_VERSION
+from app.services.packages.llm_shapes import build_llm_shapes
 from app.services.packages.rules import CANONICAL_RULES, rules_hash
 
 
@@ -32,6 +33,7 @@ def wrap_package(
         "rules_hash": rules_hash(),
         "export_id": export_id,
         "payload": payload,
+        "llm_shapes": build_llm_shapes(scope_kind, payload),
     }
 
 

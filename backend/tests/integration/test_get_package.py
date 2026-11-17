@@ -42,6 +42,87 @@ def _setup_block(client: TestClient, tmp_path: Path) -> tuple[str, str, str]:
     return pid, block["id"], point.json()["id"]
 
 
+def test_block_export_includes_llm_shapes_and_full_lists(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    assert export.status_code == 200
+    pkg = json.loads(export.json()["body"])
+    assert "llm_shapes" in pkg
+    assert pkg["llm_shapes"]["scope_kind"] == "block"
+    cols = pkg["llm_shapes"].get("collections") or {}
+    assert "payload.development_points[].lists.must_include" in cols
+    assert cols["payload.development_points[].lists.must_include"].get("item_template") == {"text": ""}
+    lists = pkg["payload"]["development_points"][0]["lists"]
+    for key in (
+        "development_guidance",
+        "must_include",
+        "questions_to_answer",
+        "knowledge_item_ids",
+    ):
+        assert key in lists
+
+
+def test_block_import_rejects_string_in_must_include(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, point_id = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    for row in pkg["payload"]["development_points"]:
+        if row["id"] == point_id:
+            row["lists"]["must_include"] = ["texto solto"]
+    bad = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("bad.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert bad.status_code == 400
+    assert "incompatível" in bad.json()["detail"].lower()
+
+
+def test_package_import_without_llm_shapes_still_valid(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, point_id = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    pkg.pop("llm_shapes", None)
+    for row in pkg["payload"]["development_points"]:
+        if row["id"] == point_id:
+            row["core_idea"] = "Sem llm_shapes"
+    uploaded = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("nost.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert uploaded.status_code == 200
+
+
+def test_block_roundtrip_preserves_point_uuid(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, point_id = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    exported_id = None
+    for row in pkg["payload"]["development_points"]:
+        if row["id"] == point_id:
+            exported_id = row["id"]
+            row["core_idea"] = "Alterado"
+    assert exported_id == point_id
+    uploaded = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("uuid.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert uploaded.status_code == 200
+    for row in pkg["payload"]["development_points"]:
+        assert row["id"] == exported_id
+
+
 def test_package_export_import_rejects_bad_rules_hash(client: TestClient, tmp_path: Path) -> None:
     pid, fascicle_id, _ = _setup_fascicle_export(client, tmp_path)
     export = client.post(
@@ -155,6 +236,7 @@ def test_new_point_via_package(client: TestClient, tmp_path: Path) -> None:
         json={"scope_kind": "block", "node_id": block_id},
     )
     pkg = json.loads(export.json()["body"])
+    base_lists = pkg["payload"]["development_points"][0]["lists"]
     pkg["payload"]["development_points"].append(
         {
             "id": "new_001",
@@ -162,7 +244,7 @@ def test_new_point_via_package(client: TestClient, tmp_path: Path) -> None:
             "title": "Novo ponto LLM",
             "core_idea": "c",
             "intended_outcome": "o",
-            "lists": {},
+            "lists": dict(base_lists),
             "status": "draft",
             "llm_freedom": "bounded",
             "template_id": None,

@@ -33,7 +33,18 @@
         "title": "P1",
         "core_idea": "c",
         "intended_outcome": "o",
-        "lists": {},
+        "lists": {
+          "development_guidance": [],
+          "perspectives": [],
+          "questions_to_answer": [],
+          "must_include": [],
+          "limits_and_exclusions": [],
+          "examples": [],
+          "open_questions": [],
+          "acceptance_criteria": [],
+          "knowledge_item_ids": [],
+          "reference_ids": []
+        },
         "status": "draft",
         "llm_freedom": "bounded",
         "template_id": null,
@@ -41,5 +52,13 @@
       }
     ],
     "premises": []
+  },
+  "llm_shapes": {
+    "version": "1",
+    "scope_kind": "block",
+    "instructions": [
+      "Cumprir estritamente os tipos definidos em llm_shapes. Não inferir estruturas não especificadas."
+    ],
+    "collections": {}
   }
 }

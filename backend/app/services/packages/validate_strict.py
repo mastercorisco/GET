@@ -7,6 +7,7 @@ import jsonschema
 
 from app.services.export.validator import validate_fascicle
 from app.services.packages.constants import GET_PACKAGE_SCHEMA, SUPPORTED_GET_PACKAGE_VERSION
+from app.services.packages.llm_shapes import validate_block_point_lists
 from app.services.packages.rules import rules_hash
 
 
@@ -111,3 +112,4 @@ def validate_get_package(pkg: dict, *, project_id: str) -> None:
         block = payload.get("block") or {}
         if block_id != block.get("id"):
             raise PackageValidationError("Ficheiro incompatível: bloco do âmbito não coincide.")
+        validate_block_point_lists(payload)
