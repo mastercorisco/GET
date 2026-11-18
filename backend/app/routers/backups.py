@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from app.deps import get_settings
 from app.schemas.backup import BackupCreateRequest, BackupRecordResponse, BackupRestorePreviewResponse
 from app.services.backup_service import create_backup, list_backups, restore_backup, restore_preview
+from app.services.workspace_exclusivity import WorkspaceExclusiveError
 from app.services.workspace_service import WorkspaceError
 
 router = APIRouter(prefix="/backups", tags=["backups"])
@@ -37,5 +38,7 @@ def backups_restore(backup_id: str, confirm: bool = False) -> dict[str, str]:
     try:
         restore_backup(get_settings(), backup_id, confirm=confirm)
         return {"status": "restored", "backup_id": backup_id}
+    except WorkspaceExclusiveError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except WorkspaceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

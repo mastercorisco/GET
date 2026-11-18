@@ -191,8 +191,11 @@ def _consolidate_in_session(session: Session, merge_session_id: str) -> None:
 
 
 def consolidate_merge_session(app_settings: AppSettings, merge_session_id: str) -> str:
-    backup = create_backup(app_settings, "critical")
-    with workspace_session(app_settings) as (session, _paths):
-        _consolidate_in_session(session, merge_session_id)
-        session.flush()
-    return backup.id
+    from app.services.workspace_exclusivity import workspace_exclusive
+
+    with workspace_exclusive("consolidate_import_merge"):
+        backup = create_backup(app_settings, "critical")
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            _consolidate_in_session(session, merge_session_id)
+            session.flush()
+        return backup.id

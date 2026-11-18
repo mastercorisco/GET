@@ -349,7 +349,7 @@
     {
       "id": "ADR-059",
       "topic": "workspace_contract_sqlite",
-      "decision": "Contrato operacional do workspace: raiz activa via GET_WORKSPACE_ROOT (sobrepõe app-config) para automação e futuro contentor; SQLite com WAL/busy_timeout, transacções BEGIN IMMEDIATE nas escritas críticas (baseline, consolidate, workbook apply, CTBJ apply, purge/delete); lock em processo único (409) para operações exclusivas; GET /api/health/workspace com integrity_check e journal_mode; sem Docker/auth/multi-utilizador no MVP.",
+      "decision": "Contrato operacional do workspace: raiz activa via GET_WORKSPACE_ROOT (sobrepõe app-config); SQLite com WAL/busy_timeout, BEGIN IMMEDIATE e lock em processo nas escritas críticas (restauro, import/merge, baseline, consolidate, workbook apply, CTBJ apply, purge/delete); HTTP 409 se concorrente; GET /api/health/workspace; invalidação de cache SQLAlchemy pós-restauro; runbook docs/WORKSPACE_OPERATIONS.md; contentor Docker apenas roadmap E09, fora do MVP.",
       "status": "accepted"
     }
   ]

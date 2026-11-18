@@ -70,4 +70,4 @@ cd frontend && npm test
 cd e2e/playwright && npm install && npx playwright test
 ```
 
-Documentação de implementação: `docs/PLAN.md`, revisão: `docs/PLAN_REVIEW_CHECKLIST.md`.
+Documentação de implementação: `docs/PLAN.md`, revisão: `docs/PLAN_REVIEW_CHECKLIST.md`. Operação do workspace (SQLite, 409, restauro): `docs/WORKSPACE_OPERATIONS.md`.

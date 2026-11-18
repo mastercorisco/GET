@@ -283,6 +283,25 @@
           ]
         }
       ]
+    },
+    {
+      "id": "E09",
+      "title": "Roadmap pós-MVP (infra opcional)",
+      "depends_on": [
+        "E01"
+      ],
+      "stories": [
+        {
+          "id": "E09-S01",
+          "title": "Contentor Docker opcional",
+          "acceptance": [
+            "Imagem e Compose documentados",
+            "Volume de workspace e GET_WORKSPACE_ROOT",
+            "Porta 127.0.0.1 no anfitrião",
+            "Fora do fluxo MVP principal até aprovação explícita"
+          ]
+        }
+      ]
     }
   ]
 }

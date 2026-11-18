@@ -66,6 +66,14 @@ def get_session_factory_for_workspace(db_path: Path) -> tuple[Engine, sessionmak
     return engine, factory
 
 
+def dispose_workspace_engine(db_path: Path) -> None:
+    """Liberta ligações SQLAlchemy após substituição do ficheiro get.db (ex.: restauro)."""
+    key = str(db_path.resolve())
+    cached = _ENGINE_CACHE.pop(key, None)
+    if cached is not None:
+        cached[0].dispose()
+
+
 def session_scope(factory: sessionmaker[Session]) -> Generator[Session, None, None]:
     session = factory()
     try:

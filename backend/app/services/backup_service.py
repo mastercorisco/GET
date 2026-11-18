@@ -14,7 +14,13 @@ from app.models.backup import BackupRecord
 from app.models.workspace import WorkspaceSettings
 from app.schemas.backup import BackupRecordResponse, BackupRestorePreviewResponse
 from app.services.workspace_paths import WorkspacePaths
-from app.services.workspace_service import WorkspaceError, get_workspace_db_path, workspace_session
+from app.services.workspace_exclusivity import workspace_exclusive
+from app.services.workspace_service import (
+    WorkspaceError,
+    get_workspace_db_path,
+    invalidate_workspace_runtime_cache,
+    workspace_session,
+)
 
 
 def _sha256(path: Path) -> str:
@@ -123,20 +129,26 @@ def restore_backup(app_settings: AppSettings, backup_id: str, *, confirm: bool) 
     if not confirm:
         raise WorkspaceError("Confirmação obrigatória para restauro.")
 
-    db_path = get_workspace_db_path(app_settings)
-    backup_path: Path
+    with workspace_exclusive("restore_backup"):
+        db_path = get_workspace_db_path(app_settings)
+        backup_path: Path
 
-    with workspace_session(app_settings) as (session, paths):
-        record = session.get(BackupRecord, backup_id)
-        if record is None:
-            raise WorkspaceError("Backup não encontrado.")
-        backup_path = Path(record.file_path)
-        pre_critical = paths.backups_dir / "critical" / f"pre_restore_guard_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.db"
-        _backup_db(db_path, pre_critical)
+        with workspace_session(app_settings, begin_immediate=True) as (session, paths):
+            record = session.get(BackupRecord, backup_id)
+            if record is None:
+                raise WorkspaceError("Backup não encontrado.")
+            backup_path = Path(record.file_path)
+            pre_critical = (
+                paths.backups_dir
+                / "critical"
+                / f"pre_restore_guard_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.db"
+            )
+            _backup_db(db_path, pre_critical)
 
-    if not backup_path.exists():
-        raise WorkspaceError("Ficheiro de backup em falta.")
+        if not backup_path.exists():
+            raise WorkspaceError("Ficheiro de backup em falta.")
 
-    with sqlite3.connect(db_path) as conn:
-        conn.execute("PRAGMA wal_checkpoint(FULL)")
-    shutil.copy2(backup_path, db_path)
+        with sqlite3.connect(db_path) as conn:
+            conn.execute("PRAGMA wal_checkpoint(FULL)")
+        shutil.copy2(backup_path, db_path)
+        invalidate_workspace_runtime_cache(db_path)

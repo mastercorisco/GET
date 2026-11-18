@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from app.config import AppSettings, get_active_workspace_root
 from app.deps import get_settings
 from app.main import app
+from app.services.workspace_exclusivity import workspace_exclusive
 from app.services.workspace_service import migrate_workspace_database
 
 
@@ -122,6 +123,20 @@ def test_migrate_reconciles_stale_alembic_version(tmp_path: Path) -> None:
     assert {row[0] for row in sqlite3.connect(db).execute(
         "SELECT name FROM sqlite_master WHERE type='table'"
     )}.__contains__("import_record")
+
+
+def test_restore_blocked_while_exclusive_operation(client: TestClient, tmp_path: Path) -> None:
+    ws = tmp_path / "workspace-exclusive"
+    client.post(
+        "/api/workspace/create",
+        json={"root_path": str(ws), "local_user_name": "tester"},
+    )
+    backup = client.post("/api/backups", json={"tier": "critical"})
+    backup_id = backup.json()["id"]
+    with workspace_exclusive("test_hold"):
+        denied = client.post(f"/api/backups/{backup_id}/restore", params={"confirm": "true"})
+    assert denied.status_code == 409
+    assert "workspace" in denied.json()["detail"].lower()
 
 
 def test_restore_requires_confirm(client: TestClient, tmp_path: Path) -> None:

@@ -192,162 +192,167 @@ def import_package(
     scope = pkg.get("scope") or {}
     scope_kind = scope.get("kind", "")
 
-    with workspace_session(app_settings) as (session, paths):
-        import_id = new_import_id()
-        dest = write_import_file(paths.imports_dir, import_id, filename or "package.json", raw)
-        export_id = pkg.get("export_id")
+    from app.services.workspace_exclusivity import workspace_exclusive
 
-        export_record = None
-        if export_id:
-            try:
-                export_record = resolve_export_record(session, project_id, export_id)
-            except BaseLoadError:
-                export_record = None
-        if export_record is not None:
-            base_src = Path(export_record.file_path).parent / MERGE_BASE_FILENAME
-            if not base_src.is_file():
-                base_src = Path(export_record.file_path)
-            if base_src.is_file():
-                snap = dest.parent / MERGE_BASE_FILENAME
-                snap.write_text(base_src.read_text(encoding="utf-8"), encoding="utf-8")
+    with workspace_exclusive("package_import"):
+        with workspace_session(app_settings, begin_immediate=True) as (session, paths):
+            import_id = new_import_id()
+            dest = write_import_file(paths.imports_dir, import_id, filename or "package.json", raw)
+            export_id = pkg.get("export_id")
 
-        record = ImportRecord(
-            id=import_id,
-            project_id=project_id,
-            source_filename=filename or "package.json",
-            raw_path=str(dest),
-            package_type=f"get_package_{scope_kind}",
-            schema_name="GET-PACKAGE",
-            schema_version=pkg.get("schema_version", "1.0.0"),
-            linked_export_id=export_id,
-            export_record_id=export_record.id if export_record else None,
-            status="staged",
-            created_at=_utcnow(),
-        )
-        session.add(record)
-        session.flush()
-        return PackageImportResponse(
-            import_id=import_id,
-            scope_kind=scope_kind,
-            export_id=export_id,
-            status="staged",
-        )
+            export_record = None
+            if export_id:
+                try:
+                    export_record = resolve_export_record(session, project_id, export_id)
+                except BaseLoadError:
+                    export_record = None
+            if export_record is not None:
+                base_src = Path(export_record.file_path).parent / MERGE_BASE_FILENAME
+                if not base_src.is_file():
+                    base_src = Path(export_record.file_path)
+                if base_src.is_file():
+                    snap = dest.parent / MERGE_BASE_FILENAME
+                    snap.write_text(base_src.read_text(encoding="utf-8"), encoding="utf-8")
+
+            record = ImportRecord(
+                id=import_id,
+                project_id=project_id,
+                source_filename=filename or "package.json",
+                raw_path=str(dest),
+                package_type=f"get_package_{scope_kind}",
+                schema_name="GET-PACKAGE",
+                schema_version=pkg.get("schema_version", "1.0.0"),
+                linked_export_id=export_id,
+                export_record_id=export_record.id if export_record else None,
+                status="staged",
+                created_at=_utcnow(),
+            )
+            session.add(record)
+            session.flush()
+            return PackageImportResponse(
+                import_id=import_id,
+                scope_kind=scope_kind,
+                export_id=export_id,
+                status="staged",
+            )
 
 
 def run_package_merge(app_settings: AppSettings, project_id: str, import_id: str) -> str:
     from app.services.import_service import _local_user as import_local_user
+    from app.services.workspace_exclusivity import workspace_exclusive
 
     latest = get_latest_baseline(app_settings, project_id)
     if latest is None:
         raise PackageError("Publicar baseline antes de analisar alterações.")
 
-    with workspace_session(app_settings) as (session, _paths):
-        import_row = session.get(ImportRecord, import_id)
-        if import_row is None or import_row.project_id != project_id:
-            raise PackageError("Importação não encontrada.")
-        if not import_row.package_type.startswith("get_package_"):
-            raise PackageError("Importação não é um pacote GET-PACKAGE.")
+    with workspace_exclusive("package_merge"):
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            import_row = session.get(ImportRecord, import_id)
+            if import_row is None or import_row.project_id != project_id:
+                raise PackageError("Importação não encontrada.")
+            if not import_row.package_type.startswith("get_package_"):
+                raise PackageError("Importação não é um pacote GET-PACKAGE.")
 
-        pkg = json.loads(Path(import_row.raw_path).read_text(encoding="utf-8"))
-        validate_get_package(pkg, project_id=project_id)
-        scope = pkg.get("scope") or {}
-        scope_kind = scope.get("kind")
-        export_id = pkg.get("export_id")
-        if not export_id:
-            raise PackageError("Pacote sem export_id.")
+            pkg = json.loads(Path(import_row.raw_path).read_text(encoding="utf-8"))
+            validate_get_package(pkg, project_id=project_id)
+            scope = pkg.get("scope") or {}
+            scope_kind = scope.get("kind")
+            export_id = pkg.get("export_id")
+            if not export_id:
+                raise PackageError("Pacote sem export_id.")
 
-        try:
-            export_record = resolve_export_record(session, project_id, export_id)
-        except BaseLoadError as exc:
-            raise PackageError(str(exc)) from exc
+            try:
+                export_record = resolve_export_record(session, project_id, export_id)
+            except BaseLoadError as exc:
+                raise PackageError(str(exc)) from exc
 
-        baseline = session.get(Baseline, latest.id)
-        if baseline is None:
-            raise PackageError("Baseline não encontrada.")
+            baseline = session.get(Baseline, latest.id)
+            if baseline is None:
+                raise PackageError("Baseline não encontrada.")
 
-        if scope_kind == "fascicle":
-            fascicle_id = scope.get("fascicle_id")
-            fascicle = session.get(DocumentNode, fascicle_id)
-            if fascicle is None or fascicle.project_id != project_id:
-                raise PackageError("Fascículo inválido.")
-            base_pkg = unwrap_fascicle_payload(
-                json.loads(Path(export_record.file_path).read_text(encoding="utf-8"))
-            )
-            ctx = ExportBuildContext(session, project_id, baseline, import_local_user(session))
-            profile = base_pkg.get("export_profile", "discussion")
-            current_pkg = materialize_current_package(ctx, fascicle, profile, export_id)
-            returned_pkg = unwrap_fascicle_payload(pkg)
-            proposals, summary = build_merge_proposals(base_pkg, current_pkg, returned_pkg)
-            merge_node_id = fascicle.id
-        elif scope_kind == "block":
-            block_id = scope.get("block_id")
-            block = session.get(DocumentNode, block_id)
-            if block is None or block.project_id != project_id:
-                raise PackageError("Bloco inválido.")
-            snap = Path(import_row.raw_path).parent / MERGE_BASE_FILENAME
-            if snap.is_file():
-                base_raw = json.loads(snap.read_text(encoding="utf-8"))
+            if scope_kind == "fascicle":
+                fascicle_id = scope.get("fascicle_id")
+                fascicle = session.get(DocumentNode, fascicle_id)
+                if fascicle is None or fascicle.project_id != project_id:
+                    raise PackageError("Fascículo inválido.")
+                base_pkg = unwrap_fascicle_payload(
+                    json.loads(Path(export_record.file_path).read_text(encoding="utf-8"))
+                )
+                ctx = ExportBuildContext(session, project_id, baseline, import_local_user(session))
+                profile = base_pkg.get("export_profile", "discussion")
+                current_pkg = materialize_current_package(ctx, fascicle, profile, export_id)
+                returned_pkg = unwrap_fascicle_payload(pkg)
+                proposals, summary = build_merge_proposals(base_pkg, current_pkg, returned_pkg)
+                merge_node_id = fascicle.id
+            elif scope_kind == "block":
+                block_id = scope.get("block_id")
+                block = session.get(DocumentNode, block_id)
+                if block is None or block.project_id != project_id:
+                    raise PackageError("Bloco inválido.")
+                snap = Path(import_row.raw_path).parent / MERGE_BASE_FILENAME
+                if snap.is_file():
+                    base_raw = json.loads(snap.read_text(encoding="utf-8"))
+                else:
+                    base_raw = _load_package_merge_base(export_record)
+                base_block = normalize_block_merge_payload(unwrap_block_payload(base_raw))
+                current_block = normalize_block_merge_payload(build_block_payload(session, block.id))
+                returned_block = normalize_block_merge_payload(unwrap_block_payload(pkg))
+                proposals, summary = build_block_merge_proposals(base_block, current_block, returned_block)
+                merge_node_id = block.id
             else:
-                base_raw = _load_package_merge_base(export_record)
-            base_block = normalize_block_merge_payload(unwrap_block_payload(base_raw))
-            current_block = normalize_block_merge_payload(build_block_payload(session, block.id))
-            returned_block = normalize_block_merge_payload(unwrap_block_payload(pkg))
-            proposals, summary = build_block_merge_proposals(base_block, current_block, returned_block)
-            merge_node_id = block.id
-        else:
-            raise PackageError("Âmbito inválido.")
+                raise PackageError("Âmbito inválido.")
 
-        old_merges = list(session.scalars(select(MergeSession).where(MergeSession.import_id == import_id)))
-        for old in old_merges:
-            props = list(session.scalars(select(ChangeProposal).where(ChangeProposal.merge_session_id == old.id)))
-            for prop in props:
-                session.execute(delete(ChangeDecision).where(ChangeDecision.proposal_id == prop.id))
-            session.execute(delete(ChangeProposal).where(ChangeProposal.merge_session_id == old.id))
-        session.execute(delete(MergeSession).where(MergeSession.import_id == import_id))
+            old_merges = list(session.scalars(select(MergeSession).where(MergeSession.import_id == import_id)))
+            for old in old_merges:
+                props = list(session.scalars(select(ChangeProposal).where(ChangeProposal.merge_session_id == old.id)))
+                for prop in props:
+                    session.execute(delete(ChangeDecision).where(ChangeDecision.proposal_id == prop.id))
+                session.execute(delete(ChangeProposal).where(ChangeProposal.merge_session_id == old.id))
+            session.execute(delete(MergeSession).where(MergeSession.import_id == import_id))
 
-        merge_id = str(uuid.uuid4())
-        merge = MergeSession(
-            id=merge_id,
-            import_id=import_id,
-            project_id=project_id,
-            base_export_id=export_id,
-            baseline_id=baseline.id,
-            fascicle_node_id=merge_node_id,
-            status="open",
-            summary_json=json.dumps(summary, ensure_ascii=False),
-            created_at=_utcnow(),
-        )
-        session.add(merge)
-        session.flush()
-
-        for item in proposals:
-            proposal_id = new_proposal_id()
-            session.add(
-                ChangeProposal(
-                    id=proposal_id,
-                    merge_session_id=merge_id,
-                    proposal_kind=item["proposal_kind"],
-                    target_item_id=item["target_item_id"],
-                    title=item["title"],
-                    field_changes_json=json.dumps(item["field_changes"], ensure_ascii=False),
-                    conflict=item["conflict"],
-                    protected_touch=item["protected_touch"],
-                )
+            merge_id = str(uuid.uuid4())
+            merge = MergeSession(
+                id=merge_id,
+                import_id=import_id,
+                project_id=project_id,
+                base_export_id=export_id,
+                baseline_id=baseline.id,
+                fascicle_node_id=merge_node_id,
+                status="open",
+                summary_json=json.dumps(summary, ensure_ascii=False),
+                created_at=_utcnow(),
             )
+            session.add(merge)
             session.flush()
-            session.add(
-                ChangeDecision(
-                    id=str(uuid.uuid4()),
-                    proposal_id=proposal_id,
-                    decision=None,
-                    destination=None,
-                    confirmed_protected=False,
-                    decided_at=None,
+
+            for item in proposals:
+                proposal_id = new_proposal_id()
+                session.add(
+                    ChangeProposal(
+                        id=proposal_id,
+                        merge_session_id=merge_id,
+                        proposal_kind=item["proposal_kind"],
+                        target_item_id=item["target_item_id"],
+                        title=item["title"],
+                        field_changes_json=json.dumps(item["field_changes"], ensure_ascii=False),
+                        conflict=item["conflict"],
+                        protected_touch=item["protected_touch"],
+                    )
                 )
-            )
-        import_row.status = "merged"
-        session.flush()
-        return merge_id
+                session.flush()
+                session.add(
+                    ChangeDecision(
+                        id=str(uuid.uuid4()),
+                        proposal_id=proposal_id,
+                        decision=None,
+                        destination=None,
+                        confirmed_protected=False,
+                        decided_at=None,
+                    )
+                )
+            import_row.status = "merged"
+            session.flush()
+            return merge_id
 
 
 def consolidate_package(app_settings: AppSettings, merge_session_id: str) -> str:

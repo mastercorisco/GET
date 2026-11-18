@@ -20,6 +20,7 @@ from app.services.import_service import (
     run_merge,
     upload_import,
 )
+from app.services.workspace_exclusivity import WorkspaceExclusiveError
 from app.services.workspace_service import WorkspaceError
 
 router = APIRouter(tags=["import"])
@@ -28,7 +29,7 @@ router = APIRouter(tags=["import"])
 def _run(action):
     try:
         return action()
-    except WorkspaceError as exc:
+    except (WorkspaceError, WorkspaceExclusiveError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ImportError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

@@ -25,6 +25,14 @@ class WorkspaceError(Exception):
 _migrated_databases: set[str] = set()
 
 
+def invalidate_workspace_runtime_cache(db_path: Path) -> None:
+    from app.db.session import dispose_workspace_engine
+
+    key = str(db_path.resolve())
+    dispose_workspace_engine(db_path)
+    _migrated_databases.discard(key)
+
+
 def _ensure_workspace_schema(db_path: Path) -> None:
     key = str(db_path.resolve())
     if key in _migrated_databases:
