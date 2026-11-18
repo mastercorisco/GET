@@ -46,6 +46,12 @@ class ProjectLocationContext(BaseModel):
     country: str | None = None
 
 
+class StructureCatalogStamp(BaseModel):
+    id: str
+    checksum: str
+    applied_at: str | None = None
+
+
 class ProjectLlmContext(BaseModel):
     code: str | None = None
     owner: str | None = None
@@ -53,6 +59,7 @@ class ProjectLlmContext(BaseModel):
     project_type: str | None = None
     document_type: str | None = None
     fascicle_overrides: dict[str, str] = Field(default_factory=dict)
+    structure_catalog: StructureCatalogStamp | None = None
 
 
 class ProjectLlmContextResponse(BaseModel):

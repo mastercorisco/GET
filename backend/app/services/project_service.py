@@ -68,7 +68,6 @@ def _ensure_templates(session) -> None:
             )
         )
         session.flush()
-        return
     if session.scalar(
         select(ProjectTemplateVersion).where(
             ProjectTemplateVersion.template_id == template.id,
@@ -80,6 +79,24 @@ def _ensure_templates(session) -> None:
                 template_id=template.id,
                 version=1,
                 metadata_json=json.dumps({"mvp": True, "schema": "0.1.0"}, ensure_ascii=False),
+                created_at=_utcnow(),
+            )
+        )
+        session.flush()
+    if session.scalar(
+        select(ProjectTemplateVersion).where(
+            ProjectTemplateVersion.template_id == template.id,
+            ProjectTemplateVersion.version == 2,
+        )
+    ) is None:
+        session.add(
+            ProjectTemplateVersion(
+                template_id=template.id,
+                version=2,
+                metadata_json=json.dumps(
+                    {"schema": "0.2.0", "ctbj_structure_version": 3},
+                    ensure_ascii=False,
+                ),
                 created_at=_utcnow(),
             )
         )
@@ -224,7 +241,19 @@ def patch_project_llm_context(
         return ProjectLlmContextResponse(project_id=project.id, context=body.context)
 
 
+def _template_ctbj_structure_version(metadata_json: str) -> int:
+    try:
+        meta = json.loads(metadata_json or "{}")
+    except json.JSONDecodeError:
+        return 0
+    if not isinstance(meta, dict):
+        return 0
+    return int(meta.get("ctbj_structure_version") or 0)
+
+
 def create_project(app_settings: AppSettings, body: ProjectCreateRequest) -> ProjectResponse:
+    seed_ctbj = False
+    project_id: str
     with workspace_session(app_settings) as (session, _paths):
         _ensure_templates(session)
         _ensure_library(session)
@@ -250,4 +279,18 @@ def create_project(app_settings: AppSettings, body: ProjectCreateRequest) -> Pro
             )
         )
         session.flush()
-        return _project_response(session, project)
+        project_id = project.id
+        seed_ctbj = _template_ctbj_structure_version(template_version.metadata_json) >= 3
+        response = _project_response(session, project)
+
+    if seed_ctbj:
+        from app.services.structure_seed.ctbj_v3_sync import apply_ctbj_v3_structure
+
+        apply_ctbj_v3_structure(
+            app_settings,
+            project_id,
+            mode="seed_empty",
+            dry_run=False,
+            preserve_rich_content=True,
+        )
+    return response

@@ -339,6 +339,12 @@
       "topic": "export_text_production_lexicon",
       "decision": "Léxico de produção de texto (capítulo/ponto) em catálogo catalogs/document_lexicon.text_production.pt-PT.json; aplicado aditivamente em exportações GET-LLM (generation_rules.document_lexicon, text_production_label_pt, Markdown) e estrutura documental legível; chaves técnicas fascicle/block/node_type e UI inalteradas.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-058",
+      "topic": "ctbj_v3_structure_seed",
+      "decision": "Estrutura documental CTBJ v3 (20 fascículos, 179 blocos, 869 pontos) versionada em catalogs/ctbj_document_structure_v3.pt-PT.json e docs/inventory; sincronização por serviço interno (migrate_ctbj_structure_v3.py / seed em create_project com template brownfield v2), sem importação JSON; migração preserva conteúdo com needs_review e relatório migration_reports.",
+      "status": "accepted"
     }
   ]
 }

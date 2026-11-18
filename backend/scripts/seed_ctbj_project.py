@@ -1,4 +1,7 @@
-"""Cria o projeto CTBJ a partir da estrutura Markdown GET."""
+"""Cria o projeto CTBJ a partir da estrutura Markdown GET.
+
+DEPRECATED: para CTBJ v3 use scripts/migrate_ctbj_structure_v3.py ou create_project com modelo brownfield v2.
+"""
 
 from __future__ import annotations
 
