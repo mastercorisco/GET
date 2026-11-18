@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Literal
@@ -27,7 +27,8 @@ from app.services.structure_seed.ctbj_catalog import CtbjCatalog, load_ctbj_cata
 from app.services.structure_seed.matching import best_title_match, texts_match, token_jaccard
 from app.services.structure_seed.templates import pick_template
 from app.services.workspace_paths import WorkspacePaths
-from app.services.workspace_service import require_workspace_session
+from app.services.workspace_exclusivity import workspace_exclusive
+from app.services.workspace_service import require_workspace_session, workspace_session
 
 SyncMode = Literal["seed_empty", "migrate"]
 EXPECTED_FASCICLES = 20
@@ -119,18 +120,19 @@ def _structure_stamp(context: dict) -> dict | None:
 
 @contextmanager
 def _sync_session(app_settings: AppSettings, *, dry_run: bool):
-    session, paths = require_workspace_session(app_settings)
-    try:
-        yield session, paths
-        if dry_run:
+    if dry_run:
+        session, paths = require_workspace_session(app_settings)
+        try:
+            yield session, paths
             session.rollback()
-        else:
-            session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+    else:
+        with workspace_session(app_settings, begin_immediate=True) as (session, paths):
+            yield session, paths
 
 
 def _match_fascicles(
@@ -437,137 +439,139 @@ def apply_ctbj_v3_structure(
     blocking: list[str] = []
     skipped = False
 
-    with _sync_session(app_settings, dry_run=dry_run) as (session, paths):
-        project = session.get(Project, project_id)
-        if project is None:
-            raise ValueError("Projecto não encontrado.")
+    exclusive = nullcontext() if dry_run else workspace_exclusive("ctbj_v3_sync")
+    with exclusive:
+        with _sync_session(app_settings, dry_run=dry_run) as (session, paths):
+            project = session.get(Project, project_id)
+            if project is None:
+                raise ValueError("Projecto não encontrado.")
 
-        ctx = _parse_llm_context(project.llm_context_json)
-        stamp = _structure_stamp(ctx)
-        nodes = _load_nodes(session, project_id)
-        legacy_codes = compute_display_codes(nodes) if nodes else {}
+            ctx = _parse_llm_context(project.llm_context_json)
+            stamp = _structure_stamp(ctx)
+            nodes = _load_nodes(session, project_id)
+            legacy_codes = compute_display_codes(nodes) if nodes else {}
 
-        if (
-            not dry_run
-            and stamp
-            and stamp.get("checksum") == catalog.checksum
-            and stamp.get("id") == catalog.id
-        ):
             if (
-                len([n for n in nodes if n.node_type == "fascicle"]) == EXPECTED_FASCICLES
-                and len([n for n in nodes if n.node_type == "block"]) >= EXPECTED_BLOCKS
+                not dry_run
+                and stamp
+                and stamp.get("checksum") == catalog.checksum
+                and stamp.get("id") == catalog.id
             ):
-                skipped = True
+                if (
+                    len([n for n in nodes if n.node_type == "fascicle"]) == EXPECTED_FASCICLES
+                    and len([n for n in nodes if n.node_type == "block"]) >= EXPECTED_BLOCKS
+                ):
+                    skipped = True
 
-        if skipped:
-            report["skipped"] = True
-            path = _write_report(paths, project_id, run_id, report)
-            return CtbjSyncResult(
-                project_id=project_id,
-                run_id=run_id,
-                dry_run=dry_run,
-                applied=False,
-                skipped=True,
-                backup_id=backup_id,
-                report_path=str(path),
-                fascicles=catalog.fascicle_count,
-                blocks=catalog.block_count,
-                catalog_points=catalog.point_count,
-                warnings=warnings,
-                blocking_errors=blocking,
+            if skipped:
+                report["skipped"] = True
+                path = _write_report(paths, project_id, run_id, report)
+                return CtbjSyncResult(
+                    project_id=project_id,
+                    run_id=run_id,
+                    dry_run=dry_run,
+                    applied=False,
+                    skipped=True,
+                    backup_id=backup_id,
+                    report_path=str(path),
+                    fascicles=catalog.fascicle_count,
+                    blocks=catalog.block_count,
+                    catalog_points=catalog.point_count,
+                    warnings=warnings,
+                    blocking_errors=blocking,
+                )
+
+            fascicle_map, fascicle_warnings = _match_fascicles(catalog, nodes, mode=mode)
+            warnings.extend(fascicle_warnings)
+
+            block_map, ambiguous, block_warnings = _match_blocks(
+                catalog, nodes, fascicle_map, legacy_codes, mode=mode
             )
+            warnings.extend(block_warnings)
+            report["ambiguous_blocks"] = ambiguous
 
-        fascicle_map, fascicle_warnings = _match_fascicles(catalog, nodes, mode=mode)
-        warnings.extend(fascicle_warnings)
+            mapped_ids: set[str] = set(fascicle_map.values()) | set(block_map.values())
 
-        block_map, ambiguous, block_warnings = _match_blocks(
-            catalog, nodes, fascicle_map, legacy_codes, mode=mode
-        )
-        warnings.extend(block_warnings)
-        report["ambiguous_blocks"] = ambiguous
-
-        mapped_ids: set[str] = set(fascicle_map.values()) | set(block_map.values())
-
-        for fascicle in catalog.fascicles:
-            f_sort = _fascicle_sort_key(fascicle.ordinal)
-            fascicle_id = _ensure_fascicle(
-                session,
-                project_id,
-                fascicle,
-                fascicle_map.get(fascicle.code),
-                f_sort,
-            )
-            fascicle_map[fascicle.code] = fascicle_id
-            mapped_ids.add(fascicle_id)
-
-            for block in fascicle.blocks:
-                b_sort = _block_sort_key(fascicle.ordinal, block.ordinal)
-                block_id = _ensure_block(
+            for fascicle in catalog.fascicles:
+                f_sort = _fascicle_sort_key(fascicle.ordinal)
+                fascicle_id = _ensure_fascicle(
                     session,
                     project_id,
-                    fascicle_id,
-                    block,
-                    block_map.get(block.code),
-                    b_sort,
+                    fascicle,
+                    fascicle_map.get(fascicle.code),
+                    f_sort,
                 )
-                block_map[block.code] = block_id
-                mapped_ids.add(block_id)
-                _sync_points(
-                    session,
-                    block_id,
-                    fascicle.code,
-                    block.title,
-                    block.development_points,
-                    report,
-                    preserve_rich_content=preserve_rich_content,
+                fascicle_map[fascicle.code] = fascicle_id
+                mapped_ids.add(fascicle_id)
+
+                for block in fascicle.blocks:
+                    b_sort = _block_sort_key(fascicle.ordinal, block.ordinal)
+                    block_id = _ensure_block(
+                        session,
+                        project_id,
+                        fascicle_id,
+                        block,
+                        block_map.get(block.code),
+                        b_sort,
+                    )
+                    block_map[block.code] = block_id
+                    mapped_ids.add(block_id)
+                    _sync_points(
+                        session,
+                        block_id,
+                        fascicle.code,
+                        block.title,
+                        block.development_points,
+                        report,
+                        preserve_rich_content=preserve_rich_content,
+                    )
+
+            nodes = _load_nodes(session, project_id)
+            _finalize_sort_keys(session, nodes)
+
+            for node in nodes:
+                if node.id in mapped_ids:
+                    continue
+                if node.node_type == "block":
+                    node.block_status = "needs_review"
+                    report["orphan_nodes"].append({"node_id": node.id, "title": node.title, "type": "block"})
+                elif node.node_type == "fascicle" and not any(
+                    c.parent_id == node.id for c in nodes if c.node_type == "block"
+                ):
+                    report["orphan_nodes"].append({"node_id": node.id, "title": node.title, "type": "fascicle"})
+
+            if not dry_run:
+                renumber_stats = normalize_project_block_point_orders(session, project_id, run_id=run_id)
+                report["point_renumber"] = renumber_stats
+                report["authoring_enrich"] = enrich_project_authoring(
+                    session, project_id, run_id=run_id, clear_needs_review=False
                 )
 
-        nodes = _load_nodes(session, project_id)
-        _finalize_sort_keys(session, nodes)
-
-        for node in nodes:
-            if node.id in mapped_ids:
-                continue
-            if node.node_type == "block":
-                node.block_status = "needs_review"
-                report["orphan_nodes"].append({"node_id": node.id, "title": node.title, "type": "block"})
-            elif node.node_type == "fascicle" and not any(
-                c.parent_id == node.id for c in nodes if c.node_type == "block"
-            ):
-                report["orphan_nodes"].append({"node_id": node.id, "title": node.title, "type": "fascicle"})
-
-        if not dry_run:
-            renumber_stats = normalize_project_block_point_orders(session, project_id, run_id=run_id)
-            report["point_renumber"] = renumber_stats
-            report["authoring_enrich"] = enrich_project_authoring(
-                session, project_id, run_id=run_id, clear_needs_review=False
-            )
-
-        fascicle_n = len([n for n in _load_nodes(session, project_id) if n.node_type == "fascicle"])
-        block_n = len([n for n in _load_nodes(session, project_id) if n.node_type == "block"])
-        report["counts"] = {
-            "fascicles": fascicle_n,
-            "blocks": block_n,
-            "catalog_points": catalog.point_count,
-        }
-        report["warnings"] = warnings
-
-        if not dry_run:
-            ctx["structure_catalog"] = {
-                "id": catalog.id,
-                "checksum": catalog.checksum,
-                "applied_at": _utcnow().isoformat(),
+            fascicle_n = len([n for n in _load_nodes(session, project_id) if n.node_type == "fascicle"])
+            block_n = len([n for n in _load_nodes(session, project_id) if n.node_type == "block"])
+            report["counts"] = {
+                "fascicles": fascicle_n,
+                "blocks": block_n,
+                "catalog_points": catalog.point_count,
             }
-            project.llm_context_json = json.dumps(ctx, ensure_ascii=False, sort_keys=True)
-            session.flush()
+            report["warnings"] = warnings
 
-        if fascicle_n < EXPECTED_FASCICLES or block_n < EXPECTED_BLOCKS:
-            blocking.append(
-                f"Contagens após sync: fascículos={fascicle_n} blocos={block_n} "
-                f"(mínimo {EXPECTED_FASCICLES}/{EXPECTED_BLOCKS})"
-            )
+            if not dry_run:
+                ctx["structure_catalog"] = {
+                    "id": catalog.id,
+                    "checksum": catalog.checksum,
+                    "applied_at": _utcnow().isoformat(),
+                }
+                project.llm_context_json = json.dumps(ctx, ensure_ascii=False, sort_keys=True)
+                session.flush()
 
-        path = _write_report(paths, project_id, run_id, report)
+            if fascicle_n < EXPECTED_FASCICLES or block_n < EXPECTED_BLOCKS:
+                blocking.append(
+                    f"Contagens após sync: fascículos={fascicle_n} blocos={block_n} "
+                    f"(mínimo {EXPECTED_FASCICLES}/{EXPECTED_BLOCKS})"
+                )
+
+            path = _write_report(paths, project_id, run_id, report)
 
     return CtbjSyncResult(
         project_id=project_id,

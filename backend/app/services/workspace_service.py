@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import subprocess
 import sys
 from contextlib import contextmanager
@@ -44,18 +45,51 @@ def _to_response(settings: WorkspaceSettings, paths: WorkspacePaths) -> Workspac
     )
 
 
+def _active_root(app_settings: AppSettings) -> Path | None:
+    try:
+        return get_active_workspace_root(app_settings)
+    except ValueError as exc:
+        raise WorkspaceError(str(exc)) from exc
+
+
 def get_workspace_db_path(app_settings: AppSettings) -> Path:
-    root = get_active_workspace_root(app_settings)
+    root = _active_root(app_settings)
     if root is None:
         raise WorkspaceError("Nenhum workspace aberto.")
     return WorkspacePaths(root).database_path
+
+
+def workspace_preflight(app_settings: AppSettings) -> dict:
+    root = _active_root(app_settings)
+    if root is None:
+        raise WorkspaceError("Nenhum workspace aberto.")
+    paths = WorkspacePaths(root)
+    paths.ensure_layout()
+    db = paths.database_path
+    if not db.is_file():
+        return {
+            "ok": False,
+            "reason": "database_missing",
+            "workspace_root": str(root),
+            "database_path": str(db),
+        }
+    with sqlite3.connect(db) as conn:
+        integrity = conn.execute("PRAGMA integrity_check").fetchone()[0]
+        journal_mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
+    return {
+        "ok": integrity == "ok",
+        "workspace_root": str(root),
+        "database_path": str(db),
+        "integrity": integrity,
+        "journal_mode": journal_mode,
+    }
 
 
 def require_workspace_session(app_settings: AppSettings) -> tuple[Session, WorkspacePaths]:
     db_path = get_workspace_db_path(app_settings)
     _ensure_workspace_schema(db_path)
     _, factory = get_session_factory_for_workspace(db_path)
-    root = get_active_workspace_root(app_settings)
+    root = _active_root(app_settings)
     if root is None:
         raise WorkspaceError("Nenhum workspace aberto.")
     paths = WorkspacePaths(root)
@@ -185,7 +219,7 @@ def migrate_workspace_database(db_path: Path) -> None:
 
 
 def get_current_workspace(app_settings: AppSettings) -> WorkspaceResponse | None:
-    root = get_active_workspace_root(app_settings)
+    root = _active_root(app_settings)
     if root is None:
         return None
     paths = WorkspacePaths(root)

@@ -58,61 +58,64 @@ def get_latest_baseline(app_settings: AppSettings, project_id: str) -> BaselineR
 
 
 def publish_baseline(app_settings: AppSettings, project_id: str) -> BaselineResponse:
-    with workspace_session(app_settings) as (session, _paths):
-        project = session.get(Project, project_id)
-        if project is None:
-            raise BaselineError("Projecto não encontrado.")
-        pin = session.scalar(select(ProjectLibraryPin).where(ProjectLibraryPin.project_id == project_id))
-        if pin is None:
-            raise BaselineError("Projecto sem pin da biblioteca.")
+    from app.services.workspace_exclusivity import workspace_exclusive
 
-        max_rev = session.scalar(
-            select(func.max(Baseline.revision)).where(Baseline.project_id == project_id)
-        )
-        next_rev = (max_rev or 0) + 1
-        baseline = Baseline(
-            id=str(uuid.uuid4()),
-            project_id=project_id,
-            code=f"BL-{next_rev:04d}",
-            revision=next_rev,
-            library_version_id=pin.library_version_id,
-            created_at=_utcnow(),
-        )
-        session.add(baseline)
-        session.flush()
+    with workspace_exclusive("publish_baseline"):
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            project = session.get(Project, project_id)
+            if project is None:
+                raise BaselineError("Projecto não encontrado.")
+            pin = session.scalar(select(ProjectLibraryPin).where(ProjectLibraryPin.project_id == project_id))
+            if pin is None:
+                raise BaselineError("Projecto sem pin da biblioteca.")
 
-        items = list(
-            session.scalars(
-                select(KnowledgeItem).where(
-                    KnowledgeItem.scope_type == "project",
-                    KnowledgeItem.scope_id == project_id,
+            max_rev = session.scalar(
+                select(func.max(Baseline.revision)).where(Baseline.project_id == project_id)
+            )
+            next_rev = (max_rev or 0) + 1
+            baseline = Baseline(
+                id=str(uuid.uuid4()),
+                project_id=project_id,
+                code=f"BL-{next_rev:04d}",
+                revision=next_rev,
+                library_version_id=pin.library_version_id,
+                created_at=_utcnow(),
+            )
+            session.add(baseline)
+            session.flush()
+
+            items = list(
+                session.scalars(
+                    select(KnowledgeItem).where(
+                        KnowledgeItem.scope_type == "project",
+                        KnowledgeItem.scope_id == project_id,
+                    )
                 )
             )
-        )
-        for item in items:
-            revision_num = _latest_revision(session, item.id)
-            if revision_num is None:
-                continue
-            session.add(
-                BaselineEntry(
-                    id=str(uuid.uuid4()),
-                    baseline_id=baseline.id,
-                    entity_type="knowledge_item",
-                    entity_id=item.id,
-                    revision_num=revision_num,
+            for item in items:
+                revision_num = _latest_revision(session, item.id)
+                if revision_num is None:
+                    continue
+                session.add(
+                    BaselineEntry(
+                        id=str(uuid.uuid4()),
+                        baseline_id=baseline.id,
+                        entity_type="knowledge_item",
+                        entity_id=item.id,
+                        revision_num=revision_num,
+                    )
                 )
-            )
 
-        nodes = list(session.scalars(select(DocumentNode).where(DocumentNode.project_id == project_id)))
-        codes = compute_display_codes(nodes)
-        for node_id, code in codes.items():
-            session.add(
-                BaselineDocumentCode(
-                    id=str(uuid.uuid4()),
-                    baseline_id=baseline.id,
-                    document_node_id=node_id,
-                    display_code=code,
+            nodes = list(session.scalars(select(DocumentNode).where(DocumentNode.project_id == project_id)))
+            codes = compute_display_codes(nodes)
+            for node_id, code in codes.items():
+                session.add(
+                    BaselineDocumentCode(
+                        id=str(uuid.uuid4()),
+                        baseline_id=baseline.id,
+                        document_node_id=node_id,
+                        display_code=code,
+                    )
                 )
-            )
-        session.flush()
-        return _to_response(baseline)
+            session.flush()
+            return _to_response(baseline)

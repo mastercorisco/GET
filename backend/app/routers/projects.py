@@ -19,6 +19,7 @@ from app.services.project_service import (
     list_templates,
     patch_project_llm_context,
 )
+from app.services.workspace_exclusivity import WorkspaceExclusiveError
 from app.services.workspace_service import WorkspaceError
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -27,7 +28,7 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 def _run(action, *, route: str = ""):
     try:
         return action()
-    except WorkspaceError as exc:
+    except (WorkspaceError, WorkspaceExclusiveError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ProjectError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

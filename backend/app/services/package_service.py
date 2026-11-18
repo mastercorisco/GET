@@ -352,51 +352,53 @@ def run_package_merge(app_settings: AppSettings, project_id: str, import_id: str
 
 def consolidate_package(app_settings: AppSettings, merge_session_id: str) -> str:
     from app.services.backup_service import create_backup
+    from app.services.workspace_exclusivity import workspace_exclusive
 
-    backup = create_backup(app_settings, "critical")
-    with workspace_session(app_settings) as (session, _paths):
-        merge = session.get(MergeSession, merge_session_id)
-        if merge is None:
-            raise ConsolidateError("Sessão de merge não encontrada.")
-        import_row = session.get(ImportRecord, merge.import_id)
-        if import_row and import_row.package_type.startswith("get_package_") and import_row.package_type.endswith(
-            "_block"
-        ):
-            try:
-                stats = apply_block_proposals(session, merge_session_id)
-            except ValueError as exc:
-                raise ConsolidateError(str(exc)) from exc
-            if stats["accepted"] == 0:
-                raise ConsolidateError(
-                    "Nenhuma proposta aceite. Aceite alterações em Reimportar antes de consolidar."
-                )
-            pending_point = any(
-                p.proposal_kind == "point_update"
-                for p, d in session.execute(
-                    select(ChangeProposal, ChangeDecision)
-                    .join(ChangeDecision, ChangeDecision.proposal_id == ChangeProposal.id)
-                    .where(ChangeProposal.merge_session_id == merge_session_id)
-                ).all()
-                if d.decision == "accepted"
-            )
-            if stats.get("total_writes", 0) == 0:
-                if pending_point and stats["point_updates_missing"]:
+    with workspace_exclusive("consolidate_package"):
+        backup = create_backup(app_settings, "critical")
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            merge = session.get(MergeSession, merge_session_id)
+            if merge is None:
+                raise ConsolidateError("Sessão de merge não encontrada.")
+            import_row = session.get(ImportRecord, merge.import_id)
+            if import_row and import_row.package_type.startswith("get_package_") and import_row.package_type.endswith(
+                "_block"
+            ):
+                try:
+                    stats = apply_block_proposals(session, merge_session_id)
+                except ValueError as exc:
+                    raise ConsolidateError(str(exc)) from exc
+                if stats["accepted"] == 0:
                     raise ConsolidateError(
-                        "Proposta aceite mas o ponto não existe na base (UUID alterado na LLM?)."
+                        "Nenhuma proposta aceite. Aceite alterações em Reimportar antes de consolidar."
                     )
-                if pending_point:
-                    raise ConsolidateError(
-                        "Proposta de ponto aceite mas nenhum campo editável foi aplicado "
-                        "(só title, core_idea, intended_outcome e listas entram no merge)."
-                    )
-                raise ConsolidateError(
-                    "Nada foi gravado na base. A proposta pode ser de bloco/premissa sem efeito "
-                    "ou o JSON não alterou campos editáveis dos pontos."
+                pending_point = any(
+                    p.proposal_kind == "point_update"
+                    for p, d in session.execute(
+                        select(ChangeProposal, ChangeDecision)
+                        .join(ChangeDecision, ChangeDecision.proposal_id == ChangeProposal.id)
+                        .where(ChangeProposal.merge_session_id == merge_session_id)
+                    ).all()
+                    if d.decision == "accepted"
                 )
-            merge.status = "consolidated"
-            import_row.status = "consolidated"
-        else:
-            _consolidate_in_session(session, merge_session_id)
+                if stats.get("total_writes", 0) == 0:
+                    if pending_point and stats["point_updates_missing"]:
+                        raise ConsolidateError(
+                            "Proposta aceite mas o ponto não existe na base (UUID alterado na LLM?)."
+                        )
+                    if pending_point:
+                        raise ConsolidateError(
+                            "Proposta de ponto aceite mas nenhum campo editável foi aplicado "
+                            "(só title, core_idea, intended_outcome e listas entram no merge)."
+                        )
+                    raise ConsolidateError(
+                        "Nada foi gravado na base. A proposta pode ser de bloco/premissa sem efeito "
+                        "ou o JSON não alterou campos editáveis dos pontos."
+                    )
+                merge.status = "consolidated"
+                import_row.status = "consolidated"
+            else:
+                _consolidate_in_session(session, merge_session_id)
         return backup.id
 
 

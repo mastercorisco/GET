@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import threading
-
 from sqlalchemy import delete, func, or_, select, text
 from sqlalchemy.orm import Session
 
@@ -36,9 +34,9 @@ from app.services.project_service import ProjectError
 from app.services.reference_service import ReferenceError
 from app.services.technical_service import TechnicalError
 from app.services.terminology_service import TerminologyError
+from app.services.workspace_exclusivity import workspace_exclusive
 from app.services.workspace_service import workspace_session
 
-_project_delete_lock = threading.Lock()
 _DOCUMENT_PURGE_BATCH = 40
 
 class DeletionResult:
@@ -340,42 +338,43 @@ def purge_project_document_structure(app_settings: AppSettings, project_id: str)
     """Remove árvore documental, pontos, associações, baselines/export do projecto; mantém o registo Project."""
     import json
 
-    remaining_before = 0
-    with workspace_session(app_settings) as (session, _paths):
-        _require_project(session, project_id)
-        remaining_before = session.scalar(
-            select(func.count()).select_from(DocumentNode).where(DocumentNode.project_id == project_id)
-        ) or 0
-        _purge_imports(session, project_id)
-        _purge_baselines_and_exports(session, project_id)
-    with workspace_session(app_settings) as (session, _paths):
-        _require_project(session, project_id)
-        _purge_document_tree(session, project_id)
-    with workspace_session(app_settings) as (session, _paths):
-        project = _require_project(session, project_id)
-        try:
-            ctx = json.loads(project.llm_context_json or "{}")
-        except json.JSONDecodeError:
-            ctx = {}
-        if not isinstance(ctx, dict):
-            ctx = {}
-        ctx.pop("structure_catalog", None)
-        project.llm_context_json = json.dumps(ctx, ensure_ascii=False, sort_keys=True)
-        session.flush()
-        remaining_after = session.scalar(
-            select(func.count()).select_from(DocumentNode).where(DocumentNode.project_id == project_id)
-        ) or 0
-        points_left = session.scalar(
-            select(func.count())
-            .select_from(DevelopmentPoint)
-            .join(DocumentNode, DevelopmentPoint.block_id == DocumentNode.id)
-            .where(DocumentNode.project_id == project_id)
-        ) or 0
-    return {
-        "document_nodes_removed": remaining_before,
-        "document_nodes_remaining": remaining_after,
-        "development_points_remaining": points_left,
-    }
+    with workspace_exclusive("purge_document_structure"):
+        remaining_before = 0
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            _require_project(session, project_id)
+            remaining_before = session.scalar(
+                select(func.count()).select_from(DocumentNode).where(DocumentNode.project_id == project_id)
+            ) or 0
+            _purge_imports(session, project_id)
+            _purge_baselines_and_exports(session, project_id)
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            _require_project(session, project_id)
+            _purge_document_tree(session, project_id)
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            project = _require_project(session, project_id)
+            try:
+                ctx = json.loads(project.llm_context_json or "{}")
+            except json.JSONDecodeError:
+                ctx = {}
+            if not isinstance(ctx, dict):
+                ctx = {}
+            ctx.pop("structure_catalog", None)
+            project.llm_context_json = json.dumps(ctx, ensure_ascii=False, sort_keys=True)
+            session.flush()
+            remaining_after = session.scalar(
+                select(func.count()).select_from(DocumentNode).where(DocumentNode.project_id == project_id)
+            ) or 0
+            points_left = session.scalar(
+                select(func.count())
+                .select_from(DevelopmentPoint)
+                .join(DocumentNode, DevelopmentPoint.block_id == DocumentNode.id)
+                .where(DocumentNode.project_id == project_id)
+            ) or 0
+        return {
+            "document_nodes_removed": remaining_before,
+            "document_nodes_remaining": remaining_after,
+            "development_points_remaining": points_left,
+        }
 
 
 def _purge_technical_leaves_batch(session: Session, project_id: str, *, max_deletes: int) -> int:
@@ -432,27 +431,23 @@ def _purge_project_tail(session: Session, project_id: str) -> None:
 
 
 def delete_project(app_settings: AppSettings, project_id: str) -> None:
-    if not _project_delete_lock.acquire(blocking=False):
-        raise ProjectError("Já está a apagar um projecto. Aguarde a conclusão e tente de novo.")
-    try:
-        with workspace_session(app_settings) as (session, _paths):
+    with workspace_exclusive("delete_project"):
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
             _require_project(session, project_id)
-        with workspace_session(app_settings) as (session, _paths):
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
             _purge_imports(session, project_id)
-        with workspace_session(app_settings) as (session, _paths):
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
             _purge_baselines_and_exports(session, project_id)
         while True:
-            with workspace_session(app_settings) as (session, _paths):
+            with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
                 removed = _purge_document_nodes_batch(session, project_id, limit=_DOCUMENT_PURGE_BATCH)
                 if removed == 0:
                     session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
                     break
         while True:
-            with workspace_session(app_settings) as (session, _paths):
+            with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
                 removed = _purge_technical_leaves_batch(session, project_id, max_deletes=_DOCUMENT_PURGE_BATCH)
                 if removed == 0:
                     break
-        with workspace_session(app_settings) as (session, _paths):
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
             _purge_project_tail(session, project_id)
-    finally:
-        _project_delete_lock.release()

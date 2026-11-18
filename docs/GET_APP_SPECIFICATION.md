@@ -424,7 +424,11 @@ Baseline imutável que fixa:
 
 ## 24. Backups e workspace
 
-Workspace separado da aplicação. Backups:
+Workspace separado da aplicação. A raiz de dados activa pode ser fixada por variável de ambiente `GET_WORKSPACE_ROOT` (prioridade sobre `~/.get/app-config.json`), para scripts e preparação de contentor sem alterar o fluxo UI de criar/abrir workspace. O endpoint `GET /api/health/workspace` reporta integridade SQLite (`PRAGMA integrity_check`, `journal_mode`) quando há workspace aberto; `/api/health` mantém-se leve (versão e capacidades).
+
+Operações que reescrevem o SQLite de forma extensa (publicar baseline, consolidar pacote, aplicar workbook, sync CTBJ apply, purge/apagar projecto) usam transacção imediata e exclusão mútua no mesmo processo (HTTP 409 se concorrente).
+
+Backups:
 
 - antes de importações e alterações estruturais;
 - diários quando existirem alterações;

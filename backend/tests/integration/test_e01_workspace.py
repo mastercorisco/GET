@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from app.config import AppSettings
+from app.config import AppSettings, get_active_workspace_root
 from app.deps import get_settings
 from app.main import app
 from app.services.workspace_service import migrate_workspace_database
@@ -27,6 +27,45 @@ def test_health(client: TestClient) -> None:
     response = client.get("/api/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
+
+def test_health_workspace_without_open_workspace(client: TestClient) -> None:
+    response = client.get("/api/health/workspace")
+    assert response.status_code == 409
+
+
+def test_health_workspace_ok(client: TestClient, tmp_path: Path) -> None:
+    ws = tmp_path / "ws-health"
+    client.post(
+        "/api/workspace/create",
+        json={"root_path": str(ws), "local_user_name": "tester"},
+    )
+    response = client.get("/api/health/workspace")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["ok"] is True
+    assert body["integrity"] == "ok"
+    assert "journal_mode" in body
+
+
+def test_env_workspace_root_used_by_health(
+    client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ws = tmp_path / "ws-env"
+    ws.mkdir()
+    (ws / "data").mkdir(parents=True)
+    cfg = tmp_path / "app-config.json"
+    monkeypatch.setenv("GET_APP_CONFIG_PATH", str(cfg))
+    monkeypatch.setenv("GET_WORKSPACE_ROOT", str(ws))
+    get_settings.cache_clear()
+    client.post(
+        "/api/workspace/create",
+        json={"root_path": str(ws), "local_user_name": "env"},
+    )
+    assert get_active_workspace_root(get_settings()) == ws.resolve()
+    response = client.get("/api/health/workspace")
+    assert response.status_code == 200
+    assert response.json()["workspace_root"] == str(ws.resolve())
 
 
 def test_create_open_workspace_and_backup(client: TestClient, tmp_path: Path) -> None:

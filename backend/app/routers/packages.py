@@ -19,6 +19,7 @@ from app.services.package_service import (
     merge_response,
     run_package_merge,
 )
+from app.services.workspace_exclusivity import WorkspaceExclusiveError
 from app.services.workspace_service import WorkspaceError
 
 router = APIRouter(tags=["packages"])
@@ -32,7 +33,7 @@ def packages_brief_contribution_template() -> PackageBriefContributionTemplateRe
 def _run(action):
     try:
         return action()
-    except WorkspaceError as exc:
+    except (WorkspaceError, WorkspaceExclusiveError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except (PackageError, ImportError, ConsolidateError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

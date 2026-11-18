@@ -345,6 +345,12 @@
       "topic": "ctbj_v3_structure_seed",
       "decision": "Estrutura documental CTBJ v3 (20 fascículos, 179 blocos, 869 pontos) versionada em catalogs/ctbj_document_structure_v3.pt-PT.json e docs/inventory; sincronização por serviço interno (migrate_ctbj_structure_v3.py / seed em create_project com template brownfield v2), sem importação JSON; migração preserva conteúdo com needs_review e relatório migration_reports.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-059",
+      "topic": "workspace_contract_sqlite",
+      "decision": "Contrato operacional do workspace: raiz activa via GET_WORKSPACE_ROOT (sobrepõe app-config) para automação e futuro contentor; SQLite com WAL/busy_timeout, transacções BEGIN IMMEDIATE nas escritas críticas (baseline, consolidate, workbook apply, CTBJ apply, purge/delete); lock em processo único (409) para operações exclusivas; GET /api/health/workspace com integrity_check e journal_mode; sem Docker/auth/multi-utilizador no MVP.",
+      "status": "accepted"
     }
   ]
 }

@@ -15,6 +15,7 @@ from app.services.workbook.constants import CONFIRM_PHRASE
 from app.services.workbook.extract import extract_workbook
 from app.services.workbook.ingest import WorkbookIngestError, persist_workbook_upload
 from app.services.workbook.migrate import WorkbookMigrationError, run_workbook_migration
+from app.services.workspace_exclusivity import WorkspaceExclusiveError, workspace_exclusive
 from app.services.workspace_service import WorkspaceError, workspace_session
 
 
@@ -116,15 +117,18 @@ def apply_workbook_migration(
         raise WorkbookApiError("Workbook com erros bloqueantes.", http_status=422)
 
     try:
-        if target == "new_project":
-            result_project_id = apply_workbook_bundle(app_settings, bundle)
-            summary = _summary_from_counts(report.get("counts"))
-        else:
-            if not project_id:
-                raise WorkbookApiError("project_id é obrigatório para projecto existente.")
-            result_project_id, summary = apply_workbook_to_project(
-                app_settings, project_id, bundle
-            )
+        with workspace_exclusive("workbook_apply"):
+            if target == "new_project":
+                result_project_id = apply_workbook_bundle(app_settings, bundle)
+                summary = _summary_from_counts(report.get("counts"))
+            else:
+                if not project_id:
+                    raise WorkbookApiError("project_id é obrigatório para projecto existente.")
+                result_project_id, summary = apply_workbook_to_project(
+                    app_settings, project_id, bundle
+                )
+    except WorkspaceExclusiveError as exc:
+        raise WorkbookApiError(str(exc), http_status=409) from exc
     except WorkbookApplyError as exc:
         raise WorkbookApiError(str(exc), http_status=422) from exc
 

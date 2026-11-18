@@ -17,6 +17,10 @@ class AppSettings(BaseSettings):
 
     host: str = "127.0.0.1"
     port: int = 4810
+    workspace_root: Path | None = Field(
+        default=None,
+        description="Raiz do workspace (dados). Se definido, sobrepõe workspace_root em app-config.json.",
+    )
     app_config_path: Path = Field(
         default_factory=lambda: Path.home() / ".get" / "app-config.json"
     )
@@ -37,11 +41,18 @@ def save_app_config(path: Path, data: dict[str, Any]) -> None:
 
 
 def get_active_workspace_root(settings: AppSettings) -> Path | None:
+    if settings.workspace_root is not None:
+        root = settings.workspace_root.expanduser().resolve()
+        if not root.is_dir():
+            raise ValueError(
+                f"GET_WORKSPACE_ROOT não é um directório válido: {root}"
+            )
+        return root
     data = load_app_config(settings.app_config_path)
     root = data.get("workspace_root")
     if not root:
         return None
-    return Path(root)
+    return Path(root).resolve()
 
 
 def set_active_workspace_root(settings: AppSettings, root: Path) -> None:
