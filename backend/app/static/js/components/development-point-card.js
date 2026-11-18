@@ -124,10 +124,20 @@ export function createDevelopmentPointCard(point, hooks) {
     const open = body.hidden;
     body.hidden = !open;
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    card.classList.toggle("is-expanded", open);
     if (open && !body.dataset.loaded) {
       hooks.loadDetail(point.id).then(function (detail) {
         body.dataset.loaded = "1";
         renderExpanded(body, detail, hooks);
+        requestAnimationFrame(function () {
+          body.scrollTop = 0;
+          const canScroll = body.scrollHeight > body.clientHeight + 2;
+          if (canScroll) body.focus({ preventScroll: true });
+        });
+      });
+    } else if (open) {
+      requestAnimationFrame(function () {
+        body.scrollTop = 0;
       });
     }
   });

@@ -105,6 +105,10 @@ if (pActive) {
   });
 }
 
+document.addEventListener("get:baseline-published", function () {
+  shell.setBaselineState("Baseline: publicada", true);
+});
+
 const expBaselineMeta = document.getElementById("expBaselineMeta");
 if (expBaselineMeta) {
   const observer = new MutationObserver(function () {

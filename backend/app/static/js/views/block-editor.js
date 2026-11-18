@@ -291,13 +291,55 @@ export function initBlockEditor(router) {
     URL.revokeObjectURL(url);
   }
 
+  function setBeStatus(text, isError) {
+    const st = document.getElementById("beStatus");
+    if (!st) return;
+    st.textContent = text || "";
+    st.classList.toggle("be-status--error", !!isError);
+    if (text) {
+      st.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }
+
+  function ensureBaselineForPackage(projectId) {
+    return api("/api/projects/" + projectId + "/baselines/latest", {}, "Falha ao verificar baseline.").then(
+      function (baseline) {
+        if (baseline && baseline.id) return baseline;
+        const ok = window.confirm(
+          "Não há baseline publicada neste projecto. O GET-PACKAGE precisa de uma baseline " +
+            "(códigos documentais e conhecimento fixados) para a reimportação.\n\n" +
+            "Publicar baseline agora e continuar a exportação?"
+        );
+        if (!ok) {
+          return Promise.reject(
+            new Error(
+              "Exportação cancelada. Publique uma baseline em Exportar → Publicar baseline " +
+                "e volte a exportar o pacote."
+            )
+          );
+        }
+        return api(
+          "/api/projects/" + projectId + "/baselines/publish",
+          { method: "POST" },
+          "Falha ao publicar baseline."
+        ).then(function (published) {
+          document.dispatchEvent(
+            new CustomEvent("get:baseline-published", { detail: { project_id: projectId, baseline: published } })
+          );
+          return published;
+        });
+      }
+    );
+  }
+
   function runBlockPackageExport() {
     if (!activeBlockId) return Promise.reject(new Error("Sem bloco activo."));
     const projectId = document.getElementById("pActive")?.value;
     if (!projectId) return Promise.reject(new Error("Sem projecto."));
     const notesEl = document.getElementById("bePkgBriefNotes");
     const llmNotes = notesEl && notesEl.value ? notesEl.value.trim() : null;
-    return api(
+    return ensureBaselineForPackage(projectId).then(function () {
+      return api(
       "/api/projects/" + projectId + "/packages/export",
       {
         method: "POST",
@@ -309,8 +351,9 @@ export function initBlockEditor(router) {
           llm_notes: llmNotes || null,
         }),
       },
-      "Falha ao exportar pacote."
-    ).then(function (row) {
+        "Falha ao exportar pacote."
+      );
+    }).then(function (row) {
       lastBlockPackageExport = {
         brief: row.brief || "",
         body: row.body,
@@ -319,16 +362,15 @@ export function initBlockEditor(router) {
       const copyBtn = document.getElementById("bePkgCopyBrief");
       if (copyBtn) copyBtn.disabled = !lastBlockPackageExport.brief;
       downloadPackage(row.filename, row.body);
-      const st = document.getElementById("beStatus");
-      if (st) st.textContent = "Pacote exportado: " + row.file_path;
+      setBeStatus("Pacote exportado: " + row.file_path, false);
       return lastBlockPackageExport;
     });
   }
 
   document.getElementById("bePkgExport")?.addEventListener("click", function () {
+    setBeStatus("A exportar pacote…", false);
     runBlockPackageExport().catch(function (err) {
-      const st = document.getElementById("beStatus");
-      if (st) st.textContent = err.message;
+      setBeStatus(err.message, true);
     });
   });
 

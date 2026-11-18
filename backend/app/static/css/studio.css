@@ -503,6 +503,11 @@ button.secondary.danger:hover {
   background: color-mix(in srgb, var(--color-danger) 12%, transparent);
 }
 
+#beStatus.be-status--error {
+  color: var(--color-danger, #fca5a5);
+  font-weight: 600;
+}
+
 .block-editor-main .compact-section {
   margin-top: 0.5rem;
   background: var(--color-bg);
@@ -567,6 +572,30 @@ button.secondary.danger:hover {
   margin-top: 0.45rem;
   overflow-x: auto;
   max-width: 100%;
+}
+
+/* Edição do ponto: corpo com altura limitada e scroll vertical visível */
+.be-points-list .dp-card.is-expanded .dp-card-body {
+  max-height: min(52vh, 34rem);
+  overflow-x: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 0.2rem;
+  outline: none;
+}
+
+.be-points-list .dp-card.is-expanded .dp-card-body:focus-visible {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+.be-points-list .dp-card.is-expanded .dp-card-body::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#bePointsPanel.compact-section--scroll[open] .compact-section__scroll-host {
+  max-height: min(58vh, calc(100vh - 12rem));
 }
 
 .be-points-list .dp-section {
