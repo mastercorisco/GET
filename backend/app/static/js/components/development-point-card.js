@@ -120,6 +120,8 @@ export function createDevelopmentPointCard(point, hooks) {
   body.hidden = true;
   card.appendChild(body);
 
+  const ui = { card: card, meta: meta, toggle: toggle, head: head };
+
   toggle.addEventListener("click", function () {
     const open = body.hidden;
     body.hidden = !open;
@@ -128,7 +130,7 @@ export function createDevelopmentPointCard(point, hooks) {
     if (open && !body.dataset.loaded) {
       hooks.loadDetail(point.id).then(function (detail) {
         body.dataset.loaded = "1";
-        renderExpanded(body, detail, hooks);
+        renderExpanded(body, detail, hooks, ui);
         requestAnimationFrame(function () {
           body.scrollTop = 0;
           const canScroll = body.scrollHeight > body.clientHeight + 2;
@@ -153,9 +155,23 @@ export function createDevelopmentPointCard(point, hooks) {
   return card;
 }
 
-function renderExpanded(body, detail, hooks) {
+function renderExpanded(body, detail, hooks, ui) {
   body.replaceChildren();
   const lists = detail.lists || {};
+
+  function syncFromSaved(saved) {
+    if (!saved || !ui) return;
+    const status = saved.status || detail.status;
+    ui.meta.textContent = status + (saved.needs_review ? " · rev" : "");
+    const stSel = body.querySelector("#dp-" + detail.id + "-status");
+    if (stSel && saved.status) stSel.value = saved.status;
+    detail.status = status;
+    const err = ui.head.querySelector(".dp-save-error");
+    if (err) err.remove();
+    if (typeof hooks.onPointSaved === "function") {
+      hooks.onPointSaved(saved);
+    }
+  }
 
   function flush() {
     const patch = {
@@ -166,7 +182,18 @@ function renderExpanded(body, detail, hooks) {
       status: body.querySelector("#dp-" + detail.id + "-status")?.value,
       lists: lists,
     };
-    hooks.savePoint(detail.id, patch);
+    return hooks
+      .savePoint(detail.id, patch)
+      .then(syncFromSaved)
+      .catch(function (err) {
+        let errSpan = ui.head.querySelector(".dp-save-error");
+        if (!errSpan) {
+          errSpan = el("span", "error dp-save-error", err.message || "Falha ao guardar.");
+          ui.head.appendChild(errSpan);
+        } else {
+          errSpan.textContent = err.message || "Falha ao guardar.";
+        }
+      });
   }
 
   function fieldBlock(parent, fieldKey, labelText, value, multiline) {
@@ -305,11 +332,22 @@ function renderExpanded(body, detail, hooks) {
       if (v === detail.status) o.selected = true;
       stSel.appendChild(o);
     });
-    stSel.addEventListener("change", flush);
+    stSel.addEventListener("change", function () {
+      ui.meta.textContent = "A guardar…";
+      flush();
+    });
     stBlock.appendChild(stSel);
     attachFieldHelp(stBlock, "development_point.status", { inputEl: stSel });
+    const autoHint = el(
+      "p",
+      "field-microhelp",
+      "As alterações guardam ao sair de cada campo ou ao mudar o estado (não há botão OK)."
+    );
     inner.appendChild(stBlock);
+    inner.appendChild(autoHint);
   });
+
+  syncFromSaved({ status: detail.status, needs_review: detail.needs_review });
 
   const actions = el("div", "dp-card-actions");
   [

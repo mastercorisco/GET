@@ -677,6 +677,9 @@ function refreshBlockEditor() {
             "Falha ao guardar."
           );
         },
+        onPointSaved: function () {
+          loadBlockValidation(activeBlockId);
+        },
         action: function (id, kind) {
           if (kind === "delete") {
             return api("/api/development-points/" + id, { method: "DELETE" }, "Falha ao eliminar.").then(
