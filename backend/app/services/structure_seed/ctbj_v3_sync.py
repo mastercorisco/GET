@@ -14,6 +14,12 @@ from sqlalchemy.orm import Session
 
 from app.config import AppSettings
 from app.domain.block.models import DEFAULT_LISTS_JSON, DevelopmentPoint
+from app.domain.block.block_enrichment import (
+    classify_point_for_authoring,
+    enrich_block_header,
+    enrich_project_authoring,
+)
+from app.domain.block.ordering import normalize_block_point_orders, normalize_project_block_point_orders
 from app.models.document import DocumentNode
 from app.models.project import Project
 from app.services.document_service import compute_display_codes
@@ -352,7 +358,7 @@ def _sync_points(
             title=_point_title(bullet),
             core_idea=bullet,
             intended_outcome=INTENDED_OUTCOME,
-            llm_freedom="bounded",
+            llm_freedom="strict",
             status="draft",
             template_id=template_id,
             needs_review=False,
@@ -367,6 +373,30 @@ def _sync_points(
         point.needs_review = True
         point.lists_json = _append_open_question(point.lists_json, MIGRATION_NOTE)
         report["orphan_points"].append({"point_id": point.id, "block_id": block_id})
+
+    normalize_block_point_orders(session, block_id, run_id="sync_points")
+
+    block = session.get(DocumentNode, block_id)
+    if block is not None:
+        titles = [
+            t
+            for t in (
+                session.scalars(
+                    select(DevelopmentPoint.title)
+                    .where(DevelopmentPoint.block_id == block_id)
+                    .where(DevelopmentPoint.status != "obsolete")
+                    .order_by(DevelopmentPoint.sort_order)
+                )
+            )
+            if (t or "").strip()
+        ]
+        enrich_block_header(block, titles)
+        for p in session.scalars(
+            select(DevelopmentPoint)
+            .where(DevelopmentPoint.block_id == block_id)
+            .where(DevelopmentPoint.status != "obsolete")
+        ):
+            classify_point_for_authoring(p, clear_needs_review=False)
 
 
 def _write_report(paths: WorkspacePaths, project_id: str, run_id: str, body: dict) -> Path:
@@ -505,6 +535,13 @@ def apply_ctbj_v3_structure(
                 c.parent_id == node.id for c in nodes if c.node_type == "block"
             ):
                 report["orphan_nodes"].append({"node_id": node.id, "title": node.title, "type": "fascicle"})
+
+        if not dry_run:
+            renumber_stats = normalize_project_block_point_orders(session, project_id, run_id=run_id)
+            report["point_renumber"] = renumber_stats
+            report["authoring_enrich"] = enrich_project_authoring(
+                session, project_id, run_id=run_id, clear_needs_review=False
+            )
 
         fascicle_n = len([n for n in _load_nodes(session, project_id) if n.node_type == "fascicle"])
         block_n = len([n for n in _load_nodes(session, project_id) if n.node_type == "block"])

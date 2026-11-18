@@ -17,6 +17,9 @@ from app.deps import get_settings  # noqa: E402
 from app.services.backup_service import create_backup  # noqa: E402
 from app.services.project_service import list_projects  # noqa: E402
 from app.services.structure_seed.ctbj_v3_sync import apply_ctbj_v3_structure  # noqa: E402
+from app.services.workspace_service import workspace_session  # noqa: E402
+from app.domain.block.block_enrichment import enrich_project_authoring  # noqa: E402
+from app.domain.block.ordering import normalize_project_block_point_orders  # noqa: E402
 
 
 def _resolve_project_id(settings: AppSettings, project_id: str | None, project_name: str | None) -> str:
@@ -48,6 +51,16 @@ def main() -> int:
     parser.add_argument("--project-name", default=None)
     parser.add_argument("--apply", action="store_true", help="Aplicar alterações (cria backup crítico)")
     parser.add_argument("--seed-empty", action="store_true", help="Modo seed sem heurística de match")
+    parser.add_argument(
+        "--renumber-points",
+        action="store_true",
+        help="Só renumera pontos 1..n em cada bloco (sem sincronizar árvore)",
+    )
+    parser.add_argument(
+        "--authoring-ready",
+        action="store_true",
+        help="Preenche objectivo/âmbito dos blocos e classifica pontos ready+strict",
+    )
     args = parser.parse_args()
 
     dry_run = not args.apply
@@ -67,6 +80,28 @@ def main() -> int:
     except SystemExit as exc:
         print(str(exc), file=sys.stderr)
         return 2
+
+    if args.authoring_ready:
+        if dry_run:
+            print("--authoring-ready exige --apply.", file=sys.stderr)
+            return 2
+        backup_id = create_backup(settings, "critical").id
+        print(f"backup_id={backup_id}")
+        with workspace_session(settings) as (session, _paths):
+            stats = enrich_project_authoring(session, project_id, run_id="authoring_cli")
+        print(f"authoring headers_patched={stats['headers_patched']} ready={stats['points_ready']} strict={stats['strict_points']} draft_left={stats['draft_remaining']}")
+        return 0
+
+    if args.renumber_points:
+        if dry_run:
+            print("--renumber-points exige --apply (altera sort_order na base).", file=sys.stderr)
+            return 2
+        backup_id = create_backup(settings, "critical").id
+        print(f"backup_id={backup_id}")
+        with workspace_session(settings) as (session, _paths):
+            stats = normalize_project_block_point_orders(session, project_id, run_id="renumber_cli")
+        print(f"renumber blocks_touched={stats['blocks_touched']} points={stats['points_renumbered']}")
+        return 0
 
     backup_id = None
     if not dry_run:

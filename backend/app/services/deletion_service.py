@@ -244,12 +244,18 @@ def _purge_imports(session: Session, project_id: str) -> None:
 
 
 def _purge_baselines_and_exports(session: Session, project_id: str) -> None:
+    exports = list(session.scalars(select(ExportRecord).where(ExportRecord.project_id == project_id)))
+    for row in exports:
+        row.parent_export_id = None
+    session.flush()
+    for row in exports:
+        session.delete(row)
+    session.flush()
     baselines = list(session.scalars(select(Baseline).where(Baseline.project_id == project_id)))
     for baseline in baselines:
         session.execute(delete(BaselineEntry).where(BaselineEntry.baseline_id == baseline.id))
         session.execute(delete(BaselineDocumentCode).where(BaselineDocumentCode.baseline_id == baseline.id))
         session.delete(baseline)
-    session.execute(delete(ExportRecord).where(ExportRecord.project_id == project_id))
 
 
 def _require_project(session: Session, project_id: str) -> Project:
@@ -259,14 +265,30 @@ def _require_project(session: Session, project_id: str) -> Project:
     return project
 
 
-def _purge_document_nodes_batch(session: Session, project_id: str, *, limit: int) -> int:
-    node_ids = list(
-        session.scalars(
-            select(DocumentNode.id)
-            .where(DocumentNode.project_id == project_id)
-            .limit(limit)
+def _purge_project_development_points(session: Session, project_id: str) -> int:
+    block_ids = select(DocumentNode.id).where(
+        DocumentNode.project_id == project_id,
+        DocumentNode.node_type == "block",
+    )
+    point_ids = select(DevelopmentPoint.id).where(DevelopmentPoint.block_id.in_(block_ids))
+    session.execute(
+        delete(Premise).where(
+            Premise.owner_kind == "development_point",
+            Premise.owner_id.in_(point_ids),
         )
     )
+    res = session.execute(delete(DevelopmentPoint).where(DevelopmentPoint.block_id.in_(block_ids)))
+    session.flush()
+    return res.rowcount if res.rowcount is not None else 0
+
+
+def _purge_document_nodes_batch(
+    session: Session, project_id: str, *, limit: int, node_type: str | None = None
+) -> int:
+    q = select(DocumentNode.id).where(DocumentNode.project_id == project_id)
+    if node_type is not None:
+        q = q.where(DocumentNode.node_type == node_type)
+    node_ids = list(session.scalars(q.limit(limit)))
     if not node_ids:
         return 0
     for nid in node_ids:
@@ -283,10 +305,77 @@ def _purge_document_nodes_batch(session: Session, project_id: str, *, limit: int
     return len(node_ids)
 
 
+def _purge_document_subtree(session: Session, project_id: str, root_id: str) -> None:
+    for nid in reversed(_subtree_ids(session, project_id, root_id)):
+        sub = session.get(DocumentNode, nid)
+        if sub is None:
+            continue
+        if sub.node_type == "block":
+            _delete_block_points(session, nid)
+        _delete_premises_for_owner(session, "block", nid)
+        _delete_premises_for_owner(session, "fascicle", nid)
+        session.execute(delete(DocumentAssociation).where(DocumentAssociation.document_node_id == nid))
+        session.execute(delete(DocumentNode).where(DocumentNode.id == nid))
+        session.flush()
+
+
 def _purge_document_tree(session: Session, project_id: str) -> None:
+    session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
+    _purge_project_development_points(session, project_id)
+    while True:
+        root_id = session.scalar(
+            select(DocumentNode.id).where(
+                DocumentNode.project_id == project_id,
+                DocumentNode.node_type == "fascicle",
+            )
+        )
+        if root_id is None:
+            break
+        _purge_document_subtree(session, project_id, root_id)
     while _purge_document_nodes_batch(session, project_id, limit=_DOCUMENT_PURGE_BATCH) > 0:
         pass
-    session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
+
+
+def purge_project_document_structure(app_settings: AppSettings, project_id: str) -> dict[str, int]:
+    """Remove árvore documental, pontos, associações, baselines/export do projecto; mantém o registo Project."""
+    import json
+
+    remaining_before = 0
+    with workspace_session(app_settings) as (session, _paths):
+        _require_project(session, project_id)
+        remaining_before = session.scalar(
+            select(func.count()).select_from(DocumentNode).where(DocumentNode.project_id == project_id)
+        ) or 0
+        _purge_imports(session, project_id)
+        _purge_baselines_and_exports(session, project_id)
+    with workspace_session(app_settings) as (session, _paths):
+        _require_project(session, project_id)
+        _purge_document_tree(session, project_id)
+    with workspace_session(app_settings) as (session, _paths):
+        project = _require_project(session, project_id)
+        try:
+            ctx = json.loads(project.llm_context_json or "{}")
+        except json.JSONDecodeError:
+            ctx = {}
+        if not isinstance(ctx, dict):
+            ctx = {}
+        ctx.pop("structure_catalog", None)
+        project.llm_context_json = json.dumps(ctx, ensure_ascii=False, sort_keys=True)
+        session.flush()
+        remaining_after = session.scalar(
+            select(func.count()).select_from(DocumentNode).where(DocumentNode.project_id == project_id)
+        ) or 0
+        points_left = session.scalar(
+            select(func.count())
+            .select_from(DevelopmentPoint)
+            .join(DocumentNode, DevelopmentPoint.block_id == DocumentNode.id)
+            .where(DocumentNode.project_id == project_id)
+        ) or 0
+    return {
+        "document_nodes_removed": remaining_before,
+        "document_nodes_remaining": remaining_after,
+        "development_points_remaining": points_left,
+    }
 
 
 def _purge_technical_leaves_batch(session: Session, project_id: str, *, max_deletes: int) -> int:
