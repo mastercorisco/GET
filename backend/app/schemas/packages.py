@@ -34,3 +34,4 @@ class PackageImportResponse(BaseModel):
     scope_kind: str
     export_id: str | None
     status: str
+    conceptual_warnings: list[str] = Field(default_factory=list)

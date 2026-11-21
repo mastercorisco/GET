@@ -18,7 +18,7 @@
       "const": "GET-PACKAGE"
     },
     "schema_version": {
-      "const": "1.0.0"
+      "enum": ["1.0.0", "1.0.1"]
     },
     "scope": {
       "type": "object",
@@ -194,7 +194,12 @@
         "text": {
           "type": "string"
         }
-      }
+      },
+      "examples": [
+        {
+          "text": "O texto gerado deve explicitar o critério X sem valores numéricos novos."
+        }
+      ]
     },
     "listPromptAnswerItem": {
       "type": "object",
@@ -207,62 +212,89 @@
         "answer": {
           "type": "string"
         }
-      }
+      },
+      "examples": [
+        {
+          "prompt": "Qual o tempo máximo aceitável para …?",
+          "answer": ""
+        }
+      ]
     },
     "pointLists": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "development_guidance",
+        "perspectives",
+        "questions_to_answer",
+        "must_include",
+        "limits_and_exclusions",
+        "examples",
+        "open_questions",
+        "acceptance_criteria",
+        "knowledge_item_ids",
+        "reference_ids"
+      ],
       "properties": {
         "development_guidance": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "x-get": { "element_kind": "string", "creatable": true },
+          "items": { "type": "string" },
+          "examples": [["Explicitar critério X sem inventar valores."]]
         },
         "perspectives": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "x-get": { "element_kind": "string", "creatable": true },
+          "items": { "type": "string" }
         },
         "questions_to_answer": {
           "type": "array",
+          "x-get": { "element_kind": "object", "creatable": true },
           "items": {
             "$ref": "#/$defs/listPromptAnswerItem"
           }
         },
         "must_include": {
           "type": "array",
+          "x-get": { "element_kind": "object", "creatable": true },
           "items": {
             "$ref": "#/$defs/listTextItem"
           }
         },
         "limits_and_exclusions": {
           "type": "array",
+          "x-get": { "element_kind": "object", "creatable": true },
           "items": {
             "$ref": "#/$defs/listTextItem"
           }
         },
         "examples": {
           "type": "array",
+          "x-get": { "element_kind": "object", "creatable": true },
           "items": {
             "$ref": "#/$defs/listTextItem"
           }
         },
         "open_questions": {
           "type": "array",
+          "x-get": { "element_kind": "object", "creatable": true },
           "items": {
             "$ref": "#/$defs/listPromptAnswerItem"
           }
         },
         "acceptance_criteria": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "x-get": { "element_kind": "string", "creatable": true },
+          "items": { "type": "string" }
         },
         "knowledge_item_ids": {
           "type": "array",
+          "x-get": {
+            "element_kind": "string",
+            "creatable": false,
+            "id_policy": "refs_only",
+            "item_template": "00000000-0000-4000-8000-000000000000"
+          },
           "items": {
             "type": "string",
             "format": "uuid"
@@ -270,6 +302,12 @@
         },
         "reference_ids": {
           "type": "array",
+          "x-get": {
+            "element_kind": "string",
+            "creatable": false,
+            "id_policy": "refs_only",
+            "item_template": "00000000-0000-4000-8000-000000000000"
+          },
           "items": {
             "type": "string",
             "format": "uuid"
@@ -303,10 +341,12 @@
           "$ref": "#/$defs/pointLists"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": ["draft", "incomplete", "ready", "approved", "obsolete"]
         },
         "llm_freedom": {
-          "type": "string"
+          "type": "string",
+          "enum": ["strict", "bounded", "exploratory"]
         },
         "template_id": {
           "type": ["string", "null"]
@@ -329,13 +369,25 @@
           "type": "string"
         },
         "importance": {
-          "type": "string"
+          "type": "string",
+          "enum": ["mandatory", "recommended", "informative"]
         },
         "source_type": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "project_decision",
+            "eda_philosophy",
+            "functional_requirement",
+            "standard",
+            "existing_document",
+            "operational_experience",
+            "technical_recommendation",
+            "unconfirmed_information"
+          ]
         },
         "confidence": {
-          "type": "string"
+          "type": "string",
+          "enum": ["confirmed", "provisional", "unverified"]
         },
         "reference_id": {
           "type": ["string", "null"]
@@ -345,11 +397,25 @@
         }
       }
     },
+    "structureAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fascicle_id", "fascicle_display_code", "position_among_blocks", "exported_at"],
+      "properties": {
+        "fascicle_id": { "type": "string", "format": "uuid" },
+        "fascicle_display_code": { "type": "string", "minLength": 1 },
+        "position_among_blocks": { "type": "integer", "minimum": 1 },
+        "exported_at": { "type": "string", "minLength": 1 }
+      }
+    },
     "blockPayload": {
       "type": "object",
       "additionalProperties": false,
       "required": ["block", "development_points", "premises"],
       "properties": {
+        "structure_anchor": {
+          "$ref": "#/$defs/structureAnchor"
+        },
         "block": {
           "type": "object",
           "additionalProperties": false,

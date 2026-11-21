@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import jsonschema
 
@@ -9,6 +10,9 @@ from app.services.export.validator import validate_fascicle
 from app.services.packages.constants import GET_PACKAGE_SCHEMA, SUPPORTED_GET_PACKAGE_VERSION
 from app.services.packages.llm_shapes import validate_block_point_lists
 from app.services.packages.rules import rules_hash
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
 
 
 class PackageValidationError(Exception):
@@ -113,3 +117,43 @@ def validate_get_package(pkg: dict, *, project_id: str) -> None:
         if block_id != block.get("id"):
             raise PackageValidationError("Ficheiro incompatível: bloco do âmbito não coincide.")
         validate_block_point_lists(payload)
+
+def validate_get_package_identity(session: "Session", pkg: dict, *, project_id: str) -> None:
+    """Confirma que nós do âmbito existem no projecto e que display_code do bloco coincide com a árvore."""
+    from sqlalchemy import select
+
+    from app.models.document import DocumentNode
+    from app.services.document_service import compute_display_codes
+
+    scope = pkg.get("scope") or {}
+    kind = scope.get("kind")
+    if kind == "block":
+        block_id = scope.get("block_id")
+        if not block_id:
+            raise PackageValidationError("Ficheiro incompatível: block_id em falta.")
+        node = session.get(DocumentNode, block_id)
+        if node is None or node.node_type != "block" or node.project_id != project_id:
+            raise PackageValidationError(
+                "Ficheiro incompatível: o bloco do pacote não existe neste projecto "
+                "(export desactualizado após reestruturação?). Re-exporte na app."
+            )
+        nodes = list(session.scalars(select(DocumentNode).where(DocumentNode.project_id == project_id)))
+        codes = compute_display_codes(nodes)
+        expected_code = codes.get(block_id, "")
+        payload_block = (pkg.get("payload") or {}).get("block") or {}
+        pkg_code = payload_block.get("display_code") or ""
+        if pkg_code and expected_code and pkg_code != expected_code:
+            raise PackageValidationError(
+                f"Ficheiro incompatível: display_code «{pkg_code}» não corresponde à árvore actual "
+                f"(esperado «{expected_code}»). Re-exporte o pacote na app."
+            )
+    elif kind == "fascicle":
+        fascicle_id = scope.get("fascicle_id")
+        if not fascicle_id:
+            raise PackageValidationError("Ficheiro incompatível: fascicle_id em falta.")
+        node = session.get(DocumentNode, fascicle_id)
+        if node is None or node.node_type != "fascicle" or node.project_id != project_id:
+            raise PackageValidationError(
+                "Ficheiro incompatível: o fascículo do pacote não existe neste projecto. Re-exporte na app."
+            )
+

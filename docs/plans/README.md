@@ -8,4 +8,6 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [micro-F0-phase-A-inventory.md](micro-F0-phase-A-inventory.md) | F0 | Guia genérico |
 | [micro-F0-phase-A-workspace-testes.md](micro-F0-phase-A-workspace-testes.md) | F0 | Inventário preenchido |
 | [micro-F0-retro-TEMPLATE.md](micro-F0-retro-TEMPLATE.md) | F0 | Template |
+| [micro-F0-f01-b07-other-workspace.md](micro-F0-f01-b07-other-workspace.md) | F0 | Inventário workspace externo |
+| [get-package-ssot-design.md](get-package-ssot-design.md) | Pós-F0 | Desenho SSOT Onda 2 |
 | [micro-F1-bloco-piloto-grill.md](micro-F1-bloco-piloto-grill.md) | F1 | Esboço (após fecho F0) |

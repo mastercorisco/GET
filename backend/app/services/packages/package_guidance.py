@@ -4,7 +4,8 @@ from __future__ import annotations
 
 PACKAGE_ANTI_PATTERNS: list[str] = [
     "Knowledge item só com title/content ou campos inventados (node_id, question, tags soltas).",
-    "Strings em must_include, open_questions, questions_to_answer ou development_guidance — usar sempre objectos tipados.",
+    "Strings soltas em must_include, limits_and_exclusions, examples, open_questions ou questions_to_answer — usar objectos com as chaves do schema ({text} ou {prompt, answer}).",
+    "Objectos em development_guidance, perspectives ou acceptance_criteria — estas listas são arrays de strings.",
     "lists omitido, {} incompleto, ou chaves de lists em falta num development_point.",
     "Alterar rules, rules_hash, schema, schema_version, scope, export_id ou truncar o envelope.",
     "Copiar protected_context para editable_knowledge sem estrutura KI completa e UUID/new_* correcto.",
@@ -17,7 +18,7 @@ COLLECTION_PRIORITY = (
 )
 
 BRIEF_OUTPUT_CONTRACT: list[str] = [
-    "Uma única resposta: ficheiro JSON GET-PACKAGE 1.0.0 parseável (sem texto antes/depois).",
+    "Uma única resposta: ficheiro JSON GET-PACKAGE 1.0.x parseável (sem texto antes/depois).",
     "Mesmo export_id, rules e rules_hash byte-a-byte iguais ao ficheiro recebido.",
     "Todos os UUID existentes preservados; criações só com new_001, new_002, …",
     "Omissão de um elemento existente NÃO apaga dados na app — se quiser remover, isso é fluxo humano, não omissão silenciosa.",
@@ -51,7 +52,7 @@ BRIEF_READ_ORDER: list[str] = [
 BRIEF_WORKFLOW: list[str] = [
     "Inventariar lacunas: campos vazios, listas só com molde, KI incompletos, texto genérico.",
     "Por ponto/KI: reescrever o mínimo necessário; propagar consistência terminológica no mesmo bloco/fascículo.",
-    "Para cada lista editada, verificar tipo de elemento (objecto, não string).",
+    "Para cada lista editada, verificar element_kind em llm_shapes (strings vs objectos).",
     "Passar checklist de autoverificação; confirmar rules_hash inalterado.",
     "Entregar só o JSON (recomendado: anexar como ficheiro .json; se usar código, um bloco ```json único).",
 ]
@@ -60,7 +61,7 @@ BRIEF_SELF_CHECK: list[str] = [
     "rules e rules_hash idênticos ao input?",
     "export_id e schema_version intactos?",
     "Todas as chaves de lists presentes em cada development_point?",
-    "Zero strings nuas nas listas tipadas?",
+    "Listas objecto (must_include, open_questions, …) sem strings soltas; listas string (development_guidance, …) sem objectos?",
     "KI com knowledge_type, revision, states, provenance, edit_policy (não só title/content)?",
     "Envelope completo (payload + scope + rules + export_id no mínimo)?",
 ]
@@ -70,7 +71,9 @@ BRIEF_SHAPE_EXAMPLES: dict[str, list[str]] = {
         "BOM must_include: {\"text\": \"O texto gerado deve explicitar o critério de aceitação X sem valores numéricos novos.\"}",
         "MAU must_include: \"incluir requisitos de segurança\" (string — rejeitado).",
         "BOM open_questions no ponto: {\"prompt\": \"Qual o tempo máximo aceitável para …?\", \"answer\": \"\"}",
-        "BOM listas: manter development_guidance, must_include, questions_to_answer, knowledge_item_ids (mesmo vazios tipados).",
+        "BOM development_guidance: \"Explicitar critério X sem inventar valores.\" (string)",
+        "MAU development_guidance: {\"text\": \"…\"} (objecto — rejeitado).",
+        "BOM listas: manter todas as chaves de lists (mesmo arrays vazios).",
     ],
     "fascicle": [
         "BOM novo open_question em editable_knowledge: KI completo com knowledge_type open_question e content que explica a lacuna.",

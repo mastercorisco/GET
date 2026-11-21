@@ -147,6 +147,25 @@ def test_block_import_rejects_string_in_must_include(client: TestClient, tmp_pat
     assert "incompatível" in bad.json()["detail"].lower()
 
 
+def test_block_import_rejects_incomplete_point_lists(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, point_id = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    for row in pkg["payload"]["development_points"]:
+        if row["id"] == point_id:
+            row["lists"].pop("development_guidance", None)
+    bad = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("nolists.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert bad.status_code == 400
+    detail = bad.json()["detail"].lower()
+    assert "incompatível" in detail or "development_guidance" in detail
+
+
 def test_package_import_without_llm_shapes_still_valid(client: TestClient, tmp_path: Path) -> None:
     pid, block_id, point_id = _setup_block(client, tmp_path)
     export = client.post(
@@ -240,6 +259,36 @@ def test_fascicle_package_roundtrip(client: TestClient, tmp_path: Path) -> None:
     after = client.get(f"/api/knowledge/{item_id}").json()
     assert after["title"] == "Título via GET-PACKAGE"
     assert export_id.startswith("PKG-FASC")
+
+
+def test_block_export_includes_structure_anchor(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    assert pkg["schema_version"] == "1.0.1"
+    anchor = pkg["payload"].get("structure_anchor") or {}
+    assert anchor.get("fascicle_display_code") == "F01"
+    assert anchor.get("position_among_blocks") == 1
+
+
+def test_import_returns_conceptual_warnings_field(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    uploaded = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("ok.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert uploaded.status_code == 200
+    body = uploaded.json()
+    assert "conceptual_warnings" in body
+    assert isinstance(body["conceptual_warnings"], list)
 
 
 def test_block_export_writes_merge_base(client: TestClient, tmp_path: Path) -> None:
@@ -403,3 +452,36 @@ def test_new_point_via_package(client: TestClient, tmp_path: Path) -> None:
     assert client.post(f"/api/projects/{pid}/packages/merge/{merge_id}/consolidate").status_code == 200
     points = client.get(f"/api/blocks/{block_id}").json()["points"]
     assert any(p["title"] == "Novo ponto LLM" for p in points)
+
+def test_block_import_rejects_unknown_block_id(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    pkg["scope"]["block_id"] = str(uuid.uuid4())
+    pkg["payload"]["block"]["id"] = pkg["scope"]["block_id"]
+    bad = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("orphan.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert bad.status_code == 400
+    assert "não existe" in bad.json()["detail"].lower() or "incompatível" in bad.json()["detail"].lower()
+
+
+def test_block_import_rejects_stale_display_code(client: TestClient, tmp_path: Path) -> None:
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    pkg = json.loads(export.json()["body"])
+    pkg["payload"]["block"]["display_code"] = "F99_B99"
+    bad = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("stale_code.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert bad.status_code == 400
+    assert "display_code" in bad.json()["detail"].lower()
+

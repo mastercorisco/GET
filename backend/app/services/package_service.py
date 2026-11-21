@@ -31,7 +31,12 @@ from app.services.packages.block_builder import build_block_payload, normalize_b
 from app.services.packages.block_consolidate import apply_block_proposals
 from app.services.packages.block_merge import build_block_merge_proposals
 from app.services.packages.envelope import package_brief_text, unwrap_block_payload, unwrap_fascicle_payload, wrap_package
-from app.services.packages.validate_strict import PackageValidationError, validate_get_package
+from app.services.packages.package_semantic import package_conceptual_warnings
+from app.services.packages.validate_strict import (
+    PackageValidationError,
+    validate_get_package,
+    validate_get_package_identity,
+)
 from app.services.workspace_service import workspace_session
 
 
@@ -141,7 +146,12 @@ def export_package(
         merge_base_path.write_text(text, encoding="utf-8")
         sha = sha256_hex(text)
 
-        record = session.scalar(select(ExportRecord).where(ExportRecord.export_id == export_id))
+        record = session.scalar(
+            select(ExportRecord).where(
+                ExportRecord.project_id == project_id,
+                ExportRecord.export_id == export_id,
+            )
+        )
         if record is None:
             record = ExportRecord(
                 id=str(uuid.uuid4()),
@@ -196,6 +206,10 @@ def import_package(
 
     with workspace_exclusive("package_import"):
         with workspace_session(app_settings, begin_immediate=True) as (session, paths):
+            try:
+                validate_get_package_identity(session, pkg, project_id=project_id)
+            except PackageValidationError as exc:
+                raise PackageError(str(exc)) from exc
             import_id = new_import_id()
             dest = write_import_file(paths.imports_dir, import_id, filename or "package.json", raw)
             export_id = pkg.get("export_id")
@@ -234,6 +248,7 @@ def import_package(
                 scope_kind=scope_kind,
                 export_id=export_id,
                 status="staged",
+                conceptual_warnings=package_conceptual_warnings(pkg),
             )
 
 
@@ -255,16 +270,20 @@ def run_package_merge(app_settings: AppSettings, project_id: str, import_id: str
 
             pkg = json.loads(Path(import_row.raw_path).read_text(encoding="utf-8"))
             validate_get_package(pkg, project_id=project_id)
+            validate_get_package_identity(session, pkg, project_id=project_id)
             scope = pkg.get("scope") or {}
             scope_kind = scope.get("kind")
             export_id = pkg.get("export_id")
             if not export_id:
                 raise PackageError("Pacote sem export_id.")
 
+            snap = Path(import_row.raw_path).parent / MERGE_BASE_FILENAME
+            export_record = None
             try:
                 export_record = resolve_export_record(session, project_id, export_id)
             except BaseLoadError as exc:
-                raise PackageError(str(exc)) from exc
+                if not (scope_kind == "block" and snap.is_file()):
+                    raise PackageError(str(exc)) from exc
 
             baseline = session.get(Baseline, latest.id)
             if baseline is None:
@@ -289,11 +308,14 @@ def run_package_merge(app_settings: AppSettings, project_id: str, import_id: str
                 block = session.get(DocumentNode, block_id)
                 if block is None or block.project_id != project_id:
                     raise PackageError("Bloco inválido.")
-                snap = Path(import_row.raw_path).parent / MERGE_BASE_FILENAME
                 if snap.is_file():
                     base_raw = json.loads(snap.read_text(encoding="utf-8"))
-                else:
+                elif export_record is not None:
                     base_raw = _load_package_merge_base(export_record)
+                else:
+                    raise PackageError(
+                        f"Base de merge em falta para {export_id}. Re-exporte o bloco na app."
+                    )
                 base_block = normalize_block_merge_payload(unwrap_block_payload(base_raw))
                 current_block = normalize_block_merge_payload(build_block_payload(session, block.id))
                 returned_block = normalize_block_merge_payload(unwrap_block_payload(pkg))

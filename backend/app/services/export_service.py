@@ -165,7 +165,12 @@ def export_master(app_settings: AppSettings, project_id: str, body: MasterExport
             zip_path = str(zip_file)
 
         sha = sha256_hex(master_text)
-        record = session.scalar(select(ExportRecord).where(ExportRecord.export_id == export_id))
+        record = session.scalar(
+            select(ExportRecord).where(
+                ExportRecord.project_id == project_id,
+                ExportRecord.export_id == export_id,
+            )
+        )
         if record is None:
             record = ExportRecord(
                 id=str(uuid.uuid4()),
@@ -254,12 +259,20 @@ def export_fascicle(
         parent_id = None
         if body.master_export_id:
             parent = session.scalar(
-                select(ExportRecord).where(ExportRecord.export_id == body.master_export_id)
+                select(ExportRecord).where(
+                    ExportRecord.project_id == project_id,
+                    ExportRecord.export_id == body.master_export_id,
+                )
             )
             parent_id = parent.id if parent else None
 
         sha = sha256_hex(text)
-        record = session.scalar(select(ExportRecord).where(ExportRecord.export_id == export_id))
+        record = session.scalar(
+            select(ExportRecord).where(
+                ExportRecord.project_id == project_id,
+                ExportRecord.export_id == export_id,
+            )
+        )
         if record is None:
             record = ExportRecord(
                 id=str(uuid.uuid4()),

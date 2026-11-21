@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import select
@@ -78,7 +79,28 @@ def build_block_payload(session: Session, block_id: str) -> dict[str, Any]:
         for row in premises
     ]
 
-    return {
+    structure_anchor: dict[str, Any] | None = None
+    if block.parent_id:
+        parent = session.get(DocumentNode, block.parent_id)
+        if parent is not None and parent.node_type == "fascicle":
+            siblings = [
+                n
+                for n in nodes
+                if n.parent_id == block.parent_id and n.node_type == "block"
+            ]
+            siblings.sort(key=lambda n: (n.sort_key, n.created_at, n.id))
+            position = next(
+                (i for i, n in enumerate(siblings, start=1) if n.id == block.id),
+                0,
+            )
+            structure_anchor = {
+                "fascicle_id": parent.id,
+                "fascicle_display_code": codes.get(parent.id, ""),
+                "position_among_blocks": position,
+                "exported_at": datetime.now(timezone.utc).isoformat(),
+            }
+
+    payload: dict[str, Any] = {
         "block": {
             "id": block.id,
             "display_code": codes.get(block.id, ""),
@@ -90,6 +112,9 @@ def build_block_payload(session: Session, block_id: str) -> dict[str, Any]:
         "development_points": point_payloads,
         "premises": premise_payloads,
     }
+    if structure_anchor is not None:
+        payload["structure_anchor"] = structure_anchor
+    return payload
 
 
 def normalize_block_merge_payload(payload: dict[str, Any]) -> dict[str, Any]:

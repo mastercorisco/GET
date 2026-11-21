@@ -6,92 +6,22 @@ from typing import Any
 from app.domain.block.models import DEFAULT_LISTS_JSON
 from app.services.packages.block_merge import BLOCK_EDITABLE, POINT_EDITABLE, PREMISE_EDITABLE
 from app.services.packages.package_guidance import COLLECTION_PRIORITY, PACKAGE_ANTI_PATTERNS
+from app.services.packages.schema_shapes import (
+    development_point_field_enums,
+    point_list_keys,
+    point_list_shapes,
+    premise_field_enums,
+)
 
 _STRICT_INSTRUCTION = (
     "Cumprir estritamente os tipos definidos em llm_shapes. Não inferir estruturas não especificadas."
 )
 
-_POINT_LIST_KEYS = (
-    "development_guidance",
-    "perspectives",
-    "questions_to_answer",
-    "must_include",
-    "limits_and_exclusions",
-    "examples",
-    "open_questions",
-    "acceptance_criteria",
-    "knowledge_item_ids",
-    "reference_ids",
-)
+POINT_LIST_KEYS: tuple[str, ...] = point_list_keys()
+_POINT_LIST_KEYS = POINT_LIST_KEYS
 
-# element_kind: "string" | "object"; id_policy: refs_only | uuid_preserve | new_temp
-POINT_LIST_SHAPES: dict[str, dict[str, Any]] = {
-    "development_guidance": {
-        "element_kind": "string",
-        "creatable": True,
-        "id_policy": None,
-        "item_template": "",
-    },
-    "perspectives": {
-        "element_kind": "string",
-        "creatable": True,
-        "id_policy": None,
-        "item_template": "",
-    },
-    "questions_to_answer": {
-        "element_kind": "object",
-        "required_keys": ["prompt", "answer"],
-        "creatable": True,
-        "id_policy": None,
-        "item_template": {"prompt": "", "answer": ""},
-    },
-    "must_include": {
-        "element_kind": "object",
-        "required_keys": ["text"],
-        "creatable": True,
-        "id_policy": None,
-        "item_template": {"text": ""},
-    },
-    "limits_and_exclusions": {
-        "element_kind": "object",
-        "required_keys": ["text"],
-        "creatable": True,
-        "id_policy": None,
-        "item_template": {"text": ""},
-    },
-    "examples": {
-        "element_kind": "object",
-        "required_keys": ["text"],
-        "creatable": True,
-        "id_policy": None,
-        "item_template": {"text": ""},
-    },
-    "open_questions": {
-        "element_kind": "object",
-        "required_keys": ["prompt", "answer"],
-        "creatable": True,
-        "id_policy": None,
-        "item_template": {"prompt": "", "answer": ""},
-    },
-    "acceptance_criteria": {
-        "element_kind": "string",
-        "creatable": True,
-        "id_policy": None,
-        "item_template": "",
-    },
-    "knowledge_item_ids": {
-        "element_kind": "string",
-        "creatable": False,
-        "id_policy": "refs_only",
-        "item_template": "00000000-0000-4000-8000-000000000000",
-    },
-    "reference_ids": {
-        "element_kind": "string",
-        "creatable": False,
-        "id_policy": "refs_only",
-        "item_template": "00000000-0000-4000-8000-000000000000",
-    },
-}
+# Gerado a partir de schemas/get_package.schema.json ($defs/pointLists + x-get).
+POINT_LIST_SHAPES: dict[str, dict[str, Any]] = point_list_shapes()
 
 NEW_KNOWLEDGE_ITEM_TEMPLATE: dict[str, Any] = {
     "id": "new_001",
@@ -202,6 +132,7 @@ def build_llm_shapes(scope_kind: str, payload: dict[str, Any]) -> dict[str, Any]
                 shape,
                 sample=sample,
             )
+        pt_enums = development_point_field_enums()
         collections["payload.development_points[]"] = {
             "path": "payload.development_points[]",
             "element_kind": "object",
@@ -218,6 +149,8 @@ def build_llm_shapes(scope_kind: str, payload: dict[str, Any]) -> dict[str, Any]
                 "llm_freedom",
             ],
             "editable_fields": sorted(POINT_EDITABLE),
+            "status_enum": pt_enums.get("status"),
+            "llm_freedom_enum": pt_enums.get("llm_freedom"),
             "item_template": {
                 "id": "new_001",
                 "sort_order": 1,
@@ -231,6 +164,7 @@ def build_llm_shapes(scope_kind: str, payload: dict[str, Any]) -> dict[str, Any]
                 "needs_review": False,
             },
         }
+        prem_enums = premise_field_enums()
         collections["payload.premises[]"] = {
             "path": "payload.premises[]",
             "element_kind": "object",
@@ -238,6 +172,9 @@ def build_llm_shapes(scope_kind: str, payload: dict[str, Any]) -> dict[str, Any]
             "id_policy": "uuid_preserve_or_new_temp",
             "required_keys": ["id", "statement", "importance", "source_type", "confidence"],
             "editable_fields": sorted(PREMISE_EDITABLE),
+            "importance_enum": prem_enums.get("importance"),
+            "source_type_enum": prem_enums.get("source_type"),
+            "confidence_enum": prem_enums.get("confidence"),
             "item_template": {
                 "id": "new_001",
                 "statement": "",
@@ -333,9 +270,12 @@ def validate_block_point_lists(payload: dict[str, Any]) -> None:
             continue
         if not isinstance(lists, dict):
             raise PackageValidationError(f"Ficheiro incompatível: ponto [{pi}] lists deve ser objeto.")
-        for key, shape in POINT_LIST_SHAPES.items():
+        for key in POINT_LIST_KEYS:
             if key not in lists:
-                continue
+                raise PackageValidationError(
+                    f"Ficheiro incompatível: ponto [{pi}] lists em falta a chave «{key}»."
+                )
+        for key, shape in POINT_LIST_SHAPES.items():
             rows = lists[key]
             if not isinstance(rows, list):
                 raise PackageValidationError(f"Ficheiro incompatível: ponto [{pi}] lists.{key} deve ser array.")

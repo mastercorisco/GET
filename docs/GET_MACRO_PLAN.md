@@ -136,7 +136,9 @@ Derivado de experiência real (reestruturação na LLM + import problemático):
 |------------|------|------|
 | Alta | Ritual + checklist pré-import (agente) | Processo |
 | Alta | Um âmbito de mudança por ficheiro devolvido | Processo |
-| Média | Relatório “conceitos misturados” no staging | Produto |
+| Média | Relatório “conceitos misturados” no staging | Produto — **v1:** `conceptual_warnings` na resposta de import + script F0 |
+| Média | Identidade pacote vs árvore (`block_id`, `display_code`, `structure_anchor`) | Produto — **feito Onda 1** |
+| Média | `export_record` por projecto (não `export_id` global) | Produto — **feito** (migração 010) |
 | Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto |
 | Baixa | Modos de import (estrutura vs conteúdo) | Produto |
 

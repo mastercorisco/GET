@@ -196,7 +196,12 @@ def export_llm_generation_package(
         zf.writestr("manifest.json", dumps_deterministic(package_manifest))
 
     if baseline_id:
-        record = session.scalar(select(ExportRecord).where(ExportRecord.export_id == package_export_id))
+        record = session.scalar(
+            select(ExportRecord).where(
+                ExportRecord.project_id == project_id,
+                ExportRecord.export_id == package_export_id,
+            )
+        )
         if record is None:
             record = ExportRecord(
                 id=str(uuid.uuid4()),

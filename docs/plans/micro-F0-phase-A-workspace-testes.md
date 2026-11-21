@@ -14,6 +14,10 @@
 | Workbook Excel | `exports/workbook/*.xlsx` (2026-11-16); sem import workbook recente na pasta | Baixa para o incidente da “lista” |
 | Estrutura MD/PDF/XMind | Muitos `exports/document-structure/*` (2026-11-18) | Possível confusão **visual** de estrutura (artefacto derivado, não reimportável) |
 
+**Contrato listas (Onda 1):** `development_guidance`, `perspectives` e `acceptance_criteria` são **strings**; `must_include` / `open_questions` são **objectos**. O brief exportado antigo podia induzir o oposto — corrigido na app.
+
+**Exports obsoletos:** re-export obrigatório antes de qualquer sessão LLM. Em `testes`, F01 tem apenas `F01_B01`…`F01_B06`; pacotes com `F01_B07` ou UUID CTBJ v3 antigos falham na validação de identidade (`block_id` / `display_code`). Confirmar `export_record` na UI e hash do ficheiro em disco; não confiar em `PKG-FASC-F01` ou `PKG-BLK-*` copiados sem registo actual.
+
 **Hipótese de causa:** sessões LLM com pacotes **bloco “completo”** (conteúdo + muitos pontos) e/ou reorganização conceptual fora do modo F0-*; imports repetidos sobre **F01_B02** (≥6 tentativas). Validação estrita pode passar com **avisos** (strings em `development_guidance`).
 
 ## Backups disponíveis
@@ -41,7 +45,7 @@ cd C:\PROGRAMACAO\GET\backend
 python scripts/validate_get_package_file.py "C:\PROGRAMACAO\GET_aux\testes\imports\c433797e-7f68-4d1b-a255-8c6a19b90544\F04_B07_package_atualizado.json" --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52
 ```
 
-Resultado 2026-11-21: OK estrito; **16 avisos** `development_guidance` como strings soltas (modo F0-content-block: corrigir para objectos tipados).
+Resultado 2026-11-21: OK estrito; avisos anteriores em `development_guidance` eram falso positivo do script F0 (strings são correctas).
 
 ## Próximo passo F0 (Phase C)
 

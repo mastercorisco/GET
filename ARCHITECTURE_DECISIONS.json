@@ -325,7 +325,7 @@
     {
       "id": "ADR-055",
       "topic": "get_package_llm_shapes",
-      "decision": "Envelopes GET-PACKAGE exportados incluem llm_shapes opcional (fora do payload): guia de coleções, item_template e instrução de tipos estritos; importação aceita pacotes sem llm_shapes; listas de pontos validam objectos tipados; rules_hash inalterado.",
+      "decision": "Envelopes GET-PACKAGE exportados incluem llm_shapes opcional (fora do payload): guia de coleções, item_template e instrução de tipos estritos; importação aceita pacotes sem llm_shapes; listas de pontos: objectos tipados em must_include/open_questions/etc. e strings em development_guidance/perspectives/acceptance_criteria; rules_hash inalterado.",
       "status": "accepted"
     },
     {
@@ -350,6 +350,12 @@
       "id": "ADR-059",
       "topic": "workspace_contract_sqlite",
       "decision": "Contrato operacional do workspace: raiz activa via GET_WORKSPACE_ROOT (sobrepõe app-config); SQLite com WAL/busy_timeout, BEGIN IMMEDIATE e lock em processo nas escritas críticas (restauro, import/merge, baseline, consolidate, workbook apply, CTBJ apply, purge/delete); HTTP 409 se concorrente; GET /api/health/workspace; invalidação de cache SQLAlchemy pós-restauro; runbook docs/WORKSPACE_OPERATIONS.md; contentor Docker apenas roadmap E09, fora do MVP.",
+      "status": "accepted"
+    },
+    {
+      "id": "ADR-060",
+      "topic": "get_package_ssot_shapes",
+      "decision": "GET-PACKAGE 1.0.x: pointLists com required nas dez chaves e vocabulário fechado (status, llm_freedom, premissas) em get_package.schema.json; anotações x-get no schema; POINT_LIST_SHAPES e enums de export gerados em runtime por schema_shapes.py a partir do mesmo ficheiro (sem duplicar tipos em Python); exemplos BOM em $defs; llm_shapes.collections inclui enums derivados do schema.",
       "status": "accepted"
     }
   ]
