@@ -111,6 +111,10 @@ Evitar: pesquisa genérica “sobre o assunto” em todos os pontos do bloco (ru
 
 **Corpus:** pode documentar-se só no disco + manifest; evolução futura opcional: campo em `llm_context_json` com path canónico do corpus (sem alterar ADR-008).
 
+## Plano macro
+
+Fases de operação (F0 import → F3 reutilização): [GET_MACRO_PLAN.md](GET_MACRO_PLAN.md).
+
 ## Análise de evolução do quadro
 
 Contexto arquitectural e lacunas: [GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAMEWORK_EVOLUTION_SUMMARY.md).
