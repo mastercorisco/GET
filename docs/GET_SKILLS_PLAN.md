@@ -1,30 +1,55 @@
 # GET — Plano de skills (mínimo alterações)
 
-Documento de referência para desenvolvimento futuro. O GET mantém a arquitectura actual; as skills são agentes externos que leem contexto exportado e devolvem propostas.
+Documento de referência para desenvolvimento futuro. O GET mantém a arquitectura actual; as skills são agentes externos (ex.: Cursor, Claude) que leem contexto exportado, eventual **corpus de apoio** em disco, e devolvem propostas.
 
 ## Princípios
 
-- SQLite continua a fonte de verdade autoritativa.
+- **Fonte de verdade:** SQLite (conhecimento aceite, pontos, referências como registos).
+- **Material de apoio:** pastas com Markdown, PDFs, normas — leitura para LLMs; **não** fonte de verdade. O que importa para engenharia ou caderno entra no GET após revisão (`Reference` com `internal_location`, factos, premissas, pontos).
+- **Memória de sessão** (ex. Claude): cache de trabalho; não substitui GET nem o corpus indexado em disco.
 - Skills **não** escrevem SQLite, **não** aprovam pontos, **não** alteram campos protegidos.
 - Ciclo: **READ → REASON → PROPOSE → REVIEW → COMMIT**.
-- **READ:** exportação GET-PACKAGE (bloco ou fascículo).
+- **READ:** exportação GET-PACKAGE (bloco ou fascículo) +, quando útil, ficheiros em `corpus/` (ver abaixo).
 - **PROPOSE:** JSON devolvido → staging / `ChangeProposal`.
 - **REVIEW / COMMIT:** fluxo de importação e consolidação já existente.
 - Humano pode editar pontos e conhecimento directamente na app (sem obrigar proposta em cada keystroke).
-- GET-LLM, Markdown, PDF e XMind são **projecções**; não são reimportáveis.
+- Exportações na app (GET-LLM, Markdown, PDF, XMind) são **projecções / contratos**; não produzem o texto final do caderno e não são reimportáveis como autoridade (excepto GET-PACKAGE).
 
 Diagrama: [GET_SKILLS_OPERATING_MODEL.drawio](GET_SKILLS_OPERATING_MODEL.drawio) (abrir em [diagrams.net](https://app.diagrams.net) ou extensão Draw.io no VS Code/Cursor).
+
+## Corpus de apoio (LLMs)
+
+Fora do SQLite (ADR-008: a app não armazena anexos). Convenção recomendada por projecto:
+
+```text
+{raiz do workspace ou projecto}/
+  corpus/
+    manifest.json ou _index.md   # inventário, datas, aplicabilidade
+    norms/                     # normas PDF (+ resumo .md opcional)
+    client/                    # RCD, atas, emails exportados
+    site/                      # as-built, levantamentos
+    vendor/                    # datasheets
+    engineering/               # notas MD internas (não duplicar biblioteca GET)
+  exports/                     # artefactos GET (já existente)
+```
+
+- Cada documento importante deve ter (ou vir a ter) um registo **`Reference`** / **`StandardProfile`** no GET, com **`internal_location`** apontando para o ficheiro.
+- O GET-PACKAGE **não inclui** binários; skills com acesso ao disco leem o corpus; opcionalmente `project.llm_context_json` indica a raiz do corpus e regras de uso.
+- Resumos `.md` de PDFs grandes reduzem tokens; o PDF permanece evidência citável.
 
 ## Skills (conjunto inicial)
 
 | Skill | Papel | Contexto | Saídas | Proibido |
 |-------|--------|----------|--------|----------|
-| **get-grill** | Preparar pontos até briefing completo | Ponto, premissas herdadas, KI/refs ligados, `development_point_templates` | Patch de `title`, `core_idea`, `intended_outcome`, `lists`; candidatos glossário/ref/decisão | Marcar `ready`/`approved`; inventar requisitos sem suporte |
-| **get-review** | Cross-check registado vs pontos/texto | Pacote + conhecimento, premissas, terminologia, referências | Inconsistências + propostas de correcção | Novos requisitos; promoção biblioteca; mudar approval |
+| **get-grill** | Preparar pontos até briefing completo | GET-PACKAGE, premissas herdadas, KI/refs ligados, `development_point_templates`, corpus | Patch de `title`, `core_idea`, `intended_outcome`, `lists`; candidatos glossário/ref/decisão; pedidos a research | Marcar `ready`/`approved`; inventar requisitos sem suporte |
+| **get-research** | Apoio na preparação do bloco: encontrar norma, fabricante, prática | Lacuna concreta (grill/review), corpus, web se aplicável, refs GET actuais | Propor `Reference` + `internal_location`; resumo MD no corpus; `fact` opcional que cita a ref | Marcar verificado; converter norma em requisito; correr em todos os pontos sem gatilho |
+| **get-write-spec** | **Redação** do texto da especificação (LLM externa) | Export GET-LLM (JSON + MD derivado), regras de geração, pontos `ready`/`approved` | Markdown (ou Word noutra ferramenta); **não** commit no GET | Alterar SQLite; aprovar conteúdo; reimportar MD como verdade |
+| **get-review** | Cross-check registado vs pontos vs texto redigido | Pacote + conhecimento, premissas, terminologia, referências, texto `get-write-spec` | Inconsistências + propostas de correcção | Novos requisitos; promoção biblioteca; mudar approval |
 | **get-decision** | Excepção: escolha transversal | Pontos afectados, decisões existentes | Propor `KnowledgeItem` `knowledge_type=decision` | Aprovar; copiar decisão para dentro de cada ponto |
-| **get-research** | Excepção: fonte em falta | Afirmação + refs actuais | Propor `Reference` (+ facto opcional que cita) | Marcar verificado; converter norma em requisito |
 
-**Não implementar agora:** get-fact-check, get-domain-model (dentro de grill/review), get-retro, get-handoff. **Geração:** exportação GET-LLM na app.
+**Na app (não é skill):** export GET-LLM / estrutura documental — **contrato** para `get-write-spec`.
+
+**Não implementar agora:** get-fact-check, get-domain-model (dentro de grill/review), get-retro, get-handoff.
 
 ## get-grill — critério de “ponto completo”
 
@@ -36,35 +61,55 @@ Alinhado com validação existente (`ready` exige título, ideia central e conte
 - `open_questions`: lacunas honestas com contexto para resposta humana.
 - `limits_and_exclusions`, `acceptance_criteria`, `questions_to_answer`, `development_guidance` conforme o modelo do ponto.
 
+Quando uma lacuna depende de documentação externa, o grill **sinaliza** (ex. `open_questions` ou encaminha **get-research**) em vez de inventar conteúdo.
+
+## get-research — gatilhos e limites
+
+Usar quando houver:
+
+- premissa ou afirmação `unverified` que exige norma, datasheet ou documento de cliente;
+- `open_questions` do grill com fonte identificável;
+- `must_include` que depende de cláusula ou capacidade de equipamento documentada.
+
+Evitar: pesquisa genérica “sobre o assunto” em todos os pontos do bloco (ruído e refs duplicadas). Consolidar no GET só após aceitar propostas no import.
+
+## get-write-spec — redação
+
+- Lê o pacote GET-LLM (preparação, premissas, `llm_freedom`, listas dos pontos).
+- Desenvolve texto respeitando limites e separando sugestões não aprovadas (modo `exploratory` nos pontos).
+- O resultado é **artefacto de leitura**; conhecimento novo volta via **get-review** + GET-PACKAGE, não por colar Markdown na app.
+
 ## get-review — três comparações
 
-1. **Registo:** afirmação ↔ premissa / facto / referência; senão → `open_questions` ou premissa `unverified` (sem scores 0–1).
+1. **Registo:** afirmação ↔ premissa / facto / referência / corpus citado; senão → `open_questions` ou premissa `unverified` (sem scores 0–1).
 2. **Decisão:** comportamento pedido ↔ decisões e premissas `mandatory`.
 3. **Prática e linguagem:** glossário, exemplos vs requisitos, instruções de redação vs premissas.
 
 ## Ordem típica de uso
 
-1. get-grill → revisão humana → aceitar propostas no GET.
-2. Marcar ponto `ready` quando a validação da app permitir.
-3. Export GET-LLM → redação externa.
-4. get-review sobre pontos e/ou texto gerado → propostas via GET-PACKAGE.
-5. get-decision / get-research apenas quando grill ou review identificarem necessidade.
-
-## Próximo incremento de produto (opcional, pequeno)
-
-**Decision profile v1** no perfil técnico já existente (`decision/1`), relação `applies_to`, sem MCP. Ver análise `get_framework_evolution` (conversa 2026-11-21). Adiar até sessões reais mostrarem que texto livre em decisões já não chega.
+1. **get-grill** (+ **get-research** quando houver lacuna documental) → revisão humana → aceitar propostas no GET.
+2. Marcar ponto **`ready`** quando a validação da app permitir; registar refs com `internal_location` no corpus quando aplicável.
+3. Export **GET-LLM** → **get-write-spec** (redação).
+4. **get-review** sobre pontos e texto redigido → propostas via GET-PACKAGE.
+5. **get-decision** quando grill ou review identificarem escolha transversal ainda por documentar.
 
 ## Saídas do grill (mapeamento)
 
 | Descoberta na interrogação | Destino na proposta |
 |----------------------------|---------------------|
 | Definição / termo | Candidato `TerminologyConcept` |
-| Fonte documental | Candidato `Reference` |
+| Fonte documental | Candidato `Reference` (+ path no corpus) |
 | Facto sustentado | Candidato `KnowledgeItem` `fact` + ligação |
 | Escolha de engenharia | Candidato get-decision → `KnowledgeItem` `decision` |
 | Clarificação do ponto | Patch `DevelopmentPoint` |
 | Relação entre itens | Candidato `KnowledgeRelation` |
-| Lacuna | `open_questions` no ponto ou KI `open_question` |
+| Lacuna | `open_questions` no ponto, research, ou KI `open_question` |
+
+## Próximo incremento de produto (opcional, pequeno)
+
+**Decision profile v1** no perfil técnico já existente (`decision/1`), relação `applies_to`, sem MCP. Ver [GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAMEWORK_EVOLUTION_SUMMARY.md). Adiar até sessões reais mostrarem que texto livre em decisões já não chega.
+
+**Corpus:** pode documentar-se só no disco + manifest; evolução futura opcional: campo em `llm_context_json` com path canónico do corpus (sem alterar ADR-008).
 
 ## Análise de evolução do quadro
 
@@ -74,6 +119,9 @@ Contexto arquitectural e lacunas: [GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAME
 
 - Pontos: `backend/app/domain/block/`
 - GET-PACKAGE: `backend/app/services/packages/`, `schemas/get_package.schema.json`
+- GET-LLM: `backend/app/services/llm_export/`
 - Orientação LLM no pacote: `backend/app/services/packages/package_guidance.py`
+- Referências: `backend/app/models/reference.py` (`internal_location`)
+- Contexto projecto LLM: `project.llm_context_json` em `backend/app/models/project.py`
 - Modelos de ponto: `catalogs/development_point_templates.pt-PT.json`
-- Método: `docs/GET_METHOD.md`, `docs/DATA_MODEL.md`
+- Método: [GET_METHOD.md](GET_METHOD.md), [DATA_MODEL.md](DATA_MODEL.md)
