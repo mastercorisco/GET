@@ -7,4 +7,4 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [micro-F0-import-ritual.md](micro-F0-import-ritual.md) | F0 | Activo |
 | [micro-F0-phase-A-inventory.md](micro-F0-phase-A-inventory.md) | F0 | Activo |
 | [micro-F0-retro-TEMPLATE.md](micro-F0-retro-TEMPLATE.md) | F0 | Template |
-| micro-F1-bloco-piloto-grill.md | F1 | Após fecho F0 |
+| [micro-F1-bloco-piloto-grill.md](micro-F1-bloco-piloto-grill.md) | F1 | Esboço (após fecho F0) |
