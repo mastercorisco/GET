@@ -182,7 +182,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Passo | Estado |
 |-------|--------|
 | Ritual + checklist + Phase A inventory | Documentado |
-| Phase A inventário incidente (canal) | **Pendente** — [micro-F0-phase-A-inventory.md](plans/micro-F0-phase-A-inventory.md) |
+| Phase A inventário incidente (canal) | **Feito** — [micro-F0-phase-A-workspace-testes.md](plans/micro-F0-phase-A-workspace-testes.md) |
 | Piloto roundtrip F0-structure | **Pendente** (humano + workspace) |
 | Retro + fecho F0 | Template pronto |
 
