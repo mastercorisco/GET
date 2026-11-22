@@ -167,7 +167,14 @@ def restore_preview(app_settings: AppSettings, backup_id: str) -> BackupRestoreP
         if record is None:
             raise WorkspaceError("Backup não encontrado.")
         file_path = record.file_path
-    meta = _count_preview(Path(file_path))
+        raw_meta = record.preview_meta_json
+    if raw_meta:
+        try:
+            meta = json.loads(raw_meta)
+        except json.JSONDecodeError:
+            meta = _count_preview(Path(file_path))
+    else:
+        meta = _count_preview(Path(file_path))
     return BackupRestorePreviewResponse(
         backup_id=backup_id,
         workspace_settings_rows=meta["workspace_settings_rows"],

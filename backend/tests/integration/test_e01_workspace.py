@@ -131,7 +131,7 @@ def test_migrate_reconciles_stale_alembic_version(tmp_path: Path) -> None:
     migrate_workspace_database(db)
     with sqlite3.connect(db) as conn:
         version = conn.execute("SELECT version_num FROM alembic_version").fetchone()[0]
-    assert version == "009"
+    assert version == "011"
     assert {row[0] for row in sqlite3.connect(db).execute(
         "SELECT name FROM sqlite_master WHERE type='table'"
     )}.__contains__("import_record")

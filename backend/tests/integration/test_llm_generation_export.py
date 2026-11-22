@@ -150,8 +150,9 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
         assert "master_discussion_llm.json" in names or any(n.startswith("master_") and n.endswith("_llm.json") for n in names)
         assert "manifest.json" in names
         master_name = next(n for n in names if n.startswith("master_") and n.endswith("_llm.json"))
-        fascicle_name = next(n for n in names if n.endswith("_llm.json") and not n.startswith("master_") and "_B" not in n.upper())
-        block_name = next(n for n in names if "_llm.json" in n and n != master_name and n != fascicle_name)
+        fascicle_name = next(f["path"] for f in body["manifest"]["files"] if f["kind"] == "fascicle")
+        block_name = next(f["path"] for f in body["manifest"]["files"] if f["kind"] == "block")
+        assert fascicle_name in names and block_name in names
         master_data = json.loads(zf.read(master_name))
         fascicle_data = json.loads(zf.read(fascicle_name))
         block_data = json.loads(zf.read(block_name))
