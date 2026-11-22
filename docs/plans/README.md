@@ -23,7 +23,8 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [micro-get-review-skill.md](micro-get-review-skill.md) | F2 | Skill get-review — `agent-skills/get-review` |
 | [micro-get-decision-skill.md](micro-get-decision-skill.md) | F3 | Skill get-decision — `agent-skills/get-decision` |
 | [micro-F1-bloco-piloto-grill.md](micro-F1-bloco-piloto-grill.md) | F1 | Esboço genérico |
-| [micro-F1-bloco-F01_B01-grill.md](micro-F1-bloco-F01_B01-grill.md) | F1 | Piloto bloco (após retro F0) |
+| [micro-F1-bloco-F01_B01-grill.md](micro-F1-bloco-F01_B01-grill.md) | F1 | F01_B01 (já ready; refino opcional) |
+| [micro-F1-bloco-F04_B07-grill.md](micro-F1-bloco-F04_B07-grill.md) | F1 | **Piloto grill activo** |
 | [micro-F2-terminology-llm-export.md](micro-F2-terminology-llm-export.md) | F2 / T0 | Glossário no pacote GET-LLM |
 | [micro-T1-terminology-search.md](micro-T1-terminology-search.md) | T1 | `GET /api/terminology/search` |
 | [micro-T2-mcp-get-server.md](micro-T2-mcp-get-server.md) | T2 / F4 | MCP local (documentado; ADR-063) |

@@ -215,3 +215,36 @@ def test_f0_preflight_script_reports_missing_fascicle(client: TestClient, tmp_pa
     )
     assert proc.returncode == 1
     assert "F99" in proc.stderr or "F99" in proc.stdout
+
+
+def test_f1_block_preflight_reports_missing_block(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    _ensure_library(client)
+    v1_id = _template_v1(client)
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1_id,
+            "name": "F1 preflight",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f1_block_preflight.py"),
+            "--project-id",
+            project["id"],
+            "--block",
+            "F99_B99",
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 1
+    assert "F99_B99" in proc.stderr or "F99_B99" in proc.stdout

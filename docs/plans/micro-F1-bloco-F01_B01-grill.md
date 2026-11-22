@@ -17,7 +17,9 @@ Bloco **F01_B01** com pontos harness completos; caminho até `ready` (marcação
 ## Projecto
 
 - CTBJ `976e3991-e64e-4306-99fe-4ac1e2230b52`
-- Export: `PKG-BLK-F01_B01` (re-export imediato antes da sessão LLM)
+- Bloco `node_id`: `3a5c2f6d-0e18-418b-abe6-9dbd228b1d9b`
+- Export: `exports/PKG-BLK-F01_B01/F01_B01_package.json` (`export_id` **PKG-BLK-F01_B01**)
+- **Estado 2026-11-22:** 4/4 pontos já `ready` — M1 mínimo cumprido; grill aqui = refino de harness (opcional). Piloto grill com lacunas: [micro-F1-bloco-F04_B07-grill.md](micro-F1-bloco-F04_B07-grill.md)
 
 ## Passos
 

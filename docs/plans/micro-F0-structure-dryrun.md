@@ -21,11 +21,17 @@ python scripts/validate_get_package_file.py "C:\PROGRAMACAO\GET_aux\testes\impor
   --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52
 ```
 
-1. App **Reimportar** → seleccionar `f0_dryrun_f01_structure.json`.
-2. Rever avisos conceptuais → **Rever alterações**.
-3. Filtro **Estrutura** → aceitar proposta `structure` → **Consolidar**.
-4. Confirmar título do bloco F01_B01 na árvore.
-5. Re-export F01; anotar no [retro](micro-F0-retro-F01.md) (canal: dry-run ou LLM).
+**Via app:** Reimportar → avisos → Rever → filtro Estrutura → Consolidar.
+
+**Via CLI** (equivalente, `--accept structure-only`):
+
+```powershell
+python scripts/f0_roundtrip_apply.py "C:\PROGRAMACAO\GET_aux\testes\imports\f0_dryrun_f01_structure.json" `
+  --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52
+```
+
+1. Confirmar título F01_B01 na árvore (ou na base).
+2. Re-export F01; anotar no [retro](micro-F0-retro-F01.md).
 
 ## Critério
 

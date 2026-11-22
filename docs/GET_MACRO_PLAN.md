@@ -217,10 +217,10 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 |--------|--------|
 | Versão documento | 1.2.0 |
 | Última actualização | 2026-11-22 |
-| **Fase macro activa** | **F0 — em curso** |
-| Entregáveis F0 | [micro-F0-piloto-structure.md](plans/micro-F0-piloto-structure.md), [docs/plans/](plans/README.md) |
-| Próxima onda repo | Piloto F0-structure (humano) + UX import; **MCP código** só após **M2** |
-| Próxima revisão sugerida | Após piloto F0-structure + retro; depois F1 |
+| **Fase macro activa** | **F1 — arranque** (F0 fechado dry-run 2026-11-22) |
+| Entregáveis F1 | [micro-F1-bloco-F01_B01-grill.md](plans/micro-F1-bloco-F01_B01-grill.md) |
+| Próxima onda repo | Piloto M1 grill bloco F01_B01; **MCP código** só após **M2** |
+| Próxima revisão sugerida | Após M1 (bloco `ready`); depois M2 |
 
 ### F0 — progresso
 
@@ -235,8 +235,9 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Pré-voo script + snapshot M0 CTBJ | **Feito** — `f0_pilot_preflight.py`, [micro-F0-orient-snapshot-CTBJ.md](plans/micro-F0-orient-snapshot-CTBJ.md) |
 | Export base `PKG-FASC-F01` (pré-voo) | **Feito** 2026-11-22 no workspace testes |
 | Dry-run F0-structure (script + teste integração) | **Feito** — [micro-F0-structure-dryrun.md](plans/micro-F0-structure-dryrun.md) |
-| Piloto roundtrip F0-structure (workspace testes) | **Pendente** — dry-run ou LLM ([micro-F0-retro-F01.md](plans/micro-F0-retro-F01.md)) |
-| Retro + fecho F0 | Template + retro F01 preparado |
+| Piloto roundtrip F0-structure (workspace testes) | **Feito** 2026-11-22 dry-run — [micro-F0-retro-F01.md](plans/micro-F0-retro-F01.md) |
+| `f0_roundtrip_apply.py` (import CLI) | **Feito** |
+| Retro + fecho F0 | **Feito** (repetição opcional via LLM) |
 
 ### F1 — bloco piloto (preparação)
 
@@ -244,7 +245,8 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 |-------|--------|
 | Skill **get-grill** (Cursor) | **Feito** (`agent-skills/get-grill`; piloto bloco pendente) |
 | Skill **get-research** (Cursor) | **Feito** (`agent-skills/get-research`) |
-| Piloto M1 (≥1 bloco, pontos `ready`) | **Pendente** — [micro-F1-bloco-piloto-grill.md](plans/micro-F1-bloco-piloto-grill.md) |
+| Micro-plano bloco F01_B01 | **Feito** — [micro-F1-bloco-F01_B01-grill.md](plans/micro-F1-bloco-F01_B01-grill.md) |
+| Piloto M1 (≥1 bloco, pontos `ready`) | **Pendente** — grill no workspace testes |
 
 ### Transversal — glossário no pacote GET-LLM (F2 / T0)
 
