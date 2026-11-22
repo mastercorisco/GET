@@ -274,6 +274,13 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Skill **get-decision** (Cursor) | **Feito** (`agent-skills/get-decision`) |
 | Piloto decisão citada em ≥2 contextos | **Pendente** (humano) — `f3_decision_citation_report.py`, [micro-F3-decision-session-prompt.md](plans/micro-F3-decision-session-prompt.md) |
 
+### M3 — reutilização (referências)
+
+| Passo | Estado |
+|-------|--------|
+| `f3_reference_citation_report.py` / `f3_reuse_report.py` | **Feito** (read-only) |
+| Piloto Reference em ≥2 pontos | **Pendente** (humano) — get-research + grill |
+
 ### Conjunto skills Cursor (inicial)
 
 | Passo | Estado |

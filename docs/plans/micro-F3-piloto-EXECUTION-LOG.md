@@ -12,7 +12,8 @@ Decisão ou premissa mandatória citada em ≥2 contextos sem cópias contradit�
 ## Ferramentas
 
 - Skill **get-decision** (`agent-skills/get-decision`, `checklist-f3.md`)
-- `f3_decision_citation_report.py` — contagens `knowledge_item_ids` → decisões
+- `f3_decision_citation_report.py`, `f3_reference_citation_report.py`, `f3_reuse_report.py`
+- `macro_pilot_status.py` — M2 redação + F3/M3 + summary
 - Prompt piloto: [micro-F3-decision-session-prompt.md](micro-F3-decision-session-prompt.md)
 - Blocos com pontos `ready` + refs no GET
 

@@ -9,6 +9,7 @@ API útil (leitura):
 
 - `GET /api/knowledge/search?q=…&scope_type=library|project&scope_id=…`
 - `GET /api/projects/{id}/summary` — contagens de `status` nos pontos, staging/merges abertos, últimos exports de pacote, `latest_llm_export_id` / `latest_llm_zip_path` (se existir GET-LLM no disco)
+- Scripts offline: `macro_pilot_status.py`, `f3_reuse_report.py` (decisões + referências citadas)
 - `GET /api/projects/{id}/exports/llm-generation/latest` — ZIP GET-LLM mais recente (manifest + caminhos)
 - `GET /api/projects/{id}/imports` (se o utilizador colar JSON de staging — só descrever, não consolidar)
 

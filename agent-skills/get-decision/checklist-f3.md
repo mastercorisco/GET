@@ -4,7 +4,7 @@ Macro: [docs/plans/micro-F3-piloto-EXECUTION-LOG.md](../../docs/plans/micro-F3-p
 
 ## Pré-voo
 
-- [ ] `f3_decision_citation_report.py --project-id <UUID>` (JSON opcional)
+- [ ] `f3_reuse_report.py --project-id <UUID>` (ou só `f3_decision_citation_report.py`)
 - [ ] Identificar decisão duplicada em `core_idea` de vários pontos → candidata a KI `decision`
 
 ## Sessão get-decision

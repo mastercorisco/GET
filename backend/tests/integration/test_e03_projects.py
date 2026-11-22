@@ -649,3 +649,36 @@ def test_f3_decision_citation_report_runs(client: TestClient, tmp_path: Path) ->
     )
     assert proc.returncode == 3, proc.stderr
     assert "decision_count" in proc.stdout
+
+
+def test_f3_reuse_report_runs(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    _ensure_library(client)
+    v1_id = _template_v1(client)
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1_id,
+            "name": "Reuse",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    for script in ("f3_reuse_report.py", "f3_reference_citation_report.py", "macro_pilot_status.py"):
+        proc = subprocess.run(
+            [
+                sys.executable,
+                str(backend / "scripts" / script),
+                "--project-id",
+                project["id"],
+                "--json",
+            ],
+            cwd=backend,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
+        assert proc.returncode in (0, 2, 3), proc.stderr
+        assert "project_id" in proc.stdout

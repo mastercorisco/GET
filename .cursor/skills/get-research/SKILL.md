@@ -43,4 +43,4 @@ Entregar JSON alinhado a schemas da app ou secções claras para o engenheiro co
 
 Devolver resultado ao fluxo **get-grill** ou import F0-knowledge; consolidate sempre humano na app.
 
-Ver `reference.md` e `examples.md`.
+Checklist reutilização: `checklist-m3-references.md`. Relatório: `f3_reference_citation_report.py`. Ver `reference.md` e `examples.md`.
