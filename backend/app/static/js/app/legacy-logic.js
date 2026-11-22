@@ -120,6 +120,7 @@ const rootPath = document.getElementById("rootPath");
       let selectedLibraryItemId = null;
       let selectedProjectItemId = null;
       let libraryTerms = [];
+      let libraryTermEditId = null;
       let selectedDocumentNodeId = null;
       let selectedDocumentBlockId = null;
 
@@ -1193,6 +1194,67 @@ const rootPath = document.getElementById("rootPath");
         });
       }
 
+      function libraryTermRowById(termId) {
+        if (!termId) return null;
+        for (let i = 0; i < libraryTerms.length; i += 1) {
+          if (libraryTerms[i].id === termId) return libraryTerms[i];
+        }
+        return null;
+      }
+
+      function libraryTermBodyFromForm(baseRow) {
+        const preferred = document.getElementById("libTermPreferred").value.trim();
+        const definition = document.getElementById("libTermDefinition").value.trim();
+        const syns = document
+          .getElementById("libTermSynonyms")
+          .value.split(",")
+          .map(function (s) {
+            return s.trim();
+          })
+          .filter(Boolean);
+        const row = baseRow || {};
+        return {
+          preferred_term: preferred,
+          definition: definition,
+          language: row.language || "pt",
+          acronym: row.acronym != null ? row.acronym : null,
+          synonyms: syns,
+          avoid_terms: Array.isArray(row.avoid_terms) ? row.avoid_terms : [],
+          technical_translation: row.technical_translation != null ? row.technical_translation : null,
+          domain: row.domain != null ? row.domain : null,
+          notes: row.notes != null ? row.notes : null,
+        };
+      }
+
+      function syncLibraryTermFormMode() {
+        const createBtn = document.getElementById("libTermCreate");
+        const cancelBtn = document.getElementById("libTermCancel");
+        if (libraryTermEditId) {
+          createBtn.textContent = "Guardar alterações";
+          cancelBtn.hidden = false;
+        } else {
+          createBtn.textContent = "Criar termo";
+          cancelBtn.hidden = true;
+        }
+      }
+
+      function clearLibraryTermForm() {
+        libraryTermEditId = null;
+        document.getElementById("libTermPreferred").value = "";
+        document.getElementById("libTermDefinition").value = "";
+        document.getElementById("libTermSynonyms").value = "";
+        syncLibraryTermFormMode();
+      }
+
+      function beginLibraryTermEdit(row) {
+        libraryTermEditId = row.id;
+        document.getElementById("libTermPreferred").value = row.preferred_term || "";
+        document.getElementById("libTermDefinition").value = row.definition || "";
+        document.getElementById("libTermSynonyms").value = Array.isArray(row.synonyms) ? row.synonyms.join(", ") : "";
+        syncLibraryTermFormMode();
+        setKnowledgeError("");
+      }
+
       async function loadLibraryTerminology() {
         libraryTerms = await knowledgeRequest("/api/terminology?scope_type=library", {}, "Falha ao listar terminologia.");
         const list = document.getElementById("libTermList");
@@ -1200,11 +1262,26 @@ const rootPath = document.getElementById("rootPath");
         libraryTerms.forEach(function (row) {
           const p = document.createElement("div");
           p.className = "list-item-row";
+          if (libraryTermEditId === row.id) p.classList.add("is-editing");
+          p.dataset.termId = row.id;
           const text = document.createElement("span");
-          text.textContent = row.preferred_term + " — " + row.definition.substring(0, 80);
+          const defPreview = row.definition.length > 56 ? row.definition.substring(0, 56) + "…" : row.definition;
+          text.textContent = row.preferred_term + " — " + defPreview;
           p.appendChild(text);
-          p.appendChild(
+          const actions = document.createElement("span");
+          actions.className = "list-item-row__actions";
+          const editBtn = document.createElement("button");
+          editBtn.type = "button";
+          editBtn.className = "secondary";
+          editBtn.textContent = "Editar";
+          editBtn.addEventListener("click", function () {
+            beginLibraryTermEdit(row);
+            loadLibraryTerminology();
+          });
+          actions.appendChild(editBtn);
+          actions.appendChild(
             actionDeleteButton("Apagar", function () {
+              if (libraryTermEditId === row.id) clearLibraryTermForm();
               knowledgeRequest(
                 "/api/terminology/" + row.id + "?confirm=true",
                 { method: "DELETE" },
@@ -1216,6 +1293,7 @@ const rootPath = document.getElementById("rootPath");
                 });
             })
           );
+          p.appendChild(actions);
           list.appendChild(p);
         });
         const conceptSel = document.getElementById("termOverrideConcept");
@@ -1634,6 +1712,10 @@ const rootPath = document.getElementById("rootPath");
           })
           .catch(function (err) { setKnowledgeError(err.message); });
       });
+      document.getElementById("libTermCancel").addEventListener("click", function () {
+        clearLibraryTermForm();
+        loadLibraryTerminology();
+      });
       document.getElementById("libTermCreate").addEventListener("click", function () {
         const preferred = document.getElementById("libTermPreferred").value.trim();
         const definition = document.getElementById("libTermDefinition").value.trim();
@@ -1641,24 +1723,30 @@ const rootPath = document.getElementById("rootPath");
           setKnowledgeError("Preencha termo e definição.");
           return;
         }
-        const syns = document.getElementById("libTermSynonyms").value.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
-        knowledgeRequest("/api/terminology", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            scope_type: "library",
-            preferred_term: preferred,
-            definition: definition,
-            synonyms: syns,
-          }),
-        }, "Falha ao criar termo.")
+        const editingId = libraryTermEditId;
+        const baseRow = editingId ? libraryTermRowById(editingId) : null;
+        const body = libraryTermBodyFromForm(baseRow);
+        const url = editingId ? "/api/terminology/" + editingId : "/api/terminology";
+        const method = editingId ? "PATCH" : "POST";
+        if (!editingId) {
+          body.scope_type = "library";
+        }
+        knowledgeRequest(
+          url,
+          {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          },
+          editingId ? "Falha ao actualizar termo." : "Falha ao criar termo."
+        )
           .then(function () {
-            document.getElementById("libTermPreferred").value = "";
-            document.getElementById("libTermDefinition").value = "";
-            document.getElementById("libTermSynonyms").value = "";
+            clearLibraryTermForm();
             return loadLibraryTerminology();
           })
-          .catch(function (err) { setKnowledgeError(err.message); });
+          .catch(function (err) {
+            setKnowledgeError(err.message);
+          });
       });
       document.getElementById("projRefCreate").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;

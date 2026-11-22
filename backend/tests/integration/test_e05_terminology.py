@@ -57,6 +57,34 @@ def test_terminology_and_project_override(client: TestClient, tmp_path: Path) ->
     assert len(listed.json()) == 1
 
 
+def test_terminology_patch_library(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    concept = client.post(
+        "/api/terminology",
+        json={
+            "scope_type": "library",
+            "preferred_term": "Antes",
+            "definition": "Definição original.",
+            "synonyms": ["a"],
+        },
+    )
+    assert concept.status_code == 200
+    concept_id = concept.json()["id"]
+    updated = client.patch(
+        f"/api/terminology/{concept_id}",
+        json={
+            "preferred_term": "Depois",
+            "definition": "Definição actualizada.",
+            "synonyms": ["b", "c"],
+        },
+    )
+    assert updated.status_code == 200
+    body = updated.json()
+    assert body["preferred_term"] == "Depois"
+    assert body["definition"] == "Definição actualizada."
+    assert body["synonyms"] == ["b", "c"]
+
+
 def test_terminology_search_library_and_project(client: TestClient, tmp_path: Path) -> None:
     _workspace(client, tmp_path)
     client.post("/api/knowledge", json={"title": "s", "content": "c", "origin_context": "t"})
