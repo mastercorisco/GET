@@ -11,7 +11,7 @@ Documentar escolhas transversal como `KnowledgeItem` `decision`, citadas nos pon
 | # | Entrega | Estado |
 |---|---------|----------|
 | 1 | `agent-skills/get-decision/SKILL.md` | Feito |
-| 2 | Piloto com grill/review | Pendente |
+| 2 | `f3_decision_citation_report.py` + piloto humano | Tooling **feito**; piloto pendente |
 
 ## Fora de âmbito
 

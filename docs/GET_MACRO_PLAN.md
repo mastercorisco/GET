@@ -272,7 +272,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Passo | Estado |
 |-------|--------|
 | Skill **get-decision** (Cursor) | **Feito** (`agent-skills/get-decision`) |
-| Piloto decisão citada em ≥2 contextos | **Pendente** (humano) |
+| Piloto decisão citada em ≥2 contextos | **Pendente** (humano) — `f3_decision_citation_report.py`, [micro-F3-decision-session-prompt.md](plans/micro-F3-decision-session-prompt.md) |
 
 ### Conjunto skills Cursor (inicial)
 

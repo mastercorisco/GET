@@ -617,3 +617,35 @@ def test_f2_glossary_report_avoid_in_project(tmp_path: Path) -> None:
         text=True,
     )
     assert proc_ok.returncode == 0, proc_ok.stdout + proc_ok.stderr
+
+
+def test_f3_decision_citation_report_runs(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    _ensure_library(client)
+    v1_id = _template_v1(client)
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1_id,
+            "name": "F3",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f3_decision_citation_report.py"),
+            "--project-id",
+            project["id"],
+            "--json",
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 3, proc.stderr
+    assert "decision_count" in proc.stdout

@@ -47,4 +47,4 @@ Não usar perfil `decision/1` completo até incremento de produto aprovado; pref
 
 Engenheiro cria/aceita KI na app ou via GET-PACKAGE (F0-knowledge); pontos passam a **referenciar** a decisão, não a duplicá-la.
 
-Ver `reference.md` e `examples.md`.
+Checklist sessão: `checklist-f3.md`. Relatório: `backend/scripts/f3_decision_citation_report.py`. Ver `reference.md` e `examples.md`.
