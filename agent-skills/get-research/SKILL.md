@@ -1,46 +1,50 @@
 ---
 name: get-research
-description: Apoia get-grill com normas e corpus; propõe Reference e factos, sem marcar verificado na app.
+description: Support get-grill with norms and corpus; propose Reference and facts without marking verified in the app.
 disable-model-invocation: true
 ---
 
-# get-research — apoio documental pontual (READ → PROPOSE)
+# get-research — focused documentary support (READ → PROPOSE)
 
-Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-research). Acoplado a **get-grill**, não substitui.
+Canonical behavior: `docs/GET_SKILLS_PLAN.md` (get-research). Coupled to **get-grill**, does not replace it.
 
-## Modo
+## User language
 
-- Ciclo: **READ → REASON → PROPOSE** (propostas de referência / facto / resumo corpus).
-- **Uma lacuna por sessão** — não pesquisar “todo o bloco”.
-- Disparado por `open_questions` do grill, premissa `unverified`, ou `must_include` que exige cláusula/datasheet.
+Reply to the engineer in **Portuguese (pt-PT)** unless they request otherwise.
 
-## Contexto mínimo
+## Mode
 
-1. Lacuna concreta (texto do grill ou ponto `point_id`).
-2. GET-PACKAGE do bloco ou excerto relevante.
-3. Corpus em disco (`corpus/…`) ou URLs indicadas pelo engenheiro.
-4. Refs GET existentes (`GET /api/references`, KI no export) — evitar duplicar.
+- Cycle: **READ → REASON → PROPOSE** (reference / fact / corpus summary proposals).
+- **One gap per session** — do not research the whole block.
+- Triggered by grill `open_questions`, unverified premise, or `must_include` needing clause/datasheet.
 
-## PROPOSE — saídas permitidas
+## Minimal context
 
-| Tipo | Conteúdo |
-|------|----------|
-| **Reference** | `citation`, `notes`, `internal_location` (caminho local ou SharePoint) |
-| **Resumo corpus** | MD derivado no disco (não reimportável como verdade) |
-| **Fact** (opcional) | KI candidato que **cita** a ref — para GET-PACKAGE F0-knowledge ou import posterior |
+1. Concrete gap (grill text or `point_id`).
+2. Block GET-PACKAGE or relevant excerpt.
+3. Corpus on disk (`corpus/…`) or URLs from the engineer.
+4. Existing GET refs (`GET /api/references`, KI in export) — avoid duplicates.
 
-Entregar JSON alinhado a schemas da app ou secções claras para o engenheiro colar no GET-PACKAGE.
+## PROPOSE — allowed outputs
 
-## Proibido
+| Type | Content |
+|------|---------|
+| **Reference** | `citation`, `notes`, `internal_location` (local path or SharePoint) |
+| **Corpus summary** | Derived MD on disk (not reimportable as truth) |
+| **Fact** (optional) | Candidate KI that **cites** the ref — for GET-PACKAGE F0-knowledge or later import |
 
-- Marcar premissa ou referência como **verificada** sem decisão humana.
-- Converter norma inteira em requisitos no pacote do bloco sem grill.
-- Pesquisa genérica em todos os pontos do fascículo.
-- POST na API / SQLite directo sem confirmação explícita.
-- Usar texto redigido externo como fonte de verdade.
+Deliver JSON aligned to app schemas or clear sections for the engineer to paste into GET-PACKAGE.
+
+## Forbidden
+
+- Mark premise or reference **verified** without human decision.
+- Convert a whole norm into block requirements without grill.
+- Generic search across all fascicle points.
+- POST to API / direct SQLite without explicit confirmation.
+- Use external authored text as source of truth.
 
 ## Handoff
 
-Devolver resultado ao fluxo **get-grill** ou import F0-knowledge; consolidate sempre humano na app.
+Return to **get-grill** flow or F0-knowledge import; consolidate always human in the app.
 
-Checklist reutilização: `checklist-m3-references.md`. Relatório: `f3_reference_citation_report.py`. Ver `reference.md` e `examples.md`.
+Reuse checklist (pt-PT): `checklist-m3-references.md`. Report: `f3_reference_citation_report.py`. See `reference.md` and `examples.md`.

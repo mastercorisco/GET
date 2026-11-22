@@ -1,24 +1,24 @@
-# get-orient — exemplos de prompt
+# get-orient — prompt examples
 
-## Panorama projecto
+## Project panorama
 
 ```text
-Modo get-orient apenas. Não gerar GET-PACKAGE.
-Contexto: exports/EXP-LLM-xxxx/manifest.json e master_discussion_llm.json em anexo.
-Pergunta: que fascículos têm mais blocos no manifest e qual o próximo passo antes de grill?
+get-orient only. Do not generate GET-PACKAGE.
+Context: exports/EXP-LLM-xxxx/manifest.json and master_discussion_llm.json attached.
+Question: which fascicles have the most blocks in the manifest and what is the next step before grill?
 ```
 
-## Bloco local
+## Local block
 
 ```text
-Só orientação. Pacote PKG-BLK-… exportado ontem.
-O import anterior foi só estrutura ou conteúdo? O que verificar antes de novo consolidate?
+Orientation only. PKG-BLK-… package exported yesterday.
+Was the last import structure-only or content? What to verify before another consolidate?
 ```
 
-## Com pesquisa biblioteca
+## With library search
 
 ```text
-get-orient. project_id=… já conhecido.
-Usei GET /api/knowledge/search?q=adjudicatário — resultados em anexo.
-Onde está a lacuna entre decisões biblioteca e pontos F04_B07?
+get-orient. project_id=… known.
+Used GET /api/knowledge/search?q=adjudicatário — results attached.
+Where is the gap between library decisions and F04_B07 points?
 ```

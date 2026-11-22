@@ -1,34 +1,38 @@
 ---
 name: get-lexicon
-description: Propõe candidatos de glossário via terminology export e GET /api/terminology/search; sem gravar na app.
+description: Propose glossary candidates from terminology export and GET /api/terminology/search; no writes to the app.
 disable-model-invocation: true
 ---
 
-# get-lexicon — glossário técnico (READ + PROPOSE)
+# get-lexicon — technical glossary (READ + PROPOSE)
 
-Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (tabela get-lexicon). API: ADR-062, `docs/plans/micro-T1-terminology-search.md`.
+Canonical behavior: `docs/GET_SKILLS_PLAN.md` (get-lexicon table). API: ADR-062, `docs/plans/micro-T1-terminology-search.md`.
 
-## Ciclo
+## User language
 
-**READ → REASON → PROPOSE** (candidatos JSON). **REVIEW / COMMIT** é humano na app ou import posterior — não nesta skill.
+Reply to the engineer in **Portuguese (pt-PT)** unless they request otherwise.
 
-## Contexto de leitura
+## Cycle
 
-1. No ZIP GET-LLM: `terminology_{profile}_llm.json` (GET-LLM-TERMINOLOGY) e/ou `.md`.
-2. API (servidor local `127.0.0.1`):
-   - `GET /api/terminology/search?q=…&project_id=<uuid>` — biblioteca + projecto + overrides (`legacy_term`).
-   - Sem `project_id`: `scope_type` + `scope_id` como listagem filtrada.
-3. Corpus/normas em disco: só material de apoio; não fonte de verdade.
-4. Entrada grill/review: termos candidatos sinalizados noutra sessão.
+**READ → REASON → PROPOSE** (candidate JSON). **REVIEW / COMMIT** is human in the app or later import — not in this skill.
 
-## PROPOSE — formato candidatos
+## Minimal context
 
-Entregar um objecto JSON (ficheiro ou bloco markdown) **sem** executar POST/PATCH na API, salvo pedido explícito separado do utilizador.
+1. In GET-LLM ZIP: `terminology_{profile}_llm.json` (GET-LLM-TERMINOLOGY) and/or `.md`.
+2. API (local server `127.0.0.1`):
+   - `GET /api/terminology/search?q=…&project_id=<uuid>` — library + project + overrides (`legacy_term`).
+   - Without `project_id`: use `scope_type` + `scope_id` as filtered listing.
+3. Corpus/norms on disk: support material only; not source of truth.
+4. Grill/review input: candidate terms flagged in another session.
+
+## PROPOSE — candidate format
+
+Deliver a JSON object (file or markdown block) **without** POST/PATCH on the API unless the user explicitly asks in a separate step.
 
 ```json
 {
   "skill": "get-lexicon",
-  "project_id": "uuid-opcional",
+  "project_id": "optional-uuid",
   "candidates": [
     {
       "action": "create",
@@ -37,35 +41,35 @@ Entregar um objecto JSON (ficheiro ou bloco markdown) **sem** executar POST/PATC
       "definition": "…",
       "synonyms": [],
       "avoid_terms": [],
-      "notes": "fonte: norma X / corpus Y"
+      "notes": "source: norm X / corpus Y"
     },
     {
       "action": "override",
-      "concept_id": "uuid-existente",
+      "concept_id": "existing-uuid",
       "legacy_term": "…",
       "usage_note": "…",
       "avoid_in_project": false
     }
   ],
   "conflicts": [
-    "termo Z colide com avoid_terms de conceito …"
+    "term Z collides with avoid_terms on concept …"
   ]
 }
 ```
 
-Campos de criação alinhados a `TerminologyCreateRequest`; overrides a `TerminologyOverrideCreateRequest`.
+Create fields align with `TerminologyCreateRequest`; overrides with `TerminologyOverrideCreateRequest`.
 
-## Regras
+## Rules
 
-- Antes de propor `create`, usar `GET /api/terminology/search` para evitar duplicados.
-- Respeitar `avoid_terms` e overrides existentes no projecto.
-- Texto redigido fora do GET **não** é fonte de verdade para o léxico.
-- Termos de projecto vs biblioteca: preferir biblioteca para reutilização (ADR-012 promoção humana).
+- Before `create`, use `GET /api/terminology/search` to avoid duplicates.
+- Respect existing `avoid_terms` and project overrides.
+- External authored text is **not** glossary source of truth.
+- Project vs library terms: prefer library for reuse (ADR-012 human promotion).
 
-## Proibido
+## Forbidden
 
-- `POST /api/terminology`, `PATCH`, `DELETE` ou overrides **sem** confirmação explícita do utilizador na mesma conversa.
-- Acesso directo ao ficheiro SQLite.
-- Reimportar glossário MD/JSON do ZIP como verdade canónica.
+- `POST /api/terminology`, `PATCH`, `DELETE`, or overrides **without** explicit user confirmation in the same conversation.
+- Direct SQLite file access.
+- Reimport glossary MD/JSON from ZIP as canonical truth.
 
-Ver `reference.md` e `examples.md`.
+See `reference.md` and `examples.md`.

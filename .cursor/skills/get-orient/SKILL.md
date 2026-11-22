@@ -1,66 +1,70 @@
 ---
 name: get-orient
-description: Ponto de situação GET só leitura sobre exports GET-LLM/GET-PACKAGE e pesquisa API sem import.
+description: Read-only GET orientation from GET-LLM/GET-PACKAGE exports and API search; no import proposals.
 disable-model-invocation: true
 ---
 
-# get-orient — ponto de situação (READ-ONLY)
+# get-orient — situation briefing (READ-ONLY)
 
-Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (secção get-orient). Plano de piloto: `docs/plans/micro-get-orient-skill.md`.
+Canonical behavior: `docs/GET_SKILLS_PLAN.md` (get-orient). Pilot plan: `docs/plans/micro-get-orient-skill.md`.
 
-**Checklist F0 (pré-import):** `checklist-f0.md` nesta pasta — usar quando a próxima sessão for ritual F0-structure/content/knowledge (não substitui get-grill).
+**F0 pre-import checklist:** `checklist-f0.md` in this folder — use when the next session is F0-structure/content/knowledge ritual (not a substitute for get-grill).
 
-## Modo
+## User language
 
-- Ciclo: **READ → REASON → ANSWER** (não PROPOSE por defeito).
-- Sessão explícita: o utilizador pediu orientação, não grill nem redação.
+Reply to the engineer in **Portuguese (pt-PT)** unless they request otherwise.
 
-## Contexto mínimo
+## Mode
 
-1. Caminho do workspace GET activo (`GET_WORKSPACE_ROOT` ou `~/.get/app-config.json`).
-2. Pelo menos um de:
-   - `exports/EXP-LLM-…/manifest.json` + `master_{profile}_llm.json` (panorama), ou
-   - pasta GET-PACKAGE fascículo/bloco (`PKG-FASC-…`, `PKG-BLK-…`).
-3. Opcional: `GET /api/knowledge/search?q=…&scope_type=library` (servidor em `127.0.0.1`).
-4. Confirmação verbal: «só orientação, não gerar JSON de import».
+- Cycle: **READ → REASON → ANSWER** (not PROPOSE by default).
+- Explicit session: the user asked for orientation, not grill or authoring.
+
+## Minimal context
+
+1. Active GET workspace path (`GET_WORKSPACE_ROOT` or `~/.get/app-config.json`).
+2. At least one of:
+   - `exports/EXP-LLM-…/manifest.json` + `master_{profile}_llm.json` (panorama), or
+   - GET-PACKAGE folder fascicle/block (`PKG-FASC-…`, `PKG-BLK-…`).
+3. Optional: `GET /api/knowledge/search?q=…&scope_type=library` (server on `127.0.0.1`).
+4. Verbal confirmation: orientation only, no import JSON.
 
 ## Ritual
 
-1. Confirmar modo get-orient.
-2. Limitar respostas ao contexto fornecido; se faltar dado, dizer «não consta no contexto fornecido».
-3. Responder com secções fixas (ver template abaixo).
-4. Se surgir trabalho de edição → encerrar e sugerir nova sessão **get-grill** com GET-PACKAGE novo.
+1. Confirm get-orient mode.
+2. Limit answers to provided context; if data is missing, say "not in the provided context".
+3. Reply using the fixed sections (template below).
+4. If editing work appears → close and suggest a new **get-grill** session with a fresh GET-PACKAGE.
 
-## Template de saída
+## Output template
 
 ```markdown
-## Estado
-(resumo factual do export/pesquisa)
+## State
+(factual summary from export/search)
 
-## Lacunas
-(o que falta no harness, refs, glossário, staging)
+## Gaps
+(missing harness, refs, glossary, staging)
 
-## Riscos de import
-(mistura estrutura/conteúdo, volumes, conceptual_warnings se existirem)
+## Import risks
+(structure/content mix, volume, conceptual_warnings if any)
 
-## Próximo passo sugerido
-(uma skill seguinte: F0 ritual, get-grill bloco X, export novo, etc.)
+## Suggested next step
+(one following skill: F0 ritual, get-grill block X, new export, etc.)
 ```
 
-## Proibido
+## Forbidden
 
-- Devolver GET-PACKAGE ou JSON de import como resposta por defeito.
-- Marcar `ready`, `approved` ou alterar campos protegidos.
-- Inventar contagens, UUIDs ou factos não presentes no export/pesquisa.
-- Substituir pesquisa FTS/knowledge para afirmações que exijam citação exata de KI.
+- Return GET-PACKAGE or import JSON as the default answer.
+- Set `ready`, `approved`, or change protected fields.
+- Invent counts, UUIDs, or facts not in export/search.
+- Replace FTS/knowledge search for claims that need exact KI citations.
 
-## Entradas por profundidade
+## Depth by artifact
 
-| Nível | Artefacto |
-|-------|-----------|
-| Panorama | GET-LLM mestre + manifest |
-| Fascículo | GET-LLM fascículo-índice ou GET-PACKAGE fascículo |
-| Bloco | GET-PACKAGE bloco |
-| Biblioteca | Knowledge search ou KI no mestre |
+| Level | Artifact |
+|-------|----------|
+| Panorama | GET-LLM master + manifest |
+| Fascicle | GET-LLM fascicle index or GET-PACKAGE fascicle |
+| Block | GET-PACKAGE block |
+| Library | Knowledge search or KI in master |
 
-Ver também `reference.md` e `examples.md` nesta pasta.
+See also `reference.md` and `examples.md` in this folder.

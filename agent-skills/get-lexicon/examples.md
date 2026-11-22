@@ -1,15 +1,15 @@
-# get-lexicon — exemplos
+# get-lexicon — examples
 
-## Pesquisa antes de propor
+## Search before propose
 
 ```text
 get-lexicon. project_id=<uuid>.
-Li terminology_discussion_llm.json no ZIP EXP-LLM-….
+Read terminology_discussion_llm.json in ZIP EXP-LLM-….
 GET /api/terminology/search?q=adjudicatário&project_id=<uuid> → 1 hit.
-Norma RCD usa «contratante de obras» — propor alinhamento?
+RCD norm uses «contratante de obras» — propose alignment?
 ```
 
-## Saída candidatos (trecho)
+## Candidate output (excerpt)
 
 ```json
 {
@@ -23,11 +23,11 @@ Norma RCD usa «contratante de obras» — propor alinhamento?
       "definition": "Pessoa colectiva pública ou privada que celebra o contrato de empreitada.",
       "synonyms": ["adjudicante"],
       "avoid_terms": ["contratante de obras"],
-      "notes": "Corpus: RCD cláusula 2 — validar com engenheiro"
+      "notes": "Corpus: RCD clause 2 — validate with engineer"
     }
   ],
   "conflicts": []
 }
 ```
 
-O utilizador regista na UI ou pede noutra sessão chamadas API explícitas.
+The engineer registers in the UI or requests explicit API calls in another session.

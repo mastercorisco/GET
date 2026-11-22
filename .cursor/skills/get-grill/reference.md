@@ -1,9 +1,9 @@
-# get-grill — referência
+# get-grill — reference
 
-- Critérios ponto completo: `docs/GET_SKILLS_PLAN.md` § get-grill
-- Anti-padrões pacote: `backend/app/services/packages/package_guidance.py`
-- Exemplo JSON: `examples/get-package-block.example.json`
-- Ritual import F0: `docs/plans/micro-F0-import-ritual.md`
-- Validação: import devolve `conceptual_warnings` — rever antes de consolidate
+- Point completeness: `docs/GET_SKILLS_PLAN.md` § get-grill
+- Package anti-patterns: `backend/app/services/packages/package_guidance.py`
+- JSON example: `examples/get-package-block.example.json`
+- F0 import ritual: `docs/plans/micro-F0-import-ritual.md`
+- Validation: import returns `conceptual_warnings` — review before consolidate
 
-Export na app: ecrã Preparação do bloco → Exportar pacote (GET-PACKAGE), não confundir com GET-LLM.
+App export: Block preparation screen → Export package (GET-PACKAGE), not GET-LLM.

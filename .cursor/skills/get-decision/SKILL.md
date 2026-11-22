@@ -1,50 +1,54 @@
 ---
 name: get-decision
-description: Propõe KnowledgeItem decision transversal; não aprovar nem duplicar texto em cada ponto.
+description: Propose cross-cutting KnowledgeItem decision; do not approve or duplicate text in every point.
 disable-model-invocation: true
 ---
 
-# get-decision — registo de escolha transversal (READ → PROPOSE)
+# get-decision — cross-cutting choice (READ → PROPOSE)
 
-Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-decision). Macro **F3** / reutilização. Perfis tipados `decision/1` — **adiar** até necessidade real ([GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAMEWORK_EVOLUTION_SUMMARY.md)).
+Canonical behavior: `docs/GET_SKILLS_PLAN.md` (get-decision). Macro **F3** / reuse. Typed profile `decision/1` — **defer** until needed ([GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAMEWORK_EVOLUTION_SUMMARY.md)).
 
-## Quando usar
+## User language
 
-- **get-grill** ou **get-review** identificam escolha de engenharia que afecta **mais de um** ponto ou fascículo.
-- A decisão não deve ser copiada como parágrafo em cada `DevelopmentPoint`; deve existir **uma vez** na biblioteca/projecto e ser **citada**.
+Reply to the engineer in **Portuguese (pt-PT)** unless they request otherwise.
 
-## Modo
+## When to use
 
-- Ciclo: **READ → REASON → PROPOSE** (candidato JSON, não commit).
-- Sessão dedicada ou ramo explícito após grill/review.
+- **get-grill** or **get-review** surface an engineering choice affecting **more than one** point or fascicle.
+- The decision must not be copied as a paragraph in each `DevelopmentPoint`; exist **once** in library/project and be **cited**.
 
-## Contexto mínimo
+## Mode
 
-1. Descrição da escolha e pontos afectados (`point_id` / códigos documentais).
-2. Decisões KI existentes (`GET /api/knowledge/search` ou export).
-3. GET-PACKAGE ou excerto do bloco onde surgiu a lacuna.
-4. Razão técnica e alternativas rejeitadas (breve).
+- Cycle: **READ → REASON → PROPOSE** (candidate JSON, no commit).
+- Dedicated session or explicit branch after grill/review.
 
-## PROPOSE — candidato decisão
+## Minimal context
 
-JSON alinhado a criação de `KnowledgeItem` com `knowledge_type: decision` (e draft coerente com schemas). Incluir:
+1. Choice description and affected points (`point_id` / document codes).
+2. Existing decision KIs (`GET /api/knowledge/search` or export).
+3. GET-PACKAGE or block excerpt where the gap appeared.
+4. Technical rationale and rejected alternatives (brief).
 
-- `title`, conteúdo da decisão (o que fica fixado).
-- `applies_to` / relações sugeridas (pontos ou temas) — como notas se o schema do pacote ainda não tiver ligação tipada.
-- Lista **«Pontos que devem referenciar»** (via `knowledge_item_ids` ou `open_questions` fechadas no grill).
+## PROPOSE — decision candidate
 
-Não usar perfil `decision/1` completo até incremento de produto aprovado; preferir decisão como KI com ficha JSON legível.
+JSON aligned to `KnowledgeItem` creation with `knowledge_type: decision`. Include:
 
-## Proibido
+- `title`, decision content (what is fixed).
+- Suggested `applies_to` / relations — as notes if package schema lacks typed links.
+- **Points that should reference** (via `knowledge_item_ids` or grill-closed `open_questions`).
 
-- Aprovar ou promover para biblioteca sem humano.
-- Colar a mesma decisão no `core_idea` de todos os pontos.
-- Substituir get-grill/get-review inteiros.
-- POST/PATCH na API ou SQLite sem confirmação explícita.
-- Inventar UUIDs de KI existentes.
+Do not use full `decision/1` profile until product increment approved; prefer decision as readable KI JSON.
+
+## Forbidden
+
+- Approve or promote to library without human.
+- Paste the same decision into every point `core_idea`.
+- Replace entire get-grill/get-review sessions.
+- POST/PATCH API or SQLite without explicit confirmation.
+- Invent existing KI UUIDs.
 
 ## Handoff
 
-Engenheiro cria/aceita KI na app ou via GET-PACKAGE (F0-knowledge); pontos passam a **referenciar** a decisão, não a duplicá-la.
+Engineer creates/accepts KI in app or via GET-PACKAGE (F0-knowledge); points **reference** the decision, not duplicate it.
 
-Checklist sessão: `checklist-f3.md`. Relatório: `backend/scripts/f3_decision_citation_report.py`. Ver `reference.md` e `examples.md`.
+Session checklist (pt-PT): `checklist-f3.md`. Report: `backend/scripts/f3_decision_citation_report.py`. See `reference.md` and `examples.md`.

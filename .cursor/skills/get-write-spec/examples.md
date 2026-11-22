@@ -1,24 +1,24 @@
-# get-write-spec — exemplos
+# get-write-spec — examples
 
-## Sessão bloco único
+## Single-block session
 
 ```text
-Modo get-write-spec. ZIP EXP-LLM-… em anexo. Redigir apenas F04_B03 (pontos ready).
-Usar terminology_discussion_llm.md. Perfil discussion. Saída: MD por ponto de desenvolvimento.
+get-write-spec mode. ZIP EXP-LLM-… attached. Author only F04_B03 (ready points).
+Use terminology_discussion_llm.md. Profile discussion. Output: MD per development point.
 ```
 
-## Estrutura MD sugerida (por bloco)
+## Suggested MD shape (per block)
 
 ```markdown
-# F04_B03 — Título do bloco
+# F04_B03 — Block title
 
-## Contexto (síntese das premissas do export)
+## Context (premise synthesis from export)
 
-## Ponto 1 — [título do ponto]
-(redação…)
+## Point 1 — [point title]
+(authoring…)
 
-## Ponto 2 — …
+## Point 2 — …
 
-## Notas fora do harness
-(itens exploratory não aprovados)
+## Notes outside harness
+(unapproved exploratory items)
 ```

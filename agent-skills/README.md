@@ -17,6 +17,17 @@ Instruções operacionais para agentes externos (Cursor, Claude, …). **Não fa
    - Unix: `./sync-to-cursor.sh`
 3. Validar contrato: `python -m pytest tests -q` (a partir desta pasta).
 
+## Language
+
+| Artifact | Language |
+|----------|----------|
+| `SKILL.md`, `reference.md`, `examples.md` | **English** (token economy; aligns with API/schema names) |
+| `checklist-*.md` | **Portuguese (pt-PT)** — engineer-facing session rituals |
+| Chat with the engineer | **pt-PT** — each `SKILL.md` includes a **User language** rule |
+| Spec text (`get-write-spec` output) | **pt-PT** — production lexicon and caderno |
+
+Human project docs (`docs/`, macro plans) stay pt-PT.
+
 ## Testes
 
 Testes de **contrato** (frontmatter, secções obrigatórias, sync byte-identical). Não avaliam qualidade de texto LLM.

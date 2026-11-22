@@ -1,6 +1,6 @@
-# get-review — exemplos
+# get-review — examples
 
 ```text
-Modo get-review. Anexo: redação F04_B03.md + GET-PACKAGE exportado hoje + terminology_discussion_llm.json.
-Listar inconsistências; PROPOSE apenas patches JSON no harness (sem status ready).
+get-review mode. Attached: redação F04_B03.md + GET-PACKAGE exported today + terminology_discussion_llm.json.
+List inconsistencies; PROPOSE only harness JSON patches (no status ready).
 ```

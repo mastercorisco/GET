@@ -1,6 +1,6 @@
-# get-research — referência
+# get-research — reference
 
-- Corpus: `docs/GET_SKILLS_PLAN.md` § Corpus de apoio
-- API leitura: `GET /api/references`, `GET /api/knowledge/{id}`, `GET /api/knowledge/search`
-- Import knowledge fascículo: modo F0-knowledge em `docs/plans/micro-F0-import-ritual.md`
-- ADR-008: proveniência em `Reference`, não gestão de pastas na app
+- Corpus: `docs/GET_SKILLS_PLAN.md` § Support corpus
+- Read API: `GET /api/references`, `GET /api/knowledge/{id}`, `GET /api/knowledge/search`
+- Fascicle knowledge import: F0-knowledge mode in `docs/plans/micro-F0-import-ritual.md`
+- ADR-008: provenance on `Reference`, no in-app folder management

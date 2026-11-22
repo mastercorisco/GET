@@ -1,17 +1,17 @@
-# get-decision — exemplos
+# get-decision — examples
 
 ```text
-Modo get-decision. Origem: get-review no F04_B03 — duas opções de protocolo SCADA.
-Afecta F04_B03, F04_B07. Propor KI decision; listar pontos que devem referenciar. Não aprovar.
+get-decision mode. Origin: get-review on F04_B03 — two SCADA protocol options.
+Affects F04_B03, F04_B07. Propose KI decision; list points that should reference. Do not approve.
 ```
 
 ```json
 {
   "proposed_knowledge_item": {
     "knowledge_type": "decision",
-    "title": "Protocolo de troca automática perante falha do link principal",
+    "title": "Automatic failover on primary link failure",
     "draft": {
-      "content": "Adopta-se failover em < 2s com … (texto técnico acordado)."
+      "content": "Adopt failover in < 2s with … (agreed technical text)."
     }
   },
   "points_should_reference": ["F04_B03_P02", "F04_B07_P01"],

@@ -1,44 +1,48 @@
 ---
 name: get-review
-description: Cruza texto redigido com GET-LLM e glossário; PROPOSE correcções via GET-PACKAGE, sem novos requisitos.
+description: Cross-check authored text vs GET-LLM and glossary; PROPOSE fixes via GET-PACKAGE, no new requirements.
 disable-model-invocation: true
 ---
 
-# get-review — revisão cruzada (READ → PROPOSE)
+# get-review — cross-check (READ → PROPOSE)
 
-Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-review). Conclusão do ciclo **M2**.
+Canonical behavior: `docs/GET_SKILLS_PLAN.md` (get-review). Closes the **M2** cycle.
 
-## Modo
+## User language
 
-- Ciclo: **READ → REASON → PROPOSE** (GET-PACKAGE de correcções, não texto livre).
-- Entrada: texto de **get-write-spec** + export GET-LLM / pacote bloco actual.
+Reply to the engineer in **Portuguese (pt-PT)** unless they request otherwise.
 
-## Contexto mínimo
+## Mode
 
-1. Artefacto MD (ou excerto) da redação.
-2. ZIP GET-LLM ou GET-PACKAGE do mesmo âmbito usado na redação.
-3. `terminology_{profile}_llm.md` ou search API.
-4. Decisões/premissas relevantes no export.
+- Cycle: **READ → REASON → PROPOSE** (correction GET-PACKAGE, not free-form rewrite).
+- Input: **get-write-spec** text + current GET-LLM / block package.
 
-## Três comparações (obrigatórias na resposta)
+## Minimal context
 
-1. **Registo:** cada afirmação forte ↔ premissa, facto, referência; senão listar como inconsistência ou `open_question` candidata.
-2. **Decisão:** comportamento pedido ↔ decisões e premissas `mandatory`.
-3. **Linguagem:** termos vs glossário (`avoid_terms`, overrides).
+1. MD artifact (or excerpt) from authoring.
+2. GET-LLM ZIP or GET-PACKAGE for the same scope used in authoring.
+3. `terminology_{profile}_llm.md` or search API.
+4. Relevant decisions/premises in export.
+
+## Three comparisons (required in response)
+
+1. **Record:** each strong claim ↔ premise, fact, reference; else list inconsistency or candidate `open_question`.
+2. **Decision:** requested behavior ↔ decisions and `mandatory` premises.
+3. **Language:** terms vs glossary (`avoid_terms`, overrides).
 
 ## PROPOSE
 
-- Alterações como **proposta GET-PACKAGE** (JSON completo do envelope; pontos, premissas, refs) — **não** reescrever o caderno inteiro no chat.
-- Secção **«Inconsistências»** priorizada.
-- **«Não corrigir no GET»** para pureza editorial sem impacto técnico.
+- Changes as **GET-PACKAGE proposal** (full envelope JSON; points, premises, refs) — **do not** rewrite the whole caderno in chat.
+- Prioritized **Inconsistencies** section.
+- **Do not fix in GET** for editorial-only issues with no technical impact.
 
-## Proibido
+## Forbidden
 
-- Introduzir requisitos novos não suportados pelos pontos.
-- Promover biblioteca; mudar `approved` via pacote.
-- Substituir get-write-spec com outra redação completa no chat.
-- Consolidar import.
+- Introduce new requirements unsupported by points.
+- Promote to library; change `approved` via package.
+- Replace get-write-spec with another full draft in chat.
+- Consolidate import.
 
-Verificação determinística (opcional): `backend/scripts/f2_review_report.py --draft <md> --block-json <export>`.
+Optional deterministic check: `backend/scripts/f2_review_report.py --draft <md> --block-json <export>`.
 
-Checklist sessão: `checklist-m2-review.md`. Ver `reference.md` e `examples.md`.
+Session checklist (pt-PT): `checklist-m2-review.md`. See `reference.md` and `examples.md`.

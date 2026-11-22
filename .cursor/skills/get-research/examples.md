@@ -1,21 +1,21 @@
-# get-research — exemplos
+# get-research — examples
 
-## Gatilho a partir do grill
+## Trigger from grill
 
 ```text
-Modo get-research. Lacuna do grill (ponto X): «potência UPS mínima» — datasheet em corpus/vendor/ups-xx.pdf.
-Propor Reference + internal_location; opcional fact que cite a ref. Não marcar verificado.
+get-research mode. Grill gap (point X): «minimum UPS power» — datasheet at corpus/vendor/ups-xx.pdf.
+Propose Reference + internal_location; optional fact citing the ref. Do not mark verified.
 ```
 
-## Saída (trecho)
+## Output (excerpt)
 
 ```json
 {
   "proposed_reference": {
-    "citation": "Fabricante X — UPS série Y, datasheet rev. 2024",
+    "citation": "Vendor X — UPS series Y, datasheet rev. 2024",
     "internal_location": "corpus/vendor/ups-xx.pdf",
-    "notes": "Pág. 12 — potência nominal kVA"
+    "notes": "Page 12 — nominal kVA"
   },
-  "for_grill": "Fechar open_question «potência UPS» com must_include objecto tipado após validação humana."
+  "for_grill": "Close open_question «UPS power» with typed must_include after human validation."
 }
 ```

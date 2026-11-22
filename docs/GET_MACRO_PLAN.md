@@ -320,7 +320,7 @@ Atalhos de estado (servidor ou CLI):
 
 | Passo | Estado |
 |-------|--------|
-| 7 skills em `agent-skills/` | **Feito** (MANIFEST 1.2.0) |
+| 7 skills em `agent-skills/` | **Feito** (MANIFEST 1.3.0, corpo EN) |
 | Pilotos M0–M3 | **Pendente** — sessões Cursor + app no workspace CTBJ; **sem** `mcp-get/` |
 
 ### T1 — pesquisa de glossário

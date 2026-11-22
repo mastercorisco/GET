@@ -63,8 +63,9 @@ Fora do SQLite (ADR-008: a app não armazena anexos). Convenção recomendada po
 | Runtime | [`.cursor/skills/`](../.cursor/skills/) — cópia via `agent-skills/sync-to-cursor.ps1` |
 | Contrato pytest | `agent-skills/tests/test_skill_package.py` |
 | Comportamento | Este documento + micro-planos em `docs/plans/` |
+| Língua do pacote | `SKILL.md` / `reference.md` / `examples.md` em **inglês**; checklists em **pt-PT**; conversa com o engenheiro em **pt-PT** — ver [`agent-skills/README.md`](../agent-skills/README.md) § Language |
 
-Skills versionadas no repo (conjunto inicial completo): **get-orient**, **get-lexicon**, **get-grill**, **get-research**, **get-write-spec**, **get-review**, **get-decision** — `agent-skills/MANIFEST.json` v1.2.0.
+Skills versionadas no repo (conjunto inicial completo): **get-orient**, **get-lexicon**, **get-grill**, **get-research**, **get-write-spec**, **get-review**, **get-decision** — `agent-skills/MANIFEST.json` v1.3.0.
 
 ## MCP GET (opcional, T2)
 
