@@ -12,3 +12,4 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [get-package-ssot-design.md](get-package-ssot-design.md) | Pós-F0 | SSOT Onda 2 (implementado) |
 | [micro-get-orient-skill.md](micro-get-orient-skill.md) | Transversal | Skill get-orient (leitura); SKILL.md pendente |
 | [micro-F1-bloco-piloto-grill.md](micro-F1-bloco-piloto-grill.md) | F1 | Esboço (após fecho F0; após get-orient opcional) |
+| [micro-F2-terminology-llm-export.md](micro-F2-terminology-llm-export.md) | F2 / T0 | Glossário no pacote GET-LLM |

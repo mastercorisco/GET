@@ -19,6 +19,8 @@ from app.services.llm_export.build_master_llm import build_master_llm
 from app.services.llm_export.builder import build_llm_block_export
 from app.services.llm_export.live_context import LlmLiveContext
 from app.services.llm_export.render_md import render_llm_export_md
+from app.services.llm_export.render_terminology_md import render_terminology_glossary_md
+from app.services.llm_export.terminology_snapshot import build_terminology_snapshot
 from app.services.workspace_service import WorkspacePaths
 
 
@@ -141,6 +143,7 @@ def export_llm_generation_package(
             }
         )
 
+    term_md_name = f"terminology_{profile}_llm.md"
     master_payload = build_master_llm(
         session,
         ctx,
@@ -149,6 +152,19 @@ def export_llm_generation_package(
         generated_at=generated_at,
         fascicle_manifest=fascicle_manifest_for_master,
     )
+    master_payload["package_terminology_markdown"] = term_md_name
+
+    term_snapshot = build_terminology_snapshot(session, project_id)
+    term_md_content = render_terminology_glossary_md(
+        term_snapshot,
+        export_id=package_export_id,
+        profile=profile,
+        generated_at=generated_at,
+    )
+    term_md_path = out_dir / term_md_name
+    term_md_path.write_text(term_md_content, encoding="utf-8")
+    term_hash = sha256_hex(term_md_content)
+
     master_json_name = f"master_{profile}_llm.json"
     master_md_name = f"master_{profile}_llm.md"
     master_json_path = out_dir / master_json_name
@@ -159,7 +175,12 @@ def export_llm_generation_package(
     master_hash = sha256_hex(master_text)
 
     manifest_files: list[dict[str, Any]] = [
-        {"path": master_json_name, "kind": "project_master", "sha256": master_hash}
+        {"path": master_json_name, "kind": "project_master", "sha256": master_hash},
+        {
+            "path": term_md_name,
+            "kind": "terminology_glossary",
+            "sha256": term_hash,
+        },
     ]
     for entry in fascicle_manifest_for_master:
         manifest_files.append(
@@ -191,6 +212,7 @@ def export_llm_generation_package(
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         zf.write(master_json_path, arcname=master_json_name)
         zf.write(master_md_path, arcname=master_md_name)
+        zf.write(term_md_path, arcname=term_md_name)
         for file_path, arcname in package_files:
             zf.write(file_path, arcname=arcname)
         zf.writestr("manifest.json", dumps_deterministic(package_manifest))

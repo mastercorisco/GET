@@ -44,13 +44,14 @@ Fora do SQLite (ADR-008: a app não armazena anexos). Convenção recomendada po
 | **get-orient** | **Leitura / ponto de situação** (projecto, fascículo, biblioteca) | GET-LLM mestre + `manifest` do ZIP; índice fascículo; GET-PACKAGE de amostra; `GET /api/knowledge/search`; workbook export (contagens); corpus se indicado em `llm_context_json` | Respostas em prosa + listas (lacunas, riscos, focos sugeridos); opcionalmente “próxima sessão: grill bloco X” | GET-PACKAGE ou alterações ao registado; marcar estados; inventar factos; substituir pesquisa FTS para citações exatas |
 | **get-grill** | Preparar pontos até briefing completo | GET-PACKAGE, premissas herdadas, KI/refs ligados, `development_point_templates`, corpus | Patch de `title`, `core_idea`, `intended_outcome`, `lists`; candidatos glossário/ref/decisão; pedidos a research | Marcar `ready`/`approved`; inventar requisitos sem suporte |
 | **get-research** | Apoio na preparação do bloco: encontrar norma, fabricante, prática | Lacuna concreta (grill/review), corpus, web se aplicável, refs GET actuais | Propor `Reference` + `internal_location`; resumo MD no corpus; `fact` opcional que cita a ref | Marcar verificado; converter norma em requisito; correr em todos os pontos sem gatilho |
-| **get-write-spec** | **Redação** do texto da especificação (LLM externa) | Export GET-LLM (JSON + MD derivado), regras de geração, pontos `ready`/`approved` | Markdown (ou Word noutra ferramenta); **não** commit no GET | Alterar SQLite; aprovar conteúdo; reimportar MD como verdade |
-| **get-review** | Cross-check registado vs pontos vs texto redigido | Pacote + conhecimento, premissas, terminologia, referências, texto `get-write-spec` | Inconsistências + propostas de correcção | Novos requisitos; promoção biblioteca; mudar approval |
+| **get-write-spec** | **Redação** do texto da especificação (LLM externa) | Export GET-LLM (JSON + MD derivado), **`terminology_{profile}_llm.md`**, regras de geração, pontos `ready`/`approved` | Markdown (ou Word noutra ferramenta); **não** commit no GET | Alterar SQLite; aprovar conteúdo; reimportar MD como verdade |
+| **get-review** | Cross-check registado vs pontos vs texto redigido | Pacote + conhecimento, premissas, **`terminology_*_llm.md`**, referências, texto `get-write-spec` | Inconsistências + propostas de correcção | Novos requisitos; promoção biblioteca; mudar approval |
+| **get-lexicon** *(roadmap T1)* | Glossário: alinhar, propor novos termos | Export glossário, corpus/normas, `GET /api/terminology` (futuro search), grill/review | JSON de candidatos `TerminologyConcept` / overrides | Gravar na app sem confirmação humana; MCP/SQLite directo |
 | **get-decision** | Excepção: escolha transversal | Pontos afectados, decisões existentes | Propor `KnowledgeItem` `knowledge_type=decision` | Aprovar; copiar decisão para dentro de cada ponto |
 
 **Na app (não é skill):** export GET-LLM / estrutura documental — **contrato** para `get-write-spec`.
 
-**Não implementar agora:** get-fact-check, get-domain-model (dentro de grill/review), get-retro, get-handoff.
+**Não implementar agora:** get-fact-check, get-domain-model (dentro de grill/review), get-retro, get-handoff, **get-lexicon** (documentar após glossário no ZIP; ver [GET_MACRO_PLAN.md](GET_MACRO_PLAN.md) §3.2).
 
 **Prioridade de documentação / skill Cursor:** `get-orient` (só leitura) **antes** do piloto F1 em [`micro-F1-bloco-piloto-grill.md`](plans/micro-F1-bloco-piloto-grill.md); ver [`plans/micro-get-orient-skill.md`](plans/micro-get-orient-skill.md).
 
@@ -130,8 +131,9 @@ Evitar: pesquisa genérica “sobre o assunto” em todos os pontos do bloco (ru
 ## get-write-spec — redação
 
 - Lê o pacote GET-LLM (preparação, premissas, `llm_freedom`, listas dos pontos).
+- Lê **`terminology_{profile}_llm.md`** no ZIP (vocabulário vinculativo; distinto do «Glossário (produção de texto)» estrutural).
 - Desenvolve texto respeitando limites e separando sugestões não aprovadas (modo `exploratory` nos pontos).
-- O resultado é **artefacto de leitura**; conhecimento novo volta via **get-review** + GET-PACKAGE, não por colar Markdown na app.
+- O resultado é **artefacto de leitura**; conhecimento novo volta via **get-review** + GET-PACKAGE; termos novos via app ou **get-lexicon**, não por colar Markdown na app.
 
 ## get-review — três comparações
 

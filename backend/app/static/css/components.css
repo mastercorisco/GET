@@ -234,6 +234,30 @@ pre.code-block {
   align-items: center;
 }
 
+.dp-card-drag-handle {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.1rem 0.35rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.dp-card-drag-handle:active {
+  cursor: grabbing;
+}
+
+.dp-card-drag-handle:focus-visible {
+  outline: 2px solid var(--color-accent, #3b82f6);
+  outline-offset: 1px;
+}
+
 .dp-card-toggle {
   flex: 1 1 auto;
   min-width: 0;

@@ -81,10 +81,15 @@ function listEditor(parent, label, fieldKey, items, onChange, isObject) {
 
 export function createDevelopmentPointCard(point, hooks) {
   const card = el("article", "dp-card");
-  card.draggable = true;
   card.dataset.pointId = point.id;
 
   const head = el("header", "dp-card-head");
+  const dragHandle = el("span", "dp-card-drag-handle", "⠿");
+  dragHandle.draggable = true;
+  dragHandle.tabIndex = 0;
+  dragHandle.setAttribute("role", "button");
+  dragHandle.setAttribute("aria-label", "Arrastar para reordenar");
+  dragHandle.title = "Arrastar para reordenar";
   const titleBit =
     point.title && String(point.title).trim()
       ? String(point.title).trim()
@@ -107,6 +112,7 @@ export function createDevelopmentPointCard(point, hooks) {
     "dp-card-meta",
     point.status + (point.needs_review ? " · rev" : "")
   );
+  head.appendChild(dragHandle);
   head.appendChild(toggle);
   head.appendChild(meta);
   head.appendChild(overviewBtn);
@@ -144,11 +150,15 @@ export function createDevelopmentPointCard(point, hooks) {
     }
   });
 
-  card.addEventListener("dragstart", function (ev) {
+  dragHandle.addEventListener("dragstart", function (ev) {
     ev.dataTransfer.setData("text/plain", point.id);
+    ev.dataTransfer.effectAllowed = "move";
     card.classList.add("is-dragging");
+    if (typeof ev.dataTransfer.setDragImage === "function") {
+      ev.dataTransfer.setDragImage(card, 24, 16);
+    }
   });
-  card.addEventListener("dragend", function () {
+  dragHandle.addEventListener("dragend", function () {
     card.classList.remove("is-dragging");
   });
 

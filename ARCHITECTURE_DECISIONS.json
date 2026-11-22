@@ -357,6 +357,12 @@
       "topic": "get_package_ssot_shapes",
       "decision": "GET-PACKAGE 1.0.x: pointLists com required nas dez chaves e vocabulário fechado (status, llm_freedom, premissas) em get_package.schema.json; anotações x-get no schema; POINT_LIST_SHAPES e enums de export gerados em runtime por schema_shapes.py a partir do mesmo ficheiro (sem duplicar tipos em Python); exemplos BOM em $defs; llm_shapes.collections inclui enums derivados do schema.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-061",
+      "topic": "llm_package_terminology_glossary",
+      "decision": "Pacote GET-LLM (GET-LLM-PACKAGE) inclui artefacto derivado terminology_{profile}_llm.md com TerminologyConcept de biblioteca e projecto e project_terminology_override; manifest.files kind terminology_glossary; master JSON/MD referencia o ficheiro; distinto do léxico estrutural ADR-057; não reimportável.",
+      "status": "accepted"
     }
   ]
 }

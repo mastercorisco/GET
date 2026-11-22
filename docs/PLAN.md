@@ -210,7 +210,7 @@ Bind `127.0.0.1`; sanitização Markdown (sem HTML cru); validação schema estr
 | 3 | E03 | Templates, projetos, técnico |
 | 4 | E04 | Árvore documental, numeração, associações |
 | 5 | E05 | Fichas, referências, terminologia |
-| 6 | E06 | Export + testes contrato exemplos |
+| 6 | E06 | Export + testes contrato exemplos (incl. glossário `terminology_*_llm.md` no pacote GET-LLM — ver [GET_MACRO_PLAN.md](GET_MACRO_PLAN.md) e [micro-F2-terminology-llm-export.md](plans/micro-F2-terminology-llm-export.md)) |
 | 7 | E07 | Import, merge, aprovação, testes falha |
 | 8 | E08 | Workbook + templates Excel |
 

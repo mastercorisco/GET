@@ -122,6 +122,16 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
     pid = project["id"]
     _fascicle_id, block_id = _block_with_ready_point(client, pid)
 
+    term_resp = client.post(
+        "/api/terminology",
+        json={
+            "scope_type": "library",
+            "preferred_term": "Adjudicatário",
+            "definition": "Entidade que adjudica o contracto.",
+        },
+    )
+    assert term_resp.status_code == 200
+
     response = client.post(
         f"/api/projects/{pid}/exports/llm-generation",
         json={"profile": "discussion", "include_draft": False},
@@ -133,7 +143,7 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
     assert Path(body["file_path"]).is_file()
     assert body["manifest"]["schema"] == "GET-LLM-PACKAGE"
     kinds = {f["kind"] for f in body["manifest"]["files"]}
-    assert kinds >= {"project_master", "fascicle", "block"}
+    assert kinds >= {"project_master", "fascicle", "block", "terminology_glossary"}
 
     with zipfile.ZipFile(body["zip_path"], "r") as zf:
         names = set(zf.namelist())
@@ -166,6 +176,16 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
         assert "## Capítulo" in block_md
         assert "## Fascículo" not in block_md
         assert "## Pontos de desenvolvimento" in block_md
+
+        term_name = "terminology_discussion_llm.md"
+        assert term_name in names
+        term_md = zf.read(term_name).decode("utf-8")
+        assert "Glossário técnico" in term_md
+        assert "Adjudicatário" in term_md
+
+        master_md = zf.read(master_name.replace(".json", ".md")).decode("utf-8")
+        assert term_name in master_md
+        assert "Glossário técnico (vocabulário)" in master_md
 
 
 def test_e06_roundtrip_still_requires_baseline(client: TestClient, tmp_path: Path) -> None:

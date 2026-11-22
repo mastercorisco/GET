@@ -154,6 +154,10 @@
         "global_open_questions": { "type": "array", "items": { "type": "object" } },
         "system_catalog_summary": { "type": "array", "items": { "type": "object" } },
         "fascicle_manifest": { "type": "array", "items": { "type": "object" } },
+        "package_terminology_markdown": {
+          "type": "string",
+          "description": "Nome do ficheiro terminology_{profile}_llm.md neste pacote GET-LLM-PACKAGE (glossário técnico E05, não reimportável)."
+        },
         "generation_rules": { "type": "object" },
         "traceability": { "type": "object" },
         "validation": { "$ref": "#/$defs/validationBlock" }

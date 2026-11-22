@@ -43,6 +43,15 @@ def render_llm_master_md(payload: dict[str, Any]) -> str:
         + _project_section(payload.get("project") or {})
     )
 
+    term_file = (payload.get("package_terminology_markdown") or "").strip()
+    if term_file:
+        lines.append("## Glossário técnico (vocabulário)")
+        lines.append(
+            f"Consultar o ficheiro **`{term_file}`** neste pacote antes de redigir "
+            "(termos preferenciais, evitar, overrides)."
+        )
+        lines.append("")
+
     lines.append(f"## {ch}s")
     for row in payload.get("fascicle_manifest") or []:
         lines.append(
