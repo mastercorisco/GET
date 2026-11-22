@@ -16,6 +16,7 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [micro-get-research-skill.md](micro-get-research-skill.md) | F1 | Skill get-research — `agent-skills/get-research` |
 | [micro-get-write-spec-skill.md](micro-get-write-spec-skill.md) | F2 | Skill get-write-spec — `agent-skills/get-write-spec` |
 | [micro-get-review-skill.md](micro-get-review-skill.md) | F2 | Skill get-review — `agent-skills/get-review` |
+| [micro-get-decision-skill.md](micro-get-decision-skill.md) | F3 | Skill get-decision — `agent-skills/get-decision` |
 | [micro-F1-bloco-piloto-grill.md](micro-F1-bloco-piloto-grill.md) | F1 | Esboço (após fecho F0; após get-orient opcional) |
 | [micro-F2-terminology-llm-export.md](micro-F2-terminology-llm-export.md) | F2 / T0 | Glossário no pacote GET-LLM |
 | [micro-T1-terminology-search.md](micro-T1-terminology-search.md) | T1 | `GET /api/terminology/search` |

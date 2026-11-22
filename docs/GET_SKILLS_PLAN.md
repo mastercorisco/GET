@@ -64,7 +64,7 @@ Fora do SQLite (ADR-008: a app não armazena anexos). Convenção recomendada po
 | Contrato pytest | `agent-skills/tests/test_skill_package.py` |
 | Comportamento | Este documento + micro-planos em `docs/plans/` |
 
-Skills versionadas no repo: **get-orient**, **get-lexicon**, **get-grill**, **get-research**, **get-write-spec**, **get-review** (MANIFEST em `agent-skills/MANIFEST.json`). **get-decision** — planeado.
+Skills versionadas no repo (conjunto inicial completo): **get-orient**, **get-lexicon**, **get-grill**, **get-research**, **get-write-spec**, **get-review**, **get-decision** — `agent-skills/MANIFEST.json` v1.2.0.
 
 ## MCP GET (opcional, T2)
 

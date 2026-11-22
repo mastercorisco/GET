@@ -254,6 +254,20 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Skill **get-review** | **Feito** (`agent-skills/get-review`) |
 | Piloto M2 ponta a ponta | **Pendente** (texto + review + import) |
 
+### F3 — reutilização (preparação)
+
+| Passo | Estado |
+|-------|--------|
+| Skill **get-decision** (Cursor) | **Feito** (`agent-skills/get-decision`) |
+| Piloto decisão citada em ≥2 contextos | **Pendente** (humano) |
+
+### Conjunto skills Cursor (inicial)
+
+| Passo | Estado |
+|-------|--------|
+| 7 skills em `agent-skills/` | **Feito** (MANIFEST 1.2.0) |
+| Pilotos M0–M3 | **Pendente** (sessões com workspace CTBJ) |
+
 ### T1 — pesquisa de glossário
 
 | Passo | Estado |

@@ -97,6 +97,13 @@ REQUIRED_SECTIONS: dict[str, list[str]] = {
         "GET-PACKAGE",
         "Contexto mínimo",
     ],
+    "get-decision": [
+        "knowledge_type",
+        "decision",
+        "Proibido",
+        "Contexto mínimo",
+        "PROPOSE",
+    ],
 }
 
 
