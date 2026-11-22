@@ -29,6 +29,11 @@ const rootPath = document.getElementById("rootPath");
         return window.confirm(message || "Confirma eliminação? Pode ser irreversível.");
       }
 
+      function exportProfileValue() {
+        const el = document.getElementById("expProfile");
+        return el && el.value ? el.value : "discussion";
+      }
+
       const TRASH_ICON_SVG =
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>';
 
@@ -185,7 +190,13 @@ const rootPath = document.getElementById("rootPath");
             row.className = "list-item-row";
             const line = document.createElement("span");
             line.textContent =
-              p.name + " · modelo v" + p.template_version + " · biblioteca v" + p.library_version;
+              p.name +
+              " · " +
+              p.id.slice(0, 8) +
+              "… · modelo v" +
+              p.template_version +
+              " · biblioteca v" +
+              p.library_version;
             row.appendChild(line);
             row.appendChild(
               actionDeleteButton(
@@ -560,11 +571,13 @@ const rootPath = document.getElementById("rootPath");
         const list = document.getElementById("impList");
         const fascicleSelect = document.getElementById("impFascicle");
         list.replaceChildren();
-        fascicleSelect.replaceChildren();
-        const empty = document.createElement("option");
-        empty.value = "";
-        empty.textContent = "—";
-        fascicleSelect.appendChild(empty);
+        if (fascicleSelect) {
+          fascicleSelect.replaceChildren();
+          const empty = document.createElement("option");
+          empty.value = "";
+          empty.textContent = "—";
+          fascicleSelect.appendChild(empty);
+        }
         const nodesPayload = await knowledgeRequest(
           "/api/projects/" + projectId + "/document-nodes",
           {},
@@ -576,7 +589,7 @@ const rootPath = document.getElementById("rootPath");
             const opt = document.createElement("option");
             opt.value = row.id;
             opt.textContent = (row.display_code ? row.display_code + " — " : "") + row.title;
-            fascicleSelect.appendChild(opt);
+            if (fascicleSelect) fascicleSelect.appendChild(opt);
           }
         });
         const imports = await knowledgeRequest(
@@ -724,11 +737,13 @@ const rootPath = document.getElementById("rootPath");
         const llmFascicleSelect = document.getElementById("expLlmFascicle");
         const list = document.getElementById("expList");
         list.replaceChildren();
-        fascicleSelect.replaceChildren();
         const empty = document.createElement("option");
         empty.value = "";
         empty.textContent = "—";
-        fascicleSelect.appendChild(empty);
+        if (fascicleSelect) {
+          fascicleSelect.replaceChildren();
+          fascicleSelect.appendChild(empty.cloneNode(true));
+        }
         if (pkgFascicleSelect) {
           pkgFascicleSelect.replaceChildren();
           pkgFascicleSelect.appendChild(empty.cloneNode(true));
@@ -769,7 +784,7 @@ const rootPath = document.getElementById("rootPath");
             const opt = document.createElement("option");
             opt.value = row.id;
             opt.textContent = label;
-            fascicleSelect.appendChild(opt);
+            if (fascicleSelect) fascicleSelect.appendChild(opt.cloneNode(true));
             if (pkgFascicleSelect) {
               const optPkg = document.createElement("option");
               optPkg.value = row.id;
@@ -1514,57 +1529,6 @@ const rootPath = document.getElementById("rootPath");
             }
           });
       });
-      document.getElementById("expMaster").addEventListener("click", function () {
-        const projectId = document.getElementById("pActive").value;
-        if (!projectId) {
-          setProjectError("Seleccione um projecto.");
-          return;
-        }
-        setExportStatus("");
-        knowledgeRequest(
-          "/api/projects/" + projectId + "/exports/master",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              profile: document.getElementById("expProfile").value,
-              write_zip: document.getElementById("expWriteZip").checked,
-            }),
-          },
-          "Falha ao exportar mestre."
-        )
-          .then(function (row) {
-            setExportStatus("Mestre gravado: " + row.file_path);
-            return loadExportSection(projectId);
-          })
-          .catch(function (err) { setExportStatus(err.message); });
-      });
-      document.getElementById("impUpload").addEventListener("click", function () {
-        const projectId = document.getElementById("pActive").value;
-        const fileInput = document.getElementById("impFile");
-        if (!projectId || !fileInput.files.length) {
-          setImportStatus("Seleccione projecto e ficheiro JSON.");
-          return;
-        }
-        const file = fileInput.files[0];
-        const form = new FormData();
-        form.append("file", file, file.name);
-        setImportStatus("");
-        fetch("/api/projects/" + projectId + "/imports", { method: "POST", body: form })
-          .then(function (res) {
-            return res.json().then(function (payload) {
-              if (!res.ok) throw new Error(apiErrorMessage(payload, "Falha no upload."));
-              return payload;
-            });
-          })
-          .then(function (payload) {
-            lastUploadedImportId = payload.id;
-            lastUploadedImportIsPackage = false;
-            return loadImportSection(projectId);
-          })
-          .then(function () { setImportStatus("Importação gravada."); })
-          .catch(function (err) { setImportStatus(err.message); });
-      });
       document.getElementById("impPkgUpload").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;
         const fileInput = document.getElementById("impPkgFile");
@@ -1714,34 +1678,6 @@ const rootPath = document.getElementById("rootPath");
           setImportStatus(err.message);
         });
       });
-      document.getElementById("impMerge").addEventListener("click", function () {
-        const projectId = document.getElementById("pActive").value;
-        const fascicleId = document.getElementById("impFascicle").value;
-        const list = document.getElementById("impList");
-        const newest = list.querySelector("p");
-        const importId =
-          lastUploadedImportId ||
-          (newest && newest.dataset.importId);
-        if (!projectId || !fascicleId || !importId) {
-          setImportStatus("Seleccione fascículo e carregue uma importação.");
-          return;
-        }
-        setImportStatus("");
-        knowledgeRequest(
-          "/api/projects/" + projectId + "/imports/" + importId + "/merge",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ fascicle_node_id: fascicleId }),
-          },
-          "Falha no merge."
-        )
-          .then(function (merge) {
-            renderProposals(projectId, merge, { isPackage: false });
-            setImportStatus("Merge concluído: " + merge.proposals.length + " proposta(s).");
-          })
-          .catch(function (err) { setImportStatus(err.message); });
-      });
       document.getElementById("impConsolidate").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;
         if (!projectId || !activeMergeSessionId) {
@@ -1796,7 +1732,8 @@ const rootPath = document.getElementById("rootPath");
       function runFasciclePackageExport() {
         const projectId = document.getElementById("pActive").value;
         const pkgSel = document.getElementById("expFasciclePkg");
-        const fascicleId = (pkgSel && pkgSel.value) || document.getElementById("expFascicle").value;
+        const legacyFascicle = document.getElementById("expFascicle");
+        const fascicleId = (pkgSel && pkgSel.value) || (legacyFascicle && legacyFascicle.value) || "";
         if (!projectId || !fascicleId) {
           return Promise.reject(new Error("Seleccione projecto e fascículo."));
         }
@@ -1810,7 +1747,7 @@ const rootPath = document.getElementById("rootPath");
             body: JSON.stringify({
               scope_kind: "fascicle",
               node_id: fascicleId,
-              profile: document.getElementById("expProfile").value,
+              profile: exportProfileValue(),
               llm_notes: rawNotes || null,
             }),
           },
@@ -1853,32 +1790,6 @@ const rootPath = document.getElementById("rootPath");
             setExportStatus(err.message);
           });
       });
-      document.getElementById("expFascicleBtn").addEventListener("click", function () {
-        const projectId = document.getElementById("pActive").value;
-        const fascicleId = document.getElementById("expFascicle").value;
-        if (!projectId || !fascicleId) {
-          setExportStatus("Seleccione projecto e fascículo raiz.");
-          return;
-        }
-        setExportStatus("");
-        knowledgeRequest(
-          "/api/projects/" + projectId + "/exports/fascicle/" + fascicleId,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              profile: document.getElementById("expProfile").value,
-              write_zip: document.getElementById("expWriteZip").checked,
-            }),
-          },
-          "Falha ao exportar fascículo."
-        )
-          .then(function (row) {
-            setExportStatus("Fascículo gravado: " + row.file_path);
-            return loadExportSection(projectId);
-          })
-          .catch(function (err) { setExportStatus(err.message); });
-      });
       document.getElementById("expLlmGeneration").addEventListener("click", function () {
         const projectId = document.getElementById("pActive").value;
         if (!projectId) {
@@ -1894,7 +1805,7 @@ const rootPath = document.getElementById("rootPath");
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              profile: document.getElementById("expProfile").value,
+              profile: exportProfileValue(),
               include_draft: document.getElementById("expLlmIncludeDraft").checked,
               fascicle_node_id: fascicleId,
             }),

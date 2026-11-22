@@ -22,7 +22,6 @@ from app.services.workspace_service import (
     workspace_session,
 )
 
-
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as f:
@@ -108,6 +107,18 @@ def list_backups(app_settings: AppSettings) -> list[BackupRecordResponse]:
             )
             for row in rows
         ]
+
+
+def delete_backup(app_settings: AppSettings, backup_id: str) -> None:
+    backup_id = (backup_id or "").strip()
+    with workspace_exclusive("delete_backup"):
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            record = session.get(BackupRecord, backup_id)
+            if record is None:
+                raise WorkspaceError("Backup não encontrado.")
+            Path(record.file_path).unlink(missing_ok=True)
+            session.delete(record)
+            session.flush()
 
 
 def restore_preview(app_settings: AppSettings, backup_id: str) -> BackupRestorePreviewResponse:

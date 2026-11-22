@@ -2,7 +2,13 @@ from fastapi import APIRouter, HTTPException
 
 from app.deps import get_settings
 from app.schemas.backup import BackupCreateRequest, BackupRecordResponse, BackupRestorePreviewResponse
-from app.services.backup_service import create_backup, list_backups, restore_backup, restore_preview
+from app.services.backup_service import (
+    create_backup,
+    delete_backup,
+    list_backups,
+    restore_backup,
+    restore_preview,
+)
 from app.services.workspace_exclusivity import WorkspaceExclusiveError
 from app.services.workspace_service import WorkspaceError
 
@@ -31,6 +37,26 @@ def backups_preview(backup_id: str) -> BackupRestorePreviewResponse:
         return restore_preview(get_settings(), backup_id)
     except WorkspaceError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+def _delete_backup_http(backup_id: str) -> None:
+    try:
+        delete_backup(get_settings(), backup_id)
+    except WorkspaceExclusiveError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except WorkspaceError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.delete("/{backup_id}", status_code=204)
+def backups_delete(backup_id: str) -> None:
+    _delete_backup_http(backup_id)
+
+
+@router.post("/{backup_id}/discard", status_code=204)
+def backups_discard(backup_id: str) -> None:
+    """Apagar registo e ficheiro (POST para compatibilidade com o mesmo padrão que restore)."""
+    _delete_backup_http(backup_id)
 
 
 @router.post("/{backup_id}/restore")

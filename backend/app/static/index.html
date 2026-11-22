@@ -629,9 +629,10 @@
         <div class="screen-guide-panel" data-screen-guide="export" hidden></div>
         <h2>Exportar para LLM</h2>
         <p class="lead choice-hint" data-help-key="export.get_package">
-          Quatro saídas distintas: <strong>GET-PACKAGE</strong> (reimportável), roundtrip legado, <strong>GET-LLM</strong>
-          (só leitura) e, na Estrutura documental, MD/PDF/XMind. Publique baseline antes de GET-PACKAGE.
+          <strong>GET-PACKAGE</strong> (reimportável), <strong>GET-LLM</strong> (só leitura) e, na Estrutura documental,
+          MD/PDF/XMind. Publique baseline antes de GET-PACKAGE.
         </p>
+        <input type="hidden" id="expProfile" value="discussion" />
         <div class="card-grid">
           <div class="card-surface">
             <h3>Baseline</h3>
@@ -658,28 +659,6 @@
             ></textarea>
             <button type="button" id="expPackageBtn">Exportar pacote</button>
             <button type="button" id="expPkgCopyBrief" class="secondary" disabled>Copiar brief</button>
-          </div>
-          <div class="card-surface">
-            <h3>Roundtrip legado (reimportação)</h3>
-            <p class="choice-hint" data-help-key="export.roundtrip">
-              Formato fascicle_roundtrip / mestre (avançado). Preferir GET-PACKAGE acima.
-            </p>
-            <label for="expProfile" data-help-key="export.profile">Perfil</label>
-            <select id="expProfile">
-              <option value="discussion">discussion</option>
-              <option value="redaction">redaction</option>
-            </select>
-            <label class="choice-inline" for="expWriteZip" data-help-key="export.zip">
-              <input type="checkbox" id="expWriteZip" />
-              <span>
-                <span class="choice-text">Incluir pacote ZIP</span>
-                <span class="choice-hint">Gera export_package.zip com JSON(s), Markdown e validation.json.</span>
-              </span>
-            </label>
-            <button type="button" id="expMaster">Exportar mestre roundtrip</button>
-            <label for="expFascicle" data-help-key="export.fascicle">Fascículo (raiz)</label>
-            <select id="expFascicle"><option value="">—</option></select>
-            <button type="button" id="expFascicleBtn" class="secondary">Exportar fascículo roundtrip</button>
           </div>
           <div class="card-surface">
             <h3>Geração LLM (GET-LLM)</h3>
@@ -732,13 +711,6 @@
         <input type="file" id="impPkgFile" accept=".json,application/json" />
         <button type="button" id="impPkgUpload" class="secondary" data-help-key="import.get_package">Importar pacote</button>
         <button type="button" id="impPkgMerge" data-help-key="import.get_package_review">Rever alterações</button>
-        <h3>Reimportação legada</h3>
-        <label for="impFile" data-help-key="import.file">Ficheiro fascicle_roundtrip</label>
-        <input type="file" id="impFile" accept=".json,application/json" />
-        <button type="button" id="impUpload" class="secondary">Carregar importação</button>
-        <button type="button" id="impMerge">Analisar (merge)</button>
-        <label for="impFascicle">Fascículo para merge</label>
-        <select id="impFascicle"><option value="">—</option></select>
         <div id="impList"></div>
         <div id="impProposals"></div>
         <button type="button" id="impConsolidate" class="secondary" hidden>Consolidar decisões</button>
@@ -757,7 +729,8 @@
         </div>
         <p class="choice-hint backups-panel__intro">
           Backup crítico antes de import, consolidate ou migração (F0). Restauro gera
-          <code>pre_restore_guard_*</code>.
+          <code>pre_restore_guard_*</code>. Pode apagar cópias antigas que já não precisa (só o ficheiro e o
+          registo; a base actual mantém-se).
         </p>
         <p id="backupStatus" class="backups-panel__status" hidden></p>
         <div id="backupList" class="backups-panel__list"></div>

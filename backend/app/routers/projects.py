@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 from app.deps import get_settings
 from app.schemas.project import (
@@ -32,6 +32,13 @@ def _run(action, *, route: str = ""):
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ProjectError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except IntegrityError as exc:
+        if route == "project_delete":
+            raise HTTPException(
+                status_code=409,
+                detail="Não foi possível apagar o projecto (referências pendentes na base). Actualize o servidor e tente de novo.",
+            ) from exc
+        raise
     except OperationalError as exc:
         if route == "project_delete":
             raise HTTPException(

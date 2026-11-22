@@ -58,6 +58,27 @@ def test_delete_draft_knowledge_and_project(client: TestClient, tmp_path: Path) 
     assert client.get("/api/projects").json() == []
 
 
+def test_delete_project_with_export_template_tree(client: TestClient, tmp_path: Path) -> None:
+    """Regressão: apagar projecto com árvore do modelo (ordem filhos→pais)."""
+    _workspace(client, tmp_path)
+    client.post(
+        "/api/knowledge",
+        json={"title": "Semente", "content": "x", "origin_context": "teste"},
+    )
+    templates = client.get("/api/projects/templates").json()
+    v1 = templates[0]["versions"][0]["id"]
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1,
+            "name": "Export project",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    pid = project["id"]
+    assert client.delete(f"/api/projects/{pid}").status_code == 204
+
+
 def test_delete_project_with_document_structure(client: TestClient, tmp_path: Path) -> None:
     _workspace(client, tmp_path)
     templates = client.get("/api/projects/templates").json()
@@ -79,4 +100,36 @@ def test_delete_project_with_document_structure(client: TestClient, tmp_path: Pa
         f"/api/projects/{pid}/document-nodes",
         json={"node_type": "block", "title": "Bloco", "parent_id": fascicle["id"]},
     )
+    assert client.delete(f"/api/projects/{pid}").status_code == 204
+
+
+def test_delete_project_with_project_scoped_knowledge(client: TestClient, tmp_path: Path) -> None:
+    """Regressão: _hard_delete_knowledge não pode tratar revision id escalares como ORM."""
+    _workspace(client, tmp_path)
+    client.post(
+        "/api/knowledge",
+        json={"title": "Semente", "content": "x", "origin_context": "teste"},
+    )
+    templates = client.get("/api/projects/templates").json()
+    v1 = templates[0]["versions"][0]["id"]
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1,
+            "name": "Com conhecimento projecto",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    pid = project["id"]
+    scoped = client.post(
+        "/api/knowledge",
+        json={
+            "title": "Unidade projecto",
+            "content": "corpo",
+            "origin_context": "teste",
+            "scope_type": "project",
+            "scope_id": pid,
+        },
+    )
+    assert scoped.status_code == 200
     assert client.delete(f"/api/projects/{pid}").status_code == 204

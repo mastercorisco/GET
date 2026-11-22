@@ -202,8 +202,43 @@ export function initBackupsView() {
             });
         });
 
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "secondary danger backups-row__delete";
+        deleteBtn.textContent = "Apagar";
+        deleteBtn.addEventListener("click", function () {
+          const ok = window.confirm(
+            "Apagar este backup?\n\nRemove o registo e o ficheiro .db no disco. Não afecta a base actual do workspace."
+          );
+          if (!ok) return;
+          setStatus("A apagar…");
+          const discardUrl = "/api/backups/" + encodeURIComponent(row.id) + "/discard";
+          fetch(discardUrl, { method: "POST" })
+            .then(function (res) {
+              if (res.status === 204) return null;
+              return res.json().then(function (b) {
+                const msg = apiErrorMessage(b, "Falha ao apagar backup.");
+                if (res.status === 404 && (msg === "Not Found" || msg === "not found")) {
+                  throw new Error(
+                    "Servidor desatualizado (rota de apagar backup em falta). Reinicie o Arranque GET.bat e Ctrl+F5."
+                  );
+                }
+                throw new Error(msg);
+              });
+            })
+            .then(function () {
+              if (expandedId === row.id) expandedId = null;
+              setStatus("Backup apagado.");
+              return refresh();
+            })
+            .catch(function (err) {
+              setStatus(err.message, true);
+            });
+        });
+
         actions.appendChild(detailsBtn);
         actions.appendChild(restoreBtn);
+        actions.appendChild(deleteBtn);
         item.appendChild(main);
         item.appendChild(actions);
 

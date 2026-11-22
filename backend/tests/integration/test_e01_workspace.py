@@ -96,6 +96,14 @@ def test_create_open_workspace_and_backup(client: TestClient, tmp_path: Path) ->
     assert preview.status_code == 200
     assert preview.json()["workspace_settings_rows"] == 1
 
+    file_path = Path(backup.json()["file_path"])
+    assert client.post(f"/api/backups/{backup_id}/discard").status_code == 204
+    assert not file_path.exists()
+    listing_after = client.get("/api/backups")
+    assert backup_id not in {row["id"] for row in listing_after.json()}
+    assert client.get(f"/api/backups/{backup_id}/preview").status_code == 404
+    assert client.post(f"/api/backups/{backup_id}/discard").status_code == 404
+
 
 def test_bind_host_defaults_localhost() -> None:
     settings = AppSettings()

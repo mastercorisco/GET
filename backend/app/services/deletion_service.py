@@ -39,6 +39,7 @@ from app.services.workspace_service import workspace_session
 
 _DOCUMENT_PURGE_BATCH = 40
 
+
 class DeletionResult:
     def __init__(self, mode: str, detail: str | None = None) -> None:
         self.mode = mode
@@ -46,9 +47,9 @@ class DeletionResult:
 
 
 def _hard_delete_knowledge(session: Session, item_id: str) -> None:
-    revision_ids = [
-        r.id for r in session.scalars(select(KnowledgeRevision.id).where(KnowledgeRevision.item_id == item_id))
-    ]
+    revision_ids = list(
+        session.scalars(select(KnowledgeRevision.id).where(KnowledgeRevision.item_id == item_id))
+    )
     if revision_ids:
         session.execute(
             delete(TechnicalProfilePayload).where(TechnicalProfilePayload.revision_id.in_(revision_ids))
@@ -224,6 +225,22 @@ def delete_technical_instance(app_settings: AppSettings, project_id: str, instan
         session.delete(row)
 
 
+def _purge_merge_sessions_for_project(session: Session, project_id: str) -> int:
+    merges = list(session.scalars(select(MergeSession).where(MergeSession.project_id == project_id)))
+    if not merges:
+        return 0
+    for merge in merges:
+        props = list(
+            session.scalars(select(ChangeProposal).where(ChangeProposal.merge_session_id == merge.id))
+        )
+        for prop in props:
+            session.execute(delete(ChangeDecision).where(ChangeDecision.proposal_id == prop.id))
+        session.execute(delete(ChangeProposal).where(ChangeProposal.merge_session_id == merge.id))
+    session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
+    session.flush()
+    return len(merges)
+
+
 def _purge_imports(session: Session, project_id: str) -> None:
     imports = list(session.scalars(select(ImportRecord).where(ImportRecord.project_id == project_id)))
     for imp in imports:
@@ -283,12 +300,18 @@ def _purge_project_development_points(session: Session, project_id: str) -> int:
 def _purge_document_nodes_batch(
     session: Session, project_id: str, *, limit: int, node_type: str | None = None
 ) -> int:
-    q = select(DocumentNode.id).where(DocumentNode.project_id == project_id)
+    nodes = list(session.scalars(select(DocumentNode).where(DocumentNode.project_id == project_id)))
     if node_type is not None:
-        q = q.where(DocumentNode.node_type == node_type)
-    node_ids = list(session.scalars(q.limit(limit)))
-    if not node_ids:
+        nodes = [n for n in nodes if n.node_type == node_type]
+    if not nodes:
         return 0
+    parent_ids = {n.parent_id for n in nodes if n.parent_id}
+    leaves = [n for n in nodes if n.id not in parent_ids]
+    if not leaves:
+        _purge_document_subtree(session, project_id, nodes[0].id)
+        return 1
+    targets = leaves[:limit]
+    node_ids = [n.id for n in targets]
     for nid in node_ids:
         node = session.get(DocumentNode, nid)
         if node is None:
@@ -318,7 +341,7 @@ def _purge_document_subtree(session: Session, project_id: str, root_id: str) -> 
 
 
 def _purge_document_tree(session: Session, project_id: str) -> None:
-    session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
+    _purge_merge_sessions_for_project(session, project_id)
     _purge_project_development_points(session, project_id)
     while True:
         root_id = session.scalar(
@@ -438,12 +461,8 @@ def delete_project(app_settings: AppSettings, project_id: str) -> None:
             _purge_imports(session, project_id)
         with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
             _purge_baselines_and_exports(session, project_id)
-        while True:
-            with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
-                removed = _purge_document_nodes_batch(session, project_id, limit=_DOCUMENT_PURGE_BATCH)
-                if removed == 0:
-                    session.execute(delete(MergeSession).where(MergeSession.project_id == project_id))
-                    break
+        with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
+            _purge_document_tree(session, project_id)
         while True:
             with workspace_session(app_settings, begin_immediate=True) as (session, _paths):
                 removed = _purge_technical_leaves_batch(session, project_id, max_deletes=_DOCUMENT_PURGE_BATCH)
