@@ -1274,53 +1274,303 @@ const rootPath = document.getElementById("rootPath");
         return JSON.parse(text);
       }
 
+      var KNOWLEDGE_PROFILE_TYPE_LABELS = {
+        control_function: "Função de controlo",
+        interface: "Interface",
+        requirement: "Requisito",
+        decision: "Decisão",
+        open_question: "Questão pendente",
+      };
+
+      function knowledgeProfileTypeLabel(profileType) {
+        return KNOWLEDGE_PROFILE_TYPE_LABELS[profileType] || profileType || "—";
+      }
+
+      var KNOWLEDGE_PROFILE_FIELDS = {
+        control_function: [
+          { key: "technical_parameters", label: "Parâmetros técnicos", kind: "textarea" },
+        ],
+        interface: [
+          { key: "technical_parameters", label: "Parâmetros técnicos", kind: "textarea" },
+          { key: "interface_boundary", label: "Fronteira da interface", kind: "text" },
+        ],
+        requirement: [
+          { key: "technical_parameters", label: "Parâmetros técnicos", kind: "textarea" },
+          { key: "acceptance_note", label: "Nota de aceitação", kind: "textarea" },
+        ],
+        decision: [
+          { key: "decision_scope", label: "Âmbito da decisão", kind: "text" },
+          { key: "technical_parameters", label: "Parâmetros técnicos", kind: "textarea" },
+          { key: "consequences", label: "Consequências", kind: "textarea" },
+        ],
+        open_question: [
+          {
+            key: "blocking",
+            label: "Bloqueante",
+            kind: "select",
+            options: [
+              { value: "false", label: "Não" },
+              { value: "true", label: "Sim" },
+            ],
+          },
+          { key: "target", label: "Destinatário", kind: "text", placeholder: "ex.: engineering_design" },
+        ],
+      };
+
+      function knowledgeProfileFieldsForType(profileType) {
+        return KNOWLEDGE_PROFILE_FIELDS[profileType] || KNOWLEDGE_PROFILE_FIELDS.control_function;
+      }
+
+      function syncKnowledgeProfileJsonTextarea(prefix, data) {
+        const dataEl = document.getElementById(prefix + "ProfileData");
+        if (dataEl) dataEl.value = JSON.stringify(data || {}, null, 2);
+      }
+
+      function renderKnowledgeProfileFields(prefix, profileType, data, enabled) {
+        const host = document.getElementById(prefix + "ProfileFields");
+        if (!host) return;
+        const fields = knowledgeProfileFieldsForType(profileType);
+        const rowData = data && typeof data === "object" ? data : {};
+        host.replaceChildren();
+        fields.forEach(function (field) {
+          const fieldId = prefix + "ProfileField_" + field.key;
+          const label = document.createElement("label");
+          label.setAttribute("for", fieldId);
+          label.textContent = field.label;
+          let control;
+          if (field.kind === "select") {
+            control = document.createElement("select");
+            (field.options || []).forEach(function (opt) {
+              const o = document.createElement("option");
+              o.value = opt.value;
+              o.textContent = opt.label;
+              control.appendChild(o);
+            });
+            const raw = rowData[field.key];
+            control.value = raw === true || raw === "true" ? "true" : raw === false || raw === "false" ? "false" : String(raw || "false");
+          } else if (field.kind === "textarea") {
+            control = document.createElement("textarea");
+            control.rows = 3;
+            control.value = rowData[field.key] != null ? String(rowData[field.key]) : "";
+          } else {
+            control = document.createElement("input");
+            control.type = "text";
+            if (field.placeholder) control.placeholder = field.placeholder;
+            control.value = rowData[field.key] != null ? String(rowData[field.key]) : "";
+          }
+          control.id = fieldId;
+          control.className = "knowledge-profile-field";
+          control.dataset.profileKey = field.key;
+          control.disabled = !enabled;
+          host.appendChild(label);
+          host.appendChild(control);
+        });
+        syncKnowledgeProfileJsonTextarea(prefix, rowData);
+        attachKnowledgeProfileFieldJsonSync(prefix);
+      }
+
+      function isKnowledgeProfileAdvancedOpen(prefix) {
+        const panel = document.getElementById(prefix + "ProfilePanel");
+        const advanced = panel && panel.querySelector(".knowledge-profile-advanced");
+        const dataEl = document.getElementById(prefix + "ProfileData");
+        return Boolean(advanced && advanced.open && dataEl && !dataEl.hidden);
+      }
+
+      function collectKnowledgeProfileDataFromFields(prefix, profileType, baseData) {
+        const fields = knowledgeProfileFieldsForType(profileType);
+        const data = Object.assign({}, baseData && typeof baseData === "object" ? baseData : {});
+        fields.forEach(function (field) {
+          const control = document.getElementById(prefix + "ProfileField_" + field.key);
+          if (!control) return;
+          let val = control.value;
+          if (field.kind === "select" && field.key === "blocking") {
+            data[field.key] = val === "true" ? "true" : "false";
+          } else if (val.trim()) {
+            data[field.key] = val.trim();
+          } else {
+            delete data[field.key];
+          }
+        });
+        return data;
+      }
+
+      function syncJsonTextareaFromProfileFields(prefix) {
+        const typeEl = document.getElementById(prefix + "ProfileType");
+        if (!typeEl) return;
+        const itemId = knowledgeDraftUi(prefix).selectedId();
+        const baseRow = knowledgeRowById(prefix, itemId);
+        const baseData =
+          baseRow && baseRow.technical_profile && baseRow.technical_profile.data
+            ? baseRow.technical_profile.data
+            : {};
+        syncKnowledgeProfileJsonTextarea(
+          prefix,
+          collectKnowledgeProfileDataFromFields(prefix, typeEl.value, baseData)
+        );
+      }
+
+      function collectKnowledgeProfileData(prefix, profileType, baseData, options) {
+        const opts = options || {};
+        const useJsonEditor = opts.useJsonEditor !== false && isKnowledgeProfileAdvancedOpen(prefix);
+        const dataEl = document.getElementById(prefix + "ProfileData");
+        if (useJsonEditor) {
+          try {
+            const parsed = JSON.parse(dataEl.value || "{}");
+            return typeof parsed === "object" && parsed !== null ? parsed : {};
+          } catch (e) {
+            throw new Error("JSON inválido na ficha avançada.");
+          }
+        }
+        return collectKnowledgeProfileDataFromFields(prefix, profileType, baseData);
+      }
+
+      function attachKnowledgeProfileFieldJsonSync(prefix) {
+        const host = document.getElementById(prefix + "ProfileFields");
+        if (!host || host.dataset.jsonSyncBound === "1") return;
+        host.dataset.jsonSyncBound = "1";
+        host.addEventListener("input", function () {
+          if (isKnowledgeProfileAdvancedOpen(prefix)) syncJsonTextareaFromProfileFields(prefix);
+        });
+      }
+
+      function installKnowledgeProfileTypeListener(prefix) {
+        const typeEl = document.getElementById(prefix + "ProfileType");
+        if (!typeEl || typeEl.dataset.profileListener === "1") return;
+        typeEl.dataset.profileListener = "1";
+        typeEl.addEventListener("change", function () {
+          const active = Boolean(knowledgeDraftUi(prefix).selectedId());
+          const host = document.getElementById(prefix + "ProfileFields");
+          const preserved = {};
+          if (host) {
+            host.querySelectorAll(".knowledge-profile-field").forEach(function (el) {
+              if (el.dataset.profileKey && el.value && el.value.trim()) {
+                preserved[el.dataset.profileKey] = el.value.trim();
+              }
+            });
+          }
+          renderKnowledgeProfileFields(prefix, typeEl.value, preserved, active);
+        });
+        const panel = document.getElementById(prefix + "ProfilePanel");
+        const advanced = panel && panel.querySelector(".knowledge-profile-advanced");
+        if (advanced && advanced.dataset.profileListener !== "1") {
+          advanced.dataset.profileListener = "1";
+          advanced.addEventListener("toggle", function () {
+            const dataEl = document.getElementById(prefix + "ProfileData");
+            if (!dataEl) return;
+            if (advanced.open) {
+              syncJsonTextareaFromProfileFields(prefix);
+              dataEl.hidden = false;
+              dataEl.disabled = !Boolean(knowledgeDraftUi(prefix).selectedId());
+            } else {
+              dataEl.hidden = true;
+            }
+          });
+        }
+        attachKnowledgeProfileFieldJsonSync(prefix);
+      }
+
+      function syncKnowledgeProfilePanel(prefix) {
+        const selectedId = knowledgeDraftUi(prefix).selectedId();
+        const active = Boolean(selectedId);
+        const panel = document.getElementById(prefix + "ProfilePanel");
+        const typeEl = document.getElementById(prefix + "ProfileType");
+        const dataEl = document.getElementById(prefix + "ProfileData");
+        const saveBtn = document.getElementById(prefix + "ProfileSave");
+        if (panel) panel.classList.toggle("is-inactive", !active);
+        if (typeEl) typeEl.disabled = !active;
+        if (dataEl) dataEl.disabled = !active;
+        hostDisableProfileFields(prefix, !active);
+        if (saveBtn) {
+          saveBtn.disabled = !active;
+          saveBtn.textContent = active ? "Guardar ficha" : "Guardar ficha";
+        }
+      }
+
+      function hostDisableProfileFields(prefix, disabled) {
+        const host = document.getElementById(prefix + "ProfileFields");
+        if (!host) return;
+        host.querySelectorAll(".knowledge-profile-field").forEach(function (el) {
+          el.disabled = disabled;
+        });
+      }
+
       function applyProfileToForm(prefix, item) {
         const meta = document.getElementById(prefix + "ProfileMeta");
         const typeEl = document.getElementById(prefix + "ProfileType");
         const dataEl = document.getElementById(prefix + "ProfileData");
-        const warnEl = document.getElementById(prefix === "k" ? "kProfileWarn" : null);
+        const warnEl = document.getElementById(prefix + "ProfileWarn");
+        const emptyHint = "Seleccione uma unidade na lista para editar a ficha.";
+        installKnowledgeProfileTypeListener(prefix);
+        const active = Boolean(item);
         if (!item) {
-          meta.textContent = "Seleccione uma unidade na lista.";
-          dataEl.value = "";
-          if (warnEl) { warnEl.hidden = true; warnEl.textContent = ""; }
-          return;
-        }
-        meta.textContent = item.title + " (" + item.id + ")";
-        const profile = item.technical_profile;
-        if (profile) {
-          typeEl.value = profile.profile_type;
-          dataEl.value = JSON.stringify(profile.data, null, 2);
-          if (warnEl && profile.validation_warnings && profile.validation_warnings.length) {
-            warnEl.hidden = false;
-            warnEl.textContent = profile.validation_warnings.join(" ");
-          } else if (warnEl) {
+          if (meta) meta.textContent = emptyHint;
+          if (typeEl) typeEl.value = "control_function";
+          renderKnowledgeProfileFields(prefix, "control_function", {}, false);
+          if (warnEl) {
             warnEl.hidden = true;
             warnEl.textContent = "";
           }
-        } else {
-          dataEl.value = "{}";
-          if (warnEl) { warnEl.hidden = true; warnEl.textContent = ""; }
+          syncKnowledgeProfilePanel(prefix);
+          return;
         }
+        const profile = item.technical_profile;
+        const profileType = profile && profile.profile_type ? profile.profile_type : "control_function";
+        if (meta) {
+          meta.textContent =
+            item.title + " · " + knowledgeProfileTypeLabel(profileType) + " · " + item.id;
+        }
+        if (typeEl) typeEl.value = profileType;
+        renderKnowledgeProfileFields(
+          prefix,
+          profileType,
+          profile && profile.data ? profile.data : {},
+          active
+        );
+        if (warnEl && profile && profile.validation_warnings && profile.validation_warnings.length) {
+          warnEl.hidden = false;
+          warnEl.textContent = profile.validation_warnings.join(" ");
+        } else if (warnEl) {
+          warnEl.hidden = true;
+          warnEl.textContent = "";
+        }
+        syncKnowledgeProfilePanel(prefix);
       }
 
       function saveTechnicalProfile(itemId, prefix, onDone) {
+        const isLibrary = prefix === "k";
+        const profileType = document.getElementById(prefix + "ProfileType").value;
+        const baseRow = knowledgeRowById(prefix, itemId);
+        const baseData =
+          baseRow && baseRow.technical_profile && baseRow.technical_profile.data
+            ? baseRow.technical_profile.data
+            : {};
         let data;
+        const advancedOpen = isKnowledgeProfileAdvancedOpen(prefix);
         try {
-          data = JSON.parse(document.getElementById(prefix + "ProfileData").value || "{}");
+          data = collectKnowledgeProfileData(prefix, profileType, baseData, {
+            useJsonEditor: advancedOpen,
+          });
         } catch (e) {
-          setKnowledgeError("JSON da ficha inválido.");
+          if (isLibrary) setKnowledgeError(e.message);
+          else setProjectError(e.message);
           return;
         }
+        const payload = {
+          profile_type: document.getElementById(prefix + "ProfileType").value,
+          data: data,
+        };
         knowledgeRequest("/api/knowledge/" + itemId + "/technical-profile", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            profile_type: document.getElementById(prefix + "ProfileType").value,
-            data: data,
-          }),
+          body: JSON.stringify(payload),
         }, "Falha ao guardar ficha.")
-          .then(onDone)
-          .catch(function (err) { setKnowledgeError(err.message); });
+          .then(function (result) {
+            return onDone(result);
+          })
+          .catch(function (err) {
+            if (isLibrary) setKnowledgeError(err.message);
+            else setProjectError(err.message);
+          });
       }
 
       async function loadLibraryReferences() {
@@ -1538,10 +1788,14 @@ const rootPath = document.getElementById("rootPath");
         });
       }
 
+      function isLibraryKnowledgeListTarget(target) {
+        return target && (target.id === "kList" || target.id === "kResults");
+      }
+
       function renderItems(target, items, showConclude) {
-        if (showConclude === undefined) showConclude = target.id === "kList";
-        const isLibrary = target.id === "kList";
-        const isProject = target.id === "pkList";
+        const isLibrary = isLibraryKnowledgeListTarget(target);
+        const isProject = target && target.id === "pkList";
+        if (showConclude === undefined) showConclude = target && target.id === "kList";
         target.replaceChildren();
         if (!items.length) {
           const empty = document.createElement("p");
@@ -1569,7 +1823,7 @@ const rootPath = document.getElementById("rootPath");
             metaText += " · " + item.revision_count + " rev.";
           }
           if (item.technical_profile && item.technical_profile.profile_type) {
-            metaText += " · ficha " + item.technical_profile.profile_type;
+            metaText += " · ficha " + knowledgeProfileTypeLabel(item.technical_profile.profile_type);
           }
           const preview = (item.content || "").replace(/\s+/g, " ").trim();
           if (preview) {
@@ -1586,7 +1840,7 @@ const rootPath = document.getElementById("rootPath");
           pick.className = "secondary";
           pick.textContent = "Seleccionar";
           pick.addEventListener("click", function () {
-            const draftPrefix = isLibrary ? "k" : "pk";
+            const draftPrefix = isLibraryKnowledgeListTarget(target) ? "k" : "pk";
             beginKnowledgeSelect(draftPrefix, item);
             renderItems(target, items, showConclude);
           });
@@ -1639,8 +1893,17 @@ const rootPath = document.getElementById("rootPath");
       async function loadKnowledge() {
         setKnowledgeError("");
         const items = await knowledgeRequest("/api/knowledge?scope_type=library", {}, "Falha ao listar unidades.");
+        if (!Array.isArray(items)) {
+          setKnowledgeError("Resposta inválida ao listar unidades da biblioteca.");
+          return;
+        }
         libraryKnowledgeItems = items;
-        renderItems(document.getElementById("kList"), items);
+        const listEl = document.getElementById("kList");
+        if (!listEl) {
+          setKnowledgeError("Painel da lista de unidades (kList) em falta no HTML.");
+          return;
+        }
+        renderItems(listEl, items);
         if (selectedLibraryItemId) {
           const found = items.find(function (i) { return i.id === selectedLibraryItemId; });
           if (found) {
@@ -1711,15 +1974,24 @@ const rootPath = document.getElementById("rootPath");
         }, "Falha ao abrir workspace.").catch(function (err) { setError(err.message); });
       });
 
-      document.getElementById("kDraftCancel").addEventListener("click", function () {
+      function bindClickIfPresent(id, handler) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("click", handler);
+      }
+
+      bindClickIfPresent("kDraftCancel", function () {
         clearKnowledgeDraftForm("k");
         loadKnowledge().catch(function (err) {
           setKnowledgeError(err.message);
         });
       });
-      document.getElementById("kCreate").addEventListener("click", function () {
+      bindClickIfPresent("kCreate", function () {
         submitKnowledgeDraftForm("k");
       });
+      installKnowledgeProfileTypeListener("k");
+      installKnowledgeProfileTypeListener("pk");
+      renderKnowledgeProfileFields("k", "control_function", {}, false);
+      renderKnowledgeProfileFields("pk", "control_function", {}, false);
       document.getElementById("pCreate").addEventListener("click", function () {
         const body = {
           template_version_id: document.getElementById("pTemplateVersion").value,
@@ -1833,7 +2105,7 @@ const rootPath = document.getElementById("rootPath");
           })
           .catch(function (err) { setProjectError(err.message); });
       });
-      document.getElementById("pkDraftCancel").addEventListener("click", function () {
+      bindClickIfPresent("pkDraftCancel", function () {
         clearKnowledgeDraftForm("pk");
         const projectId = document.getElementById("pActive").value;
         if (projectId) {
@@ -1842,18 +2114,18 @@ const rootPath = document.getElementById("rootPath");
           });
         }
       });
-      document.getElementById("pkCreate").addEventListener("click", function () {
+      bindClickIfPresent("pkCreate", function () {
         submitKnowledgeDraftForm("pk");
       });
 
-      document.getElementById("kProfileSave").addEventListener("click", function () {
+      bindClickIfPresent("kProfileSave", function () {
         if (!selectedLibraryItemId) {
           setKnowledgeError("Seleccione uma unidade da biblioteca.");
           return;
         }
         saveTechnicalProfile(selectedLibraryItemId, "k", loadKnowledge);
       });
-      document.getElementById("pkProfileSave").addEventListener("click", function () {
+      bindClickIfPresent("pkProfileSave", function () {
         if (!selectedProjectItemId) {
           setProjectError("Seleccione uma unidade do projecto.");
           return;

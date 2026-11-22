@@ -172,26 +172,33 @@
           <p id="kError" class="error" hidden></p>
           <h3>Unidades (biblioteca)</h3>
           <div id="kList" class="list-panel knowledge-unit-list"></div>
-          <h3>Ficha técnica (unidade seleccionada)</h3>
-          <p id="kProfileMeta">Seleccione uma unidade na lista.</p>
-          <label for="kProfileType" data-help-key="knowledge.profile_type">profile_type</label>
-          <select id="kProfileType">
-            <option value="control_function">control_function</option>
-            <option value="interface">interface</option>
-            <option value="requirement">requirement</option>
-            <option value="decision">decision</option>
-            <option value="open_question">open_question</option>
-          </select>
-          <label for="kProfileData" data-help-key="knowledge.profile_data">data (JSON)</label>
-          <textarea id="kProfileData" placeholder='{"technical_parameters": "texto livre"}'></textarea>
-          <button type="button" id="kProfileSave" class="secondary">Guardar ficha</button>
-          <p id="kProfileWarn" class="error" hidden></p>
+          <div class="card-surface knowledge-profile-panel is-inactive" id="kProfilePanel">
+            <h3 class="knowledge-profile-panel__title">Ficha técnica (opcional)</h3>
+            <p id="kProfileMeta" class="knowledge-profile-panel__meta">Seleccione uma unidade na lista para editar a ficha.</p>
+            <div class="knowledge-profile-panel__fields">
+              <label for="kProfileType" data-help-key="knowledge.profile_type">Tipo de ficha</label>
+              <select id="kProfileType" disabled>
+                <option value="control_function">Função de controlo</option>
+                <option value="interface">Interface</option>
+                <option value="requirement">Requisito</option>
+                <option value="decision">Decisão</option>
+                <option value="open_question">Questão pendente</option>
+              </select>
+              <div id="kProfileFields" class="knowledge-profile-fields"></div>
+              <details class="knowledge-profile-advanced">
+                <summary data-help-key="knowledge.profile_data">Editar JSON bruto (avançado)</summary>
+                <textarea id="kProfileData" class="knowledge-profile-json" placeholder='{"technical_parameters": "…"}' disabled hidden></textarea>
+              </details>
+            </div>
+            <button type="button" id="kProfileSave" class="secondary" disabled>Guardar ficha</button>
+            <p id="kProfileWarn" class="error" hidden></p>
+          </div>
         </div>
         <div class="route-tab-panel" data-route-tab="search" hidden>
           <label for="kQuery" data-help-key="knowledge.search">Texto</label>
           <input id="kQuery" />
           <button type="button" id="kSearch" class="secondary">Pesquisar</button>
-          <div id="kResults" class="list-panel"></div>
+          <div id="kResults" class="list-panel knowledge-unit-list"></div>
         </div>
         <div class="route-tab-panel" data-route-tab="refs" hidden>
           <label for="libRefTitle" data-help-key="library.ref_title">Título</label>
@@ -265,19 +272,27 @@
           <button type="button" id="pkDraftCancel" class="secondary" hidden>Cancelar edição</button>
           <h3>Unidades (projecto)</h3>
           <div id="pkList" class="list-panel knowledge-unit-list"></div>
-          <h3>Ficha técnica (projecto)</h3>
-          <p id="pkProfileMeta">Seleccione uma unidade na lista do projecto.</p>
-          <label for="pkProfileType">profile_type</label>
-          <select id="pkProfileType">
-            <option value="control_function">control_function</option>
-            <option value="interface">interface</option>
-            <option value="requirement">requirement</option>
-            <option value="decision">decision</option>
-            <option value="open_question">open_question</option>
-          </select>
-          <label for="pkProfileData">data (JSON)</label>
-          <textarea id="pkProfileData"></textarea>
-          <button type="button" id="pkProfileSave" class="secondary">Guardar ficha</button>
+          <div class="card-surface knowledge-profile-panel is-inactive" id="pkProfilePanel">
+            <h3 class="knowledge-profile-panel__title">Ficha técnica (opcional)</h3>
+            <p id="pkProfileMeta" class="knowledge-profile-panel__meta">Seleccione uma unidade na lista para editar a ficha.</p>
+            <div class="knowledge-profile-panel__fields">
+              <label for="pkProfileType" data-help-key="knowledge.profile_type">Tipo de ficha</label>
+              <select id="pkProfileType" disabled>
+                <option value="control_function">Função de controlo</option>
+                <option value="interface">Interface</option>
+                <option value="requirement">Requisito</option>
+                <option value="decision">Decisão</option>
+                <option value="open_question">Questão pendente</option>
+              </select>
+              <div id="pkProfileFields" class="knowledge-profile-fields"></div>
+              <details class="knowledge-profile-advanced">
+                <summary data-help-key="knowledge.profile_data">Editar JSON bruto (avançado)</summary>
+                <textarea id="pkProfileData" class="knowledge-profile-json" placeholder='{"technical_parameters": "…"}' disabled hidden></textarea>
+              </details>
+            </div>
+            <button type="button" id="pkProfileSave" class="secondary" disabled>Guardar ficha</button>
+            <p id="pkProfileWarn" class="error" hidden></p>
+          </div>
         </div>
         <div class="route-tab-panel" data-route-tab="prefs" hidden>
           <label for="projRefTitle">Título</label>

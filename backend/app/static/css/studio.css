@@ -771,13 +771,19 @@ button.secondary.danger:hover {
 
 .knowledge-unit-list.list-panel {
   padding: calc(0.65rem * 0.85) 0.7rem;
+  min-height: 2.5rem;
 }
 
-.knowledge-unit-list .knowledge-unit-row {
+.knowledge-unit-row {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   gap: 0.45rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.knowledge-unit-list .knowledge-unit-row {
   margin: calc(0.38rem * 0.8) 0;
   padding: calc(0.32rem * 0.85) 0.15rem;
   border-top: none;
@@ -839,6 +845,80 @@ button.secondary.danger:hover {
 
 .knowledge-unit-list .list-item-row__actions .secondary.danger {
   padding: 0.16rem 0.42rem;
+}
+
+.knowledge-profile-panel {
+  margin-top: 0.85rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.knowledge-profile-panel.is-inactive {
+  opacity: 0.72;
+}
+
+.knowledge-profile-panel__title {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+}
+
+.knowledge-profile-panel__meta {
+  margin: 0 0 0.55rem;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+
+.knowledge-profile-panel__fields label {
+  margin-top: 0.45rem;
+}
+
+.knowledge-profile-panel select,
+.knowledge-profile-panel textarea {
+  margin-top: 0.2rem;
+}
+
+.knowledge-profile-fields label {
+  margin-top: 0.45rem;
+  font-size: 0.84rem;
+}
+
+.knowledge-profile-fields .knowledge-profile-field {
+  margin-top: 0.2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.knowledge-profile-fields textarea.knowledge-profile-field {
+  min-height: 3.5rem;
+  max-height: min(10rem, 24vh);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.knowledge-profile-advanced {
+  margin-top: 0.55rem;
+  font-size: 0.82rem;
+}
+
+.knowledge-profile-advanced summary {
+  cursor: pointer;
+  color: var(--color-muted);
+}
+
+.knowledge-profile-json {
+  min-height: 4.25rem;
+  max-height: min(12rem, 28vh);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  margin-top: 0.35rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.knowledge-profile-panel #kProfileSave,
+.knowledge-profile-panel #pkProfileSave {
+  margin-top: 0.55rem;
 }
 
 .project-list-panel.list-panel {

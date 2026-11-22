@@ -150,7 +150,7 @@ A interface apresenta estados resumidos calculados, sem perder as três dimensõ
 4. Decisão.
 5. Questão pendente.
 
-Os parâmetros técnicos mantêm-se como texto livre no MVP. Não existe validação automática de unidades ou gamas numéricas.
+Os parâmetros técnicos mantêm-se como texto livre no MVP (objecto `data` na API). No cliente, a ficha usa **tipo em lista** e **campos guiados** por `profile_type`; JSON bruto permanece opcional (modo avançado). Não existe validação automática de unidades ou gamas numéricas.
 
 ## 8. Estrutura documental
 
