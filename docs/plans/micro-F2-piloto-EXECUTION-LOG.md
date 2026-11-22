@@ -4,7 +4,7 @@
 |--------|--------|
 | Pré-requisito | F1 M1 — bloco com pontos `ready` |
 | Bloco piloto | **F04_B07** (CTBJ testes) |
-| Estado | **Em curso** (export GET-LLM 2026-11-22) |
+| Estado | **Dry-run tooling OK** — redação final humana pendente |
 
 ## Ferramentas
 
@@ -13,6 +13,7 @@
 | `f2_m2_preflight.py` | Contagens exportáveis + `--export` GET-LLM (fascículo do bloco) |
 | `f2_m2_materialize.py` | Copiar bloco + glossário para `redaction/{block}`; `--outline` |
 | `f2_review_report.py` | Cobertura `must_include` no rascunho MD |
+| `f2_draft_from_export.py` | Dry-run MD a partir do JSON export (não canónico) |
 | Skills | `get-write-spec`, `get-review` |
 
 ## Pré-voo M2
@@ -38,8 +39,10 @@ python scripts/f2_m2_preflight.py --project-id <UUID> --block F04_B07 --export
 
 - [x] Export GET-LLM com glossário no ZIP
 - [x] Materializar inputs + esboço REDACAO
-- [ ] Sessão **get-write-spec** (preencher `REDACAO-F04_B07.md`)
-- [ ] **get-review** contra pontos + glossário
+- [x] Dry-run texto: `f2_draft_from_export.py` → `REDACAO-F04_B07.md` (workspace)
+- [x] `f2_review_report`: **30/30** must_include
+- [ ] Sessão **get-write-spec** (redação caderno final)
+- [ ] **get-review** semântico + glossário — [micro-F2-review-session-F04_B07.md](micro-F2-review-session-F04_B07.md)
 - [ ] Correcções via GET-PACKAGE (se aplicável) — não reimportar MD
 
 ## Definition of Done M2

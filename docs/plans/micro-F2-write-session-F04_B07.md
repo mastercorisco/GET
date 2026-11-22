@@ -11,6 +11,12 @@ python scripts/f2_m2_materialize.py --project-id 976e3991-e64e-4306-99fe-4ac1e22
 
 Editar `redaction/F04_B07/REDACAO-F04_B07-outline.md` → guardar como `REDACAO-F04_B07.md` (fora do GET).
 
+Dry-run (só tooling):
+
+```powershell
+python scripts/f2_draft_from_export.py "redaction\F04_B07\F04_B07_discussion_llm.json" --out "redaction\F04_B07\REDACAO-F04_B07.md"
+```
+
 ## Prompt (copiar)
 
 ```text

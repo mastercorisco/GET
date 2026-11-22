@@ -465,3 +465,55 @@ def test_f2_review_report_detects_missing_must_include(tmp_path: Path) -> None:
     )
     assert proc.returncode == 1
     assert "FALTA" in proc.stdout or "0/" in proc.stdout
+
+
+def test_f2_draft_from_export_covers_must_include(tmp_path: Path) -> None:
+    import json
+
+    block = {
+        "block": {"title": "Bloco teste"},
+        "preparation": {
+            "development_points": [
+                {
+                    "title": "Ponto",
+                    "status": "ready",
+                    "core_idea": "Ideia.",
+                    "must_include": [
+                        {"text": "Obrigação alpha para validação do piloto M2."},
+                        {"text": "Obrigação beta adicional no mesmo ponto."},
+                    ],
+                }
+            ]
+        },
+    }
+    block_path = tmp_path / "B01_discussion_llm.json"
+    block_path.write_text(json.dumps(block), encoding="utf-8")
+    out = tmp_path / "REDACAO-B01.md"
+    backend = Path(__file__).resolve().parents[2]
+    proc_draft = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_draft_from_export.py"),
+            str(block_path),
+            "--out",
+            str(out),
+        ],
+        cwd=backend,
+        capture_output=True,
+        text=True,
+    )
+    assert proc_draft.returncode == 0, proc_draft.stderr
+    proc_rev = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_review_report.py"),
+            "--draft",
+            str(out),
+            "--block-json",
+            str(block_path),
+        ],
+        cwd=backend,
+        capture_output=True,
+        text=True,
+    )
+    assert proc_rev.returncode == 0, proc_rev.stdout
