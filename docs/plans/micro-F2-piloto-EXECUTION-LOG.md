@@ -11,6 +11,8 @@
 | Script | Uso |
 |--------|-----|
 | `f2_m2_preflight.py` | Contagens exportáveis + `--export` GET-LLM (fascículo do bloco) |
+| `f2_m2_materialize.py` | Copiar bloco + glossário para `redaction/{block}`; `--outline` |
+| `f2_review_report.py` | Cobertura `must_include` no rascunho MD |
 | Skills | `get-write-spec`, `get-review` |
 
 ## Pré-voo M2
@@ -27,10 +29,16 @@ python scripts/f2_m2_preflight.py --project-id <UUID> --block F04_B07 --export
 - ZIP: `exports/EXP-LLM-976e3991/llm_generation_discussion.zip`
 - F04_B07: 6× `ready`, 2× `approved`; glossário presente no ZIP
 
+## Kit redação (2026-11-22)
+
+- `redaction/F04_B07/` no workspace testes (materialize + outline)
+- Prompt: [micro-F2-write-session-F04_B07.md](micro-F2-write-session-F04_B07.md)
+
 ## Piloto ponta a ponta
 
 - [x] Export GET-LLM com glossário no ZIP
-- [ ] Sessão **get-write-spec** (MD fora do GET)
+- [x] Materializar inputs + esboço REDACAO
+- [ ] Sessão **get-write-spec** (preencher `REDACAO-F04_B07.md`)
 - [ ] **get-review** contra pontos + glossário
 - [ ] Correcções via GET-PACKAGE (se aplicável) — não reimportar MD
 

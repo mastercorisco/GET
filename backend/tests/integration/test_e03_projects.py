@@ -378,3 +378,90 @@ def test_f2_m2_preflight_reports_block(client: TestClient, tmp_path: Path) -> No
     )
     assert proc.returncode == 0, proc.stderr
     assert "exportable_points" in proc.stdout
+
+
+def test_f2_m2_materialize_after_llm_export(client: TestClient, tmp_path: Path) -> None:
+    import json
+
+    from tests.integration.test_llm_generation_export import _block_with_ready_point
+
+    _workspace(client, tmp_path)
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": _template_v1(client),
+            "name": "M2 mat",
+            "intervention_type": "greenfield",
+        },
+    ).json()
+    pid = project["id"]
+    _fascicle_id, block_id = _block_with_ready_point(client, pid)
+    assert client.post(f"/api/projects/{pid}/baselines/publish").status_code == 200
+    gen = client.post(
+        f"/api/projects/{pid}/exports/llm-generation",
+        json={"profile": "discussion", "include_draft": False, "fascicle_node_id": _fascicle_id},
+    )
+    assert gen.status_code == 200
+    block_file = next(
+        f["path"] for f in gen.json()["manifest"]["files"] if f["kind"] == "block"
+    )
+    block_code = block_file.replace("_discussion_llm.json", "")
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_m2_materialize.py"),
+            "--project-id",
+            pid,
+            "--block",
+            block_code,
+            "--outline",
+            "--json",
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stderr + proc.stdout
+    payload = json.loads(proc.stdout)
+    assert payload.get("outline")
+    assert Path(payload["outline"]).is_file()
+
+
+def test_f2_review_report_detects_missing_must_include(tmp_path: Path) -> None:
+    import json
+
+    block = {
+        "preparation": {
+            "development_points": [
+                {
+                    "title": "Ponto A",
+                    "status": "ready",
+                    "must_include": [{"text": "Frase obrigatória única para teste de cobertura."}],
+                }
+            ]
+        }
+    }
+    block_path = tmp_path / "block_llm.json"
+    block_path.write_text(json.dumps(block), encoding="utf-8")
+    draft_path = tmp_path / "draft.md"
+    draft_path.write_text("# Rascunho\n\nTexto sem a obrigação.\n", encoding="utf-8")
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_review_report.py"),
+            "--draft",
+            str(draft_path),
+            "--block-json",
+            str(block_path),
+        ],
+        cwd=backend,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 1
+    assert "FALTA" in proc.stdout or "0/" in proc.stdout
