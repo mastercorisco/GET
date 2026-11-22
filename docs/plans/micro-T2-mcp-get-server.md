@@ -52,6 +52,8 @@ Valida `health/workspace`, `projects/.../summary` (com `latest_llm_*` se export 
 
 ## Critérios para iniciar implementação (T2.0)
 
+**Nota:** validação de skills **≠** MCP. Os itens abaixo correm com exports/API/app; ver [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md) §9 «Skills vs MCP».
+
 - [ ] **M2** piloto: get-write-spec → get-review → GET-PACKAGE aceite — [micro-F2-M2-production-checklist.md](micro-F2-M2-production-checklist.md).
 - [ ] ≥2 skills além de get-orient / get-lexicon validadas em sessão real (ex. get-grill).
 - [ ] Servidor GET estável no workspace; base URL documentada.
@@ -76,7 +78,7 @@ Valida `health/workspace`, `projects/.../summary` (com `latest_llm_*` se export 
 | ADR-063 | **Aceite** (implementação **adiada**) |
 | Código `mcp-get/` | **Não iniciado** |
 | Gatilho | Fecho **M2** + checklist T2.0 acima |
-| Repo macro 1.2.0 | Implementação MCP **bloqueada** até M2 assinalado em GET_MACRO_PLAN §9 |
+| Repo macro 1.2.2 | Implementação MCP **bloqueada** até M2 assinalado em GET_MACRO_PLAN §9 |
 
 ## Relação com agent-skills
 

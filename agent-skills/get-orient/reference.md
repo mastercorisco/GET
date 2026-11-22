@@ -5,6 +5,8 @@
 - Fixture mínima: `agent-skills/fixtures/llm-master-snippet.json`
 - Exemplos completos: `examples/llm-master-export.example.json`, `examples/get-package-block.example.json`
 
+Skills Cursor **não dependem** de servidor MCP: exports, scripts e API local bastam até T2.0 ([GET_MACRO_PLAN.md](../../docs/GET_MACRO_PLAN.md) §9).
+
 API útil (leitura):
 
 - `GET /api/knowledge/search?q=…&scope_type=library|project&scope_id=…`

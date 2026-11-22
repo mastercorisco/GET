@@ -217,12 +217,46 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 
 | Campo | Valor |
 |--------|--------|
-| Versão documento | 1.2.0 |
+| Versão documento | 1.2.2 |
 | Última actualização | 2026-11-22 |
 | **Fase macro activa** | **F2 — piloto M2** (M1 F04_B07 fechado 2026-11-22) |
+| Índice micro-planos | [plans/README.md](plans/README.md) |
 | Entregáveis F1 | [micro-F1-bloco-F01_B01-grill.md](plans/micro-F1-bloco-F01_B01-grill.md) |
-| Próxima onda repo | M2: get-write-spec + get-review no ZIP EXP-LLM; **MCP código** só após **M2** |
+| Próxima onda repo | **Gargalo humano M2** (redação + review); tooling F2/F3/M3 e API read-only **feitos** — **sem** novo código macro até M2 fechado ou F4 |
 | Próxima revisão sugerida | Após M2 (texto + review); depois M3 |
+
+### Skills vs MCP (ordem)
+
+- **Validar skills não exige MCP.** As skills em `agent-skills/` usam exports em disco, ZIP GET-LLM, scripts e, quando útil, HTTP à API FastAPI local (`127.0.0.1`) — ver [GET_SKILLS_PLAN.md](GET_SKILLS_PLAN.md) § MCP GET.
+- **Servidor GET (uvicorn)** ≠ **servidor MCP** (`mcp-get/`). O primeiro é a app; o segundo é transporte opcional futuro (ADR-063).
+- **Ordem obrigatória:** (1) fechar **M2** produção → (2) pilotos skills em sessão real **sem** `mcp-get/` → (3) só então implementar **T2.0** leitura MCP.
+- Critério T2.0 «≥2 skills além de get-orient/get-lexicon validadas» significa **sessões Cursor + app**, não tools MCP.
+- «Exports **ou** MCP bastam para leitura» = não são obrigatórios os dois; hoje é só exports/API.
+- Consolidar imports, marcar `ready`/`approved` e aceitar propostas: sempre **engenheiro** na app (com ou sem MCP).
+
+### Próximos passos e quem faz o quê
+
+| Entrega | Repo (feito) | Engenheiro (obrigatório) | Desbloqueia |
+|--------|----------------|---------------------------|-------------|
+| **M2** redação | GET-LLM, scripts M2, checklists, `f2_m2_production_status` | Redação final `REDACAO-*`; get-review; GET-PACKAGE + **consolidate** na UI; fecho [micro-F2-piloto-EXECUTION-LOG](plans/micro-F2-piloto-EXECUTION-LOG.md) | F3/M3 piloto, gate T2.0 |
+| **F3** decisão | Skills, `f3_*`, API `reuse-report`, prompts | Sessão get-decision; criar KI `decision`; ≥2 pontos com `knowledge_item_ids`; actualizar EXECUTION-LOG | Reutilização transversal |
+| **M3** referências | Idem + [micro-F3-reference-session-prompt](plans/micro-F3-reference-session-prompt.md) | get-research + grill; uma `Reference`; mesma `reference_id` em ≥2 pontos | Norma centralizada |
+| **Pilotos skills** (T2 gate) | 7 skills em `agent-skills/` | ≥2 sessões reais **além de** get-orient/get-lexicon (ex. write-spec, grill) — **sem MCP** | Autorizar código `mcp-get/` |
+| **T2.0** MCP leitura | ADR-063, `t2_readiness_check`, catálogo | Aceitar checklist [micro-T2](plans/micro-T2-mcp-get-server.md); M2 + skills acima | T2.1 escrita MCP |
+
+Detalhe M2: [micro-F2-M2-production-checklist.md](plans/micro-F2-M2-production-checklist.md).
+
+### Sequência recomendada
+
+1. M2 redação (get-write-spec) → M2 review (get-review) → fecho M2 no §9.
+2. F3 e/ou M3 no CTBJ (podem ser em paralelo após M2).
+3. Pilotos skills documentados (sessão + resultado no EXECUTION-LOG).
+4. Implementação `mcp-get/` T2.0 (só leitura).
+
+Atalhos de estado (servidor ou CLI):
+
+- `python backend/scripts/macro_pilot_status.py --project-id <UUID> --block F04_B07 --json`
+- `GET /api/projects/{id}/reuse-report`
 
 ### F0 — progresso
 
@@ -287,7 +321,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Passo | Estado |
 |-------|--------|
 | 7 skills em `agent-skills/` | **Feito** (MANIFEST 1.2.0) |
-| Pilotos M0–M3 | **Pendente** (sessões com workspace CTBJ) |
+| Pilotos M0–M3 | **Pendente** — sessões Cursor + app no workspace CTBJ; **sem** `mcp-get/` |
 
 ### T1 — pesquisa de glossário
 
@@ -301,7 +335,8 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Passo | Estado |
 |-------|--------|
 | ADR-063 + catálogo tools + micro-plano | **Feito** — [micro-T2-mcp-get-server.md](plans/micro-T2-mcp-get-server.md), [mcp/TOOL_CATALOG.md](mcp/TOOL_CATALOG.md) |
-| Implementação `mcp-get/` (stdio + proxy HTTP) | **Adiado** até fecho **M2** (checklist T2.0 em [micro-T2-mcp-get-server.md](plans/micro-T2-mcp-get-server.md); **não iniciar código** antes do piloto M2) |
+| Validação skills (gate humano T2.0) | **Pendente** — **antes** de código MCP; sem dependência de `mcp-get/` |
+| Implementação `mcp-get/` (stdio + proxy HTTP) | **Adiado** até fecho **M2** + checklist T2.0 (skills validadas sem MCP; **não iniciar código** antes do piloto M2) |
 | Tools de escrita com `confirm` | **T2.1** — após T2.0 leitura |
 
 Actualizar este ficheiro quando fechares F0, M1, M2 ou M3, ou quando o backlog da secção 6 mudar de prioridade.
