@@ -352,3 +352,29 @@ def test_f1_patch_block_point_patches_file(client: TestClient, tmp_path: Path) -
     )
     assert proc.returncode == 0, proc.stderr + proc.stdout
     assert out.is_file()
+
+
+def test_f2_m2_preflight_reports_block(client: TestClient, tmp_path: Path) -> None:
+    from tests.integration.test_get_package import _setup_block
+
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_m2_preflight.py"),
+            "--project-id",
+            pid,
+            "--block",
+            "F01_B01",
+            "--json",
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert "exportable_points" in proc.stdout

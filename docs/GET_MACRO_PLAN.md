@@ -217,10 +217,10 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 |--------|--------|
 | Versão documento | 1.2.0 |
 | Última actualização | 2026-11-22 |
-| **Fase macro activa** | **F1 — arranque** (F0 fechado dry-run 2026-11-22) |
+| **Fase macro activa** | **F2 — piloto M2** (M1 F04_B07 fechado 2026-11-22) |
 | Entregáveis F1 | [micro-F1-bloco-F01_B01-grill.md](plans/micro-F1-bloco-F01_B01-grill.md) |
-| Próxima onda repo | M1: marcar `ready` em F04_B07 após `f1_ready_check`; **MCP código** só após **M2** |
-| Próxima revisão sugerida | Após M1 (bloco `ready`); depois M2 |
+| Próxima onda repo | M2: get-write-spec + get-review no ZIP EXP-LLM; **MCP código** só após **M2** |
+| Próxima revisão sugerida | Após M2 (texto + review); depois M3 |
 
 ### F0 — progresso
 
@@ -247,7 +247,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Skill **get-research** (Cursor) | **Feito** (`agent-skills/get-research`) |
 | Micro-plano bloco F01_B01 | **Feito** — [micro-F1-bloco-F01_B01-grill.md](plans/micro-F1-bloco-F01_B01-grill.md) |
 | Piloto grill F04_B07 (ferramentas + prompt) | **Feito** — `f1_block_preflight`, `f1_patch_block_point`, [micro-F1-grill-session-prompt.md](plans/micro-F1-grill-session-prompt.md) |
-| Piloto M1 (≥1 bloco, pontos `ready`) | **Em curso** — ciclo grill+import F04_B07; `f1_ready_check` — [micro-F1-piloto-EXECUTION-LOG.md](plans/micro-F1-piloto-EXECUTION-LOG.md) |
+| Piloto M1 (≥1 bloco, pontos `ready`) | **Feito** — F04_B07 — [micro-F1-piloto-EXECUTION-LOG.md](plans/micro-F1-piloto-EXECUTION-LOG.md) |
 
 ### Transversal — glossário no pacote GET-LLM (F2 / T0)
 
@@ -264,7 +264,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Export GET-LLM + glossário (app) | **Feito** (T0) |
 | Skill **get-write-spec** | **Feito** (`agent-skills/get-write-spec`) |
 | Skill **get-review** | **Feito** (`agent-skills/get-review`) |
-| Piloto M2 ponta a ponta | **Pendente** (texto + review + import) |
+| Piloto M2 ponta a ponta | **Em curso** — export feito; `f2_m2_preflight` — [micro-F2-piloto-EXECUTION-LOG.md](plans/micro-F2-piloto-EXECUTION-LOG.md) |
 
 ### F3 — reutilização (preparação)
 

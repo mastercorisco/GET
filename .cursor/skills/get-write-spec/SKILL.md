@@ -11,7 +11,7 @@ Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-write-spec). Macro F2 / 
 ## Pré-requisitos
 
 - Pontos alvo em **`ready`** ou **`approved`** (ou rascunhos só se export pediu `include_draft`).
-- Export **GET-LLM** recente (`llm_generation_{profile}.zip`) do projecto ou fascículo.
+- Export **GET-LLM** recente (`llm_generation_{profile}.zip`) do projecto ou fascículo. Pré-voo: `backend/scripts/f2_m2_preflight.py --export`.
 
 ## Modo
 

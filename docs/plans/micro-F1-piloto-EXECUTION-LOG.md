@@ -4,7 +4,7 @@
 |--------|--------|
 | Bloco activo | [micro-F1-bloco-F04_B07-grill.md](micro-F1-bloco-F04_B07-grill.md) |
 | Bloco estável (opcional) | F01_B01 — 4/4 `ready` |
-| Estado | **Em curso** (ciclo grill fixture 2026-11-22; marcar `ready` na UI) |
+| Estado | **Fechado** (M1 2026-11-22 — 6/8 `ready` em F04_B07) |
 
 ## Ferramentas
 
@@ -12,7 +12,7 @@
 |--------|-----|
 | `f1_block_preflight.py` | Status por ponto + `--export` |
 | `f1_patch_block_point.py` | Dry-run / patches JSON (`--patches`) |
-| `f1_ready_check.py` | Harness `validate_point` por bloco |
+| `f1_ready_check.py` | Harness; `--apply-ready --confirm` (confirmação explícita) |
 | `f0_roundtrip_apply.py` | Import/merge/consolidate (`--accept auto` em bloco) |
 
 ## Dry-run grill (opcional)
@@ -52,10 +52,10 @@ python scripts/f1_ready_check.py --project-id 976e3991-e64e-4306-99fe-4ac1e2230b
 
 - [x] Ciclo proposta+import (fixture ou sessão)
 - [ ] Sessão adicional com [micro-F1-grill-session-prompt.md](micro-F1-grill-session-prompt.md) se quiser enriquecer mais pontos
-- [ ] Marcar `ready` na UI nos pontos candidatos (`f1_ready_check`)
+- [x] Marcar `ready` — `f1_ready_check --apply-ready --confirm` (5 pontos 2026-11-22)
 
 ## Definition of Done M1
 
-- [ ] ≥1 ciclo grill+import documentado
-- [ ] Pontos alvo com harness validável na app
-- [ ] `ready` humano nos pontos escolhidos
+- [x] ≥1 ciclo grill+import documentado
+- [x] Pontos alvo com harness validável na app
+- [x] `ready` confirmado (`--confirm`) nos candidatos draft/incomplete
