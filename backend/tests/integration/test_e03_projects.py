@@ -158,3 +158,24 @@ def test_project_knowledge_isolated_from_library(client: TestClient, tmp_path: P
     assert "Unidade de projeto" in project_titles
     assert "Unidade de projeto" not in library_titles
     assert project_items.json()[0]["scope_type"] == "project"
+
+
+def test_project_summary_read_only(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    _ensure_library(client)
+    v1_id = _template_v1(client)
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1_id,
+            "name": "Resumo",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    summary = client.get("/api/projects/" + project["id"] + "/summary")
+    assert summary.status_code == 200
+    body = summary.json()
+    assert body["project_id"] == project["id"]
+    assert isinstance(body["point_status_counts"], dict)
+    assert body["imports_staged"] == 0
+    assert body["merge_sessions_open"] == 0

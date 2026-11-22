@@ -68,6 +68,7 @@ Exemplo de config Cursor: documentar em `mcp-get/README.md` quando existir; **n�
 | ADR-063 | **Aceite** (implementação **adiada**) |
 | Código `mcp-get/` | **Não iniciado** |
 | Gatilho | Fecho **M2** + checklist T2.0 acima |
+| Repo macro 1.2.0 | Implementação MCP **bloqueada** até M2 assinalado em GET_MACRO_PLAN §9 |
 
 ## Relação com agent-skills
 

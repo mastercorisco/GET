@@ -8,6 +8,8 @@ disable-model-invocation: true
 
 Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (secção get-orient). Plano de piloto: `docs/plans/micro-get-orient-skill.md`.
 
+**Checklist F0 (pré-import):** `checklist-f0.md` nesta pasta — usar quando a próxima sessão for ritual F0-structure/content/knowledge (não substitui get-grill).
+
 ## Modo
 
 - Ciclo: **READ → REASON → ANSWER** (não PROPOSE por defeito).

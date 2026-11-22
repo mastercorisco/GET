@@ -86,7 +86,7 @@ Quando existir `mcp-get/` (ADR-063), será um **transporte stdio** que replica e
 | Fascículo | GET-LLM fascículo-índice ou GET-PACKAGE fascículo (se estrutura recente) | Ordem, títulos, KI editáveis |
 | Bloco | GET-PACKAGE bloco exportado | Detalhe de pontos, premissas, `open_questions` |
 | Biblioteca | Pesquisa FTS na app + KI no mestre / pins do projecto | Termos, decisões, factos reutilizáveis |
-| Métricas | Workbook projecto (Excel derivado) | Contagens por `status`, rascunhos — **não** fonte de verdade, só apoio |
+| Métricas | `GET /api/projects/{id}/summary` ou workbook Excel derivado | Contagens por `status`, rascunhos — API é determinística; workbook é apoio |
 
 ### Perguntas típicas
 

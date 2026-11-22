@@ -168,18 +168,19 @@ Derivado de experiência real (reestruturação na LLM + import problemático):
 
 | Prioridade | Item | Tipo |
 |------------|------|------|
-| Alta | Ritual + checklist pré-import (agente) | Processo |
+| Alta | Ritual + checklist pré-import (agente) | Processo — **checklist** em `agent-skills/get-orient/checklist-f0.md` |
 | Alta | Um âmbito de mudança por ficheiro devolvido | Processo |
-| **Alta** | Glossário E05 em `terminology_*_llm.md` no ZIP GET-LLM | Produto — **T0 / ver micro-F2** |
-| Média | Relatório “conceitos misturados” no staging | Produto — **v1:** `conceptual_warnings` na resposta de import + script F0 |
+| **Alta** | Glossário E05 em `terminology_*_llm.md` no ZIP GET-LLM | Produto — **feito T0** (micro-F2, ADR-061) |
+| Média | Relatório “conceitos misturados” no staging | Produto — **v1 API feita**; UI avisos + grupos import em curso F0 |
 | Média | Identidade pacote vs árvore (`block_id`, `display_code`, `structure_anchor`) | Produto — **feito Onda 1** |
 | Média | `export_record` por projecto (não `export_id` global) | Produto — **feito** (migração 010) |
-| Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto |
-| Média | `GET /api/terminology/search` | Produto — **T1 feito** (ADR-062) |
+| Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto — **em implementação** (filtro + lote por secção) |
+| Média | `GET /api/terminology/search` | Produto — **feito T1** (ADR-062) |
+| Média | `GET /api/projects/{id}/summary` (contagens read-only, M0) | Produto — **feito** (get-orient) |
 | Média | `confirm` em DELETE terminologia | Produto — T2 |
 | Baixa | Modos de import (estrutura vs conteúdo) | Produto |
-| Baixa | MCP stdio local + tools | Infra — T2–T3 |
-| Baixa | Skill get-lexicon versionada | Processo — T1 |
+| Baixa | MCP stdio local + tools | Infra — T2–T3 (adiado até **M2**) |
+| Baixa | Skill get-lexicon versionada | Processo — **feito T1** (`agent-skills/get-lexicon`) |
 
 **Nota técnica actual:** merge de bloco não propaga `status` em `point_update` — por desenho. Qualquer mudança para “propor ready via pacote” exige proposta explícita, validação e UX dedicada (não silenciosa).
 
@@ -214,10 +215,11 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 
 | Campo | Valor |
 |--------|--------|
-| Versão documento | 1.1.0 |
+| Versão documento | 1.2.0 |
 | Última actualização | 2026-11-22 |
 | **Fase macro activa** | **F0 — em curso** |
-| Entregáveis F0 | [docs/plans/](plans/README.md) |
+| Entregáveis F0 | [micro-F0-piloto-structure.md](plans/micro-F0-piloto-structure.md), [docs/plans/](plans/README.md) |
+| Próxima onda repo | Piloto F0-structure (humano) + UX import; **MCP código** só após **M2** |
 | Próxima revisão sugerida | Após piloto F0-structure + retro; depois F1 |
 
 ### F0 — progresso
@@ -226,8 +228,12 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 |-------|--------|
 | Ritual + checklist + Phase A inventory | Documentado |
 | Phase A inventário incidente (canal) | **Feito** — [micro-F0-phase-A-workspace-testes.md](plans/micro-F0-phase-A-workspace-testes.md) |
-| Piloto roundtrip F0-structure | **Pendente** (humano + workspace) |
-| Retro + fecho F0 | Template pronto |
+| Micro-plano piloto F01-structure | **Feito** — [micro-F0-piloto-structure.md](plans/micro-F0-piloto-structure.md) |
+| Checklist agente F0 | **Feito** — `agent-skills/get-orient/checklist-f0.md` |
+| UI `conceptual_warnings` + grupos import | **Feito** (legacy-logic) |
+| `GET /api/projects/{id}/summary` (M0) | **Feito** |
+| Piloto roundtrip F0-structure | **Pendente** (humano — [micro-F0-retro-F01.md](plans/micro-F0-retro-F01.md)) |
+| Retro + fecho F0 | Template + retro F01 preparado |
 
 ### F1 — bloco piloto (preparação)
 
@@ -280,7 +286,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Passo | Estado |
 |-------|--------|
 | ADR-063 + catálogo tools + micro-plano | **Feito** — [micro-T2-mcp-get-server.md](plans/micro-T2-mcp-get-server.md), [mcp/TOOL_CATALOG.md](mcp/TOOL_CATALOG.md) |
-| Implementação `mcp-get/` (stdio + proxy HTTP) | **Adiado** até fecho **M2** (checklist no micro-plano) |
+| Implementação `mcp-get/` (stdio + proxy HTTP) | **Adiado** até fecho **M2** (checklist T2.0 em [micro-T2-mcp-get-server.md](plans/micro-T2-mcp-get-server.md); **não iniciar código** antes do piloto M2) |
 | Tools de escrita com `confirm` | **T2.1** — após T2.0 leitura |
 
 Actualizar este ficheiro quando fechares F0, M1, M2 ou M3, ou quando o backlog da secção 6 mudar de prioridade.

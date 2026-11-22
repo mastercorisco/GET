@@ -521,6 +521,49 @@ const rootPath = document.getElementById("rootPath");
       let lastUploadedImportId = null;
       let lastUploadedImportIsPackage = false;
       let lastFasciclePackageExport = null;
+      let lastConceptualWarnings = [];
+      let lastMergeRenderContext = null;
+      let impProposalGroupFilter = "all";
+
+      var _PROPOSAL_GROUP_LABELS = {
+        all: "Todas",
+        structure: "Estrutura",
+        points: "Pontos",
+        premises: "Premissas",
+        knowledge: "Conhecimento",
+        other: "Outros",
+      };
+
+      function proposalGroup(kind) {
+        if (kind === "structure" || kind === "block_field") return "structure";
+        if (kind === "point_update" || kind === "point_create") return "points";
+        if (kind === "premise_update" || kind === "premise_create") return "premises";
+        if (kind === "create" || kind === "update" || kind === "removal") return "knowledge";
+        return "other";
+      }
+
+      function showConceptualWarnings(warnings) {
+        lastConceptualWarnings = Array.isArray(warnings) ? warnings.slice() : [];
+        const el = document.getElementById("impConceptualWarnings");
+        if (!el) return;
+        el.replaceChildren();
+        if (!lastConceptualWarnings.length) {
+          el.hidden = true;
+          return;
+        }
+        el.hidden = false;
+        const head = document.createElement("p");
+        head.className = "choice-hint";
+        head.textContent = "Avisos conceptuais (rever antes de consolidate):";
+        el.appendChild(head);
+        const ul = document.createElement("ul");
+        lastConceptualWarnings.forEach(function (w) {
+          const li = document.createElement("li");
+          li.textContent = w;
+          ul.appendChild(li);
+        });
+        el.appendChild(ul);
+      }
 
       function downloadTextFile(filename, text) {
         const blob = new Blob([text], { type: "application/json;charset=utf-8" });
@@ -606,8 +649,120 @@ const rootPath = document.getElementById("rootPath");
           list.appendChild(p);
         });
         document.getElementById("impProposals").replaceChildren();
+        showConceptualWarnings([]);
         document.getElementById("impConsolidate").hidden = true;
         activeMergeSessionId = null;
+        lastMergeRenderContext = null;
+      }
+
+      function acceptVisibleProposals(projectId, merge, proposals, mergeRoot) {
+        const pending = (proposals || []).filter(function (p) {
+          return !p.decision;
+        });
+        if (!pending.length) return Promise.resolve(0);
+        return pending
+          .reduce(function (chain, prop) {
+            return chain.then(function () {
+              return knowledgeRequest(
+                mergeRoot + merge.id + "/proposals/" + prop.id,
+                {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    decision: "accepted",
+                    destination: prop.destination || "project",
+                    confirmed_protected: !!prop.confirmed_protected,
+                  }),
+                },
+                "Falha ao aceitar proposta."
+              );
+            });
+          }, Promise.resolve())
+          .then(function () {
+            return pending.length;
+          });
+      }
+
+      function renderProposalCard(projectId, merge, prop, mergeRoot) {
+        const box = document.createElement("div");
+        box.className = "card-surface";
+        box.style.marginBottom = "1rem";
+        box.dataset.proposalGroup = proposalGroup(prop.proposal_kind);
+        const title = document.createElement("p");
+        title.textContent =
+          prop.proposal_kind + " · " + prop.title +
+          (prop.conflict ? " · conflito" : "") +
+          (prop.protected_touch ? " · protegido" : "");
+        box.appendChild(title);
+        const decLabel = document.createElement("label");
+        decLabel.textContent = "Decisão";
+        const dec = document.createElement("select");
+        dec.innerHTML =
+          "<option value=''>—</option><option value='accepted'>aceitar</option><option value='rejected'>rejeitar</option>";
+        if (prop.decision) dec.value = prop.decision;
+        const destLabel = document.createElement("label");
+        destLabel.textContent = "Destino";
+        const dest = document.createElement("select");
+        dest.innerHTML =
+          "<option value='project'>project</option><option value='library'>library</option>" +
+          "<option value='pending'>pending</option><option value='rejected'>rejected</option>";
+        dest.value = prop.destination || "project";
+        const confirmLabel = document.createElement("label");
+        confirmLabel.className = "choice-inline";
+        const confirm = document.createElement("input");
+        confirm.type = "checkbox";
+        confirm.checked = !!prop.confirmed_protected;
+        confirmLabel.appendChild(confirm);
+        confirmLabel.appendChild(document.createTextNode(" Confirmo toque em campos protegidos"));
+        if (prop.protected_touch) box.appendChild(confirmLabel);
+        const save = document.createElement("button");
+        save.type = "button";
+        save.textContent = prop.decision ? "Actualizar decisão" : "Guardar decisão";
+        save.className = "secondary";
+        save.addEventListener("click", function () {
+          if (!dec.value) {
+            setImportStatus("Seleccione «aceitar» ou «rejeitar» antes de guardar.");
+            return;
+          }
+          if (prop.protected_touch && dec.value === "accepted" && !confirm.checked) {
+            setImportStatus("Proposta protegida: marque a confirmação ou rejeite.");
+            return;
+          }
+          save.disabled = true;
+          knowledgeRequest(
+            mergeRoot + merge.id + "/proposals/" + prop.id,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                decision: dec.value,
+                destination: dest.value || "project",
+                confirmed_protected: confirm.checked,
+              }),
+            },
+            "Falha ao guardar decisão."
+          )
+            .then(function (updated) {
+              if (updated && updated.decision) dec.value = updated.decision;
+              save.textContent = "Decisão guardada";
+              prop.decision = updated.decision;
+              setImportStatus(
+                "Decisão guardada. «Consolidar decisões» aplica alterações aos pontos do bloco."
+              );
+            })
+            .catch(function (err) {
+              setImportStatus(err.message);
+            })
+            .finally(function () {
+              save.disabled = false;
+            });
+        });
+        box.appendChild(decLabel);
+        box.appendChild(dec);
+        box.appendChild(destLabel);
+        box.appendChild(dest);
+        box.appendChild(save);
+        return box;
       }
 
       function renderProposals(projectId, merge, options) {
@@ -615,6 +770,7 @@ const rootPath = document.getElementById("rootPath");
         activeMergeSessionId = merge.id;
         activeMergeIsPackage =
           opts.isPackage !== undefined ? !!opts.isPackage : !!lastUploadedImportIsPackage;
+        lastMergeRenderContext = { projectId: projectId, merge: merge, options: opts };
         if (!projectId) {
           setImportStatus("Seleccione um projecto activo antes de decidir propostas.");
           return;
@@ -624,90 +780,104 @@ const rootPath = document.getElementById("rootPath");
           : "/api/projects/" + projectId + "/imports/merge/";
         const target = document.getElementById("impProposals");
         target.replaceChildren();
-        if (!merge.proposals.length) {
+        const proposals = merge.proposals || [];
+        if (!proposals.length) {
           const p = document.createElement("p");
           p.textContent = "Sem propostas (ou omissões tratadas como no-op).";
           target.appendChild(p);
-        }
-        merge.proposals.forEach(function (prop) {
-          const box = document.createElement("div");
-          box.className = "card-surface";
-          box.style.marginBottom = "1rem";
-          const title = document.createElement("p");
-          title.textContent =
-            prop.proposal_kind + " · " + prop.title +
-            (prop.conflict ? " · conflito" : "") +
-            (prop.protected_touch ? " · protegido" : "");
-          box.appendChild(title);
-          const decLabel = document.createElement("label");
-          decLabel.textContent = "Decisão";
-          const dec = document.createElement("select");
-          dec.innerHTML = "<option value=''>—</option><option value='accepted'>aceitar</option><option value='rejected'>rejeitar</option>";
-          if (prop.decision) dec.value = prop.decision;
-          const destLabel = document.createElement("label");
-          destLabel.textContent = "Destino";
-          const dest = document.createElement("select");
-          dest.innerHTML = "<option value='project'>project</option><option value='library'>library</option><option value='pending'>pending</option><option value='rejected'>rejected</option>";
-          dest.value = prop.destination || "project";
-          const confirmLabel = document.createElement("label");
-          confirmLabel.className = "choice-inline";
-          const confirm = document.createElement("input");
-          confirm.type = "checkbox";
-          confirm.checked = !!prop.confirmed_protected;
-          confirmLabel.appendChild(confirm);
-          confirmLabel.appendChild(document.createTextNode(" Confirmo toque em campos protegidos"));
-          if (prop.protected_touch) box.appendChild(confirmLabel);
-          const save = document.createElement("button");
-          save.type = "button";
-          save.textContent = prop.decision ? "Actualizar decisão" : "Guardar decisão";
-          save.className = "secondary";
-          save.addEventListener("click", function () {
-            if (!dec.value) {
-              setImportStatus("Seleccione «aceitar» ou «rejeitar» antes de guardar.");
+        } else {
+          const toolbar = document.createElement("div");
+          toolbar.className = "import-proposal-toolbar";
+          toolbar.style.marginBottom = "1rem";
+          const filterLabel = document.createElement("label");
+          filterLabel.textContent = "Filtrar grupo";
+          const filterSel = document.createElement("select");
+          filterSel.id = "impProposalGroupFilter";
+          Object.keys(_PROPOSAL_GROUP_LABELS).forEach(function (key) {
+            const opt = document.createElement("option");
+            opt.value = key;
+            opt.textContent = _PROPOSAL_GROUP_LABELS[key];
+            if (key === impProposalGroupFilter) opt.selected = true;
+            filterSel.appendChild(opt);
+          });
+          filterSel.addEventListener("change", function () {
+            impProposalGroupFilter = filterSel.value;
+            if (lastMergeRenderContext) {
+              renderProposals(
+                lastMergeRenderContext.projectId,
+                lastMergeRenderContext.merge,
+                lastMergeRenderContext.options
+              );
+            }
+          });
+          const batchBtn = document.createElement("button");
+          batchBtn.type = "button";
+          batchBtn.className = "secondary";
+          batchBtn.textContent = "Aceitar pendentes visíveis";
+          batchBtn.addEventListener("click", function () {
+            const visible = proposals.filter(function (prop) {
+              const g = proposalGroup(prop.proposal_kind);
+              return (impProposalGroupFilter === "all" || impProposalGroupFilter === g) && !prop.decision;
+            });
+            if (!visible.length) {
+              setImportStatus("Nenhuma proposta pendente no filtro actual.");
               return;
             }
-            if (prop.protected_touch && dec.value === "accepted" && !confirm.checked) {
-              setImportStatus("Proposta protegida: marque a confirmação ou rejeite.");
+            const label = _PROPOSAL_GROUP_LABELS[impProposalGroupFilter] || impProposalGroupFilter;
+            if (
+              !window.confirm(
+                "Aceitar " + visible.length + " proposta(s) no grupo «" + label + "»? Revise conflitos antes."
+              )
+            ) {
               return;
             }
-            save.disabled = true;
-            knowledgeRequest(
-              mergeRoot + merge.id + "/proposals/" + prop.id,
-              {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  decision: dec.value,
-                  destination: dest.value || "project",
-                  confirmed_protected: confirm.checked,
-                }),
-              },
-              "Falha ao guardar decisão."
-            )
-              .then(function (updated) {
-                if (updated && updated.decision) dec.value = updated.decision;
-                save.textContent = "Decisão guardada";
-                setImportStatus(
-                  "Decisão guardada. «Consolidar decisões» aplica alterações aos pontos do bloco."
-                );
+            batchBtn.disabled = true;
+            acceptVisibleProposals(projectId, merge, visible, mergeRoot)
+              .then(function (n) {
+                setImportStatus(n + " proposta(s) marcadas como aceites — guarde ou revise protegidos.");
+                visible.forEach(function (p) {
+                  p.decision = "accepted";
+                });
+                renderProposals(projectId, merge, opts);
               })
               .catch(function (err) {
                 setImportStatus(err.message);
               })
               .finally(function () {
-                save.disabled = false;
+                batchBtn.disabled = false;
               });
           });
-          box.appendChild(decLabel);
-          box.appendChild(dec);
-          box.appendChild(destLabel);
-          box.appendChild(dest);
-          box.appendChild(save);
-          target.appendChild(box);
-        });
+          toolbar.appendChild(filterLabel);
+          toolbar.appendChild(filterSel);
+          toolbar.appendChild(batchBtn);
+          target.appendChild(toolbar);
+
+          const groupOrder = ["structure", "points", "premises", "knowledge", "other"];
+          const buckets = {};
+          groupOrder.forEach(function (g) {
+            buckets[g] = [];
+          });
+          proposals.forEach(function (prop) {
+            const g = proposalGroup(prop.proposal_kind);
+            buckets[g].push(prop);
+          });
+          groupOrder.forEach(function (g) {
+            if (impProposalGroupFilter !== "all" && impProposalGroupFilter !== g) return;
+            if (!buckets[g].length) return;
+            const section = document.createElement("div");
+            section.className = "import-proposal-group";
+            const heading = document.createElement("h4");
+            heading.textContent = _PROPOSAL_GROUP_LABELS[g] + " (" + buckets[g].length + ")";
+            section.appendChild(heading);
+            buckets[g].forEach(function (prop) {
+              section.appendChild(renderProposalCard(projectId, merge, prop, mergeRoot));
+            });
+            target.appendChild(section);
+          });
+        }
         const consolidateBtn = document.getElementById("impConsolidate");
         if (consolidateBtn) {
-          consolidateBtn.hidden = !merge.proposals.length;
+          consolidateBtn.hidden = !proposals.length;
           consolidateBtn.textContent = activeMergeIsPackage
             ? "Consolidar decisões (aplica pontos do bloco)"
             : "Consolidar decisões";
@@ -1586,12 +1756,19 @@ const rootPath = document.getElementById("rootPath");
             });
           })
           .then(function (payload) {
+            showConceptualWarnings(payload.conceptual_warnings);
             return loadImportSection(projectId).then(function () {
               lastUploadedImportId = payload.import_id;
               lastUploadedImportIsPackage = true;
             });
           })
-          .then(function () { setImportStatus("Pacote aceite. Use Rever alterações."); })
+          .then(function () {
+            var msg = "Pacote aceite. Use Rever alterações.";
+            if (lastConceptualWarnings.length) {
+              msg += " (" + lastConceptualWarnings.length + " aviso(s) conceptual — ver lista acima.)";
+            }
+            setImportStatus(msg);
+          })
           .catch(function (err) { setImportStatus(err.message); });
       });
       var _BLOCK_PACKAGE_PROPOSAL_KINDS = [

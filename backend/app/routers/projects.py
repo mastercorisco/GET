@@ -10,6 +10,8 @@ from app.schemas.project import (
     TemplateResponse,
 )
 from app.services.deletion_service import delete_project
+from app.schemas.project_summary import ProjectSummaryResponse
+from app.services.project_summary_service import get_project_summary
 from app.services.project_service import (
     ProjectError,
     create_project,
@@ -71,6 +73,11 @@ def project_create(body: ProjectCreateRequest) -> ProjectResponse:
 @router.get("/{project_id}", response_model=ProjectResponse)
 def project_get(project_id: str) -> ProjectResponse:
     return _run(lambda: get_project(get_settings(), project_id))
+
+
+@router.get("/{project_id}/summary", response_model=ProjectSummaryResponse)
+def project_summary(project_id: str) -> ProjectSummaryResponse:
+    return _run(lambda: get_project_summary(get_settings(), project_id))
 
 
 @router.get("/{project_id}/llm-context", response_model=ProjectLlmContextResponse)
