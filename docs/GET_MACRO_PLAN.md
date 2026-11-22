@@ -234,6 +234,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Passo | Estado |
 |-------|--------|
 | Skill **get-grill** (Cursor) | **Feito** (`agent-skills/get-grill`; piloto bloco pendente) |
+| Skill **get-research** (Cursor) | **Feito** (`agent-skills/get-research`) |
 | Piloto M1 (≥1 bloco, pontos `ready`) | **Pendente** — [micro-F1-bloco-piloto-grill.md](plans/micro-F1-bloco-piloto-grill.md) |
 
 ### Transversal — glossário no pacote GET-LLM (F2 / T0)

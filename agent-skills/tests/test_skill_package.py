@@ -80,6 +80,11 @@ REQUIRED_SECTIONS: dict[str, list[str]] = {
         "Proibido",
         "Contexto mínimo",
     ],
+    "get-research": [
+        "Proibido",
+        "Contexto mínimo",
+        "PROPOSE",
+    ],
 }
 
 
