@@ -164,6 +164,13 @@ def test_docx_includes_points_without_block_model(client: TestClient, tmp_path: 
     assert "Ponto 1" in blob
     assert "must=" not in blob
     assert "(ready)" not in blob
+    list_number = [p for p in doc.paragraphs if p.style and p.style.name == "List Number"]
+    assert list_number
+    first_p_pr = list_number[0]._p.pPr
+    if first_p_pr is not None and first_p_pr.numPr is not None:
+        num_id = first_p_pr.numPr.numId
+        assert num_id is None or num_id.val != 1
+    assert all(p.style.name == "List Number" for p in list_number)
 
 
 def test_xlsx_no_pontos_sheet_when_point_detail_none(client: TestClient, tmp_path: Path) -> None:

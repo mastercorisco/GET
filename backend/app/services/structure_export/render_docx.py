@@ -5,9 +5,7 @@ from io import BytesIO
 
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.oxml.ns import qn
 from docx.shared import Cm
-from docx.text.paragraph import Paragraph
 
 from app.domain.document_lexicon import label_pt, title_with_production_label
 from app.schemas.structure_export import (
@@ -24,18 +22,6 @@ def _heading_level(depth: int) -> int:
     return min(max(depth + 1, 2), 6)
 
 
-def _restart_list_numbering(paragraph: Paragraph) -> None:
-    """Reinicia numeração Word no primeiro item de cada lista de pontos."""
-    p_pr = paragraph._p.get_or_add_pPr()
-    num_pr = p_pr.get_or_add_numPr()
-    for child in list(num_pr):
-        num_pr.remove(child)
-    ilvl = num_pr.makeelement(qn("w:ilvl"), {qn("w:val"): "0"})
-    num_id = num_pr.makeelement(qn("w:numId"), {qn("w:val"): "1"})
-    num_pr.append(ilvl)
-    num_pr.append(num_id)
-
-
 def _add_indented_note(document: Document, prefix: str, text: str) -> None:
     para = document.add_paragraph(f"{prefix}{text}")
     para.paragraph_format.left_indent = Cm(1.0)
@@ -44,11 +30,9 @@ def _add_indented_note(document: Document, prefix: str, text: str) -> None:
 def _add_points(document: Document, points: list[PointSummarySnapshot] | list[PointFullSnapshot] | None) -> None:
     if not points:
         return
-    for idx, p in enumerate(points):
+    for p in points:
         title = p.title.strip()
-        para = document.add_paragraph(title, style=LIST_NUMBER_STYLE)
-        if idx == 0:
-            _restart_list_numbering(para)
+        document.add_paragraph(title, style=LIST_NUMBER_STYLE)
         if isinstance(p, PointFullSnapshot):
             if p.core_idea.strip():
                 _add_indented_note(document, "Ideia central: ", p.core_idea.strip())
