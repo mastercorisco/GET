@@ -769,16 +769,76 @@ button.secondary.danger:hover {
   background: color-mix(in srgb, var(--accent, #3b6ea8) 12%, transparent);
 }
 
-#pkList .item.is-editing {
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--accent, #3b6ea8) 12%, transparent);
-  padding: 0.35rem 0.45rem;
-  margin-top: 0.5rem;
+.knowledge-unit-list.list-panel {
+  padding: calc(0.65rem * 0.85) 0.7rem;
 }
 
-#pkList .item button.secondary {
-  margin-top: 0.25rem;
-  margin-right: 0.35rem;
+.knowledge-unit-list .knowledge-unit-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: calc(0.38rem * 0.8) 0;
+  padding: calc(0.32rem * 0.85) 0.15rem;
+  border-top: none;
+  min-height: 2.1rem;
+}
+
+.knowledge-unit-list .knowledge-unit-row:not(:last-child) {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
+  margin-bottom: calc(0.42rem * 0.8);
+  padding-bottom: calc(0.38rem * 0.85);
+}
+
+.knowledge-unit-row__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  align-self: center;
+}
+
+.knowledge-unit-row__title {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.22;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knowledge-unit-row__meta {
+  display: block;
+  font-size: 0.76rem;
+  line-height: 1.2;
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knowledge-unit-list .knowledge-unit-row.is-editing {
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent, #3b6ea8) 12%, transparent);
+  padding: calc(0.32rem * 0.85) 0.35rem;
+}
+
+.knowledge-unit-list .list-item-row__actions {
+  gap: 0.16rem;
+}
+
+.knowledge-unit-list .list-item-row__actions .secondary {
+  padding: 0.16rem 0.42rem;
+  font-size: 0.73rem;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-right: 0;
+}
+
+.knowledge-unit-list .list-item-row__actions .secondary.danger {
+  padding: 0.16rem 0.42rem;
 }
 
 .project-list-panel.list-panel {

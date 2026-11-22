@@ -159,7 +159,8 @@
           <button type="button" class="route-tab" data-route-tab="terms" role="tab">Terminologia</button>
         </div>
         <div class="route-tab-panel" data-route-tab="units">
-          <p>Crie uma unidade. O rascunho fica separado da revisão até carregar em «Concluir revisão».</p>
+          <p>Crie ou edite o rascunho da unidade. O conteúdo aprovado em revisão mantém-se na história até carregar em «Concluir revisão».</p>
+          <p id="kDraftMeta" data-help-key="knowledge.draft">Nenhuma unidade seleccionada — preencha os campos para criar ou seleccione na lista.</p>
           <label for="kTitle" data-help-key="knowledge.title">Título</label>
           <input id="kTitle" />
           <label for="kContent" data-help-key="knowledge.content">Conteúdo</label>
@@ -167,9 +168,10 @@
           <label for="kContext" data-help-key="knowledge.origin_context">Contexto de origem</label>
           <input id="kContext" />
           <button type="button" id="kCreate">Criar unidade</button>
+          <button type="button" id="kDraftCancel" class="secondary" hidden>Cancelar edição</button>
           <p id="kError" class="error" hidden></p>
           <h3>Unidades (biblioteca)</h3>
-          <div id="kList" class="list-panel"></div>
+          <div id="kList" class="list-panel knowledge-unit-list"></div>
           <h3>Ficha técnica (unidade seleccionada)</h3>
           <p id="kProfileMeta">Seleccione uma unidade na lista.</p>
           <label for="kProfileType" data-help-key="knowledge.profile_type">profile_type</label>
@@ -262,7 +264,7 @@
           <button type="button" id="pkCreate">Criar unidade no projeto</button>
           <button type="button" id="pkDraftCancel" class="secondary" hidden>Cancelar edição</button>
           <h3>Unidades (projecto)</h3>
-          <div id="pkList" class="list-panel"></div>
+          <div id="pkList" class="list-panel knowledge-unit-list"></div>
           <h3>Ficha técnica (projecto)</h3>
           <p id="pkProfileMeta">Seleccione uma unidade na lista do projecto.</p>
           <label for="pkProfileType">profile_type</label>
