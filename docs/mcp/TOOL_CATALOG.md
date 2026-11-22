@@ -43,6 +43,7 @@ Base URL: `http://127.0.0.1:<porta>/api` (servidor GET activo).
 | `confirm` em DELETE terminologia | tool `delete_terminology` segura | macro §6 T2 |
 | Relatório contagens / staging + último GET-LLM | `get_project_summary` | **feito** `GET /projects/{id}/summary` |
 | Endpoint “último export LLM por projecto” | evita MCP listar filesystem | **feito** `GET .../llm-generation/latest` |
+| Relatório reutilização F3/M3 por projecto | `get_project_reuse_report` | **feito** `GET /projects/{id}/reuse-report` |
 
 ## Anti-padrões
 

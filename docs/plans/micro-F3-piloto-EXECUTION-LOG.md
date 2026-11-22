@@ -14,7 +14,8 @@ Decisão ou premissa mandatória citada em ≥2 contextos sem cópias contradit�
 - Skill **get-decision** (`agent-skills/get-decision`, `checklist-f3.md`)
 - `f3_decision_citation_report.py`, `f3_reference_citation_report.py`, `f3_reuse_report.py`
 - `macro_pilot_status.py` — M2 redação + F3/M3 + summary
-- Prompt piloto: [micro-F3-decision-session-prompt.md](micro-F3-decision-session-prompt.md)
+- Prompts: [micro-F3-decision-session-prompt.md](micro-F3-decision-session-prompt.md), [micro-F3-reference-session-prompt.md](micro-F3-reference-session-prompt.md)
+- API: `GET /api/projects/{id}/reuse-report`
 - Blocos com pontos `ready` + refs no GET
 
 ## Piloto

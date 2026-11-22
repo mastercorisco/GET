@@ -178,6 +178,7 @@ Derivado de experiência real (reestruturação na LLM + import problemático):
 | Média | `GET /api/terminology/search` | Produto — **feito T1** (ADR-062) |
 | Média | `GET /api/projects/{id}/summary` (contagens + último GET-LLM, read-only, M0) | Produto — **feito** (get-orient) |
 | Média | `GET .../exports/llm-generation/latest` (M2/MCP leitura) | Produto — **feito** |
+| Média | `GET /api/projects/{id}/reuse-report` (F3/M3 read-only) | Produto — **feito** |
 | Média | `confirm` em DELETE terminologia | Produto — **feito** (`confirm` query param) |
 | Baixa | Modos de import (estrutura vs conteúdo) | Produto |
 | Baixa | MCP stdio local + tools | Infra — T2–T3 (adiado até **M2**) |
@@ -278,7 +279,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 
 | Passo | Estado |
 |-------|--------|
-| `f3_reference_citation_report.py` / `f3_reuse_report.py` | **Feito** (read-only) |
+| `f3_reference_citation_report.py` / `f3_reuse_report.py` / API `reuse-report` | **Feito** (read-only) |
 | Piloto Reference em ≥2 pontos | **Pendente** (humano) — get-research + grill |
 
 ### Conjunto skills Cursor (inicial)

@@ -56,6 +56,8 @@ def main() -> int:
             )
         code2, _ = _get(f"{base}/projects/{args.project_id}/exports/llm-generation/latest")
         checks.append({"id": "llm_generation_latest", "ok": code2 == 200, "http": code2})
+        code3, reuse = _get(f"{base}/projects/{args.project_id}/reuse-report")
+        checks.append({"id": "project_reuse_report", "ok": code3 == 200 and isinstance(reuse, dict), "http": code3})
 
     manual = [
         {"id": "m2_production", "ok": False, "note": "get-write-spec + get-review + GET-PACKAGE (humano)"},
