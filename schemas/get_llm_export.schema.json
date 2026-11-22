@@ -158,6 +158,10 @@
           "type": "string",
           "description": "Nome do ficheiro terminology_{profile}_llm.md neste pacote GET-LLM-PACKAGE (glossário técnico E05, não reimportável)."
         },
+        "package_terminology_json": {
+          "type": "string",
+          "description": "Nome do ficheiro terminology_{profile}_llm.json (GET-LLM-TERMINOLOGY) no mesmo pacote."
+        },
         "generation_rules": { "type": "object" },
         "traceability": { "type": "object" },
         "validation": { "$ref": "#/$defs/validationBlock" }

@@ -44,11 +44,15 @@ def render_llm_master_md(payload: dict[str, Any]) -> str:
     )
 
     term_file = (payload.get("package_terminology_markdown") or "").strip()
-    if term_file:
+    term_json = (payload.get("package_terminology_json") or "").strip()
+    if term_file or term_json:
         lines.append("## Glossário técnico (vocabulário)")
+        if term_json:
+            lines.append(f"- JSON: **`{term_json}`** (dados estruturados)")
+        if term_file:
+            lines.append(f"- Markdown: **`{term_file}`** (leitura humana/LLM)")
         lines.append(
-            f"Consultar o ficheiro **`{term_file}`** neste pacote antes de redigir "
-            "(termos preferenciais, evitar, overrides)."
+            "Usar termos preferenciais; respeitar evitar e overrides do projecto."
         )
         lines.append("")
 

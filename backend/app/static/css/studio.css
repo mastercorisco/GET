@@ -688,3 +688,16 @@ button.secondary.danger:hover {
   outline: 2px solid var(--color-danger);
   outline-offset: 2px;
 }
+
+.exp-llm-progress {
+  margin: 0.65rem 0 0;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2, var(--color-surface));
+  color: var(--color-text);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  white-space: pre;
+}

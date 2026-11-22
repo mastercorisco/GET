@@ -144,6 +144,7 @@ def export_llm_generation_package(
         )
 
     term_md_name = f"terminology_{profile}_llm.md"
+    term_json_name = f"terminology_{profile}_llm.json"
     master_payload = build_master_llm(
         session,
         ctx,
@@ -153,8 +154,10 @@ def export_llm_generation_package(
         fascicle_manifest=fascicle_manifest_for_master,
     )
     master_payload["package_terminology_markdown"] = term_md_name
+    master_payload["package_terminology_json"] = term_json_name
 
     term_snapshot = build_terminology_snapshot(session, project_id)
+
     term_md_content = render_terminology_glossary_md(
         term_snapshot,
         export_id=package_export_id,
@@ -164,6 +167,23 @@ def export_llm_generation_package(
     term_md_path = out_dir / term_md_name
     term_md_path.write_text(term_md_content, encoding="utf-8")
     term_hash = sha256_hex(term_md_content)
+
+    term_json_payload: dict[str, Any] = {
+        "get_export": {
+            "schema": "GET-LLM-TERMINOLOGY",
+            "schema_version": "1.0",
+            "export_type": "terminology_glossary",
+            "generated_at": generated_at,
+            "language": "pt-PT",
+        },
+        "export_id": package_export_id,
+        "profile": profile,
+        "payload": term_snapshot,
+    }
+    term_json_text = dumps_deterministic(term_json_payload)
+    term_json_path = out_dir / term_json_name
+    term_json_path.write_text(term_json_text, encoding="utf-8")
+    term_json_hash = sha256_hex(term_json_text)
 
     master_json_name = f"master_{profile}_llm.json"
     master_md_name = f"master_{profile}_llm.md"
@@ -180,6 +200,11 @@ def export_llm_generation_package(
             "path": term_md_name,
             "kind": "terminology_glossary",
             "sha256": term_hash,
+        },
+        {
+            "path": term_json_name,
+            "kind": "terminology_glossary",
+            "sha256": term_json_hash,
         },
     ]
     for entry in fascicle_manifest_for_master:
@@ -213,6 +238,7 @@ def export_llm_generation_package(
         zf.write(master_json_path, arcname=master_json_name)
         zf.write(master_md_path, arcname=master_md_name)
         zf.write(term_md_path, arcname=term_md_name)
+        zf.write(term_json_path, arcname=term_json_name)
         for file_path, arcname in package_files:
             zf.write(file_path, arcname=arcname)
         zf.writestr("manifest.json", dumps_deterministic(package_manifest))

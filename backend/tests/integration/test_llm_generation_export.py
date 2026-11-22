@@ -177,15 +177,25 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
         assert "## Fascículo" not in block_md
         assert "## Pontos de desenvolvimento" in block_md
 
-        term_name = "terminology_discussion_llm.md"
-        assert term_name in names
-        term_md = zf.read(term_name).decode("utf-8")
+        term_md_name = "terminology_discussion_llm.md"
+        term_json_name = "terminology_discussion_llm.json"
+        assert term_md_name in names
+        assert term_json_name in names
+        term_md = zf.read(term_md_name).decode("utf-8")
         assert "Glossário técnico" in term_md
         assert "Adjudicatário" in term_md
+        term_json = json.loads(zf.read(term_json_name))
+        assert term_json["get_export"]["schema"] == "GET-LLM-TERMINOLOGY"
+        assert any(
+            t.get("preferred_term") == "Adjudicatário"
+            for t in term_json["payload"].get("library_terms") or []
+        )
 
         master_md = zf.read(master_name.replace(".json", ".md")).decode("utf-8")
-        assert term_name in master_md
+        assert term_json_name in master_md
         assert "Glossário técnico (vocabulário)" in master_md
+        master_data = json.loads(zf.read(master_name))
+        assert master_data.get("package_terminology_json") == term_json_name
 
 
 def test_e06_roundtrip_still_requires_baseline(client: TestClient, tmp_path: Path) -> None:

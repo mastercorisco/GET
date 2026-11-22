@@ -725,6 +725,43 @@ const rootPath = document.getElementById("rootPath");
         el.textContent = message;
       }
 
+      let llmExportProgressTimer = null;
+
+      function stopLlmExportProgress() {
+        if (llmExportProgressTimer !== null) {
+          clearInterval(llmExportProgressTimer);
+          llmExportProgressTimer = null;
+        }
+        const prog = document.getElementById("expLlmProgress");
+        const btn = document.getElementById("expLlmGeneration");
+        if (prog) {
+          prog.hidden = true;
+          prog.textContent = "";
+        }
+        if (btn) btn.disabled = false;
+      }
+
+      function startLlmExportProgress() {
+        stopLlmExportProgress();
+        const prog = document.getElementById("expLlmProgress");
+        const btn = document.getElementById("expLlmGeneration");
+        if (btn) btn.disabled = true;
+        if (!prog) return;
+        prog.hidden = false;
+        const barWidth = 26;
+        const arrow = "===>";
+        let pos = 0;
+        function frame() {
+          const pad = Math.max(0, barWidth - arrow.length);
+          pos = pos >= pad ? 0 : pos + 1;
+          const left = " ".repeat(pos);
+          const right = " ".repeat(pad - pos);
+          prog.textContent = "A exportar pacote GET-LLM…\n[" + left + arrow + right + "]";
+        }
+        frame();
+        llmExportProgressTimer = setInterval(frame, 120);
+      }
+
       async function loadExportSection(projectId) {
         const expBriefLabel = document.querySelector('label[data-help-key="export.get_package_brief"]');
         if (expBriefLabel) {
@@ -1800,6 +1837,7 @@ const rootPath = document.getElementById("rootPath");
         const fascicleEl = document.getElementById("expLlmFascicle");
         const fascicleId = fascicleEl && fascicleEl.value ? fascicleEl.value : null;
         setExportStatus("");
+        startLlmExportProgress();
         knowledgeRequest(
           "/api/projects/" + projectId + "/exports/llm-generation",
           {
@@ -1817,12 +1855,16 @@ const rootPath = document.getElementById("rootPath");
             const blocks = (row.manifest && row.manifest.files)
               ? row.manifest.files.filter(function (f) { return f.kind === "block"; }).length
               : "?";
+            stopLlmExportProgress();
             setExportStatus(
               "Pacote GET-LLM: " + row.zip_path + " · mestre " + row.file_path + " · " + blocks + " bloco(s)."
             );
             return loadExportSection(projectId);
           })
-          .catch(function (err) { setExportStatus(err.message); });
+          .catch(function (err) {
+            stopLlmExportProgress();
+            setExportStatus(err.message);
+          });
       });
       document.getElementById("kSearch").addEventListener("click", function () {
         const q = document.getElementById("kQuery").value.trim();
