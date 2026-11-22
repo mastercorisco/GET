@@ -9,6 +9,7 @@ from app.models.document import DocumentNode
 from app.models.imports import ImportRecord, MergeSession
 from app.models.project import Project
 from app.schemas.project_summary import LatestExportSnippet, ProjectSummaryResponse
+from app.services.export_service import ExportError, latest_llm_generation_export
 from app.services.project_service import ProjectError
 from app.services.workspace_service import workspace_session
 
@@ -62,6 +63,15 @@ def get_project_summary(settings: AppSettings, project_id: str) -> ProjectSummar
             for row in export_rows
         ]
 
+        llm_export_id: str | None = None
+        llm_zip: str | None = None
+        try:
+            llm = latest_llm_generation_export(settings, project_id)
+            llm_export_id = llm.export_id
+            llm_zip = llm.zip_path
+        except ExportError:
+            pass
+
         return ProjectSummaryResponse(
             project_id=project_id,
             point_status_counts=status_counts,
@@ -69,4 +79,6 @@ def get_project_summary(settings: AppSettings, project_id: str) -> ProjectSummar
             imports_staged=int(staged or 0),
             merge_sessions_open=int(open_merges or 0),
             latest_package_exports=latest_exports,
+            latest_llm_export_id=llm_export_id,
+            latest_llm_zip_path=llm_zip,
         )

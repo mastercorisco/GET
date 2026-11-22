@@ -176,7 +176,7 @@ Derivado de experiência real (reestruturação na LLM + import problemático):
 | Média | `export_record` por projecto (não `export_id` global) | Produto — **feito** (migração 010) |
 | Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto — **feito** (filtro + lote por secção) |
 | Média | `GET /api/terminology/search` | Produto — **feito T1** (ADR-062) |
-| Média | `GET /api/projects/{id}/summary` (contagens read-only, M0) | Produto — **feito** (get-orient) |
+| Média | `GET /api/projects/{id}/summary` (contagens + último GET-LLM, read-only, M0) | Produto — **feito** (get-orient) |
 | Média | `GET .../exports/llm-generation/latest` (M2/MCP leitura) | Produto — **feito** |
 | Média | `confirm` em DELETE terminologia | Produto — **feito** (`confirm` query param) |
 | Baixa | Modos de import (estrutura vs conteúdo) | Produto |

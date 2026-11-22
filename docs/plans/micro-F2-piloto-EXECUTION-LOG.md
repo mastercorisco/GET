@@ -4,7 +4,7 @@
 |--------|--------|
 | Pré-requisito | F1 M1 — bloco com pontos `ready` |
 | Bloco piloto | **F04_B07** (CTBJ testes) |
-| Estado | **Dry-run tooling OK** — redação final humana pendente |
+| Estado | **Dry-run tooling OK** — redação final humana pendente — [checklist M2 produção](micro-F2-M2-production-checklist.md) |
 
 ## Ferramentas
 

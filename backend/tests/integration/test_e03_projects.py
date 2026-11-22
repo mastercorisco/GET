@@ -182,6 +182,8 @@ def test_project_summary_read_only(client: TestClient, tmp_path: Path) -> None:
     assert isinstance(body["point_status_counts"], dict)
     assert body["imports_staged"] == 0
     assert body["merge_sessions_open"] == 0
+    assert body["latest_llm_export_id"] is None
+    assert body["latest_llm_zip_path"] is None
 
 
 def test_f0_preflight_script_reports_missing_fascicle(client: TestClient, tmp_path: Path) -> None:

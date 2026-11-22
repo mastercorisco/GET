@@ -33,5 +33,7 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [micro-F2-write-session-F04_B07.md](micro-F2-write-session-F04_B07.md) | F2 | Prompt get-write-spec F04_B07 |
 | [micro-F2-review-session-F04_B07.md](micro-F2-review-session-F04_B07.md) | F2 | Prompt get-review F04_B07 |
 | [micro-F2-retro-F04_B07.md](micro-F2-retro-F04_B07.md) | F2 | Retro dry-run M2 |
+| [micro-F2-M2-production-checklist.md](micro-F2-M2-production-checklist.md) | F2 | Fecho M2 produção (humano) |
+| [micro-F3-piloto-EXECUTION-LOG.md](micro-F3-piloto-EXECUTION-LOG.md) | F3 | Registo reutilização (pendente) |
 | [micro-T1-terminology-search.md](micro-T1-terminology-search.md) | T1 | `GET /api/terminology/search` |
 | [micro-T2-mcp-get-server.md](micro-T2-mcp-get-server.md) | T2 / F4 | MCP local (documentado; ADR-063) |

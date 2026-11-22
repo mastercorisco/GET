@@ -42,9 +42,17 @@ mcp-get/
 
 Exemplo de config Cursor: documentar em `mcp-get/README.md` quando existir; **não** commitar segredos.
 
+## Pré-voo automático (sem MCP)
+
+```powershell
+python backend/scripts/t2_readiness_check.py --project-id <UUID>
+```
+
+Valida `health/workspace`, `projects/.../summary` (com `latest_llm_*` se export existir) e `exports/llm-generation/latest`. **Não** substitui o checklist humano abaixo.
+
 ## Critérios para iniciar implementação (T2.0)
 
-- [ ] **M2** piloto: get-write-spec → get-review → GET-PACKAGE aceite.
+- [ ] **M2** piloto: get-write-spec → get-review → GET-PACKAGE aceite — [micro-F2-M2-production-checklist.md](micro-F2-M2-production-checklist.md).
 - [ ] ≥2 skills além de get-orient / get-lexicon validadas em sessão real (ex. get-grill).
 - [ ] Servidor GET estável no workspace; base URL documentada.
 - [ ] Engenheiro aceita que exports **ou** MCP bastam para leitura (não ambos obrigatórios).

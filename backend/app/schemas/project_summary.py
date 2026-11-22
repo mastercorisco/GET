@@ -18,3 +18,5 @@ class ProjectSummaryResponse(BaseModel):
     imports_staged: int = 0
     merge_sessions_open: int = 0
     latest_package_exports: list[LatestExportSnippet] = Field(default_factory=list)
+    latest_llm_export_id: str | None = None
+    latest_llm_zip_path: str | None = None
