@@ -90,6 +90,8 @@ Existem duas entradas para o mesmo modelo:
 1. criação direta na Biblioteca EDA;
 2. criação contextual num projeto ou bloco.
 
+No cliente, o separador **Projecto → Conhecimento** permite criar unidades no âmbito do projeto activo, editar o rascunho (`PATCH /draft`), concluir revisão e manter a ficha técnica opcional, com o mesmo ciclo rascunho/revisão da biblioteca.
+
 Estrutura mínima obrigatória:
 
 - título;

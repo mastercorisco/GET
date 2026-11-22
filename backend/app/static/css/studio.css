@@ -769,6 +769,18 @@ button.secondary.danger:hover {
   background: color-mix(in srgb, var(--accent, #3b6ea8) 12%, transparent);
 }
 
+#pkList .item.is-editing {
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent, #3b6ea8) 12%, transparent);
+  padding: 0.35rem 0.45rem;
+  margin-top: 0.5rem;
+}
+
+#pkList .item button.secondary {
+  margin-top: 0.25rem;
+  margin-right: 0.35rem;
+}
+
 .project-list-panel.list-panel {
   max-height: min(10rem, 28vh);
   overflow-y: auto;

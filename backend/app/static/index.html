@@ -251,13 +251,17 @@
           </details>
         </div>
         <div class="route-tab-panel" data-route-tab="pknowledge" hidden>
-          <label for="pkTitle">Título</label>
+          <p>Crie ou edite o rascunho da unidade. O conteúdo aprovado em revisão mantém-se na história até carregar em «Concluir revisão».</p>
+          <p id="pkDraftMeta" data-help-key="knowledge.draft">Nenhuma unidade seleccionada — preencha os campos para criar ou seleccione na lista.</p>
+          <label for="pkTitle" data-help-key="knowledge.title">Título</label>
           <input id="pkTitle" />
-          <label for="pkContent">Conteúdo</label>
+          <label for="pkContent" data-help-key="knowledge.content">Conteúdo</label>
           <textarea id="pkContent"></textarea>
-          <label for="pkContext">Contexto</label>
+          <label for="pkContext" data-help-key="knowledge.origin_context">Contexto de origem</label>
           <input id="pkContext" />
           <button type="button" id="pkCreate">Criar unidade no projeto</button>
+          <button type="button" id="pkDraftCancel" class="secondary" hidden>Cancelar edição</button>
+          <h3>Unidades (projecto)</h3>
           <div id="pkList" class="list-panel"></div>
           <h3>Ficha técnica (projecto)</h3>
           <p id="pkProfileMeta">Seleccione uma unidade na lista do projecto.</p>

@@ -114,6 +114,48 @@ def test_self_relation_is_rejected(client: TestClient, tmp_path: Path) -> None:
     assert allowed.json()["relation_type"] == "related_to"
 
 
+def test_project_knowledge_draft_patch_and_conclude(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    templates = client.get("/api/projects/templates").json()
+    v1 = templates[0]["versions"][0]["id"]
+    project = client.post(
+        "/api/projects",
+        json={"template_version_id": v1, "name": "P-K", "intervention_type": "brownfield"},
+    )
+    assert project.status_code == 200
+    project_id = project.json()["id"]
+    created = client.post(
+        "/api/knowledge",
+        json={
+            "title": "Unidade projecto",
+            "content": "conteúdo inicial",
+            "origin_context": "ensaio",
+            "scope_type": "project",
+            "scope_id": project_id,
+        },
+    )
+    assert created.status_code == 200
+    item_id = created.json()["id"]
+    assert created.json()["scope_type"] == "project"
+    assert created.json()["scope_id"] == project_id
+
+    patched = client.patch(
+        f"/api/knowledge/{item_id}/draft",
+        json={
+            "title": "Unidade editada",
+            "content": "conteúdo novo",
+            "origin_context": "ensaio",
+        },
+    )
+    assert patched.status_code == 200
+    assert patched.json()["title"] == "Unidade editada"
+
+    concluded = client.post(f"/api/knowledge/{item_id}/conclude")
+    assert concluded.status_code == 200
+    assert concluded.json()["revision_count"] == 1
+    assert len(concluded.json()["revisions"]) == 1
+
+
 def test_search_returns_library_title(client: TestClient, tmp_path: Path) -> None:
     _workspace(client, tmp_path)
     _create(client, "Bombagem de fuelóleo", "circuito de alimentação")
