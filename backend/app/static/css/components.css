@@ -634,3 +634,124 @@ button.linkish.field-help-concept-btn {
   margin-top: 1rem;
   font-weight: 600;
 }
+
+/* Backups — lista densa, acções à direita */
+.backups-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 0 0.35rem;
+  padding: 0.15rem 0 0.35rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.backups-panel__head h2 {
+  margin: 0;
+}
+
+.backups-panel__intro {
+  margin: 0.35rem 0 0.5rem;
+}
+
+.backups-panel__create {
+  flex-shrink: 0;
+}
+
+.backups-panel button {
+  margin-top: 0;
+  margin-right: 0;
+  padding: 0.22rem 0.55rem;
+  font-size: 0.8rem;
+  line-height: 1.25;
+}
+
+.backups-panel__status {
+  margin: 0.35rem 0;
+  font-size: 0.85rem;
+}
+
+.backups-panel__status.error {
+  margin-top: 0.35rem;
+}
+
+.backups-panel__list {
+  margin-top: 0.25rem;
+}
+
+.backup-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.backup-item.is-expanded {
+  background: var(--color-bg);
+}
+
+.backup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  border-bottom: none;
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+.backup-row__detail {
+  padding: 0 0 0.4rem 0.25rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.backup-row__detail[hidden] {
+  display: none;
+}
+
+.backup-row__detail dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.1rem 0.65rem;
+}
+
+.backup-row__detail dt {
+  margin: 0;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.backup-row__detail dd {
+  margin: 0;
+  word-break: break-all;
+}
+
+.backup-row__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.backup-row__meta {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.backup-row__sha {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.backup-row__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.3rem;
+}

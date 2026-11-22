@@ -747,16 +747,20 @@
         
       </section>
 
-      <section class="route-panel card " data-route="backups">
+      <section class="route-panel card backups-panel" data-route="backups">
         <div class="screen-guide-panel" data-screen-guide="backups" hidden></div>
-        <h2>Backups</h2>
-        
-        
-        <p class="lead">Backups locais do workspace. Crie um backup crítico antes de importações ou migrações.</p>
-        <button type="button" id="backupCreateCritical" class="secondary">Criar backup crítico</button>
-        <p id="backupStatus" hidden></p>
-        <div id="backupList"></div>
-
+        <div class="backups-panel__head">
+          <h2>Backups</h2>
+          <button type="button" id="backupCreateCritical" class="secondary backups-panel__create">
+            Criar backup crítico
+          </button>
+        </div>
+        <p class="choice-hint backups-panel__intro">
+          Backup crítico antes de import, consolidate ou migração (F0). Restauro gera
+          <code>pre_restore_guard_*</code>.
+        </p>
+        <p id="backupStatus" class="backups-panel__status" hidden></p>
+        <div id="backupList" class="backups-panel__list"></div>
       </section>
 
       <section class="route-panel card " data-route="settings">

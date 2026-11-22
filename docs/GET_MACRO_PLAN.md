@@ -23,7 +23,7 @@ O GET **não redige** o caderno. A app exporta contratos (GET-PACKAGE, GET-LLM);
 |--------|------------------|
 | **Engenheiro** | Autoridade técnica; aceitar/rejeitar propostas; marcar `ready` / `approved` nos pontos; baseline |
 | **GET (app)** | Fonte de verdade; validação determinística; export/import roundtrip |
-| **Agente (Cursor, Claude, …)** | READ → REASON → PROPOSE; organização opcional de ficheiros em disco; **não** escreve SQLite directamente |
+| **Agente (Cursor, Claude, …)** | READ → REASON → PROPOSE (ou **só ANSWER** em get-orient); organização opcional de ficheiros em disco; **não** escreve SQLite directamente |
 | **Material de apoio** | PDF, MD, SharePoint (links); **não** fonte de verdade — só leitura para skills |
 
 **Proveniência sem gestão de pastas na app (ADR-008):** registar origem com `Reference` (`citation`, `notes`, `internal_location` para caminho local) ou URL SharePoint em `citation`/`notes`; premissas com `reference_id`; conhecimento com `origin_context`. A organização física fica **fora** do GET.
@@ -39,6 +39,8 @@ As fases são **mapa de paragem**, não papelada. O agente ajuda a: traduzir ped
 ### F0 — Estrutura e importação fiáveis
 
 **Objectivo:** Árvore documental e tipos conceptuais correctos após roundtrip; sem “baralhar” fascículo, bloco, ponto, knowledge, premissa.
+
+**Orientação:** após consolidate ou quando o estado no disco/UI estiver confuso, sessão **get-orient** (só leitura): export GET-LLM mestre + manifest, ou GET-PACKAGE do fascículo afectado — **sem** nova proposta na mesma conversa. Ver [GET_SKILLS_PLAN.md](GET_SKILLS_PLAN.md#get-orient--ponto-de-situação-só-leitura).
 
 **Problemas a atacar (prioridade alta):**
 - Reorganização feita na LLM num único ficheiro → import conceptualmente sujo.
@@ -58,7 +60,7 @@ As fases são **mapa de paragem**, não papelada. O agente ajuda a: traduzir ped
 
 **Objectivo:** Pontos informativos e completos para redação de qualidade.
 
-**Skills:** [get-grill](GET_SKILLS_PLAN.md), [get-research](GET_SKILLS_PLAN.md) pontual, propostas via GET-PACKAGE.
+**Skills:** [get-orient](GET_SKILLS_PLAN.md) (ponto de situação, antes do piloto), [get-grill](GET_SKILLS_PLAN.md), [get-research](GET_SKILLS_PLAN.md) pontual, propostas via GET-PACKAGE.
 
 **Modo “grill me”:** diálogo para confirmar ideias **antes** de as incluir na proposta; a skill devolve conteúdo estruturado, não autoridade.
 
@@ -106,6 +108,7 @@ Candidatos isolados (um de cada vez): skills Cursor versionadas; MCP só leitura
 
 | ID | Nome | Prova de valor |
 |----|------|----------------|
+| **M0** *(transversal)* | Ponto de situação legível | get-orient sobre mestre/índice → foco F0/F1 escolhido com evidência no export |
 | **M1** | Bloco piloto preparado | Grill + research pontual → pontos `ready` credíveis |
 | **M2** | Ciclo redação uma vez | GET-LLM → get-write-spec → get-review → GET-PACKAGE |
 | **M3** | Reutilização | Conhecimento centralizado citável (refs, decisões, glossário) |

@@ -10,7 +10,7 @@ Um bloco no fascículo estabilizado em F0 com pontos **harness** completos; cami
 
 | Incluído | Excluído |
 |----------|----------|
-| Sessões get-grill + get-research pontual | get-write-spec (→ F2) |
+| **get-orient** (ponto de situação) → sessões get-grill + get-research pontual | get-write-spec (→ F2) |
 | Propostas GET-PACKAGE (campos ponto, refs) | decision/1, MCP |
 | `Reference` com URL SharePoint ou caminho em `citation`/`notes` | Marcar `approved` via import |
 
