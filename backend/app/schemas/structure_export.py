@@ -64,6 +64,7 @@ class StructureTreeNodeSnapshot(BaseModel):
     title: str
     depth: int
     sort_key: int
+    block_status: str | None = None
     block_model: BlockModelSnapshot | None = None
     points: list[PointSummarySnapshot] | list[PointFullSnapshot] | None = None
     children: list[StructureTreeNodeSnapshot] = Field(default_factory=list)

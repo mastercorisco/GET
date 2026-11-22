@@ -21,7 +21,10 @@ export function initStructureExportView() {
 
   function syncScopeRadios() {
     const hasSelection = !!selectedRootId;
-    if (scopeSubtree) scopeSubtree.disabled = !hasSelection;
+    if (scopeSubtree) {
+      scopeSubtree.disabled = !hasSelection;
+      if (!hasSelection) scopeSubtree.checked = false;
+    }
     if (!hasSelection && scopeFull) scopeFull.checked = true;
   }
 

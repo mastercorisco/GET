@@ -5,6 +5,9 @@ from io import BytesIO
 
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.oxml.ns import qn
+from docx.shared import Cm
+from docx.text.paragraph import Paragraph
 
 from app.domain.document_lexicon import label_pt, title_with_production_label
 from app.schemas.structure_export import (
@@ -14,35 +17,49 @@ from app.schemas.structure_export import (
     StructureTreeNodeSnapshot,
 )
 
+LIST_NUMBER_STYLE = "List Number"
+
 
 def _heading_level(depth: int) -> int:
     return min(max(depth + 1, 2), 6)
 
 
+def _restart_list_numbering(paragraph: Paragraph) -> None:
+    """Reinicia numeração Word no primeiro item de cada lista de pontos."""
+    p_pr = paragraph._p.get_or_add_pPr()
+    num_pr = p_pr.get_or_add_numPr()
+    for child in list(num_pr):
+        num_pr.remove(child)
+    ilvl = num_pr.makeelement(qn("w:ilvl"), {qn("w:val"): "0"})
+    num_id = num_pr.makeelement(qn("w:numId"), {qn("w:val"): "1"})
+    num_pr.append(ilvl)
+    num_pr.append(num_id)
+
+
+def _add_indented_note(document: Document, prefix: str, text: str) -> None:
+    para = document.add_paragraph(f"{prefix}{text}")
+    para.paragraph_format.left_indent = Cm(1.0)
+
+
 def _add_points(document: Document, points: list[PointSummarySnapshot] | list[PointFullSnapshot] | None) -> None:
     if not points:
         return
-    for p in points:
+    for idx, p in enumerate(points):
+        title = p.title.strip()
+        para = document.add_paragraph(title, style=LIST_NUMBER_STYLE)
+        if idx == 0:
+            _restart_list_numbering(para)
         if isinstance(p, PointFullSnapshot):
-            document.add_paragraph(
-                f"{p.order}. {p.title} ({p.status}, {p.llm_freedom})",
-                style="List Bullet",
-            )
             if p.core_idea.strip():
-                document.add_paragraph(f"Ideia central: {p.core_idea.strip()}")
+                _add_indented_note(document, "Ideia central: ", p.core_idea.strip())
             if p.intended_outcome.strip():
-                document.add_paragraph(f"Resultado: {p.intended_outcome.strip()}")
+                _add_indented_note(document, "Resultado: ", p.intended_outcome.strip())
             if p.premises:
-                document.add_paragraph("Premissas:", style="List Bullet")
+                document.add_paragraph("Premissas:")
                 for pr in p.premises:
-                    document.add_paragraph(str(pr.get("statement", "")), style="List Bullet 2")
-        else:
-            document.add_paragraph(
-                f"{p.order}. {p.title} ({p.status}) — "
-                f"must={p.must_include_count}, abertos={p.open_questions_count}, "
-                f"critérios={p.acceptance_criteria_count}",
-                style="List Bullet",
-            )
+                    statement = str(pr.get("statement", "")).strip()
+                    if statement:
+                        document.add_paragraph(statement, style="List Bullet")
 
 
 def _walk_node(document: Document, node: StructureTreeNodeSnapshot) -> None:

@@ -149,6 +149,37 @@ def test_structure_export_docx_and_xlsx(client: TestClient, tmp_path: Path) -> N
     assert any(v and "F" in str(v) for v in cells)
 
 
+def test_docx_includes_points_without_block_model(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    pid, _, _ = _project_with_tree(client)
+    res = client.post(
+        f"/api/projects/{pid}/document-structure/export",
+        json={"format": "docx", "include_block_model": False, "point_detail": "summary"},
+    )
+    assert res.status_code == 200
+    from docx import Document
+
+    doc = Document(BytesIO(res.content))
+    blob = "\n".join(p.text for p in doc.paragraphs)
+    assert "Ponto 1" in blob
+    assert "must=" not in blob
+    assert "(ready)" not in blob
+
+
+def test_xlsx_no_pontos_sheet_when_point_detail_none(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    pid, _, _ = _project_with_tree(client)
+    res = client.post(
+        f"/api/projects/{pid}/document-structure/export",
+        json={"format": "xlsx", "point_detail": "none"},
+    )
+    assert res.status_code == 200
+    from openpyxl import load_workbook
+
+    wb = load_workbook(BytesIO(res.content))
+    assert "Pontos" not in wb.sheetnames
+
+
 def test_structure_export_pdf_and_xmind(client: TestClient, tmp_path: Path) -> None:
     _workspace(client, tmp_path)
     pid, _, _ = _project_with_tree(client)

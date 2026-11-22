@@ -189,6 +189,7 @@ def _build_tree_node(
                 depth=depth + 1,
             )
         )
+    block_status = (node.block_status or "active") if node.node_type == "block" else None
     return StructureTreeNodeSnapshot(
         id=node.id,
         node_type=node.node_type,
@@ -196,6 +197,7 @@ def _build_tree_node(
         title=node.title,
         depth=depth,
         sort_key=node.sort_key,
+        block_status=block_status,
         block_model=block_model,
         points=points,
         children=children,
