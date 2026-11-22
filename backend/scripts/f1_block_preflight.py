@@ -26,18 +26,19 @@ from app.services.workspace_service import workspace_session
 
 
 def _resolve_block(session, project_id: str, code: str) -> tuple[str, str]:
+    code_norm = code.strip().upper()
     block_id = session.scalar(
         select(BaselineDocumentCode.document_node_id)
         .join(DocumentNode, DocumentNode.id == BaselineDocumentCode.document_node_id)
         .where(
             DocumentNode.project_id == project_id,
             DocumentNode.node_type == "block",
-            BaselineDocumentCode.display_code == code,
+            func.upper(BaselineDocumentCode.display_code) == code_norm,
         )
         .limit(1)
     )
     if not block_id:
-        raise ProjectError(f"Bloco {code!r} não encontrado.")
+        raise ProjectError(f"Bloco {code_norm!r} não encontrado.")
     block = session.get(DocumentNode, block_id)
     title = block.title if block else ""
     return block_id, title
@@ -60,7 +61,7 @@ def main() -> int:
 
     with workspace_session(settings) as (session, _paths):
         try:
-            block_id, block_title = _resolve_block(session, args.project_id, args.block.upper())
+            block_id, block_title = _resolve_block(session, args.project_id, args.block)
         except ProjectError as exc:
             print(f"ERRO: {exc}", file=sys.stderr)
             return 1

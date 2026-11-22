@@ -38,7 +38,7 @@ Candidatos paralelos (no chat ou secção do pacote): novos `TerminologyConcept`
 3. Secção **«Para get-research»** se houver lacunas documentais.
 4. **Não** incluir `status: ready` / `approved` nos pontos — marcação é humana na UI após import.
 
-Validar mentalmente contra regras da app (`validate_point`): título, ideia central, listas mínimas antes de sugerir ao engenheiro marcar ready.
+Validar mentalmente contra regras da app (`validate_point`): título, ideia central, listas mínimas antes de sugerir ao engenheiro marcar ready. Na app: `backend/scripts/f1_ready_check.py --block <CODE>`.
 
 ## Proibido
 

@@ -41,6 +41,11 @@ def main() -> int:
         help="auto=fascicle→structure-only, block→f0-safe",
     )
     parser.add_argument("--dry-run", action="store_true", help="Só import + merge; não decide nem consolida")
+    parser.add_argument(
+        "--confirm-protected",
+        action="store_true",
+        help="Aceitar propostas com protected_touch (sem isto são ignoradas).",
+    )
     args = parser.parse_args()
 
     path = args.path.resolve()
@@ -96,6 +101,10 @@ def main() -> int:
             print(f"SKIP (não aceite auto): {prop.proposal_kind} · {prop.title[:60]}")
             skipped += 1
             continue
+        if prop.protected_touch and not args.confirm_protected:
+            print(f"SKIP (protegido): {prop.proposal_kind} · {prop.title[:60]}")
+            skipped += 1
+            continue
         try:
             decide_proposal(
                 settings,
@@ -104,7 +113,7 @@ def main() -> int:
                 ProposalDecisionRequest(
                     decision="accepted",
                     destination="project",
-                    confirmed_protected=prop.protected_touch,
+                    confirmed_protected=bool(prop.protected_touch and args.confirm_protected),
                 ),
             )
             accepted += 1

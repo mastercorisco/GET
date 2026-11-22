@@ -542,6 +542,10 @@ const rootPath = document.getElementById("rootPath");
         return "other";
       }
 
+      function proposalNeedsManualDecision(prop) {
+        return !!(prop && (prop.protected_touch || prop.conflict));
+      }
+
       function showConceptualWarnings(warnings) {
         lastConceptualWarnings = Array.isArray(warnings) ? warnings.slice() : [];
         const el = document.getElementById("impConceptualWarnings");
@@ -656,8 +660,9 @@ const rootPath = document.getElementById("rootPath");
       }
 
       function acceptVisibleProposals(projectId, merge, proposals, mergeRoot) {
-        const pending = (proposals || []).filter(function (p) {
-          return !p.decision;
+        const pool = proposals || [];
+        const pending = pool.filter(function (p) {
+          return !p.decision && !proposalNeedsManualDecision(p);
         });
         if (!pending.length) return Promise.resolve(0);
         return pending
@@ -815,18 +820,32 @@ const rootPath = document.getElementById("rootPath");
           batchBtn.className = "secondary";
           batchBtn.textContent = "Aceitar pendentes visíveis";
           batchBtn.addEventListener("click", function () {
-            const visible = proposals.filter(function (prop) {
+            const visibleAll = proposals.filter(function (prop) {
               const g = proposalGroup(prop.proposal_kind);
               return (impProposalGroupFilter === "all" || impProposalGroupFilter === g) && !prop.decision;
             });
+            const visible = visibleAll.filter(function (prop) {
+              return !proposalNeedsManualDecision(prop);
+            });
+            const manualCount = visibleAll.length - visible.length;
             if (!visible.length) {
-              setImportStatus("Nenhuma proposta pendente no filtro actual.");
+              if (manualCount) {
+                setImportStatus(
+                  manualCount +
+                    " proposta(s) protegida(s)/conflito no filtro — decida manualmente (confirmação obrigatória)."
+                );
+              } else {
+                setImportStatus("Nenhuma proposta pendente no filtro actual.");
+              }
               return;
             }
             const label = _PROPOSAL_GROUP_LABELS[impProposalGroupFilter] || impProposalGroupFilter;
+            const manualHint = manualCount
+              ? " (" + manualCount + " protegida(s)/conflito ficam de fora.)"
+              : "";
             if (
               !window.confirm(
-                "Aceitar " + visible.length + " proposta(s) no grupo «" + label + "»? Revise conflitos antes."
+                "Aceitar " + visible.length + " proposta(s) no grupo «" + label + "»?" + manualHint
               )
             ) {
               return;
@@ -834,7 +853,11 @@ const rootPath = document.getElementById("rootPath");
             batchBtn.disabled = true;
             acceptVisibleProposals(projectId, merge, visible, mergeRoot)
               .then(function (n) {
-                setImportStatus(n + " proposta(s) marcadas como aceites — guarde ou revise protegidos.");
+                var msg = n + " proposta(s) marcadas como aceites.";
+                if (manualCount) {
+                  msg += " " + manualCount + " protegida(s)/conflito ignoradas.";
+                }
+                setImportStatus(msg);
                 visible.forEach(function (p) {
                   p.decision = "accepted";
                 });
@@ -1781,9 +1804,17 @@ const rootPath = document.getElementById("rootPath");
 
       function acceptBlockPackageProposals(projectId, merge) {
         const mergeRoot = "/api/projects/" + projectId + "/packages/merge/";
-        const batch = (merge.proposals || []).filter(function (p) {
-          return _BLOCK_PACKAGE_PROPOSAL_KINDS.indexOf(p.proposal_kind) >= 0;
+        const all = merge.proposals || [];
+        const batch = all.filter(function (p) {
+          return (
+            _BLOCK_PACKAGE_PROPOSAL_KINDS.indexOf(p.proposal_kind) >= 0 &&
+            !p.decision &&
+            !proposalNeedsManualDecision(p)
+          );
         });
+        const skipped = all.filter(function (p) {
+          return _BLOCK_PACKAGE_PROPOSAL_KINDS.indexOf(p.proposal_kind) >= 0 && proposalNeedsManualDecision(p);
+        }).length;
         if (!batch.length) return Promise.resolve(0);
         return batch
           .reduce(function (chain, prop) {
@@ -1796,7 +1827,7 @@ const rootPath = document.getElementById("rootPath");
                   body: JSON.stringify({
                     decision: "accepted",
                     destination: "project",
-                    confirmed_protected: !!prop.protected_touch,
+                    confirmed_protected: false,
                   }),
                 },
                 "Falha ao aceitar proposta."
@@ -1804,7 +1835,7 @@ const rootPath = document.getElementById("rootPath");
             });
           }, Promise.resolve())
           .then(function () {
-            return batch.length;
+            return { accepted: batch.length, skippedManual: skipped };
           });
       }
 
@@ -1850,10 +1881,15 @@ const rootPath = document.getElementById("rootPath");
           setImportStatus("Alterações: " + n + " proposta(s).");
           if (opts.autoApplyBlock && (opts.scopeKind || "") === "block") {
             setImportStatus("A aceitar propostas de conteúdo do bloco…");
-            return acceptBlockPackageProposals(projectId, merge).then(function (acceptedCount) {
+            return acceptBlockPackageProposals(projectId, merge).then(function (result) {
+              const acceptedCount = result && result.accepted != null ? result.accepted : result;
+              const skippedManual = result && result.skippedManual != null ? result.skippedManual : 0;
               if (!acceptedCount) {
                 setImportStatus(
-                  "Sem propostas de pontos/bloco — decida manualmente ou verifique o JSON devolvido."
+                  skippedManual
+                    ? skippedManual +
+                        " proposta(s) protegida(s)/conflito — confirme manualmente antes de consolidar."
+                    : "Sem propostas de pontos/bloco — decida manualmente ou verifique o JSON devolvido."
                 );
                 return merge;
               }

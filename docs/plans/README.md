@@ -27,6 +27,7 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [micro-F1-bloco-F04_B07-grill.md](micro-F1-bloco-F04_B07-grill.md) | F1 | **Piloto grill activo** |
 | [micro-F1-grill-session-prompt.md](micro-F1-grill-session-prompt.md) | F1 | Prompt get-grill F04_B07 |
 | [micro-F1-piloto-EXECUTION-LOG.md](micro-F1-piloto-EXECUTION-LOG.md) | F1 | Registo M1 |
+| [fixtures/f1_grill_F04_B07_patches.json](fixtures/f1_grill_F04_B07_patches.json) | F1 | Patches grill repetíveis F04_B07 |
 | [micro-F2-terminology-llm-export.md](micro-F2-terminology-llm-export.md) | F2 / T0 | Glossário no pacote GET-LLM |
 | [micro-T1-terminology-search.md](micro-T1-terminology-search.md) | T1 | `GET /api/terminology/search` |
 | [micro-T2-mcp-get-server.md](micro-T2-mcp-get-server.md) | T2 / F4 | MCP local (documentado; ADR-063) |

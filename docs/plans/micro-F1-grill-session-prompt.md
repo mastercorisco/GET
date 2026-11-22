@@ -33,8 +33,11 @@ Saída: JSON GET-PACKAGE completo; rules_hash inalterado.
 ```powershell
 python scripts/validate_get_package_file.py "<json>" --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52
 python scripts/f0_roundtrip_apply.py "<json>" --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52
+python scripts/f1_ready_check.py --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52 --block F04_B07
 ```
 
 `f0_roundtrip_apply` em modo **auto** aceita propostas de pontos/premissas em pacotes bloco.
+
+Dry-run repetível com fixture: `docs/plans/fixtures/f1_grill_F04_B07_patches.json` + `f1_patch_block_point.py --patches`.
 
 Registar em [micro-F1-piloto-EXECUTION-LOG.md](micro-F1-piloto-EXECUTION-LOG.md).

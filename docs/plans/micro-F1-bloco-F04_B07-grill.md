@@ -22,9 +22,9 @@ F01_B01 já tem **4/4** pontos `ready` (M1 nominal no bloco piloto estrutural). 
    ```
 3. Sessão **get-grill** sobre `F04_B07_package.json` (modo F0-content-block no ritual).
 4. `validate_get_package_file.py` → `f0_roundtrip_apply.py` (modo **auto** em bloco) ou import na UI (grupo **Pontos**).
-5. Dry-run sem LLM: [micro-F1-piloto-EXECUTION-LOG.md](micro-F1-piloto-EXECUTION-LOG.md).
+5. Patches fixture ou dry-run: [fixtures/f1_grill_F04_B07_patches.json](fixtures/f1_grill_F04_B07_patches.json), [micro-F1-piloto-EXECUTION-LOG.md](micro-F1-piloto-EXECUTION-LOG.md).
 6. Prompt grill: [micro-F1-grill-session-prompt.md](micro-F1-grill-session-prompt.md).
-7. Consolidate → marcar **`ready`** na UI (humano).
+7. `f1_ready_check.py` → marcar **`ready`** na UI (humano) nos candidatos com harness OK.
 
 ## Entrega M1
 

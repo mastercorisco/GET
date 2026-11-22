@@ -1,0 +1,26 @@
+[
+  {
+    "title_contains": "materiais removidos",
+    "append_open_question": {
+      "prompt": "Confirmar com o cliente os fluxos de entrega e classificação ADR/LER para resíduos de cabos e estruturas metálicas.",
+      "answer": ""
+    }
+  },
+  {
+    "title_contains": "Cablagem",
+    "append_must_include": [
+      {
+        "text": "Distinguir cabos desativados com etiqueta de reserva, cabos a remover e cabos em espera até confirmação da exploração."
+      }
+    ],
+    "append_guidance": "Evitar inventar secções normativas; sinalizar lacunas como open_question e usar get-research se o PDF estiver em disco."
+  },
+  {
+    "title_contains": "conservar, reutilizar",
+    "append_must_include": [
+      {
+        "text": "Lista com identificação de ativo, localização actual e destino (reutilização, reserva, entrega ou manutenção em contingência)."
+      }
+    ]
+  }
+]

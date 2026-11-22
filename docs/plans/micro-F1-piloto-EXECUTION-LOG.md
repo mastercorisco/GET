@@ -4,14 +4,15 @@
 |--------|--------|
 | Bloco activo | [micro-F1-bloco-F04_B07-grill.md](micro-F1-bloco-F04_B07-grill.md) |
 | Bloco estável (opcional) | F01_B01 — 4/4 `ready` |
-| Estado | **Em curso** (dry-run grill 2026-11-22 feito) |
+| Estado | **Em curso** (ciclo grill fixture 2026-11-22; marcar `ready` na UI) |
 
 ## Ferramentas
 
 | Script | Uso |
 |--------|-----|
 | `f1_block_preflight.py` | Status por ponto + `--export` |
-| `f1_patch_block_point.py` | Dry-run mínimo (guidance) sem LLM |
+| `f1_patch_block_point.py` | Dry-run / patches JSON (`--patches`) |
+| `f1_ready_check.py` | Harness `validate_point` por bloco |
 | `f0_roundtrip_apply.py` | Import/merge/consolidate (`--accept auto` em bloco) |
 
 ## Dry-run grill (opcional)
@@ -31,11 +32,27 @@ python scripts/f0_roundtrip_apply.py "imports\f1_dryrun_f04_b07.json" --project-
 - Ponto: Execução brownfield — +1 `development_guidance`
 - Backup consolidate: `df61c5f5-12d2-4d39-801e-ecad7b9bd0f7`
 
+## Ciclo grill (fixture / agente 2026-11-22)
+
+- Ficheiro patches: [fixtures/f1_grill_F04_B07_patches.json](fixtures/f1_grill_F04_B07_patches.json)
+- JSON: `imports/f1_grill_f04_b07.json` (workspace testes)
+- 3× `point_update` consolidados · backup `5d1235f6-0089-4cd5-aeff-92edb84dc918`
+- `f1_ready_check`: **5 candidatos** a `ready` (harness OK; status ainda draft/incomplete)
+
+```powershell
+python scripts/f1_patch_block_point.py "exports\PKG-BLK-F04_B07\F04_B07_package.json" `
+  --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52 `
+  --patches ..\docs\plans\fixtures\f1_grill_F04_B07_patches.json `
+  --out "imports\f1_grill_f04_b07.json"
+python scripts/f0_roundtrip_apply.py "imports\f1_grill_f04_b07.json" --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52
+python scripts/f1_ready_check.py --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52 --block F04_B07
+```
+
 ## Piloto LLM (get-grill)
 
-- [ ] Sessão com [micro-F1-grill-session-prompt.md](micro-F1-grill-session-prompt.md)
-- [ ] Import + consolidate
-- [ ] Marcar `ready` na UI nos pontos alvo
+- [x] Ciclo proposta+import (fixture ou sessão)
+- [ ] Sessão adicional com [micro-F1-grill-session-prompt.md](micro-F1-grill-session-prompt.md) se quiser enriquecer mais pontos
+- [ ] Marcar `ready` na UI nos pontos candidatos (`f1_ready_check`)
 
 ## Definition of Done M1
 

@@ -281,3 +281,74 @@ def test_f1_patch_block_point_missing_title(client: TestClient, tmp_path: Path) 
         text=True,
     )
     assert proc.returncode != 0
+
+
+def test_f1_ready_check_runs_on_block(client: TestClient, tmp_path: Path) -> None:
+    from tests.integration.test_get_package import _setup_block
+
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f1_ready_check.py"),
+            "--project-id",
+            pid,
+            "--block",
+            "F01_B01",
+            "--json",
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert "point_count" in proc.stdout
+
+
+def test_f1_patch_block_point_patches_file(client: TestClient, tmp_path: Path) -> None:
+    import json
+
+    from tests.integration.test_get_package import _setup_block
+
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    assert export.status_code == 200
+    pkg_path = Path(export.json()["file_path"])
+    patches = [
+        {
+            "title_contains": "Ponto",
+            "append_guidance": "Linha de orientação de teste.",
+        }
+    ]
+    patch_file = tmp_path / "patches.json"
+    patch_file.write_text(json.dumps(patches), encoding="utf-8")
+    out = tmp_path / "patched.json"
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f1_patch_block_point.py"),
+            str(pkg_path),
+            "--project-id",
+            pid,
+            "--patches",
+            str(patch_file),
+            "--out",
+            str(out),
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stderr + proc.stdout
+    assert out.is_file()
