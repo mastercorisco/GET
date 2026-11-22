@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import uuid
 import zipfile
 from datetime import datetime, timezone
@@ -84,6 +85,55 @@ def list_exports(app_settings: AppSettings, project_id: str) -> list[ExportRecor
             )
         )
         return [_record_response(row) for row in rows]
+
+
+def latest_llm_generation_export(
+    app_settings: AppSettings,
+    project_id: str,
+    *,
+    profile: str | None = None,
+) -> LlmGenerationExportResponse:
+    with workspace_session(app_settings) as (session, paths):
+        stmt = select(ExportRecord).where(
+            ExportRecord.project_id == project_id,
+            ExportRecord.package_type == "llm_generation",
+        )
+        if profile:
+            stmt = stmt.where(ExportRecord.profile == profile)
+        row = session.scalar(stmt.order_by(ExportRecord.created_at.desc()).limit(1))
+        export_id = f"EXP-LLM-{project_id[:8]}"
+        prof = profile or (row.profile if row else "discussion")
+        if row is not None:
+            export_id = row.export_id
+            prof = row.profile
+
+        exp_dir = paths.exports_dir / export_id
+        zip_path = exp_dir / f"llm_generation_{prof}.zip"
+        if not zip_path.is_file():
+            zips = sorted(exp_dir.glob("llm_generation_*.zip")) if exp_dir.is_dir() else []
+            zip_path = zips[-1] if zips else zip_path
+        if not zip_path.is_file():
+            raise ExportError("Nenhum export GET-LLM (llm_generation) neste projecto.")
+
+        manifest_path = exp_dir / "manifest.json"
+        master_path = row.file_path if row else str(exp_dir / f"master_{prof}_llm.json")
+        if row is None and not Path(master_path).is_file():
+            masters = sorted(exp_dir.glob("master_*_llm.json")) if exp_dir.is_dir() else []
+            master_path = str(masters[0]) if masters else master_path
+
+        manifest: dict = {}
+        if manifest_path.is_file():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        sha = row.sha256 if row else ""
+        if not sha and Path(master_path).is_file():
+            sha = sha256_hex(Path(master_path).read_text(encoding="utf-8"))
+        return LlmGenerationExportResponse(
+            export_id=export_id,
+            file_path=master_path,
+            zip_path=str(zip_path),
+            sha256=sha,
+            manifest=manifest,
+        )
 
 
 def export_master(app_settings: AppSettings, project_id: str, body: MasterExportRequest) -> ExportRecordResponse:

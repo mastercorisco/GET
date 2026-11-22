@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import uuid
 import zipfile
 from pathlib import Path
 
@@ -137,6 +138,13 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
         json={"profile": "discussion", "include_draft": False},
     )
     assert response.status_code == 200, response.text
+    body = response.json()
+    latest = client.get(f"/api/projects/{pid}/exports/llm-generation/latest")
+    assert latest.status_code == 200
+    assert latest.json()["export_id"] == body["export_id"]
+    assert Path(latest.json()["zip_path"]).is_file()
+    missing = client.get(f"/api/projects/{uuid.uuid4()}/exports/llm-generation/latest")
+    assert missing.status_code == 400
     body = response.json()
     assert body["zip_path"]
     assert Path(body["zip_path"]).is_file()

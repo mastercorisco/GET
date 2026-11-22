@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from app.deps import get_settings
 from app.schemas.export import (
@@ -13,6 +13,7 @@ from app.services.export_service import (
     export_fascicle,
     export_llm_generation,
     export_master,
+    latest_llm_generation_export,
     list_exports,
 )
 from app.services.workspace_service import WorkspaceError
@@ -42,6 +43,17 @@ def exports_llm_generation(
     project_id: str, body: LlmGenerationExportRequest
 ) -> LlmGenerationExportResponse:
     return _run(lambda: export_llm_generation(get_settings(), project_id, body))
+
+
+@router.get(
+    "/projects/{project_id}/exports/llm-generation/latest",
+    response_model=LlmGenerationExportResponse,
+)
+def exports_llm_generation_latest(
+    project_id: str,
+    profile: str | None = Query(default=None, description="discussion | redaction"),
+) -> LlmGenerationExportResponse:
+    return _run(lambda: latest_llm_generation_export(get_settings(), project_id, profile=profile))
 
 
 @router.post("/projects/{project_id}/exports/master", response_model=ExportRecordResponse)

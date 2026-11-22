@@ -16,6 +16,7 @@
 | `f2_draft_from_export.py` | Dry-run MD a partir do JSON export (não canónico) |
 | `f2_glossary_report.py` | `avoid_terms` no rascunho |
 | `f2_m2_gate.py` | Gate tooling M2 (must_include + glossário) |
+| `f2_m2_workflow.py` | materialize → draft opcional → gate |
 | Skills | `get-write-spec`, `get-review` |
 
 ## Pré-voo M2

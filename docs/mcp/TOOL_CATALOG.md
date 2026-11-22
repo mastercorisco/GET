@@ -42,7 +42,7 @@ Base URL: `http://127.0.0.1:<porta>/api` (servidor GET activo).
 |-----|------------------|---------|
 | `confirm` em DELETE terminologia | tool `delete_terminology` segura | macro §6 T2 |
 | Relatório contagens / staging | `get-orient` sem cópia manual | macro §6 |
-| Endpoint “último export LLM por projecto” | evita MCP listar filesystem | opcional T2 |
+| Endpoint “último export LLM por projecto” | evita MCP listar filesystem | **feito** `GET .../llm-generation/latest` |
 
 ## Anti-padrões
 
