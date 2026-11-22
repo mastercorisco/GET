@@ -15,3 +15,4 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 | [micro-F1-bloco-piloto-grill.md](micro-F1-bloco-piloto-grill.md) | F1 | Esboço (após fecho F0; após get-orient opcional) |
 | [micro-F2-terminology-llm-export.md](micro-F2-terminology-llm-export.md) | F2 / T0 | Glossário no pacote GET-LLM |
 | [micro-T1-terminology-search.md](micro-T1-terminology-search.md) | T1 | `GET /api/terminology/search` |
+| [micro-T2-mcp-get-server.md](micro-T2-mcp-get-server.md) | T2 / F4 | MCP local (documentado; ADR-063) |

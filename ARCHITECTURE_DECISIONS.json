@@ -369,6 +369,12 @@
       "topic": "terminology_search_api",
       "decision": "GET /api/terminology/search com q obrigatório; sem project_id usa scope_type/scope_id como list; com project_id pesquisa biblioteca+projecto e texto de overrides; resposta TerminologySearchHit (concept + project_override opcional); matching AND por tokens em campos E05; leitura apenas, preparação T1/MCP.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-063",
+      "topic": "mcp_local_http_proxy",
+      "decision": "Servidor MCP local (stdio) futuro em pacote mcp-get/ separado do backend: apenas proxy HTTP para FastAPI em 127.0.0.1; nunca acesso directo ao SQLite; tools de leitura sem confirm; mutações apenas com confirm explícito na API (precedente restore backup). Implementação adiada até M2 fechado (macro F4/T2). Catálogo de tools em docs/mcp/TOOL_CATALOG.md alinhado a GET_SKILLS_PLAN.",
+      "status": "accepted"
     }
   ]
 }

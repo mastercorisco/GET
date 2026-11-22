@@ -36,3 +36,7 @@ curl "http://127.0.0.1:8000/api/terminology/search?q=termo&project_id=<uuid>"
 | get-orient | implementada |
 | get-lexicon | implementada |
 | get-grill, get-research, get-write-spec, get-review, get-decision | planeadas |
+
+## MCP (futuro)
+
+Servidor MCP **não faz parte** deste pacote. Documentação: [`docs/plans/micro-T2-mcp-get-server.md`](../docs/plans/micro-T2-mcp-get-server.md) e [`docs/mcp/TOOL_CATALOG.md`](../docs/mcp/TOOL_CATALOG.md) (ADR-063). Implementação após fecho **M2**.

@@ -244,4 +244,12 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | `GET /api/terminology/search` | **Feito** (ADR-062; [micro-T1-terminology-search.md](plans/micro-T1-terminology-search.md)) |
 | Skill get-lexicon (Cursor) | **Feito** (`agent-skills/get-lexicon`; piloto humano pendente) |
 
+### T2 — MCP local (F4)
+
+| Passo | Estado |
+|-------|--------|
+| ADR-063 + catálogo tools + micro-plano | **Feito** — [micro-T2-mcp-get-server.md](plans/micro-T2-mcp-get-server.md), [mcp/TOOL_CATALOG.md](mcp/TOOL_CATALOG.md) |
+| Implementação `mcp-get/` (stdio + proxy HTTP) | **Adiado** até fecho **M2** (checklist no micro-plano) |
+| Tools de escrita com `confirm` | **T2.1** — após T2.0 leitura |
+
 Actualizar este ficheiro quando fechares F0, M1, M2 ou M3, ou quando o backlog da secção 6 mudar de prioridade.

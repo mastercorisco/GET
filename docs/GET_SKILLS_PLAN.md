@@ -66,6 +66,12 @@ Fora do SQLite (ADR-008: a app não armazena anexos). Convenção recomendada po
 
 Skills versionadas no repo: **get-orient**, **get-lexicon** (MANIFEST em `agent-skills/MANIFEST.json`).
 
+## MCP GET (opcional, T2)
+
+Até **M2** fechado e onda **T2.0**, as skills **não dependem** de MCP: usam ficheiros em `exports/` e chamadas HTTP a `127.0.0.1` (search terminologia, knowledge FTS, etc.).
+
+Quando existir `mcp-get/` (ADR-063), será um **transporte stdio** que replica essas leituras (e, em T2.1, escritas com `confirm`) via FastAPI — **sem** SQLite directo. Catálogo futuro de tools: [`docs/mcp/TOOL_CATALOG.md`](mcp/TOOL_CATALOG.md). Plano: [`docs/plans/micro-T2-mcp-get-server.md`](plans/micro-T2-mcp-get-server.md).
+
 ## get-orient — ponto de situação (só leitura)
 
 **Problema:** O engenheiro precisa de perguntar “onde estamos?” (estrutura, harness, biblioteca, imports pendentes) **sem** abrir um ciclo de proposta nem misturar com grill ou redação.
