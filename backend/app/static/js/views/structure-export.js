@@ -6,11 +6,24 @@ export function initStructureExportView() {
   const pointRadios = document.querySelectorAll('input[name="docExportPoints"]');
   const premises = document.getElementById("docExportPremises");
   const rootHint = document.getElementById("docExportRootHint");
+  const scopeSubtree = document.getElementById("docExportScopeSubtree");
+  const scopeFull = document.getElementById("docExportScopeFull");
   const btn = document.getElementById("docExportBtn");
   const statusEl = document.getElementById("docExportStatus");
   if (!formatSel || !btn) return;
 
   let selectedRootId = null;
+
+  function exportScope() {
+    if (scopeFull && scopeFull.checked) return "full";
+    return "subtree";
+  }
+
+  function syncScopeRadios() {
+    const hasSelection = !!selectedRootId;
+    if (scopeSubtree) scopeSubtree.disabled = !hasSelection;
+    if (!hasSelection && scopeFull) scopeFull.checked = true;
+  }
 
   function setStatus(msg, isError) {
     if (!statusEl) return;
@@ -22,20 +35,29 @@ export function initStructureExportView() {
   function refreshRootHint() {
     if (!rootHint) return;
     const meta = document.getElementById("docSelectedMeta");
-    const code = meta && meta.dataset.displayCode;
     const title = meta && meta.textContent;
-    if (selectedRootId && title) {
-      rootHint.textContent = "Subárvore: " + title;
+    if (selectedRootId && title && title !== "Nenhum nó seleccionado.") {
+      rootHint.textContent =
+        exportScope() === "full"
+          ? "Projecto completo (ignora selecção: " + title + ")."
+          : "Subárvore a partir de: " + title;
     } else {
-      rootHint.textContent = "Raiz: projecto completo (nenhum nó seleccionado na árvore).";
+      rootHint.textContent = "Nenhum nó na árvore — apenas projecto completo.";
     }
+    syncScopeRadios();
+  }
+
+  function ingestSelection(node) {
+    selectedRootId = node ? node.id : null;
+    refreshRootHint();
   }
 
   document.addEventListener("get:document-node-selected", function (ev) {
-    const node = ev.detail && ev.detail.node;
-    selectedRootId = node ? node.id : null;
-    refreshRootHint();
+    ingestSelection(ev.detail && ev.detail.node);
   });
+
+  if (scopeFull) scopeFull.addEventListener("change", refreshRootHint);
+  if (scopeSubtree) scopeSubtree.addEventListener("change", refreshRootHint);
 
   function selectedPointDetail() {
     let val = "none";
@@ -53,6 +75,11 @@ export function initStructureExportView() {
       setStatus("Seleccione o projecto activo no ecrã Projectos.", true);
       return;
     }
+    const scope = exportScope();
+    if (scope === "subtree" && !selectedRootId) {
+      setStatus("Seleccione um nó na árvore ou escolha «Projecto completo».", true);
+      return;
+    }
     const detail = selectedPointDetail();
     const body = {
       format: formatSel.value,
@@ -60,7 +87,7 @@ export function initStructureExportView() {
       point_detail: detail,
       include_point_premises: !!(premises && premises.checked && detail === "full"),
     };
-    if (selectedRootId) body.root_node_id = selectedRootId;
+    if (scope === "subtree" && selectedRootId) body.root_node_id = selectedRootId;
 
     fetch("/api/projects/" + encodeURIComponent(projectId) + "/document-structure/export", {
       method: "POST",
@@ -94,5 +121,7 @@ export function initStructureExportView() {
       });
   });
 
+  const meta = document.getElementById("docSelectedMeta");
+  if (meta && meta.dataset.nodeId) selectedRootId = meta.dataset.nodeId;
   refreshRootHint();
 }

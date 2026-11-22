@@ -119,6 +119,36 @@ def test_pdf_point_markup_no_html_escape_or_status() -> None:
     assert _xml_escape("a<b>c") == "a&lt;b&gt;c"
 
 
+def test_structure_export_docx_and_xlsx(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    pid, _, _ = _project_with_tree(client)
+
+    docx = client.post(
+        f"/api/projects/{pid}/document-structure/export",
+        json={"format": "docx", "include_block_model": True, "point_detail": "summary"},
+    )
+    assert docx.status_code == 200
+    assert docx.content[:2] == b"PK"
+    assert ".docx" in (docx.headers.get("Content-Disposition") or "")
+
+    xlsx = client.post(
+        f"/api/projects/{pid}/document-structure/export",
+        json={"format": "xlsx", "include_block_model": True, "point_detail": "summary"},
+    )
+    assert xlsx.status_code == 200
+    assert xlsx.content[:2] == b"PK"
+    from openpyxl import load_workbook
+
+    wb = load_workbook(BytesIO(xlsx.content))
+    assert "00_Leitura" in wb.sheetnames
+    assert "Estrutura" in wb.sheetnames
+    assert "Pontos" in wb.sheetnames
+    assert "01_Fasciculos" not in wb.sheetnames
+    ws = wb["Estrutura"]
+    cells = [ws.cell(row=r, column=3).value for r in range(2, ws.max_row + 1)]
+    assert any(v and "F" in str(v) for v in cells)
+
+
 def test_structure_export_pdf_and_xmind(client: TestClient, tmp_path: Path) -> None:
     _workspace(client, tmp_path)
     pid, _, _ = _project_with_tree(client)

@@ -544,9 +544,22 @@
                   alterações à base, use <strong>GET-PACKAGE</strong> na Preparação do bloco ou em Exportar.
                 </p>
                 <p id="docExportRootHint" class="choice-hint"></p>
+                <fieldset class="wb-target-fieldset">
+                  <legend data-help-key="structure_export.scope">Âmbito da exportação</legend>
+                  <label class="choice-inline wb-target-option">
+                    <input type="radio" name="docExportScope" value="subtree" id="docExportScopeSubtree" checked />
+                    <span>Subárvore do nó seleccionado na árvore</span>
+                  </label>
+                  <label class="choice-inline wb-target-option">
+                    <input type="radio" name="docExportScope" value="full" id="docExportScopeFull" />
+                    <span>Projecto completo</span>
+                  </label>
+                </fieldset>
                 <label for="docExportFormat" data-help-key="structure_export.format">Formato</label>
                 <select id="docExportFormat">
                   <option value="markdown">Markdown (.md)</option>
+                  <option value="docx">Word (.docx)</option>
+                  <option value="xlsx">Excel (.xlsx)</option>
                   <option value="pdf">PDF</option>
                   <option value="xmind">XMind (.xmind)</option>
                 </select>

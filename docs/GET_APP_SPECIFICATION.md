@@ -353,7 +353,7 @@ Contrato `get_package.schema.json` (`schema`: `GET-PACKAGE`, versão `1.0.0`): *
 
 ### Exportação estrutural legível
 
-Independente do ciclo LLM (JSON/ZIP): a partir do ecrã **Estrutura documental**, o utilizador pode gerar **Markdown, PDF ou XMind** com a árvore documental do projecto (códigos **live** do SQLite) ou de uma **subárvore** (fascículo seleccionado). Opções: modelo estrutural do bloco; pontos de desenvolvimento (nenhum, resumo, completo); premissas resolvidas nos pontos completos. Artefactos em `{workspace}/exports/document-structure/`; **não reimportáveis**. Títulos visíveis usam o léxico de produção de texto (capítulo/ponto); `node_type` no snapshot técnico permanece inalterado.
+Independente do ciclo LLM (JSON/ZIP): a partir do ecrã **Estrutura documental**, o utilizador pode gerar **Markdown, Word (.docx), Excel (.xlsx), PDF ou XMind** com a árvore documental do projecto (códigos **live** do SQLite) ou de uma **subárvore** (fascículo seleccionado ou «projecto completo»). Opções: modelo estrutural do bloco; pontos de desenvolvimento (nenhum, resumo, completo); premissas resolvidas nos pontos completos. O Excel estrutural é legível/revisão (folhas `00_Leitura`, `Estrutura`, `Pontos`); distinto do **workbook GET** reimportável no ecrã Workbook. Artefactos em `{workspace}/exports/document-structure/`; **não reimportáveis**. Títulos visíveis usam o léxico de produção de texto (capítulo/ponto); `node_type` no snapshot técnico permanece inalterado.
 
 ## 18. Política de edição no pacote
 

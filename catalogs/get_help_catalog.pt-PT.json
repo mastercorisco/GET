@@ -564,10 +564,10 @@
     },
     "structure_export.overview": {
       "label": "Exportar estrutura",
-      "short_help": "MD, PDF ou XMind — revisão humana, sem reimportação.",
+      "short_help": "MD, Word, Excel, PDF ou XMind — revisão humana, sem reimportação.",
       "definition": "Artefacto legível; não reimportável; códigos live.",
       "guiding_question": "Precisa de uma lista para revisão offline?",
-      "instructions": "Seleccione um fascículo na árvore para exportar só essa subárvore.",
+      "instructions": "Com um nó na árvore, pode exportar só essa subárvore ou escolher «Projecto completo» na secção Exportar estrutura.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [
@@ -577,22 +577,41 @@
       "purpose_in_app": "Gera ficheiro em exports/document-structure/ e permite transferir pela UI.",
       "workflow_context": "Estrutura documental, secção Exportar estrutura.",
       "when_to_use": "Após definir fascículos/blocos; antes de reuniões de revisão.",
-      "what_happens_next": "Abrir no leitor (PDF, XMind) ou partilhar o Markdown.",
+      "what_happens_next": "Abrir no leitor (Word, Excel, PDF, XMind) ou partilhar o Markdown.",
       "related_concepts": [
         "project"
       ],
       "related_screen": "project-structure",
       "common_confusions": [
         "Para devolver alterações à base use GET-PACKAGE, não este export.",
+        "O Excel aqui não é o workbook GET reimportável (ecrã Workbook).",
         "Não é GET-LLM nem roundtrip."
       ]
     },
+    "structure_export.scope": {
+      "label": "Âmbito da exportação",
+      "short_help": "Subárvore do nó na árvore ou projecto inteiro.",
+      "definition": "root_node_id na API só é enviado no modo subárvore.",
+      "guiding_question": "Precisa de todos os fascículos ou só do ramo actual?",
+      "instructions": "Com fascículo seleccionado, o modo subárvore é o habitual; use projecto completo para mapa global.",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Controla se o POST inclui root_node_id.",
+      "workflow_context": "Estrutura documental, Exportar estrutura.",
+      "when_to_use": "Antes de Transferir exportação.",
+      "what_happens_next": "O ficheiro reflecte o âmbito escolhido.",
+      "related_concepts": [],
+      "related_screen": "project-structure",
+      "common_confusions": []
+    },
     "structure_export.format": {
       "label": "Formato de exportação",
-      "short_help": "Markdown, PDF ou XMind.",
+      "short_help": "Markdown, Word, Excel, PDF ou XMind.",
       "definition": "Cada formato usa o mesmo snapshot interno.",
       "guiding_question": "O destinatário precisa de editar o mapa mental?",
-      "instructions": "XMind para brainstorming; PDF para impressão; MD para diff em git.",
+      "instructions": "Word/Excel para edição local; XMind para brainstorming; PDF para impressão; MD para diff em git.",
       "good_examples": [],
       "bad_examples": [],
       "tips": [],

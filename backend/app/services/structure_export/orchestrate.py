@@ -7,15 +7,25 @@ from pathlib import Path
 from app.config import AppSettings
 from app.schemas.structure_export import StructureExportRequest, StructureExportResponseMeta
 from app.services.structure_export.collect import StructureExportError, collect_snapshot
+from app.services.structure_export.render_docx import render_docx
 from app.services.structure_export.render_markdown import render_markdown
 from app.services.structure_export.render_pdf import render_pdf
 from app.services.structure_export.render_xmind import render_xmind
+from app.services.structure_export.render_xlsx import render_xlsx
 from app.services.workspace_service import WorkspaceError, workspace_session
 
 _MEDIA = {
     "markdown": ("text/markdown; charset=utf-8", "md"),
     "pdf": ("application/pdf", "pdf"),
     "xmind": ("application/vnd.xmind.workbook", "xmind"),
+    "docx": (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "docx",
+    ),
+    "xlsx": (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "xlsx",
+    ),
 }
 
 
@@ -40,8 +50,12 @@ def export_document_structure(
                 payload = render_markdown(snapshot).encode("utf-8")
             elif request.format == "pdf":
                 payload = render_pdf(snapshot)
-            else:
+            elif request.format == "xmind":
                 payload = render_xmind(snapshot)
+            elif request.format == "docx":
+                payload = render_docx(snapshot)
+            else:
+                payload = render_xlsx(snapshot)
 
             media_type, ext = _MEDIA[request.format]
             run_id = str(uuid.uuid4())

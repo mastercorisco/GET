@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 PointDetailLevel = Literal["none", "summary", "full"]
-StructureExportFormat = Literal["markdown", "pdf", "xmind"]
+StructureExportFormat = Literal["markdown", "pdf", "xmind", "docx", "xlsx"]
 
 
 class StructureExportRequest(BaseModel):
