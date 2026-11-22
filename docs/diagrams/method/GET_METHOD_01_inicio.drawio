@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" agent="GET" version="22.1.0" type="device">
+  <diagram id="method-01-inicio" name="01 Inicio">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t1" value="1. Inicio - preparar o terreno" style="text;html=1;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="24" width="400" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="hum" value="Engenheiro" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="80" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ws" value="Abrir ou criar&#10;workspace&#10;(get.db)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32" vertex="1" parent="1">
+          <mxGeometry x="160" y="90" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lib" value="Biblioteca EDA&#10;KnowledgeItem&#10;(semente)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#1b5e20" vertex="1" parent="1">
+          <mxGeometry x="340" y="90" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="proj" value="Criar projecto&#10;modelo, pin&#10;biblioteca" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32" vertex="1" parent="1">
+          <mxGeometry x="540" y="90" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="struct" value="Estrutura CTBJ&#10;fasciculos, blocos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825" vertex="1" parent="1">
+          <mxGeometry x="740" y="90" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="base" value="Publicar baseline&#10;(obrigatoria para&#10;GET-PACKAGE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="540" y="200" width="180" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="corpus" value="Opcional: corpus/&#10;PDF, normas, vendor&#10;(nao e verdade)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;dashed=1;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="160" y="200" width="200" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="endArrow=classic;html=1;" edge="1" parent="1" source="hum" target="ws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=classic;html=1;" edge="1" parent="1" source="ws" target="lib">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=classic;html=1;" edge="1" parent="1" source="lib" target="proj">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=classic;html=1;" edge="1" parent="1" source="proj" target="struct">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=classic;html=1;" edge="1" parent="1" source="proj" target="base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="Saida: projecto com estrutura e baseline publicada. Pronto para trabalhar blocos." style="text;html=1;align=left;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="160" y="320" width="720" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

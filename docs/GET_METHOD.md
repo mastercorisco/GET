@@ -216,6 +216,8 @@ Ver catálogo de ajuda (`method.example_walkthrough`) e pacote exchange exportad
 
 Documento complementar: [GET_APP_SPECIFICATION.md](GET_APP_SPECIFICATION.md).
 
+Diagramas: resumo [GET_METHOD_FLOW.drawio](GET_METHOD_FLOW.drawio); 6 folhas [GET_METHOD_ALL_SHEETS.drawio](GET_METHOD_ALL_SHEETS.drawio). Skills: [GET_SKILLS_OPERATING_MODEL.drawio](GET_SKILLS_OPERATING_MODEL.drawio).
+
 ### Roadmap: skills e evolução mínima
 
 - Plano macro (fases F0–F4, M1–M3): [GET_MACRO_PLAN.md](GET_MACRO_PLAN.md)

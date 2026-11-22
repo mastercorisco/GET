@@ -1,0 +1,170 @@
+<mxfile host="app.diagrams.net" agent="GET" version="22.1.0" type="device">
+  <diagram id="get-method-flow" name="Metodo GET">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="GET — Metodo de trabalho (SQLite · 127.0.0.1 · sem LLM na app)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="280" y="16" width="1040" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n1" value="1. INICIO&#xa;Workspace, biblioteca,&#xa;projecto, baseline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="180" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="2. TRABALHO&#xa;Blocos, pontos, KI;&#xa;app ou skills externas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="250" y="80" width="180" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="3. EXPORT&#xa;GET-PACKAGE (reimport)&#xa;GET-LLM (contrato)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="460" y="80" width="180" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="4. FORA DO GET&#xa;LLM, skills, corpus&#xa;(nao escreve SQLite)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="670" y="80" width="200" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="5. IMPORT&#xa;Staging, merge,&#xa;revisao humana" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="900" y="80" width="180" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="6. BIBLIOTECA&#xa;Promocao, append-only,&#xa;reutilizacao" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1110" y="80" width="180" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e12" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1" source="n2" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e34" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1" source="n3" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e45" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1" source="n4" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e56" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1" source="n5" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e62" style="endArrow=classic;html=1;dashed=1" edge="1" parent="1" source="n6" target="n2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="200" />
+              <mxPoint x="340" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cycle-note" value="Ciclo por fasciculo/bloco. So JSON GET-PACKAGE reimporta. Markdown e texto redigido sao leitura." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;fontSize=11;align=center" vertex="1" parent="1">
+          <mxGeometry x="250" y="200" width="860" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-work" value="2. TRABALHO — duas entradas, mesma autoridade" style="swimlane;horizontal=0;startSize=32;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="760" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-app" value="Caminho A — App GET" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;startSize=26" vertex="1" parent="lane-work">
+          <mxGeometry x="24" y="40" width="340" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="wa1" value="Estrutura P/F/B" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="lane-app">
+          <mxGeometry x="16" y="44" width="120" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="wa2" value="DevelopmentPoints" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="lane-app">
+          <mxGeometry x="150" y="44" width="120" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="wa3" value="draft para ready" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4" vertex="1" parent="lane-app">
+          <mxGeometry x="16" y="120" width="254" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="e-wa12" style="endArrow=classic;html=1;" edge="1" parent="lane-app" source="wa1" target="wa2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-wa23" style="endArrow=classic;html=1;" edge="1" parent="lane-app" source="wa2" target="wa3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-skill" value="Caminho B — Skills (fora)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;startSize=26" vertex="1" parent="lane-work">
+          <mxGeometry x="380" y="40" width="360" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="sb0" value="get-orient" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc" vertex="1" parent="lane-skill">
+          <mxGeometry x="16" y="48" width="88" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sb1" value="get-grill" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc" vertex="1" parent="lane-skill">
+          <mxGeometry x="112" y="48" width="88" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sb2" value="get-research" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc" vertex="1" parent="lane-skill">
+          <mxGeometry x="208" y="48" width="88" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sb3" value="GET-PACKAGE" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7" vertex="1" parent="lane-skill">
+          <mxGeometry x="240" y="120" width="104" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="e-sb01" style="endArrow=classic;html=1;" edge="1" parent="lane-skill" source="sb0" target="sb1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-sb12" style="endArrow=classic;html=1;" edge="1" parent="lane-skill" source="sb1" target="sb2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-sb23" style="endArrow=classic;html=1;" edge="1" parent="lane-skill" source="sb2" target="sb3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-io" value="3–5. Exportacao, fora, importacao" style="swimlane;horizontal=0;startSize=32;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="820" y="260" width="740" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg" value="GET-PACKAGE&#xa;roundtrip JSON" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="lane-io">
+          <mxGeometry x="40" y="56" width="150" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="llm" value="Export GET-LLM&#xa;(contrato, nao redige)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1" vertex="1" parent="lane-io">
+          <mxGeometry x="220" y="56" width="150" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="write" value="get-write-spec&#xa;texto .md fora" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1" vertex="1" parent="lane-io">
+          <mxGeometry x="400" y="56" width="150" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="stage" value="Staging +&#xa;ChangeProposal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="lane-io">
+          <mxGeometry x="40" y="160" width="150" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="merge" value="Merge +&#xa;consolidate (F0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;fontStyle=1" vertex="1" parent="lane-io">
+          <mxGeometry x="220" y="160" width="150" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="sqlite" value="SQLite&#xa;fonte de verdade" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" vertex="1" parent="lane-io">
+          <mxGeometry x="420" y="150" width="120" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pkg-stage" style="endArrow=classic;html=1;" edge="1" parent="lane-io" source="pkg" target="stage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-stage-merge" style="endArrow=classic;html=1;" edge="1" parent="lane-io" source="stage" target="merge">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-merge-sqlite" style="endArrow=classic;html=1;" edge="1" parent="lane-io" source="merge" target="sqlite">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-llm-write" value="redacao" style="endArrow=classic;html=1;dashed=1;fontSize=10" edge="1" parent="lane-io" source="llm" target="write">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-corpus" value="Material de apoio — corpus/ e sessao LLM (nao SSOT)" style="swimlane;horizontal=0;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="560" width="1520" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="corpus" value="corpus/: normas, site, PDF, manifest · Reference.internal_location" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8" vertex="1" parent="lane-corpus">
+          <mxGeometry x="32" y="40" width="480" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="backup" value="Backup workspace antes de import / export de risco" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1" vertex="1" parent="lane-corpus">
+          <mxGeometry x="540" y="40" width="360" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend" value="Legenda" style="swimlane;whiteSpace=wrap;html=1;startSize=24;fillColor=#ffffff;strokeColor=#999999" vertex="1" parent="1">
+          <mxGeometry x="40" y="680" width="720" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="Autoridade GET" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;html=1" vertex="1" parent="legend">
+          <mxGeometry x="16" y="36" width="130" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="Export / proposta" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;html=1" vertex="1" parent="legend">
+          <mxGeometry x="156" y="36" width="130" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="Fora / corpus" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;html=1" vertex="1" parent="legend">
+          <mxGeometry x="296" y="36" width="130" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="Staging" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;html=1" vertex="1" parent="legend">
+          <mxGeometry x="436" y="36" width="100" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="doc-ref" value="Detalhe por fase: GET_METHOD_ALL_SHEETS.drawio · Texto: GET_METHOD.md e GET_SKILLS_PLAN.md" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="40" y="820" width="900" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

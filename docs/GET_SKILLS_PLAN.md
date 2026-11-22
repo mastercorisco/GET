@@ -15,7 +15,7 @@ Documento de referência para desenvolvimento futuro. O GET mantém a arquitectu
 - Humano pode editar pontos e conhecimento directamente na app (sem obrigar proposta em cada keystroke).
 - Exportações na app (GET-LLM, Markdown, PDF, XMind) são **projecções / contratos**; não produzem o texto final do caderno e não são reimportáveis como autoridade (excepto GET-PACKAGE).
 
-Diagrama: [GET_SKILLS_OPERATING_MODEL.drawio](GET_SKILLS_OPERATING_MODEL.drawio) (abrir em [diagrams.net](https://app.diagrams.net) ou extensão Draw.io no VS Code/Cursor).
+Diagramas (draw.io / [diagrams.net](https://app.diagrams.net)): metodo [GET_METHOD_FLOW.drawio](GET_METHOD_FLOW.drawio) (resumo) · [GET_METHOD_ALL_SHEETS.drawio](GET_METHOD_ALL_SHEETS.drawio) (6 folhas) · skills [GET_SKILLS_OPERATING_MODEL.drawio](GET_SKILLS_OPERATING_MODEL.drawio).
 
 ## Corpus de apoio (LLMs)
 
