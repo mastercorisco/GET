@@ -564,3 +564,54 @@ def test_f2_m2_gate_passes_with_full_draft(tmp_path: Path) -> None:
         text=True,
     )
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_f2_glossary_report_avoid_in_project(tmp_path: Path) -> None:
+    import json
+
+    term = {
+        "payload": {
+            "project_overrides": [
+                {
+                    "preferred_term": "Feeder",
+                    "avoid_in_project": True,
+                    "legacy_term": "Alimentador de combustível",
+                }
+            ],
+        }
+    }
+    term_path = tmp_path / "term.json"
+    term_path.write_text(json.dumps(term), encoding="utf-8")
+    bad_draft = tmp_path / "bad.md"
+    bad_draft.write_text("O Feeder deve ser calibrado.\n", encoding="utf-8")
+    ok_draft = tmp_path / "ok.md"
+    ok_draft.write_text("O alimentador de combustível deve ser calibrado.\n", encoding="utf-8")
+    backend = Path(__file__).resolve().parents[2]
+    proc_bad = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_glossary_report.py"),
+            "--draft",
+            str(bad_draft),
+            "--terminology-json",
+            str(term_path),
+        ],
+        cwd=backend,
+        capture_output=True,
+        text=True,
+    )
+    assert proc_bad.returncode == 1
+    proc_ok = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_glossary_report.py"),
+            "--draft",
+            str(ok_draft),
+            "--terminology-json",
+            str(term_path),
+        ],
+        cwd=backend,
+        capture_output=True,
+        text=True,
+    )
+    assert proc_ok.returncode == 0, proc_ok.stdout + proc_ok.stderr
