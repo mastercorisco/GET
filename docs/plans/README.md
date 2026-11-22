@@ -6,6 +6,9 @@ Planos derivados de [GET_MACRO_PLAN.md](../GET_MACRO_PLAN.md).
 |-----------|------|--------|
 | [micro-F0-import-ritual.md](micro-F0-import-ritual.md) | F0 | Activo |
 | [micro-F0-piloto-structure.md](micro-F0-piloto-structure.md) | F0 | Piloto F01-structure (Phase C) |
+| [micro-F0-orient-snapshot-CTBJ.md](micro-F0-orient-snapshot-CTBJ.md) | F0 / M0 | Snapshot get-orient testes |
+| [micro-F0-structure-dryrun.md](micro-F0-structure-dryrun.md) | F0 | Roundtrip estrutura sem LLM |
+| [micro-F0-llm-session-prompt.md](micro-F0-llm-session-prompt.md) | F0 | Prompt copiar F01-structure |
 | [micro-F0-retro-F01.md](micro-F0-retro-F01.md) | F0 | Retro piloto (preencher após execução) |
 | [micro-F0-phase-A-inventory.md](micro-F0-phase-A-inventory.md) | F0 | Guia genérico |
 | [micro-F0-phase-A-workspace-testes.md](micro-F0-phase-A-workspace-testes.md) | F0 | Inventário preenchido |

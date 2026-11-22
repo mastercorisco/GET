@@ -12,7 +12,8 @@ Provar **roundtrip F0-structure** num fascículo real: export → alteração m�
 |--------|--------|
 | Workspace | `C:\PROGRAMACAO\GET_aux\testes` (`~/.get/app-config.json`) |
 | Projecto | CTBJ — `976e3991-e64e-4306-99fe-4ac1e2230b52` |
-| Fascículo piloto | **F01** (export `PKG-FASC-F01/F01_package.json`) |
+| Fascículo piloto | **F01** — `node_id` `753c0de0-a759-4a8c-8e13-96a1360e0754` |
+| Export GET-PACKAGE | `exports/PKG-FASC-F01/F01_package.json` (`export_id` **PKG-FASC-F01**) |
 | Modo | **F0-structure** apenas |
 | Alteração de teste | Ex.: corrigir **1** título de bloco ou ordem relativa mínima (documentar no retro) |
 
@@ -28,6 +29,9 @@ Provar **roundtrip F0-structure** num fascículo real: export → alteração m�
 2. **Re-export** fascículo F01 na UI → anotar `export_id` e caminho em `exports/PKG-FASC-F01/`.
 3. Sessão **get-orient** (READ only): confirmar subárvore F01 e estado de imports recentes.
 4. Copiar checklist: `agent-skills/get-orient/checklist-f0.md`.
+5. Pré-voo CLI (opcional): `python backend/scripts/f0_pilot_preflight.py --project-id <uuid> --fascicle F01 --export`
+6. Snapshot M0: [micro-F0-orient-snapshot-CTBJ.md](micro-F0-orient-snapshot-CTBJ.md)
+7. Dry-run sem LLM (opcional): [micro-F0-structure-dryrun.md](micro-F0-structure-dryrun.md) · prompt LLM: [micro-F0-llm-session-prompt.md](micro-F0-llm-session-prompt.md)
 
 ## Fluxo
 

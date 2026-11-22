@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -179,3 +182,36 @@ def test_project_summary_read_only(client: TestClient, tmp_path: Path) -> None:
     assert isinstance(body["point_status_counts"], dict)
     assert body["imports_staged"] == 0
     assert body["merge_sessions_open"] == 0
+
+
+def test_f0_preflight_script_reports_missing_fascicle(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    _ensure_library(client)
+    v1_id = _template_v1(client)
+    project = client.post(
+        "/api/projects",
+        json={
+            "template_version_id": v1_id,
+            "name": "Preflight",
+            "intervention_type": "brownfield",
+        },
+    ).json()
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f0_pilot_preflight.py"),
+            "--project-id",
+            project["id"],
+            "--fascicle",
+            "F99",
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 1
+    assert "F99" in proc.stderr or "F99" in proc.stdout

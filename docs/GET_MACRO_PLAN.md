@@ -171,10 +171,10 @@ Derivado de experiência real (reestruturação na LLM + import problemático):
 | Alta | Ritual + checklist pré-import (agente) | Processo — **checklist** em `agent-skills/get-orient/checklist-f0.md` |
 | Alta | Um âmbito de mudança por ficheiro devolvido | Processo |
 | **Alta** | Glossário E05 em `terminology_*_llm.md` no ZIP GET-LLM | Produto — **feito T0** (micro-F2, ADR-061) |
-| Média | Relatório “conceitos misturados” no staging | Produto — **v1 API feita**; UI avisos + grupos import em curso F0 |
+| Média | Relatório “conceitos misturados” no staging | Produto — **feito** (`conceptual_warnings` API + UI) |
 | Média | Identidade pacote vs árvore (`block_id`, `display_code`, `structure_anchor`) | Produto — **feito Onda 1** |
 | Média | `export_record` por projecto (não `export_id` global) | Produto — **feito** (migração 010) |
-| Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto — **em implementação** (filtro + lote por secção) |
+| Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto — **feito** (filtro + lote por secção) |
 | Média | `GET /api/terminology/search` | Produto — **feito T1** (ADR-062) |
 | Média | `GET /api/projects/{id}/summary` (contagens read-only, M0) | Produto — **feito** (get-orient) |
 | Média | `confirm` em DELETE terminologia | Produto — T2 |
@@ -232,7 +232,10 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Checklist agente F0 | **Feito** — `agent-skills/get-orient/checklist-f0.md` |
 | UI `conceptual_warnings` + grupos import | **Feito** (legacy-logic) |
 | `GET /api/projects/{id}/summary` (M0) | **Feito** |
-| Piloto roundtrip F0-structure | **Pendente** (humano — [micro-F0-retro-F01.md](plans/micro-F0-retro-F01.md)) |
+| Pré-voo script + snapshot M0 CTBJ | **Feito** — `f0_pilot_preflight.py`, [micro-F0-orient-snapshot-CTBJ.md](plans/micro-F0-orient-snapshot-CTBJ.md) |
+| Export base `PKG-FASC-F01` (pré-voo) | **Feito** 2026-11-22 no workspace testes |
+| Dry-run F0-structure (script + teste integração) | **Feito** — [micro-F0-structure-dryrun.md](plans/micro-F0-structure-dryrun.md) |
+| Piloto roundtrip F0-structure (workspace testes) | **Pendente** — dry-run ou LLM ([micro-F0-retro-F01.md](plans/micro-F0-retro-F01.md)) |
 | Retro + fecho F0 | Template + retro F01 preparado |
 
 ### F1 — bloco piloto (preparação)

@@ -52,4 +52,4 @@ Permitir perguntas ao **conteúdo** do GET (projecto e biblioteca) para perceber
 |-------|--------|
 | Documentação plano | 2026-11-21 |
 | SKILL.md Cursor | **Feito** (`agent-skills/get-orient`) |
-| Piloto utilizador | Pendente |
+| Piloto utilizador | Em curso — [micro-F0-orient-snapshot-CTBJ.md](micro-F0-orient-snapshot-CTBJ.md) |

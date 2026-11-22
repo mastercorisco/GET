@@ -470,6 +470,57 @@ def test_block_import_rejects_unknown_block_id(client: TestClient, tmp_path: Pat
     assert "não existe" in bad.json()["detail"].lower() or "incompatível" in bad.json()["detail"].lower()
 
 
+def _setup_fascicle_with_block(client: TestClient, tmp_path: Path) -> tuple[str, str, str]:
+    _workspace(client, tmp_path)
+    project = _project(client)
+    pid = project["id"]
+    fascicle = _create_node(client, pid, "fascicle", "Fascículo F0", None)["node"]
+    block = _create_node(client, pid, "block", "Bloco estrutural", fascicle["id"])["node"]
+    assert client.post(f"/api/projects/{pid}/baselines/publish").status_code == 200
+    return pid, fascicle["id"], block["id"]
+
+
+def test_fascicle_get_package_f0_structure_roundtrip(client: TestClient, tmp_path: Path) -> None:
+    """F0-structure: alterar só title em fascicle.structure via GET-PACKAGE."""
+    pid, fascicle_id, block_id = _setup_fascicle_with_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "fascicle", "node_id": fascicle_id},
+    )
+    assert export.status_code == 200
+    pkg = json.loads(export.json()["body"])
+    structure = pkg["payload"]["fascicle"]["structure"]
+    block_row = next(row for row in structure if row["node_id"] == block_id)
+    block_row["title"] = "Bloco estrutural (F0-structure)"
+
+    uploaded = client.post(
+        f"/api/projects/{pid}/packages/import",
+        files={"file": ("f0_structure.json", json.dumps(pkg).encode(), "application/json")},
+    )
+    assert uploaded.status_code == 200
+    assert isinstance(uploaded.json().get("conceptual_warnings"), list)
+
+    import_id = uploaded.json()["import_id"]
+    merged = client.post(f"/api/projects/{pid}/packages/imports/{import_id}/merge")
+    assert merged.status_code == 200
+    proposals = merged.json()["proposals"]
+    structure_prop = next((p for p in proposals if p["proposal_kind"] == "structure"), None)
+    assert structure_prop is not None
+    merge_id = merged.json()["id"]
+    dec = client.patch(
+        f"/api/projects/{pid}/packages/merge/{merge_id}/proposals/{structure_prop['id']}",
+        json={"decision": "accepted", "destination": "project", "confirmed_protected": False},
+    )
+    assert dec.status_code == 200
+    consolidated = client.post(f"/api/projects/{pid}/packages/merge/{merge_id}/consolidate")
+    assert consolidated.status_code == 200
+
+    nodes = client.get(f"/api/projects/{pid}/document-nodes").json()
+    node_rows = nodes if isinstance(nodes, list) else nodes.get("nodes", [])
+    block_after = next(n for n in node_rows if n["id"] == block_id)
+    assert block_after["title"] == "Bloco estrutural (F0-structure)"
+
+
 def test_block_import_rejects_stale_display_code(client: TestClient, tmp_path: Path) -> None:
     pid, block_id, _ = _setup_block(client, tmp_path)
     export = client.post(

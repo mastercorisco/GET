@@ -24,6 +24,7 @@ Usar **antes** de `POST .../packages/import`. Complemento: [docs/plans/micro-F0-
 ## Segurança operacional
 
 - [ ] Backup crítico após último consolidate bom
+- [ ] `backend/scripts/f0_pilot_preflight.py --fascicle F01 --export` (se export antigo ou em dúvida)
 - [ ] `validate_get_package_file.py` sem erro estrito
 - [ ] Avisos heurísticos do script lidos
 - [ ] Número de alterações plausível para “humo” (alerta se >30 propostas estruturais de teste)

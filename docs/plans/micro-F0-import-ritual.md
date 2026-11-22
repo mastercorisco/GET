@@ -60,6 +60,7 @@ Validação offline (a partir de `backend/`, com venv activo):
 
 ```powershell
 python scripts/validate_get_package_file.py <caminho\ficheiro.json> --project-id <project-uuid>
+python scripts/f0_pilot_preflight.py --project-id <project-uuid> --fascicle F01 --export
 ```
 
 O script corre validação estrita (`validate_get_package`) e avisos conceptuais heurísticos F0.
