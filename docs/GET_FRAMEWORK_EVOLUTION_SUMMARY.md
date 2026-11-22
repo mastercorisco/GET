@@ -41,7 +41,7 @@ Workflow BPMN, dezenas de tabelas novas, writes automáticos de agentes, embeddi
 
 ## Skills (ver documento dedicado)
 
-Implementação **fora** do runtime GET: [GET_SKILLS_PLAN.md](GET_SKILLS_PLAN.md) (inclui **get-orient** só leitura para ponto de situação) e diagrama [GET_METHOD_FLOW.drawio](GET_METHOD_FLOW.drawio) (uma pagina, metodo completo).
+Implementação **fora** do runtime GET: [GET_SKILLS_PLAN.md](GET_SKILLS_PLAN.md) (inclui **get-orient** só leitura para ponto de situação) e diagrama [diagrams/GET_METHOD_ALL_SHEETS.drawio](diagrams/GET_METHOD_ALL_SHEETS.drawio) (metodo, 6 folhas).
 
 ## Próximo incremento de produto (quando necessário)
 

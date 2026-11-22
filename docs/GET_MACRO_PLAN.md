@@ -2,7 +2,7 @@
 
 Documento de visão para **como** usar o GET com LLMs e revisão humana, em paralelo com [`PLAN.md`](PLAN.md) (construção da aplicação, épicos E01–E08).
 
-**Relacionados:** [GET_SKILLS_PLAN.md](GET_SKILLS_PLAN.md), [GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAMEWORK_EVOLUTION_SUMMARY.md), [GET_SKILLS_OPERATING_MODEL.drawio](GET_SKILLS_OPERATING_MODEL.drawio), [GET_METHOD.md](GET_METHOD.md).
+**Relacionados:** [GET_SKILLS_PLAN.md](GET_SKILLS_PLAN.md), [GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAMEWORK_EVOLUTION_SUMMARY.md), [diagrams/GET_METHOD_ALL_SHEETS.drawio](diagrams/GET_METHOD_ALL_SHEETS.drawio), [GET_METHOD.md](GET_METHOD.md).
 
 ---
 

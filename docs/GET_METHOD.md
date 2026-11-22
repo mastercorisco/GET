@@ -216,12 +216,12 @@ Ver catálogo de ajuda (`method.example_walkthrough`) e pacote exchange exportad
 
 Documento complementar: [GET_APP_SPECIFICATION.md](GET_APP_SPECIFICATION.md).
 
-Diagramas: resumo [GET_METHOD_FLOW.drawio](GET_METHOD_FLOW.drawio); 6 folhas [GET_METHOD_ALL_SHEETS.drawio](GET_METHOD_ALL_SHEETS.drawio). Skills: [GET_SKILLS_OPERATING_MODEL.drawio](GET_SKILLS_OPERATING_MODEL.drawio).
+Diagrama (6 folhas): [diagrams/GET_METHOD_ALL_SHEETS.drawio](diagrams/GET_METHOD_ALL_SHEETS.drawio) — ver [diagrams/README.md](diagrams/README.md).
 
 ### Roadmap: skills e evolução mínima
 
 - Plano macro (fases F0–F4, M1–M3): [GET_MACRO_PLAN.md](GET_MACRO_PLAN.md)
 - Planos micro (F0 ritual, retro): [plans/README.md](plans/README.md)
 - Plano de skills (grill, review, decision, research): [GET_SKILLS_PLAN.md](GET_SKILLS_PLAN.md)
-- Diagrama de operação: [GET_SKILLS_OPERATING_MODEL.drawio](GET_SKILLS_OPERATING_MODEL.drawio)
+- Diagrama do método: [diagrams/GET_METHOD_ALL_SHEETS.drawio](diagrams/GET_METHOD_ALL_SHEETS.drawio)
 - Resumo da análise de evolução do quadro: [GET_FRAMEWORK_EVOLUTION_SUMMARY.md](GET_FRAMEWORK_EVOLUTION_SUMMARY.md)
