@@ -55,3 +55,43 @@ def test_terminology_and_project_override(client: TestClient, tmp_path: Path) ->
     listed = client.get(f"/api/projects/{project['id']}/terminology-overrides")
     assert listed.status_code == 200
     assert len(listed.json()) == 1
+
+
+def test_terminology_search_library_and_project(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    client.post("/api/knowledge", json={"title": "s", "content": "c", "origin_context": "t"})
+    concept = client.post(
+        "/api/terminology",
+        json={
+            "scope_type": "library",
+            "preferred_term": "Feeder",
+            "definition": "Linha de alimentação de combustível.",
+            "synonyms": ["alimentador", "feeder line"],
+        },
+    ).json()
+    templates = client.get("/api/projects/templates").json()
+    v1 = templates[0]["versions"][0]["id"]
+    project = client.post(
+        "/api/projects",
+        json={"template_version_id": v1, "name": "P", "intervention_type": "brownfield"},
+    ).json()
+    client.post(
+        f"/api/projects/{project['id']}/terminology-overrides",
+        json={"concept_id": concept["id"], "legacy_term": "Alimentador combustível"},
+    )
+
+    by_synonym = client.get("/api/terminology/search", params={"q": "alimentador"})
+    assert by_synonym.status_code == 200
+    assert len(by_synonym.json()) == 1
+    assert by_synonym.json()[0]["concept"]["preferred_term"] == "Feeder"
+
+    merged = client.get(
+        "/api/terminology/search",
+        params={"q": "combustível", "project_id": project["id"]},
+    )
+    assert merged.status_code == 200
+    assert len(merged.json()) == 1
+    assert merged.json()[0]["project_override"]["legacy_term"] == "Alimentador combustível"
+
+    empty = client.get("/api/terminology/search", params={"q": "   "})
+    assert empty.status_code == 400

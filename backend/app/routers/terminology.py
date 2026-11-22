@@ -6,6 +6,7 @@ from app.schemas.terminology import (
     TerminologyOverrideCreateRequest,
     TerminologyOverrideResponse,
     TerminologyResponse,
+    TerminologySearchHit,
     TerminologyUpdateRequest,
 )
 from app.services.deletion_service import delete_terminology, delete_terminology_override
@@ -16,6 +17,7 @@ from app.services.terminology_service import (
     get_terminology,
     list_terminology,
     list_terminology_overrides,
+    search_terminology,
     update_terminology,
 )
 from app.services.workspace_service import WorkspaceError
@@ -38,6 +40,24 @@ def terminology_list(
     scope_id: str | None = Query(default=None),
 ) -> list[TerminologyResponse]:
     return _run(lambda: list_terminology(get_settings(), scope_type, scope_id))
+
+
+@router.get("/terminology/search", response_model=list[TerminologySearchHit])
+def terminology_search(
+    q: str = Query(min_length=1),
+    project_id: str | None = Query(default=None),
+    scope_type: str = Query(default="library"),
+    scope_id: str | None = Query(default=None),
+) -> list[TerminologySearchHit]:
+    return _run(
+        lambda: search_terminology(
+            get_settings(),
+            q,
+            project_id=project_id,
+            scope_type=scope_type,
+            scope_id=scope_id,
+        )
+    )
 
 
 @router.post("/terminology", response_model=TerminologyResponse)

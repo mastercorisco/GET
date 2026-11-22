@@ -61,3 +61,8 @@ class TerminologyOverrideResponse(BaseModel):
     legacy_term: str | None
     avoid_in_project: bool
     usage_note: str | None
+
+
+class TerminologySearchHit(BaseModel):
+    concept: TerminologyResponse
+    project_override: TerminologyOverrideResponse | None = None

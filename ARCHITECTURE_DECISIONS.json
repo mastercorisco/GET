@@ -363,6 +363,12 @@
       "topic": "llm_package_terminology_glossary",
       "decision": "Pacote GET-LLM (GET-LLM-PACKAGE) inclui artefacto derivado terminology_{profile}_llm.md com TerminologyConcept de biblioteca e projecto e project_terminology_override; manifest.files kind terminology_glossary; master JSON/MD referencia o ficheiro; distinto do léxico estrutural ADR-057; não reimportável.",
       "status": "accepted"
+    },
+    {
+      "id": "ADR-062",
+      "topic": "terminology_search_api",
+      "decision": "GET /api/terminology/search com q obrigatório; sem project_id usa scope_type/scope_id como list; com project_id pesquisa biblioteca+projecto e texto de overrides; resposta TerminologySearchHit (concept + project_override opcional); matching AND por tokens em campos E05; leitura apenas, preparação T1/MCP.",
+      "status": "accepted"
     }
   ]
 }

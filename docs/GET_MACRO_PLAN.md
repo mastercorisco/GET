@@ -175,7 +175,7 @@ Derivado de experiência real (reestruturação na LLM + import problemático):
 | Média | Identidade pacote vs árvore (`block_id`, `display_code`, `structure_anchor`) | Produto — **feito Onda 1** |
 | Média | `export_record` por projecto (não `export_id` global) | Produto — **feito** (migração 010) |
 | Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto |
-| Média | `GET /api/terminology/search` | Produto — T1 |
+| Média | `GET /api/terminology/search` | Produto — **T1 feito** (ADR-062) |
 | Média | `confirm` em DELETE terminologia | Produto — T2 |
 | Baixa | Modos de import (estrutura vs conteúdo) | Produto |
 | Baixa | MCP stdio local + tools | Infra — T2–T3 |
@@ -235,5 +235,13 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 |-------|--------|
 | Plano macro + micro-F2 | **Feito** |
 | Implementação `terminology_*_llm.md` no ZIP | **Feito** (ADR-061; ver micro-F2) |
+| JSON `terminology_*_llm.json` no ZIP | **Feito** (GET-LLM-TERMINOLOGY) |
+
+### T1 — pesquisa de glossário
+
+| Passo | Estado |
+|-------|--------|
+| `GET /api/terminology/search` | **Feito** (ADR-062; [micro-T1-terminology-search.md](plans/micro-T1-terminology-search.md)) |
+| Skill get-lexicon (Cursor) | **Feito** (`agent-skills/get-lexicon`; piloto humano pendente) |
 
 Actualizar este ficheiro quando fechares F0, M1, M2 ou M3, ou quando o backlog da secção 6 mudar de prioridade.

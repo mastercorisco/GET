@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+import re
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 
 from app.config import AppSettings
 from app.models.knowledge import Library
@@ -15,6 +16,7 @@ from app.schemas.terminology import (
     TerminologyOverrideCreateRequest,
     TerminologyOverrideResponse,
     TerminologyResponse,
+    TerminologySearchHit,
     TerminologyUpdateRequest,
 )
 from app.services.knowledge_service import _ensure_library
@@ -75,6 +77,114 @@ def _to_response(row: TerminologyConcept) -> TerminologyResponse:
         domain=row.domain,
         notes=row.notes,
     )
+
+
+def _search_tokens(raw: str) -> list[str]:
+    tokens = [t.casefold() for t in re.findall(r"[\w]+", raw, flags=re.UNICODE)]
+    if not tokens:
+        raise TerminologyError("Consulta de pesquisa vazia.")
+    return tokens
+
+
+def _concept_search_blob(row: TerminologyConcept) -> str:
+    parts = [
+        row.preferred_term or "",
+        row.definition or "",
+        row.language or "",
+        row.acronym or "",
+        row.technical_translation or "",
+        row.domain or "",
+        row.notes or "",
+        " ".join(_list_from_json(row.synonyms_json)),
+        " ".join(_list_from_json(row.avoid_terms_json)),
+    ]
+    return " ".join(parts).casefold()
+
+
+def _matches_all_tokens(blob: str, tokens: list[str]) -> bool:
+    return all(token in blob for token in tokens)
+
+
+def search_terminology(
+    app_settings: AppSettings,
+    query: str,
+    *,
+    project_id: str | None = None,
+    scope_type: str = "library",
+    scope_id: str | None = None,
+) -> list[TerminologySearchHit]:
+    tokens = _search_tokens(query)
+    with workspace_session(app_settings) as (session, _paths):
+        _ensure_library(session)
+        library = session.scalar(select(Library).limit(1))
+        if library is None:
+            raise TerminologyError("Biblioteca em falta.")
+
+        overrides_by_concept: dict[str, ProjectTerminologyOverride] = {}
+        if project_id:
+            project = session.get(Project, project_id)
+            if project is None:
+                raise TerminologyError("Projeto não encontrado.")
+            for ov in session.scalars(
+                select(ProjectTerminologyOverride).where(
+                    ProjectTerminologyOverride.project_id == project_id
+                )
+            ):
+                overrides_by_concept[ov.concept_id] = ov
+            rows = list(
+                session.scalars(
+                    select(TerminologyConcept)
+                    .where(
+                        or_(
+                            (TerminologyConcept.scope_type == "library")
+                            & (TerminologyConcept.scope_id == library.id),
+                            (TerminologyConcept.scope_type == "project")
+                            & (TerminologyConcept.scope_id == project_id),
+                        )
+                    )
+                    .order_by(TerminologyConcept.preferred_term)
+                )
+            )
+        else:
+            if scope_type not in {"library", "project"}:
+                raise TerminologyError("Âmbito inválido.")
+            resolved = _resolve_scope(session, scope_type, scope_id)
+            rows = list(
+                session.scalars(
+                    select(TerminologyConcept)
+                    .where(
+                        TerminologyConcept.scope_type == scope_type,
+                        TerminologyConcept.scope_id == resolved,
+                    )
+                    .order_by(TerminologyConcept.preferred_term)
+                )
+            )
+
+        hits: list[TerminologySearchHit] = []
+        for row in rows:
+            blob = _concept_search_blob(row)
+            override = overrides_by_concept.get(row.id)
+            if override:
+                extra = " ".join(
+                    x for x in (override.legacy_term or "", override.usage_note or "") if x
+                ).casefold()
+                if extra:
+                    blob = f"{blob} {extra}"
+            if not _matches_all_tokens(blob, tokens):
+                continue
+            ov_response: TerminologyOverrideResponse | None = None
+            if override is not None:
+                ov_response = TerminologyOverrideResponse(
+                    id=override.id,
+                    project_id=override.project_id,
+                    concept_id=override.concept_id,
+                    preferred_term=row.preferred_term,
+                    legacy_term=override.legacy_term,
+                    avoid_in_project=override.avoid_in_project,
+                    usage_note=override.usage_note,
+                )
+            hits.append(TerminologySearchHit(concept=_to_response(row), project_override=ov_response))
+        return hits
 
 
 def list_terminology(

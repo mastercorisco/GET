@@ -18,7 +18,7 @@ Permitir perguntas ao **conteúdo** do GET (projecto e biblioteca) para perceber
 | # | Entrega | Critério de aceitação |
 |---|---------|------------------------|
 | 1 | Secção canónica em GET_SKILLS_PLAN | Feito neste incremento de documentação |
-| 2 | `.cursor/skills/get-orient/SKILL.md` (ou equivalente no ambiente do utilizador) | Instruções READ-ONLY, lista de inputs, anti-padrões, exemplos de prompts |
+| 2 | `agent-skills/get-orient/SKILL.md` + sync → `.cursor/skills/get-orient/` | Instruções READ-ONLY, lista de inputs, anti-padrões, exemplos de prompts |
 | 3 | Checklist “contexto mínimo” na skill | Mestre LLM **ou** pacote bloco/fascículo + `project_id`; biblioteca via search ou KI no export |
 | 4 | Piloto uma sessão | Engenheiro faz 3–5 perguntas sobre CTBJ; respostas citam apenas o fornecido; próximo passo nomeia skill seguinte (grill/F0) |
 
@@ -51,5 +51,5 @@ Permitir perguntas ao **conteúdo** do GET (projecto e biblioteca) para perceber
 | Campo | Valor |
 |-------|--------|
 | Documentação plano | 2026-11-21 |
-| SKILL.md Cursor | Pendente |
+| SKILL.md Cursor | **Feito** (`agent-skills/get-orient`) |
 | Piloto utilizador | Pendente |

@@ -1,0 +1,12 @@
+---
+description: Skills GET — editar só em agent-skills/ e sincronizar para .cursor/skills/
+globs: agent-skills/**,.cursor/skills/**
+alwaysApply: false
+---
+
+# Pacote agent-skills
+
+- Fonte de verdade das skills Cursor: `agent-skills/<nome>/` (não o backend).
+- Após editar `SKILL.md`, correr `agent-skills/sync-to-cursor.ps1` (ou `.sh`).
+- Não alterar comportamento canónico só na skill sem alinhar `docs/GET_SKILLS_PLAN.md`.
+- Skills não escrevem SQLite; leitura via exports e API `127.0.0.1`.
