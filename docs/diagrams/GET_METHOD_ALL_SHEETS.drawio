@@ -1,11 +1,11 @@
 <mxfile host="Electron" agent="GET" pages="6">
   <diagram id="method-00-visao" name="00 Visao geral">
-    <mxGraphModel dx="1364" dy="661" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="520" math="0" shadow="0">
+    <mxGraphModel dx="1180" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="520" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="t0" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;fontStyle=1" value="GET - Metodo de trabalho (sem LLM na app)" vertex="1">
-          <mxGeometry height="36" width="760" x="280" y="20" as="geometry" />
+        <mxCell id="t0" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;fontStyle=1" value="GET - Gerador de Especificações Técnicas&lt;br&gt;Método de trabalho" vertex="1">
+          <mxGeometry height="60" width="760" x="280" y="20" as="geometry" />
         </mxCell>
         <mxCell id="n1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontStyle=1" value="1. INICIO&#xa;Workspace, projecto,&#xa;baseline, biblioteca" vertex="1">
           <mxGeometry height="80" width="180" x="40" y="120" as="geometry" />
@@ -41,17 +41,18 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="loop" parent="1" style="rounded=0;html=1;fillColor=#f5f5f5;strokeColor=#999999;dashed=1;fontSize=12" value="Ciclo por fasciculo ou bloco. Backup critico antes de import ou consolidate." vertex="1">
-          <mxGeometry height="48" width="880" x="260" y="260" as="geometry" />
+          <mxGeometry height="30" width="1100" x="260" y="260" as="geometry" />
         </mxCell>
         <mxCell id="e62" edge="1" parent="1" source="n6" style="endArrow=classic;html=1;dashed=1;fontSize=11" target="n2" value="proximo bloco">
-          <mxGeometry relative="1" as="geometry">
+          <mxGeometry relative="1" x="0.0084" as="geometry">
+            <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="1260" y="340" />
-              <mxPoint x="350" y="340" />
+              <mxPoint x="1260" y="320" />
+              <mxPoint x="350" y="320" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="auth" parent="1" style="text;html=1;align=center;fontSize=12;fontStyle=2" value="Fonte de verdade: SQLite (127.0.0.1). So GET-PACKAGE e reimportavel." vertex="1">
+        <mxCell id="auth" parent="1" style="text;html=1;align=center;fontSize=12;fontStyle=2" value="Fonte de verdade: Base de dados do GET" vertex="1">
           <mxGeometry height="24" width="640" x="380" y="360" as="geometry" />
         </mxCell>
       </root>
@@ -71,17 +72,17 @@
         <mxCell id="ws" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32" value="Abrir ou criar&#xa;workspace&#xa;(get.db)" vertex="1">
           <mxGeometry height="60" width="140" x="160" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="lib" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#1b5e20" value="Biblioteca EDA&#xa;KnowledgeItem&#xa;(semente)" vertex="1">
-          <mxGeometry height="60" width="160" x="340" y="90" as="geometry" />
+        <mxCell id="lib" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#1b5e20" value="Biblioteca EDA&lt;br&gt;KnowledgeItem&lt;br&gt;(bases de conhecimento guardadas)" vertex="1">
+          <mxGeometry height="60" width="210" x="330" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="proj" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32" value="Criar projecto&#xa;modelo, pin&#xa;biblioteca" vertex="1">
-          <mxGeometry height="60" width="160" x="540" y="90" as="geometry" />
+        <mxCell id="proj" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32" value="Criar projecto.&lt;br&gt;Uso de&amp;nbsp;modelo opcional&lt;br&gt;patente em &lt;i&gt;biblioteca&lt;/i&gt;" vertex="1">
+          <mxGeometry height="60" width="210" x="570" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="struct" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825" value="Estrutura CTBJ&#xa;fasciculos, blocos" vertex="1">
-          <mxGeometry height="60" width="160" x="740" y="90" as="geometry" />
+        <mxCell id="struct" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825" value="Estrutura do novo caderno de encargos com&amp;nbsp;&lt;br&gt;fascículos, blocos" vertex="1">
+          <mxGeometry height="60" width="160" x="820" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="base" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontStyle=1" value="Publicar baseline&#xa;(obrigatoria para&#xa;GET-PACKAGE)" vertex="1">
-          <mxGeometry height="64" width="180" x="530" y="203" as="geometry" />
+        <mxCell id="base" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontStyle=1" value="Publicar baseline&lt;br&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;(obrigatório para exportação &lt;br&gt;futura de&amp;nbsp;GET-PACKAGE)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="64" width="210" x="570" y="203" as="geometry" />
         </mxCell>
         <mxCell id="corpus" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;dashed=1;fontSize=11" value="Opcional: corpus/&#xa;PDF, normas, vendor&#xa;(nao e verdade)" vertex="1">
           <mxGeometry height="64" width="200" x="160" y="200" as="geometry" />
@@ -170,7 +171,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="method-03-export" name="03 Exportacao">
-    <mxGraphModel dx="1364" dy="661" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="680" math="0" shadow="0">
+    <mxGraphModel dx="1228" dy="595" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="680" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -246,7 +247,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="method-04-import" name="04 Importacao e revisao">
-    <mxGraphModel dx="1228" dy="595" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+    <mxGraphModel dx="1062" dy="702" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -271,7 +272,7 @@
         <mxCell id="hum" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Engenheiro" vertex="1">
           <mxGeometry height="90" width="50" x="920" y="75" as="geometry" />
         </mxCell>
-        <mxCell id="con" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;fontColor=#ffffff;fontStyle=1" value="Consolidar no SQLite" vertex="1">
+        <mxCell id="con" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;fontColor=#ffffff;fontStyle=1" value="Consolidar na base de dados GET" vertex="1">
           <mxGeometry height="56" width="160" x="720" y="200" as="geometry" />
         </mxCell>
         <mxCell id="rules" parent="1" style="text;html=1;align=left;fontSize=12" value="Omissao no JSON nao apaga. Campos protegidos. Conflitos visiveis." vertex="1">
@@ -306,7 +307,7 @@
         <mxCell id="t5" parent="1" style="text;html=1;fontSize=16;fontStyle=1" value="5. Biblioteca - conhecimento reutilizavel (SQLite)" vertex="1">
           <mxGeometry height="32" width="520" x="40" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="sqlite" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e3f2fd;strokeColor=#1565c0;fontStyle=1" value="SQLite get.db" vertex="1">
+        <mxCell id="sqlite" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e3f2fd;strokeColor=#1565c0;fontStyle=1" value="Base de dados get.db" vertex="1">
           <mxGeometry height="80" width="120" x="400" y="80" as="geometry" />
         </mxCell>
         <mxCell id="libk" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#1b5e20" value="Biblioteca global&#xa;scope=library" vertex="1">
