@@ -1,7 +1,7 @@
 {
   "package": "get-agent-skills",
   "version": "1.0.0",
-  "skills": ["get-orient", "get-lexicon"],
+  "skills": ["get-orient", "get-lexicon", "get-grill"],
   "get_api_features": {
     "terminology_search": "GET /api/terminology/search",
     "knowledge_search": "GET /api/knowledge/search"

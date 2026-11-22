@@ -229,6 +229,13 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Piloto roundtrip F0-structure | **Pendente** (humano + workspace) |
 | Retro + fecho F0 | Template pronto |
 
+### F1 — bloco piloto (preparação)
+
+| Passo | Estado |
+|-------|--------|
+| Skill **get-grill** (Cursor) | **Feito** (`agent-skills/get-grill`; piloto bloco pendente) |
+| Piloto M1 (≥1 bloco, pontos `ready`) | **Pendente** — [micro-F1-bloco-piloto-grill.md](plans/micro-F1-bloco-piloto-grill.md) |
+
 ### Transversal — glossário no pacote GET-LLM (F2 / T0)
 
 | Passo | Estado |

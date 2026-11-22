@@ -64,7 +64,7 @@ Fora do SQLite (ADR-008: a app não armazena anexos). Convenção recomendada po
 | Contrato pytest | `agent-skills/tests/test_skill_package.py` |
 | Comportamento | Este documento + micro-planos em `docs/plans/` |
 
-Skills versionadas no repo: **get-orient**, **get-lexicon** (MANIFEST em `agent-skills/MANIFEST.json`).
+Skills versionadas no repo: **get-orient**, **get-lexicon**, **get-grill** (MANIFEST em `agent-skills/MANIFEST.json`; ver `docs/plans/micro-get-grill-skill.md`).
 
 ## MCP GET (opcional, T2)
 

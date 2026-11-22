@@ -14,6 +14,10 @@ Um bloco no fascículo estabilizado em F0 com pontos **harness** completos; cami
 | Propostas GET-PACKAGE (campos ponto, refs) | decision/1, MCP |
 | `Reference` com URL SharePoint ou caminho em `citation`/`notes` | Marcar `approved` via import |
 
+## Skill Cursor
+
+`agent-skills/get-grill/` — ver [micro-get-grill-skill.md](micro-get-grill-skill.md).
+
 ## Passos (a detalhar após F0)
 
 1. Escolher bloco (código documental + tema técnico adequado para grill).

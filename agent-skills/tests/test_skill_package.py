@@ -75,6 +75,11 @@ REQUIRED_SECTIONS: dict[str, list[str]] = {
         "Proibido",
         "Ciclo",
     ],
+    "get-grill": [
+        "GET-PACKAGE",
+        "Proibido",
+        "Contexto mínimo",
+    ],
 }
 
 
