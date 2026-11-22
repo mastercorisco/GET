@@ -95,8 +95,19 @@ REQUIRED_SECTIONS: dict[str, list[str]] = {
         "PROPOSE",
         "Proibido",
         "GET-PACKAGE",
+        "Contexto mínimo",
     ],
 }
+
+
+def test_manifest_skills_match_required_sections() -> None:
+    manifest_skills = set(_load_manifest()["skills"])
+    required_skills = set(REQUIRED_SECTIONS)
+    assert manifest_skills == required_skills, (
+        f"MANIFEST vs REQUIRED_SECTIONS: "
+        f"only_manifest={manifest_skills - required_skills}, "
+        f"only_required={required_skills - manifest_skills}"
+    )
 
 
 @pytest.mark.parametrize("skill,sections", list(REQUIRED_SECTIONS.items()))

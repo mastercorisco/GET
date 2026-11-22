@@ -39,7 +39,7 @@ Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-write-spec). Macro F2 / 
 
 ## Proibido
 
-- Alterar SQLite, GET-PACKAGE devolvido como «texto final canónico», ou reimportar MD na app.
+- Alterar SQLite, usar GET-PACKAGE como saída de redação em vez de MD, ou reimportar MD na app.
 - Aprovar conteúdo ou marcar pontos `ready`/`approved`.
 - Ignorar glossário técnico do ZIP.
 - Misturar redação de vários fascículos num único ficheiro sem pedido explícito.

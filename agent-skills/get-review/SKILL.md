@@ -28,7 +28,7 @@ Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-review). Conclusão do c
 
 ## PROPOSE
 
-- Alterações como PATCH GET-PACKAGE (pontos, premissas, refs) — **não** reescrever o caderno inteiro no chat.
+- Alterações como **proposta GET-PACKAGE** (JSON completo do envelope; pontos, premissas, refs) — **não** reescrever o caderno inteiro no chat.
 - Secção **«Inconsistências»** priorizada.
 - **«Não corrigir no GET»** para pureza editorial sem impacto técnico.
 
