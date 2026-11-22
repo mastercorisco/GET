@@ -97,12 +97,19 @@ document.addEventListener("get:help-level-changed", function () {
 
 initCompactSections(document);
 
+function syncProjectPillFromSelect() {
+  const pActive = document.getElementById("pActive");
+  if (!pActive) return;
+  const opt = pActive.options[pActive.selectedIndex];
+  const name = pActive.value && opt ? opt.textContent : "";
+  shell.setActiveProjectName(name);
+}
+
+document.addEventListener("get:projects-catalog-updated", syncProjectPillFromSelect);
+
 const pActive = document.getElementById("pActive");
 if (pActive) {
-  pActive.addEventListener("change", function () {
-    const opt = pActive.options[pActive.selectedIndex];
-    shell.setActiveProjectName(opt ? opt.textContent : "");
-  });
+  pActive.addEventListener("change", syncProjectPillFromSelect);
 }
 
 document.addEventListener("get:baseline-published", function () {

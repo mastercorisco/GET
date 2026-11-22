@@ -1,5 +1,20 @@
 import { apiErrorMessage } from "../api/client.js";
 
+/** 204 / corpo vazio não são JSON — evita JSON.parse em apagar backup. */
+function readFetchBody(res) {
+  return res.text().then(function (text) {
+    const trimmed = (text || "").trim();
+    if (!trimmed) {
+      return { json: null, raw: "" };
+    }
+    try {
+      return { json: JSON.parse(trimmed), raw: trimmed };
+    } catch (_e) {
+      return { json: null, raw: trimmed };
+    }
+  });
+}
+
 function formatDate(iso) {
   if (!iso) return "";
   try {
@@ -31,6 +46,7 @@ function fillDetailPanel(panel, row, previewApi) {
   addDetailRow(dl, "Tier", row.tier);
   addDetailRow(dl, "Criado", formatDate(row.created_at));
   addDetailRow(dl, "Ficheiro", row.file_path);
+  addDetailRow(dl, "Nota", row.user_note);
   addDetailRow(dl, "sha256", row.sha256);
   const meta = row.preview_meta_json || {};
   if (meta.workspace_settings_rows != null) {
@@ -52,6 +68,7 @@ function fillDetailPanel(panel, row, previewApi) {
 export function initBackupsView() {
   const listEl = document.getElementById("backupList");
   const createBtn = document.getElementById("backupCreateCritical");
+  const noteInput = document.getElementById("backupCreateNote");
   const statusEl = document.getElementById("backupStatus");
   if (!listEl || !createBtn) return;
 
@@ -152,6 +169,13 @@ export function initBackupsView() {
           row.tier + " · " + formatDate(row.created_at) + metaBit + " · " + shortPath(row.file_path);
         main.appendChild(head);
 
+        if (row.user_note) {
+          const note = document.createElement("p");
+          note.className = "backup-row__note";
+          note.textContent = row.user_note;
+          main.appendChild(note);
+        }
+
         const sha = document.createElement("p");
         sha.className = "backup-row__sha";
         sha.textContent = (row.sha256 || "").slice(0, 12) + "…";
@@ -215,15 +239,22 @@ export function initBackupsView() {
           const discardUrl = "/api/backups/" + encodeURIComponent(row.id) + "/discard";
           fetch(discardUrl, { method: "POST" })
             .then(function (res) {
-              if (res.status === 204) return null;
-              return res.json().then(function (b) {
-                const msg = apiErrorMessage(b, "Falha ao apagar backup.");
-                if (res.status === 404 && (msg === "Not Found" || msg === "not found")) {
-                  throw new Error(
-                    "Servidor desatualizado (rota de apagar backup em falta). Reinicie o Arranque GET.bat e Ctrl+F5."
-                  );
+              return readFetchBody(res).then(function (parsed) {
+                if (res.ok && (res.status === 204 || res.status === 205 || !parsed.raw)) {
+                  return;
                 }
-                throw new Error(msg);
+                if (!res.ok) {
+                  const msg = apiErrorMessage(
+                    parsed.json,
+                    (parsed.raw && parsed.raw.trim()) || "Falha ao apagar backup."
+                  );
+                  if (res.status === 404 && (msg === "Not Found" || msg === "not found")) {
+                    throw new Error(
+                      "Servidor desatualizado (rota de apagar backup em falta). Reinicie o Arranque GET.bat e Ctrl+F5."
+                    );
+                  }
+                  throw new Error(msg);
+                }
               });
             })
             .then(function () {
@@ -257,10 +288,14 @@ export function initBackupsView() {
 
   createBtn.addEventListener("click", function () {
     setStatus("");
+    const userNote =
+      noteInput && typeof noteInput.value === "string" ? noteInput.value.trim() : "";
+    const payload = { tier: "critical" };
+    if (userNote) payload.user_note = userNote;
     fetch("/api/backups", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tier: "critical" }),
+      body: JSON.stringify(payload),
     })
       .then(function (res) {
         return res.json().then(function (body) {
@@ -269,6 +304,7 @@ export function initBackupsView() {
       })
       .then(function (result) {
         if (!result.ok) throw new Error(apiErrorMessage(result.body, "Falha ao criar backup."));
+        if (noteInput) noteInput.value = "";
         setStatus("Backup crítico criado.");
         return refresh();
       })

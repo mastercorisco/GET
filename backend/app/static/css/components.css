@@ -659,8 +659,43 @@ button.linkish.field-help-concept-btn {
   margin: 0.35rem 0 0.5rem;
 }
 
+.backups-panel__create-block {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  max-width: 22rem;
+  flex: 1 1 14rem;
+}
+
+.backups-panel__note-label {
+  align-self: stretch;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.backups-panel__note {
+  width: 100%;
+  min-height: 2.5rem;
+  resize: vertical;
+  font: inherit;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-surface);
+}
+
 .backups-panel__create {
+  width: 100%;
   flex-shrink: 0;
+  text-align: center;
+}
+
+.backup-row__note {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  font-style: italic;
 }
 
 .backups-panel button {

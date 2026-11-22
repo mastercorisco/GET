@@ -129,6 +129,13 @@ body {
   white-space: nowrap;
 }
 
+/* Nome do projecto pode ser longo; workspace mantém corte por caminho */
+#status-project.status-pill {
+  max-width: min(46vw, 40rem);
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
 .status-pill--ok {
   border-color: var(--color-success-border);
   background: var(--color-success-subtle);

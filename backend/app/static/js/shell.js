@@ -23,7 +23,10 @@ export function createShell(router) {
   }
 
   function setActiveProjectName(name) {
-    if (els.projectPill) els.projectPill.textContent = "Projecto: " + (name || "—");
+    if (!els.projectPill) return;
+    const label = "Projecto: " + (name || "—");
+    els.projectPill.textContent = label;
+    els.projectPill.title = name ? label : "";
   }
 
   function setBaselineState(text, ok) {

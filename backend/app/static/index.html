@@ -723,9 +723,19 @@
         <div class="screen-guide-panel" data-screen-guide="backups" hidden></div>
         <div class="backups-panel__head">
           <h2>Backups</h2>
-          <button type="button" id="backupCreateCritical" class="secondary backups-panel__create">
-            Criar backup crítico
-          </button>
+          <div class="backups-panel__create-block">
+            <button type="button" id="backupCreateCritical" class="secondary backups-panel__create">
+              Criar backup crítico
+            </button>
+            <label class="backups-panel__note-label" for="backupCreateNote">Nota (opcional)</label>
+            <textarea
+              id="backupCreateNote"
+              class="backups-panel__note"
+              rows="2"
+              maxlength="500"
+              placeholder="Ex.: Antes do import do pacote F01"
+            ></textarea>
+          </div>
         </div>
         <p class="choice-hint backups-panel__intro">
           Backup crítico antes de import, consolidate ou migração (F0). Restauro gera

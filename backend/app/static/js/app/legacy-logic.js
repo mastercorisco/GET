@@ -262,6 +262,7 @@ const rootPath = document.getElementById("rootPath");
           document.getElementById("docList").replaceChildren();
           document.getElementById("docAssocList").replaceChildren();
         }
+        document.dispatchEvent(new CustomEvent("get:projects-catalog-updated"));
       }
 
       function renderDocumentTree(nodes) {

@@ -22,3 +22,4 @@ class BackupRecord(Base):
     sha256: Mapped[str] = mapped_column(String(64), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     preview_meta_json: Mapped[str] = mapped_column(Text, default="{}")
+    user_note: Mapped[str | None] = mapped_column(Text, nullable=True)

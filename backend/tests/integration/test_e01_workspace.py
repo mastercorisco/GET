@@ -83,8 +83,12 @@ def test_create_open_workspace_and_backup(client: TestClient, tmp_path: Path) ->
     assert current.status_code == 200
     assert current.json()["local_user_name"] == "tester"
 
-    backup = client.post("/api/backups", json={"tier": "critical"})
+    backup = client.post(
+        "/api/backups",
+        json={"tier": "critical", "user_note": "  Antes do teste  "},
+    )
     assert backup.status_code == 200
+    assert backup.json()["user_note"] == "Antes do teste"
     assert Path(backup.json()["file_path"]).exists()
 
     listing = client.get("/api/backups")

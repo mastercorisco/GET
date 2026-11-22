@@ -121,7 +121,7 @@ Seguir entidades em [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md). Mapeamento físi
 **E01 — fundações**
 
 - `workspace_settings` (id, root_path, created_at, local_user_name, schema_versions_json **só metadata**, retention policy)
-- `backup_record` (id, tier: critical/daily/weekly, path, sha256, created_at, workspace_snapshot_meta)
+- `backup_record` (id, tier: critical/daily/weekly, path, sha256, created_at, preview_meta_json, user_note opcional)
 
 **E02 — conhecimento**
 

@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 class BackupCreateRequest(BaseModel):
     tier: str = Field(pattern="^(critical|daily|weekly)$")
+    user_note: str | None = Field(default=None, max_length=500)
 
 
 class BackupRecordResponse(BaseModel):
@@ -14,6 +15,7 @@ class BackupRecordResponse(BaseModel):
     sha256: str
     created_at: datetime
     preview_meta_json: dict
+    user_note: str | None = None
 
 
 class BackupRestorePreviewResponse(BaseModel):

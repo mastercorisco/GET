@@ -26,7 +26,7 @@ def backups_list() -> list[BackupRecordResponse]:
 @router.post("", response_model=BackupRecordResponse)
 def backups_create(body: BackupCreateRequest) -> BackupRecordResponse:
     try:
-        return create_backup(get_settings(), body.tier)
+        return create_backup(get_settings(), body.tier, user_note=body.user_note)
     except WorkspaceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -45,7 +45,9 @@ def _delete_backup_http(backup_id: str) -> None:
     except WorkspaceExclusiveError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except WorkspaceError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
+        msg = str(exc)
+        status = 409 if "bloqueado" in msg.lower() or "em uso" in msg.lower() else 404
+        raise HTTPException(status_code=status, detail=msg) from exc
 
 
 @router.delete("/{backup_id}", status_code=204)
