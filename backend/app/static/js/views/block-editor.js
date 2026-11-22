@@ -680,6 +680,102 @@ function refreshBlockEditor() {
         onPointSaved: function () {
           loadBlockValidation(activeBlockId);
         },
+        listPremises: function (pointId) {
+          return api(
+            "/api/premises?owner_kind=development_point&owner_id=" + encodeURIComponent(pointId),
+            {},
+            "Falha ao listar premissas."
+          );
+        },
+        createPremise: function (pointId, body) {
+          return api(
+            "/api/premises",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                owner_kind: "development_point",
+                owner_id: pointId,
+                statement: body.statement,
+                importance: body.importance,
+                source_type: body.source_type,
+                confidence: body.confidence,
+              }),
+            },
+            "Falha ao criar premissa."
+          );
+        },
+        deletePremise: function (premiseId) {
+          return api("/api/premises/" + premiseId, { method: "DELETE" }, "Falha ao apagar.");
+        },
+        loadKnowledgePickList: function () {
+          const projectId = document.getElementById("pActive")?.value;
+          const libP = api("/api/knowledge?scope_type=library", {}, "").catch(function () {
+            return [];
+          });
+          const projP = projectId
+            ? api(
+                "/api/knowledge?scope_type=project&scope_id=" + encodeURIComponent(projectId),
+                {},
+                ""
+              ).catch(function () {
+                return [];
+              })
+            : Promise.resolve([]);
+          return Promise.all([libP, projP]).then(function (parts) {
+            const seen = new Set();
+            const out = [];
+            parts.forEach(function (rows) {
+              (rows || []).forEach(function (it) {
+                if (!it || !it.id || seen.has(it.id)) return;
+                seen.add(it.id);
+                const prefix = it.human_code ? it.human_code + " · " : "";
+                out.push({
+                  id: it.id,
+                  label: prefix + (it.title || it.id.slice(0, 8)) + " (" + (it.knowledge_type || "—") + ")",
+                });
+              });
+            });
+            out.sort(function (a, b) {
+              return a.label.localeCompare(b.label, "pt");
+            });
+            return out;
+          });
+        },
+        loadReferencePickList: function () {
+          const projectId = document.getElementById("pActive")?.value;
+          const libP = api("/api/references?scope_type=library", {}, "").catch(function () {
+            return [];
+          });
+          const projP = projectId
+            ? api(
+                "/api/references?scope_type=project&scope_id=" + encodeURIComponent(projectId),
+                {},
+                ""
+              ).catch(function () {
+                return [];
+              })
+            : Promise.resolve([]);
+          return Promise.all([libP, projP]).then(function (parts) {
+            const seen = new Set();
+            const out = [];
+            parts.forEach(function (rows) {
+              (rows || []).forEach(function (ref) {
+                if (!ref || !ref.id || seen.has(ref.id)) return;
+                seen.add(ref.id);
+                const cite = ref.citation ? " — " + ref.citation.slice(0, 60) : "";
+                out.push({
+                  id: ref.id,
+                  label: (ref.title || ref.id.slice(0, 8)) + cite,
+                });
+              });
+            });
+            out.sort(function (a, b) {
+              return a.label.localeCompare(b.label, "pt");
+            });
+            return out;
+          });
+        },
         action: function (id, kind) {
           if (kind === "delete") {
             return api("/api/development-points/" + id, { method: "DELETE" }, "Falha ao eliminar.").then(

@@ -102,6 +102,22 @@ def test_block_points_crud_reorder_export(client: TestClient, tmp_path: Path) ->
     assert p1.status_code == 200
     pid = p1.json()["id"]
 
+    point_prem = client.post(
+        "/api/premises",
+        json={
+            "owner_kind": "development_point",
+            "owner_id": pid,
+            "statement": "Premissa específica do ponto.",
+            "importance": "recommended",
+            "source_type": "technical_recommendation",
+            "confidence": "provisional",
+        },
+    )
+    assert point_prem.status_code == 200
+    listed = client.get(f"/api/premises?owner_kind=development_point&owner_id={pid}")
+    assert listed.status_code == 200
+    assert any(p["statement"] == "Premissa específica do ponto." for p in listed.json())
+
     client.patch(
         f"/api/development-points/{pid}",
         json={

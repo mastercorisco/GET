@@ -629,6 +629,34 @@ button.secondary.danger:hover {
   font-size: inherit;
 }
 
+.be-points-list .dp-list-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.25rem 0;
+}
+
+.be-points-list .dp-list-del {
+  flex: 0 0 2.25rem;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  padding: 0.28rem 0.35rem;
+  line-height: 1;
+  order: 0;
+}
+
+.be-points-list .dp-list-row input,
+.be-points-list .dp-list-row select.dp-ref-select {
+  flex: 1 1 auto;
+  min-width: 6rem;
+  order: 1;
+}
+
+.be-points-list .dp-premise-list {
+  margin: 0.35rem 0;
+}
+
 .dp-card .tip-btn.field-help-btn {
   margin: 0;
   padding: 0 0.35rem;
