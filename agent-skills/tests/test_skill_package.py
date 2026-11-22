@@ -85,6 +85,17 @@ REQUIRED_SECTIONS: dict[str, list[str]] = {
         "Contexto mínimo",
         "PROPOSE",
     ],
+    "get-write-spec": [
+        "GET-LLM",
+        "terminology",
+        "Proibido",
+        "Contexto mínimo",
+    ],
+    "get-review": [
+        "PROPOSE",
+        "Proibido",
+        "GET-PACKAGE",
+    ],
 }
 
 

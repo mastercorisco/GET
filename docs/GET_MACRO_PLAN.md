@@ -245,6 +245,15 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Implementação `terminology_*_llm.md` no ZIP | **Feito** (ADR-061; ver micro-F2) |
 | JSON `terminology_*_llm.json` no ZIP | **Feito** (GET-LLM-TERMINOLOGY) |
 
+### F2 — ciclo redação (M2)
+
+| Passo | Estado |
+|-------|--------|
+| Export GET-LLM + glossário (app) | **Feito** (T0) |
+| Skill **get-write-spec** | **Feito** (`agent-skills/get-write-spec`) |
+| Skill **get-review** | **Feito** (`agent-skills/get-review`) |
+| Piloto M2 ponta a ponta | **Pendente** (texto + review + import) |
+
 ### T1 — pesquisa de glossário
 
 | Passo | Estado |

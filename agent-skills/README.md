@@ -37,7 +37,9 @@ curl "http://127.0.0.1:8000/api/terminology/search?q=termo&project_id=<uuid>"
 | get-lexicon | implementada |
 | get-grill | implementada |
 | get-research | implementada |
-| get-write-spec, get-review, get-decision | planeadas |
+| get-write-spec | implementada |
+| get-review | implementada |
+| get-decision | planeada |
 
 ## MCP (futuro)
 
