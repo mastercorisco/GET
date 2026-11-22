@@ -517,3 +517,50 @@ def test_f2_draft_from_export_covers_must_include(tmp_path: Path) -> None:
         text=True,
     )
     assert proc_rev.returncode == 0, proc_rev.stdout
+
+
+def test_f2_m2_gate_passes_with_full_draft(tmp_path: Path) -> None:
+    import json
+
+    block = {
+        "block": {"title": "B"},
+        "preparation": {
+            "development_points": [
+                {
+                    "title": "P",
+                    "status": "ready",
+                    "must_include": [{"text": "Frase única obrigatória gate M2 teste."}],
+                }
+            ]
+        },
+    }
+    term = {
+        "payload": {
+            "library_terms": [
+                {"preferred_term": "T", "avoid_terms": ["proibido_xyz"]},
+            ],
+        }
+    }
+    block_path = tmp_path / "b.json"
+    term_path = tmp_path / "t.json"
+    draft_path = tmp_path / "d.md"
+    block_path.write_text(json.dumps(block), encoding="utf-8")
+    term_path.write_text(json.dumps(term), encoding="utf-8")
+    draft_path.write_text("Frase única obrigatória gate M2 teste.\n", encoding="utf-8")
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f2_m2_gate.py"),
+            "--draft",
+            str(draft_path),
+            "--block-json",
+            str(block_path),
+            "--terminology-json",
+            str(term_path),
+        ],
+        cwd=backend,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr

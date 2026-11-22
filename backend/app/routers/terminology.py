@@ -94,13 +94,15 @@ def terminology_overrides_create(
 
 
 @router.delete("/terminology/{concept_id}", status_code=204)
-def terminology_delete(concept_id: str) -> None:
-    _run(lambda: delete_terminology(get_settings(), concept_id))
+def terminology_delete(concept_id: str, confirm: bool = Query(default=False)) -> None:
+    _run(lambda: delete_terminology(get_settings(), concept_id, confirm=confirm))
 
 
 @router.delete(
     "/projects/{project_id}/terminology-overrides/{override_id}",
     status_code=204,
 )
-def terminology_override_delete(project_id: str, override_id: str) -> None:
-    _run(lambda: delete_terminology_override(get_settings(), project_id, override_id))
+def terminology_override_delete(
+    project_id: str, override_id: str, confirm: bool = Query(default=False)
+) -> None:
+    _run(lambda: delete_terminology_override(get_settings(), project_id, override_id, confirm=confirm))

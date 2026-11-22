@@ -95,3 +95,46 @@ def test_terminology_search_library_and_project(client: TestClient, tmp_path: Pa
 
     empty = client.get("/api/terminology/search", params={"q": "   "})
     assert empty.status_code == 400
+
+
+def test_terminology_delete_requires_confirm(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    client.post("/api/knowledge", json={"title": "s", "content": "c", "origin_context": "t"})
+    concept = client.post(
+        "/api/terminology",
+        json={
+            "scope_type": "library",
+            "preferred_term": "Apagar-me",
+            "definition": "Teste confirm.",
+        },
+    ).json()
+    cid = concept["id"]
+    blocked = client.delete(f"/api/terminology/{cid}")
+    assert blocked.status_code == 400
+    assert client.get("/api/terminology", params={"scope_type": "library"}).json()
+    ok = client.delete(f"/api/terminology/{cid}", params={"confirm": True})
+    assert ok.status_code == 204
+    assert client.delete(f"/api/terminology/{cid}", params={"confirm": True}).status_code == 400
+
+
+def test_terminology_override_delete_requires_confirm(client: TestClient, tmp_path: Path) -> None:
+    _workspace(client, tmp_path)
+    client.post("/api/knowledge", json={"title": "s", "content": "c", "origin_context": "t"})
+    concept = client.post(
+        "/api/terminology",
+        json={"scope_type": "library", "preferred_term": "X", "definition": "d"},
+    ).json()
+    templates = client.get("/api/projects/templates").json()
+    v1 = templates[0]["versions"][0]["id"]
+    project = client.post(
+        "/api/projects",
+        json={"template_version_id": v1, "name": "P", "intervention_type": "brownfield"},
+    ).json()
+    pid = project["id"]
+    ov = client.post(
+        f"/api/projects/{pid}/terminology-overrides",
+        json={"concept_id": concept["id"], "legacy_term": "Legado"},
+    ).json()
+    oid = ov["id"]
+    assert client.delete(f"/api/projects/{pid}/terminology-overrides/{oid}").status_code == 400
+    assert client.delete(f"/api/projects/{pid}/terminology-overrides/{oid}", params={"confirm": True}).status_code == 204

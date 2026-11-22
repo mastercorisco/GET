@@ -1205,7 +1205,11 @@ const rootPath = document.getElementById("rootPath");
           p.appendChild(text);
           p.appendChild(
             actionDeleteButton("Apagar", function () {
-              knowledgeRequest("/api/terminology/" + row.id, { method: "DELETE" }, "Falha ao apagar termo.")
+              knowledgeRequest(
+                "/api/terminology/" + row.id + "?confirm=true",
+                { method: "DELETE" },
+                "Falha ao apagar termo."
+              )
                 .then(loadLibraryTerminology)
                 .catch(function (err) {
                   setKnowledgeError(err.message);
@@ -1284,7 +1288,7 @@ const rootPath = document.getElementById("rootPath");
           p.appendChild(
             actionDeleteButton("Apagar", function () {
               knowledgeRequest(
-                "/api/projects/" + projectId + "/terminology-overrides/" + row.id,
+                "/api/projects/" + projectId + "/terminology-overrides/" + row.id + "?confirm=true",
                 { method: "DELETE" },
                 "Falha ao apagar override."
               )

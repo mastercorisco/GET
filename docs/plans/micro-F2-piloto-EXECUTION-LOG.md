@@ -14,6 +14,8 @@
 | `f2_m2_materialize.py` | Copiar bloco + glossário para `redaction/{block}`; `--outline` |
 | `f2_review_report.py` | Cobertura `must_include` no rascunho MD |
 | `f2_draft_from_export.py` | Dry-run MD a partir do JSON export (não canónico) |
+| `f2_glossary_report.py` | `avoid_terms` no rascunho |
+| `f2_m2_gate.py` | Gate tooling M2 (must_include + glossário) |
 | Skills | `get-write-spec`, `get-review` |
 
 ## Pré-voo M2

@@ -177,7 +177,7 @@ Derivado de experiência real (reestruturação na LLM + import problemático):
 | Média | UI de aceitação por grupo (pontos / premissas / knowledge) | Produto — **feito** (filtro + lote por secção) |
 | Média | `GET /api/terminology/search` | Produto — **feito T1** (ADR-062) |
 | Média | `GET /api/projects/{id}/summary` (contagens read-only, M0) | Produto — **feito** (get-orient) |
-| Média | `confirm` em DELETE terminologia | Produto — T2 |
+| Média | `confirm` em DELETE terminologia | Produto — **feito** (`confirm` query param) |
 | Baixa | Modos de import (estrutura vs conteúdo) | Produto |
 | Baixa | MCP stdio local + tools | Infra — T2–T3 (adiado até **M2**) |
 | Baixa | Skill get-lexicon versionada | Processo — **feito T1** (`agent-skills/get-lexicon`) |

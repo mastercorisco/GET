@@ -12,6 +12,13 @@ python scripts/f2_review_report.py `
 
 Exit code `0` ⇒ todas as frases `must_include` (ready/approved) aparecem no rascunho — ainda assim validar semântica e glossário.
 
+```powershell
+python scripts/f2_m2_gate.py `
+  --draft "redaction\F04_B07\REDACAO-F04_B07.md" `
+  --block-json "redaction\F04_B07\F04_B07_discussion_llm.json" `
+  --terminology-json "redaction\F04_B07\terminology_discussion_llm.json"
+```
+
 ## Prompt (copiar)
 
 ```text

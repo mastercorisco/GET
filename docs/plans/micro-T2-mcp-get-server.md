@@ -52,7 +52,7 @@ Exemplo de config Cursor: documentar em `mcp-get/README.md` quando existir; **n�
 ## Critérios T2.1 (escrita)
 
 - [ ] Padrão `confirm` alinhado a `POST /backups/{id}/restore?confirm=true`.
-- [ ] `confirm` em DELETE terminologia (produto).
+- [x] `confirm` em DELETE terminologia (produto).
 - [ ] Descrição de cada tool de escrita avisa: confirmação humana na app.
 
 ## Testes futuros

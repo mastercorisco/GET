@@ -117,7 +117,9 @@ def delete_reference(app_settings: AppSettings, reference_id: str) -> None:
         session.delete(ref)
 
 
-def delete_terminology(app_settings: AppSettings, concept_id: str) -> None:
+def delete_terminology(app_settings: AppSettings, concept_id: str, *, confirm: bool) -> None:
+    if not confirm:
+        raise TerminologyError("Confirmação obrigatória para apagar termo (confirm=true).")
     with workspace_session(app_settings) as (session, _paths):
         row = session.get(TerminologyConcept, concept_id)
         if row is None:
@@ -130,7 +132,11 @@ def delete_terminology(app_settings: AppSettings, concept_id: str) -> None:
         session.delete(row)
 
 
-def delete_terminology_override(app_settings: AppSettings, project_id: str, override_id: str) -> None:
+def delete_terminology_override(
+    app_settings: AppSettings, project_id: str, override_id: str, *, confirm: bool
+) -> None:
+    if not confirm:
+        raise TerminologyError("Confirmação obrigatória para apagar override (confirm=true).")
     with workspace_session(app_settings) as (session, _paths):
         row = session.get(ProjectTerminologyOverride, override_id)
         if row is None or row.project_id != project_id:
