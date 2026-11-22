@@ -41,4 +41,4 @@ Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-review). Conclusão do c
 
 Verificação determinística (opcional): `backend/scripts/f2_review_report.py --draft <md> --block-json <export>`.
 
-Ver `reference.md` e `examples.md`.
+Checklist sessão: `checklist-m2-review.md`. Ver `reference.md` e `examples.md`.

@@ -48,4 +48,4 @@ Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-write-spec). Macro F2 / 
 
 Texto → **get-review** → correcções via GET-PACKAGE aceites pelo engenheiro.
 
-Ver `reference.md` e `examples.md`.
+Checklist sessão: `checklist-m2.md`. Ver `reference.md` e `examples.md`.

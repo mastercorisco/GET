@@ -143,6 +143,11 @@ def test_llm_generation_zip_without_baseline(client: TestClient, tmp_path: Path)
     assert latest.status_code == 200
     assert latest.json()["export_id"] == body["export_id"]
     assert Path(latest.json()["zip_path"]).is_file()
+    summary = client.get(f"/api/projects/{pid}/summary")
+    assert summary.status_code == 200
+    summ = summary.json()
+    assert summ["latest_llm_export_id"] == body["export_id"]
+    assert summ["latest_llm_zip_path"] == body["zip_path"]
     missing = client.get(f"/api/projects/{uuid.uuid4()}/exports/llm-generation/latest")
     assert missing.status_code == 400
     body = response.json()

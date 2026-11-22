@@ -17,7 +17,8 @@
 | `f2_glossary_report.py` | `avoid_terms` no rascunho |
 | `f2_m2_gate.py` | Gate tooling M2 (must_include + glossário) |
 | `f2_m2_workflow.py` | materialize → draft opcional → gate |
-| Skills | `get-write-spec`, `get-review` |
+| `f2_m2_production_status.py` | Artefactos `redaction/` + summary + `--run-gate` |
+| Skills | `get-write-spec`, `get-review` (+ `checklist-m2.md` / `checklist-m2-review.md`) |
 
 ## Pré-voo M2
 

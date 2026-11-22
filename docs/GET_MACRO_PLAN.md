@@ -265,7 +265,7 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Export GET-LLM + glossário (app) | **Feito** (T0) |
 | Skill **get-write-spec** | **Feito** (`agent-skills/get-write-spec`) |
 | Skill **get-review** | **Feito** (`agent-skills/get-review`) |
-| Piloto M2 ponta a ponta | **Em curso** — export feito; `f2_m2_preflight` — [micro-F2-piloto-EXECUTION-LOG.md](plans/micro-F2-piloto-EXECUTION-LOG.md) |
+| Piloto M2 ponta a ponta | **Em curso** — tooling fechado; **produção humana** (write-spec + review) — [micro-F2-M2-production-checklist.md](plans/micro-F2-M2-production-checklist.md), `f2_m2_production_status.py` |
 
 ### F3 — reutilização (preparação)
 
