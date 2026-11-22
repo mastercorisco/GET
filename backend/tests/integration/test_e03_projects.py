@@ -248,3 +248,36 @@ def test_f1_block_preflight_reports_missing_block(client: TestClient, tmp_path: 
     )
     assert proc.returncode == 1
     assert "F99_B99" in proc.stderr or "F99_B99" in proc.stdout
+
+
+def test_f1_patch_block_point_missing_title(client: TestClient, tmp_path: Path) -> None:
+    from tests.integration.test_get_package import _setup_block
+
+    pid, block_id, _ = _setup_block(client, tmp_path)
+    export = client.post(
+        f"/api/projects/{pid}/packages/export",
+        json={"scope_kind": "block", "node_id": block_id},
+    )
+    assert export.status_code == 200
+    pkg_path = Path(export.json()["file_path"])
+    cfg = tmp_path / "app-config.json"
+    env = {**os.environ, "GET_APP_CONFIG_PATH": str(cfg)}
+    backend = Path(__file__).resolve().parents[2]
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(backend / "scripts" / "f1_patch_block_point.py"),
+            str(pkg_path),
+            "--project-id",
+            pid,
+            "--title-contains",
+            "inexistente_xyz",
+            "--append-guidance",
+            "x",
+        ],
+        cwd=backend,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode != 0

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # get-grill — preparar harness do bloco (READ → PROPOSE)
 
-Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-grill). Plano F1: `docs/plans/micro-F1-bloco-piloto-grill.md`.
+Comportamento canónico: `docs/GET_SKILLS_PLAN.md` (get-grill). Piloto activo: `docs/plans/micro-F1-bloco-F04_B07-grill.md` · prompt: `docs/plans/micro-F1-grill-session-prompt.md`.
 
 ## Modo
 

@@ -246,7 +246,8 @@ Modelo de título: `docs/plans/micro-F1-bloco-XX-grill.md` (criar quando necess�
 | Skill **get-grill** (Cursor) | **Feito** (`agent-skills/get-grill`; piloto bloco pendente) |
 | Skill **get-research** (Cursor) | **Feito** (`agent-skills/get-research`) |
 | Micro-plano bloco F01_B01 | **Feito** — [micro-F1-bloco-F01_B01-grill.md](plans/micro-F1-bloco-F01_B01-grill.md) |
-| Piloto M1 (≥1 bloco, pontos `ready`) | **Pendente** — grill no workspace testes |
+| Piloto grill F04_B07 (ferramentas + prompt) | **Feito** — `f1_block_preflight`, `f1_patch_block_point`, [micro-F1-grill-session-prompt.md](plans/micro-F1-grill-session-prompt.md) |
+| Piloto M1 (≥1 bloco, pontos `ready`) | **Em curso** — [micro-F1-piloto-EXECUTION-LOG.md](plans/micro-F1-piloto-EXECUTION-LOG.md) |
 
 ### Transversal — glossário no pacote GET-LLM (F2 / T0)
 

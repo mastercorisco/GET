@@ -21,8 +21,10 @@ F01_B01 já tem **4/4** pontos `ready` (M1 nominal no bloco piloto estrutural). 
    python backend/scripts/f1_block_preflight.py --project-id 976e3991-e64e-4306-99fe-4ac1e2230b52 --block F04_B07 --export
    ```
 3. Sessão **get-grill** sobre `F04_B07_package.json` (modo F0-content-block no ritual).
-4. `validate_get_package_file.py` → import → aceitar **pontos/premissas** (não estrutura fascículo).
-5. Consolidate → marcar **`ready`** na UI onde a validação passar (humano).
+4. `validate_get_package_file.py` → `f0_roundtrip_apply.py` (modo **auto** em bloco) ou import na UI (grupo **Pontos**).
+5. Dry-run sem LLM: [micro-F1-piloto-EXECUTION-LOG.md](micro-F1-piloto-EXECUTION-LOG.md).
+6. Prompt grill: [micro-F1-grill-session-prompt.md](micro-F1-grill-session-prompt.md).
+7. Consolidate → marcar **`ready`** na UI (humano).
 
 ## Entrega M1
 

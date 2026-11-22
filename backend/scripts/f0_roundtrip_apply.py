@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""F0-structure: import GET-PACKAGE → merge → aceitar (estrutura) → consolidate (CLI)."""
+"""GET-PACKAGE: import → merge → aceitar propostas → consolidate (CLI; F0/F1)."""
 
 from __future__ import annotations
 
@@ -31,14 +31,14 @@ _F0_SAFE_KINDS = frozenset(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Aplicar import GET-PACKAGE fascículo (piloto F0).")
+    parser = argparse.ArgumentParser(description="Aplicar import GET-PACKAGE (fascículo F0 / bloco F1).")
     parser.add_argument("path", type=Path, help="JSON devolvido (dry-run ou LLM)")
     parser.add_argument("--project-id", required=True)
     parser.add_argument(
         "--accept",
-        choices=("structure-only", "f0-safe", "all-pending"),
-        default="structure-only",
-        help="Que propostas aceitar automaticamente",
+        choices=("auto", "structure-only", "f0-safe", "all-pending"),
+        default="auto",
+        help="auto=fascicle→structure-only, block→f0-safe",
     )
     parser.add_argument("--dry-run", action="store_true", help="Só import + merge; não decide nem consolida")
     args = parser.parse_args()
@@ -77,9 +77,14 @@ def main() -> int:
         print("Dry-run: parado antes de decisões.")
         return 0
 
-    if args.accept == "structure-only":
+    accept_mode = args.accept
+    if accept_mode == "auto":
+        accept_mode = "structure-only" if imported.scope_kind == "fascicle" else "f0-safe"
+        print(f"Aceitação auto: {accept_mode} (scope={imported.scope_kind})")
+
+    if accept_mode == "structure-only":
         allowed = _STRUCTURE_KINDS
-    elif args.accept == "f0-safe":
+    elif accept_mode == "f0-safe":
         allowed = _F0_SAFE_KINDS
     else:
         allowed = None
