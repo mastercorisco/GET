@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eda.local/get/schemas/get_structure_contract.schema.json",
+  "title": "GET Structure Bootstrap Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schema_version",
+    "catalog",
+    "fascicles",
+    "llm_instructions",
+    "anti_patterns",
+    "workbook_mapping",
+    "next_steps"
+  ],
+  "properties": {
+    "schema": { "const": "GET-STRUCTURE-CONTRACT" },
+    "schema_version": { "const": "1.0.0" },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "checksum"],
+      "properties": {
+        "id": { "type": "string" },
+        "version": { "type": "integer" },
+        "checksum": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "display_name": { "type": "string" }
+      }
+    },
+    "project_template_code": { "type": "string" },
+    "fascicles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["display_code", "title", "blocks"],
+        "properties": {
+          "display_code": { "type": "string" },
+          "title": { "type": "string" },
+          "purpose": { "type": "string" },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["display_code", "title"],
+              "additionalProperties": false,
+              "properties": {
+                "display_code": { "type": "string" },
+                "title": { "type": "string" },
+                "development_point_hints": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "editorial_rules": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "llm_instructions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 5 }
+    },
+    "anti_patterns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 5 }
+    },
+    "workbook_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fascicles_sheet", "blocks_sheet"],
+      "properties": {
+        "fascicles_sheet": { "type": "string" },
+        "blocks_sheet": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 5 }
+    }
+  }
+}

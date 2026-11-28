@@ -1,0 +1,50 @@
+{
+  "id": "generic_example_v1",
+  "version": 1,
+  "locale": "pt-PT",
+  "display_name": "Estrutura documental genérica (exemplo)",
+  "source": "docs/inventory/structure_catalog_generic_example.inventory.md",
+  "complements": [],
+  "fascicles": [
+    {
+      "code": "F00",
+      "ordinal": 1,
+      "title": "Guia de estrutura documental",
+      "blocks": [
+        {
+          "code": "F00_B01",
+          "ordinal": 1,
+          "title": "Objectivo do documento",
+          "development_points": [
+            {
+              "text": "Definir o âmbito do exemplo."
+            },
+            {
+              "text": "Indicar como evoluir para GET-PACKAGE após baseline."
+            }
+          ]
+        },
+        {
+          "code": "F00_B02",
+          "ordinal": 2,
+          "title": "Convenções de codificação",
+          "development_points": [
+            {
+              "text": "Usar códigos estáveis Fascículo_Bloco."
+            },
+            {
+              "text": "Não inferir nós novos só via GET-PACKAGE."
+            }
+          ]
+        }
+      ],
+      "purpose": "exemplo de fascículo introdutório para testes do seed e do contrato bootstrap."
+    }
+  ],
+  "totals": {
+    "fascicles": 1,
+    "blocks": 2,
+    "development_points": 4
+  },
+  "checksum": "36ea4bbfce2d28af2ead95f8d2831ecee49669a3447c7d8d3601966c5ef8f601"
+}

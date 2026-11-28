@@ -25,6 +25,8 @@ _BROWNFIELD_CODE = "brownfield-cee-csc"
 _BROWNFIELD_NAME = (
     "Central de produção de energia elétrica — remodelação brownfield do sistema de comando e controlo"
 )
+_GENERIC_STRUCTURE_CODE = "generic-structure-v1"
+_GENERIC_STRUCTURE_NAME = "Estrutura documental genérica (exemplo)"
 class ProjectError(Exception):
     pass
 
@@ -95,6 +97,38 @@ def _ensure_templates(session) -> None:
                 version=2,
                 metadata_json=json.dumps(
                     {"schema": "0.2.0", "ctbj_structure_version": 3},
+                    ensure_ascii=False,
+                ),
+                created_at=_utcnow(),
+            )
+        )
+        session.flush()
+
+    generic = session.scalar(select(ProjectTemplate).where(ProjectTemplate.code == _GENERIC_STRUCTURE_CODE))
+    if generic is None:
+        generic = ProjectTemplate(
+            code=_GENERIC_STRUCTURE_CODE,
+            name=_GENERIC_STRUCTURE_NAME,
+            description=_GENERIC_STRUCTURE_NAME,
+            created_at=_utcnow(),
+        )
+        session.add(generic)
+        session.flush()
+    if session.scalar(
+        select(ProjectTemplateVersion).where(
+            ProjectTemplateVersion.template_id == generic.id,
+            ProjectTemplateVersion.version == 1,
+        )
+    ) is None:
+        session.add(
+            ProjectTemplateVersion(
+                template_id=generic.id,
+                version=1,
+                metadata_json=json.dumps(
+                    {
+                        "schema": "0.3.0",
+                        "structure_catalog": {"id": "generic_example_v1", "version": 1},
+                    },
                     ensure_ascii=False,
                 ),
                 created_at=_utcnow(),
@@ -251,8 +285,22 @@ def _template_ctbj_structure_version(metadata_json: str) -> int:
     return int(meta.get("ctbj_structure_version") or 0)
 
 
+def _template_structure_catalog_id(metadata_json: str) -> str | None:
+    try:
+        meta = json.loads(metadata_json or "{}")
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(meta, dict):
+        return None
+    stamp = meta.get("structure_catalog")
+    if not isinstance(stamp, dict):
+        return None
+    catalog_id = stamp.get("id")
+    return str(catalog_id) if catalog_id else None
+
+
 def create_project(app_settings: AppSettings, body: ProjectCreateRequest) -> ProjectResponse:
-    seed_ctbj = False
+    seed_catalog_id: str | None = None
     project_id: str
     with workspace_session(app_settings) as (session, _paths):
         _ensure_templates(session)
@@ -280,17 +328,24 @@ def create_project(app_settings: AppSettings, body: ProjectCreateRequest) -> Pro
         )
         session.flush()
         project_id = project.id
-        seed_ctbj = _template_ctbj_structure_version(template_version.metadata_json) >= 3
+        meta_json = template_version.metadata_json
+        catalog_id = _template_structure_catalog_id(meta_json)
+        if catalog_id:
+            seed_catalog_id = catalog_id
+        elif _template_ctbj_structure_version(meta_json) >= 3:
+            seed_catalog_id = "ctbj_v3"
         response = _project_response(session, project)
 
-    if seed_ctbj:
-        from app.services.structure_seed.ctbj_v3_sync import apply_ctbj_v3_structure
+    if seed_catalog_id:
+        from app.services.structure_seed.generic_sync import apply_structure_catalog
 
-        apply_ctbj_v3_structure(
+        apply_structure_catalog(
             app_settings,
             project_id,
+            catalog_id=seed_catalog_id,
             mode="seed_empty",
             dry_run=False,
             preserve_rich_content=True,
+            report_prefix=seed_catalog_id.replace("/", "_"),
         )
     return response

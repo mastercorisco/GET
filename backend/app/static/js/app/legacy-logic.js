@@ -265,6 +265,51 @@ const rootPath = document.getElementById("rootPath");
           document.getElementById("docAssocList").replaceChildren();
         }
         document.dispatchEvent(new CustomEvent("get:projects-catalog-updated"));
+        loadStructureCatalogs().catch(function () {});
+      }
+
+      async function loadStructureCatalogs() {
+        const select = document.getElementById("pStructureCatalog");
+        const meta = document.getElementById("pStructureCatalogMeta");
+        if (!select) return;
+        const data = await knowledgeRequest("/api/structure-catalogs", {}, "Falha ao listar catálogos de estrutura.");
+        const catalogs = data.catalogs || [];
+        select.replaceChildren();
+        catalogs.forEach(function (c) {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent =
+            (c.display_name || c.id) +
+            " · v" +
+            c.version +
+            " · " +
+            c.totals.fascicles +
+            "F/" +
+            c.totals.blocks +
+            "B";
+          select.appendChild(opt);
+        });
+        function syncMeta() {
+          if (!meta || !select.value) {
+            if (meta) meta.textContent = "";
+            return;
+          }
+          const found = catalogs.find(function (c) { return c.id === select.value; });
+          if (!found) {
+            meta.textContent = "";
+            return;
+          }
+          meta.textContent =
+            "Checksum " +
+            (found.checksum ? found.checksum.slice(0, 12) + "…" : "—") +
+            (found.project_template_code ? " · modelo " + found.project_template_code : "");
+        }
+        select.onchange = syncMeta;
+        if (catalogs.length) {
+          const preferred = catalogs.find(function (c) { return c.id === "generic_example_v1"; });
+          select.value = preferred ? preferred.id : catalogs[0].id;
+        }
+        syncMeta();
       }
 
       function renderDocumentTree(nodes) {
@@ -1992,6 +2037,24 @@ const rootPath = document.getElementById("rootPath");
       installKnowledgeProfileTypeListener("pk");
       renderKnowledgeProfileFields("k", "control_function", {}, false);
       renderKnowledgeProfileFields("pk", "control_function", {}, false);
+      bindClickIfPresent("pStructureContract", function () {
+        const id = document.getElementById("pStructureCatalog") && document.getElementById("pStructureCatalog").value;
+        if (!id) {
+          setProjectError("Sem catálogo seleccionado.");
+          return;
+        }
+        window.location.href =
+          "/api/structure-catalogs/" + encodeURIComponent(id) + "/bootstrap-contract";
+      });
+      bindClickIfPresent("pStructureWorkbook", function () {
+        const id = document.getElementById("pStructureCatalog") && document.getElementById("pStructureCatalog").value;
+        if (!id) {
+          setProjectError("Sem catálogo seleccionado.");
+          return;
+        }
+        window.location.href =
+          "/api/structure-catalogs/" + encodeURIComponent(id) + "/workbook-structure.xlsx";
+      });
       document.getElementById("pCreate").addEventListener("click", function () {
         const body = {
           template_version_id: document.getElementById("pTemplateVersion").value,

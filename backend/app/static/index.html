@@ -234,6 +234,16 @@
         <div class="route-tab-panel" data-route-tab="projects">
           <label for="pTemplateVersion" data-help-key="project.template_version">Modelo (versão)</label>
           <select id="pTemplateVersion"></select>
+          <details class="compact-section compact-section--content" id="pStructureCatalogPanel">
+            <summary>Catálogos de estrutura (contrato LLM)</summary>
+            <div class="compact-section__body">
+              <label for="pStructureCatalog" data-help-key="project.structure_catalog">Catálogo</label>
+              <select id="pStructureCatalog"></select>
+              <button type="button" id="pStructureContract" class="secondary">Transferir GET-STRUCTURE-CONTRACT</button>
+              <button type="button" id="pStructureWorkbook" class="secondary">Transferir workbook 01/02</button>
+              <p id="pStructureCatalogMeta" class="choice-hint"></p>
+            </div>
+          </details>
           <div class="card-grid">
             <div class="card-surface">
               <label for="pName" data-help-key="project.name">Nome do projeto</label>

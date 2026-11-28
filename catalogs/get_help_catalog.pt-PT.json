@@ -982,6 +982,26 @@
       "related_screen": "project",
       "common_confusions": []
     },
+    "project.structure_catalog": {
+      "label": "Catálogo de estrutura",
+      "short_help": "Contrato GET-STRUCTURE-CONTRACT para LLM.",
+      "definition": "Inventário versionado de fascículos e blocos (ficheiro catalogs/*.json) usado no seed do modelo genérico.",
+      "guiding_question": "Que espinha dorsal documental usar antes de criar o projecto?",
+      "instructions": "",
+      "good_examples": [],
+      "bad_examples": [],
+      "tips": [],
+      "allow_use_example": false,
+      "purpose_in_app": "Transferir contrato ou workbook 01/02 antes da criação do projecto; a árvore entra pelo modelo, não por reimportação do contrato.",
+      "workflow_context": "Ecrã Projecto → Catálogos de estrutura.",
+      "when_to_use": "Ao planear documentação com LLM externa ou Excel.",
+      "what_happens_next": "Criar projecto com o modelo associado ao catálogo (ex. generic-structure-v1).",
+      "related_concepts": ["project", "workbook"],
+      "related_screen": "project",
+      "common_confusions": [
+        "Confundir GET-STRUCTURE-CONTRACT com GET-PACKAGE reimportável."
+      ]
+    },
     "project.name": {
       "label": "Nome do projecto",
       "short_help": "Identificação do caderno.",

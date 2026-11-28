@@ -296,6 +296,8 @@ Atualizações do modelo não alteram projetos existentes automaticamente.
 
 **Versão 2 (brownfield CTBJ):** o template `brownfield-cee-csc` versão 2 inclui `ctbj_structure_version: 3` e, na criação do projecto, popula automaticamente a árvore F01–F20 (179 blocos, inventário de pontos em `catalogs/ctbj_document_structure_v3.pt-PT.json`). Projectos legados em v1 migram via `scripts/migrate_ctbj_structure_v3.py` (dry-run por defeito, backup crítico em `--apply`, relatório em `migration_reports/`).
 
+**Modelo genérico (exemplo):** o template `generic-structure-v1` referencia `structure_catalog.id = generic_example_v1` em `catalogs/structure_catalog_generic_example.pt-PT.json` (exemplo mínimo para o método de catálogo). Antes de criar o projecto, o utilizador pode transferir o **GET-STRUCTURE-CONTRACT** (`GET /api/structure-catalogs/{id}/bootstrap-contract`) para orientar uma LLM externa; o contrato não reimporta árvore — a árvore entra pelo seed na criação ou pelo workbook. Correções em massa: `GET /api/structure-catalogs/{id}/workbook-structure.xlsx` ou exportação workbook do projecto.
+
 ## 16. Perfis de instruções
 
 Perfil-base versionado, complementado por projeto e fascículo. Instruções protegidas não podem ser contrariadas sem confirmação explícita.

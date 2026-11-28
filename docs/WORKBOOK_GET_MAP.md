@@ -37,6 +37,7 @@ Pela **UI** (ecrã «Importação Excel») ou **API**:
 |-------|----------|--------|
 | 0 | Exportar biblioteca / projecto | Download `GET /api/workbook/export/...` |
 | 1 | Transferir modelo | Download `GET /api/workbook/templates/{id}` |
+| 1b | Estrutura a partir de catálogo | Download `GET /api/structure-catalogs/{id}/workbook-structure.xlsx` (folhas `01_Fasciculos` e `02_Blocos` pré-preenchidas) |
 | 2 | `POST /api/workbook/validate` | Validação estrutural (sem BD) |
 | 3 | `POST /api/workbook/migrate` (multipart, `dry_run=true`) | Upload para `{workspace}/imports/workbook/{run_id}/source.xlsx` + relatório |
 | 4 | `POST /api/workbook/migrate/apply` | Backup crítico; `new_project` ou `existing_project` |

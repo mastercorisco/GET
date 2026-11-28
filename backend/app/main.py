@@ -14,6 +14,7 @@ from app.routers import (
     packages,
     import_review,
     workbook,
+    structure_catalogs,
     structure_export,
     health,
     knowledge,
@@ -55,6 +56,7 @@ app.include_router(export.router, prefix="/api")
 app.include_router(packages.router, prefix="/api")
 app.include_router(import_review.router, prefix="/api")
 app.include_router(workbook.router, prefix="/api")
+app.include_router(structure_catalogs.router, prefix="/api")
 app.include_router(structure_export.router, prefix="/api")
 app.include_router(ui_preferences.router, prefix="/api")
 app.include_router(block_router, prefix="/api")
